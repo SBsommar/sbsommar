@@ -337,7 +337,7 @@ visitors can see what is planned and what has already happened this year.
 
 ### 28.7 Implementation constraints
 
-- The section uses only CSS custom properties from `docs/07-DESIGN.md §7`.
+- The section uses only CSS custom properties from `docs/07-design/css-strategy.md §7`.
   No hardcoded colors, spacing, or typography. <!-- 02-§28.16 -->
 - The client-side script is minimal — no framework, no external
   dependency. <!-- 02-§28.17 -->
