@@ -1,3 +1,7 @@
+---
+title: "Traceability — 02-requirements"
+---
+
 # Traceability — 02-requirements
 
 Part of [the traceability index](./index.md).
@@ -1406,6 +1410,14 @@ its requirement rows together with the test-legend rows that evidence them.
 | `02-§97.19` | covered | DOCS-CFG-05: `docs/robots.txt` (Disallow: /) present; verified to address every user agent |
 | `02-§97.20` | covered | DOCS-CFG-06: both `docs/_includes/head-custom.html` (Primer/Minima) and `docs/_includes/head_custom.html` (Cayman) emit `<meta name="robots" content="noindex, nofollow">`; whichever theme GitHub Pages picks, the tag lands in `<head>` — manual browser verification confirms |
 | `02-§97.21` | covered | DOCS-CFG-07: no `sitemap.xml`, `sitemap.txt`, or forbidden Jekyll plugins (`jekyll-sitemap`, `jekyll-seo-tag`, `jekyll-feed`) under `docs/` |
+| `02-§97.22` | implemented | `docs/_config.yml` `defaults` apply `layout: default`; `docs/_layouts/default.html`. Verified via local Jekyll build: all 36 rendered pages wrapped in the layout, no per-file `layout:` opt-in |
+| `02-§97.23` | implemented | `docs/_layouts/default.html` renders the site title as a link to the landing page. Verified in the rendered output |
+| `02-§97.24` | implemented | `theme: jekyll-theme-primer`; content in Primer's `container-lg … markdown-body`; `assets/css/style.css` built. Verified in the rendered output |
+| `02-§97.25` | covered | DOCS-NAV-05 (`tests/docs-nav.test.js`): every `.md` under `docs/` has front-matter with a non-empty `title` (36/36) |
+| `02-§97.26` | implemented | `docs/_layouts/default.html` renders the site title as a link, not an `<h1>`. Verified via build: exactly one `<h1>` on all 36 pages |
+| `02-§97.27` | implemented | `docs/_includes/breadcrumb.html`. Verified: `All docs › <Family>` breadcrumb on family pages, absent on the landing page and top-level docs |
+| `02-§97.28` | implemented | `docs/_includes/family-nav.html`. Verified: sibling links render on deep pages with the current page excluded; absent on landing/top-level. Nav data verified by DOCS-NAV-01..04 |
+| `02-§97.29` | covered | DOCS-NAV-04 (`tests/docs-nav.test.js`): `docs/_data/docs-nav.yml` listings stay in sync with the files on disk, so one edit updates every sibling |
 
 ### §98 — Locale Overview Page
 

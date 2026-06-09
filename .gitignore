@@ -25,3 +25,9 @@ Thumbs.db
 # Build files for deploying
 public/*
 !public/.gitkeep
+
+# Jekyll local-preview artifacts for the docs site (GitHub Pages builds
+# from docs/ itself; these are only produced by a local `jekyll build/serve`)
+docs/_site/
+docs/.jekyll-cache/
+docs/.sass-cache/

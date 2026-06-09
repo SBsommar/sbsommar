@@ -1,3 +1,7 @@
+---
+title: "SB Sommar – Data Contract"
+---
+
 # SB Sommar – Data Contract
 
 This document defines the official data structure for all camp YAML files.

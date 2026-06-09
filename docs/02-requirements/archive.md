@@ -1,3 +1,7 @@
+---
+title: "SB Sommar – Requirements: Archived Requirements"
+---
+
 # SB Sommar – Requirements: Archived Requirements
 
 Sections superseded by later requirements. IDs are preserved because they are still cited from code; prose lives here for historical reference.

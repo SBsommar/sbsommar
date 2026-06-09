@@ -1,3 +1,7 @@
+---
+title: "SB Sommar – Operations Guide"
+---
+
 # SB Sommar – Operations Guide
 
 How to develop, run, and deploy the site.

@@ -1,3 +1,7 @@
+---
+title: "SB Sommar – Requirements: Pages and Navigation"
+---
+
 # SB Sommar – Requirements: Pages and Navigation
 
 Site structure: page inventory, the homepage pre-camp section, navigation, footer, hero CTAs, accordions, anchor IDs.

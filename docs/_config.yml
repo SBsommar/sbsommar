@@ -4,6 +4,13 @@
 
 title: SB Sommar – Project Documentation
 
+# GitHub Pages' built-in default theme. Set explicitly so its stylesheet
+# (assets/css/style.css) is generated even though the project-owned
+# _layouts/default.html shadows the theme's own layout. No Gemfile needed —
+# jekyll-theme-primer is whitelisted on GitHub Pages. See
+# docs/03-architecture/ci-and-deploy.md §34.
+theme: jekyll-theme-primer
+
 # Enable jekyll-relative-links so that intra-docs links written as
 # [text](other-file.md) resolve to the rendered HTML pages.
 # This plugin is whitelisted on GitHub Pages (no Gemfile needed).
@@ -13,3 +20,11 @@ plugins:
 relative_links:
   enabled: true
   collections: true
+
+# Apply the project layout to every page without per-file front-matter
+# opt-in (02-§97.22). Pages still carry a front-matter `title` (02-§97.25).
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: default

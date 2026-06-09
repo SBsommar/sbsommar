@@ -1,3 +1,7 @@
+---
+title: "SB Sommar – Requirements: Caching and Performance"
+---
+
 # SB Sommar – Requirements: Caching and Performance
 
 Cache strategy: cache headers, content-hash cache-busting for CSS/JS/images, image dimension and filename rules, image lazy-loading.

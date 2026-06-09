@@ -1,3 +1,7 @@
+---
+title: "Traceability — 03-architecture"
+---
+
 # Traceability — 03-architecture
 
 Part of [the traceability index](./index.md).

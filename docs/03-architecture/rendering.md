@@ -1,3 +1,7 @@
+---
+title: "SB Sommar – Architecture: Rendering"
+---
+
 # SB Sommar – Architecture: Rendering
 
 Page rendering logic and project structure, plus the RSS feed and per-event page generation.

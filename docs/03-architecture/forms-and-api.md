@@ -1,3 +1,7 @@
+---
+title: "SB Sommar – Architecture: Forms and API"
+---
+
 # SB Sommar – Architecture: Forms and API
 
 Participant event editing (session cookie architecture), per-field inline validation, participant event deletion, the add- and edit-activity submit flows, form time-gating, and the form draft cache.

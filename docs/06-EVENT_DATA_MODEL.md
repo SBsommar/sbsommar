@@ -1,3 +1,7 @@
+---
+title: "SB Sommar – Event Data Model"
+---
+
 # SB Sommar – Event Data Model
 
 This document explains *why* the event data is structured the way it is — the reasoning, the future-proofing decisions, and the design intent.

@@ -1,3 +1,7 @@
+---
+title: "SB Sommar – Requirements: Design and Content"
+---
+
 # SB Sommar – Requirements: Design and Content
 
 Visual and editorial polish: hero redesign, link colors, modal styling, registration banner, locale overview page, index design.

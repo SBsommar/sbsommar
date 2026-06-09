@@ -1,3 +1,7 @@
+---
+title: "SB Sommar – Requirements: Add and Edit Forms"
+---
+
 # SB Sommar – Requirements: Add and Edit Forms
 
 Add-activity and edit-activity forms: fields, validation, submit flows, time-gating, cookies, drafts, multi-day, delete, conflict warning, error visibility.

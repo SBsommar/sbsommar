@@ -1,3 +1,7 @@
+---
+title: "SB Sommar – Architecture: Platform and Security"
+---
+
 # SB Sommar – Architecture: Platform and Security
 
 The Progressive Web App layer, admin token infrastructure, authorization endpoint rate limiting, and regex performance and escape hygiene.

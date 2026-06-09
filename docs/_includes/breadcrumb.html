@@ -1,0 +1,18 @@
+{%- comment -%}
+One-level breadcrumb for documentation pages that live inside a family
+subfolder (02-§97.27). Derives the family from the first path segment and
+links back to the landing page and the family index. Top-level pages and the
+landing page itself match no family, so they render no breadcrumb.
+{%- endcomment -%}
+{%- assign nav = site.data["docs-nav"] -%}
+{%- assign parts = page.path | split: "/" -%}
+{%- assign current_dir = parts[0] -%}
+{%- for family in nav.families -%}
+  {%- if family.dir == current_dir -%}
+    <nav class="docs-breadcrumb" aria-label="Breadcrumb">
+      <a href="{{ '/' | relative_url }}">All docs</a>
+      <span aria-hidden="true">›</span>
+      <a href="{{ family.dir | append: '/' | relative_url }}">{{ family.name }}</a>
+    </nav>
+  {%- endif -%}
+{%- endfor -%}

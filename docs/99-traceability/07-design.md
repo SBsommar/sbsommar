@@ -1,3 +1,7 @@
+---
+title: "Traceability — 07-design"
+---
+
 # Traceability — 07-design
 
 Part of [the traceability index](./index.md).

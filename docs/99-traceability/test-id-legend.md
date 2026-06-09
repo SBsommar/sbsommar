@@ -1,3 +1,7 @@
+---
+title: "Test ID Legend"
+---
+
 # Test ID Legend
 
 Part of [the traceability index](./index.md).
@@ -172,3 +176,5 @@ Part of [the traceability index](./index.md).
 | MDT-20 | `tests/markdown-toolbar.test.js` | `02-§57.8 — Accessible aria-label` |
 | MDT-21..22 | `tests/markdown-toolbar.test.js` | `02-§57.10 — Shared markdown-toolbar.js` |
 | MDT-23 | `tests/markdown-toolbar.test.js` | `02-§57.13 — Focus indicator` |
+| DOCS-NAV-01..04 | `tests/docs-nav.test.js` | `docs-nav.yml — single source for within-family navigation (02-§97.28, 02-§97.29)` |
+| DOCS-NAV-05 | `tests/docs-nav.test.js` | `docs front-matter — every page carries a title (02-§97.25)` |

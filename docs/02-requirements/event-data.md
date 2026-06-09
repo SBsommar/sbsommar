@@ -1,3 +1,7 @@
+---
+title: "SB Sommar – Requirements: Event Data"
+---
+
 # SB Sommar – Requirements: Event Data
 
 Event data: source-of-truth YAML, locations, archive policy, naming convention, derived active camp, QA isolation, the camps.yaml validator.

@@ -1,3 +1,7 @@
+---
+title: "SB Sommar – Architecture: CI and Deploy"
+---
+
 # SB Sommar – Architecture: CI and Deploy
 
 The event-data CI pipeline, the camps.yaml validator, the Markdown converter, the PHP API for shared hosting, and content-hash asset cache-busting.
@@ -372,5 +376,90 @@ miss.
 | File | Role |
 | ---- | ---- |
 | `source/build/build.js` | Post-processing: hash computation and URL rewriting |
+
+---
+
+## 34. Documentation Site Layout and Navigation
+
+### 34.1 Context
+
+The documentation site (02-§97) is served by GitHub Pages using its
+built-in default theme, `jekyll-theme-primer`. Primer already wraps every
+rendered page — not only the landing page — in chrome: a site-title link
+back to the landing page, a max-width `markdown-body` container, a
+system sans-serif typeface, syntax highlighting, and the robots meta
+(02-§97.20) via the head-custom include. GitHub Pages derives a page
+`<title>` from the first `#` heading even when a file has no front-matter.
+
+Three gaps remain. Primer shows no breadcrumb, so a reader on a deep page
+(for example `02-requirements/pages-navigation.html`) cannot see which
+family the page belongs to. Primer offers no navigation between sibling
+files within a family; the only inter-doc link is the in-content "Part of
+the … index" line. And Primer renders the site title as an `<h1>`, so
+every page carries two `<h1>` elements — the site title and the
+document's own heading. Requirements 02-§97.22–97.29 close these gaps.
+
+### 34.2 Approach — extend Primer, do not replace it
+
+The site keeps `jekyll-theme-primer`. A project-owned
+`docs/_layouts/default.html` shadows the theme's layout: it reproduces
+Primer's page structure (head, container, content) and links Primer's
+generated stylesheet (`assets/css/style.css`), so the existing
+typography, tables, and code highlighting are unchanged, while adding the
+breadcrumb and the within-family navigation. Replacing Primer with an
+own-CSS layout or switching to `just-the-docs` were both evaluated and
+rejected; see appendix §10.
+
+### 34.3 Layout application and front-matter
+
+`docs/_config.yml` sets `defaults` so that every page under `docs/`
+receives `layout: default` without per-file opt-in (02-§97.22). Every
+`.md` file under `docs/` carries YAML front-matter with a `title`
+(02-§97.25). The layout uses `page.title` only for the `<title>` element
+and the breadcrumb — never as an on-page heading. The site title in the
+header is rendered as non-heading chrome (a styled link, not an `<h1>`),
+so the document's own top-level `#` heading is the single `<h1>` on the
+page (02-§97.26).
+
+### 34.4 Breadcrumb
+
+For a page inside a documentation subfolder, the layout derives the
+family from the page's URL path (for example `02-requirements/`) and
+renders a one-level breadcrumb above the content that links back to the
+landing page and names the family (02-§97.27). The landing page itself
+shows no breadcrumb. The human-readable family name comes from the same
+data source as the navigation block (§34.5).
+
+### 34.5 Within-family navigation
+
+A single data file, `docs/_data/docs-nav.yml`, lists each documentation
+family (`02-requirements/`, `03-architecture/`, `07-design/`,
+`99-traceability/`) and the files that belong to it. The include
+`docs/_includes/family-nav.html` selects the entry matching the current
+page's family and renders links to its sibling files, emitted as a
+navigation block below the content (02-§97.28). Because the listing lives
+in one data file, adding or removing a family member updates every
+sibling's navigation and the breadcrumb's family name without editing any
+individual page (02-§97.29).
+
+### 34.6 Robots policy preserved
+
+The project-owned layout owns the `<head>`, and it includes the existing
+`head-custom.html` so the `<meta name="robots" content="noindex,
+nofollow">` tag remains the single source of the robots directive
+(02-§97.20). The dual head-custom filenames stay shipped; with Primer
+still active as the theme they remain harmless, and the requirement's
+desired state — the tag present in the `<head>` of every rendered page —
+is unchanged.
+
+### 34.7 Files
+
+| File | Role |
+| ---- | ---- |
+| `docs/_config.yml` | `defaults` applying `layout: default` to every page |
+| `docs/_layouts/default.html` | Shadow layout: Primer structure + breadcrumb + family nav, single `<h1>` |
+| `docs/_data/docs-nav.yml` | Single source listing families and their files |
+| `docs/_includes/family-nav.html` | Renders the within-family navigation block |
+| `docs/_includes/breadcrumb.html` | Renders the one-level breadcrumb |
 
 ---

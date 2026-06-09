@@ -1,0 +1,49 @@
+# Single source for the documentation site's within-family navigation and
+# breadcrumb (02-§97.28, 02-§97.29). Each family lists the Markdown files in
+# its folder; tests/docs-nav.test.js (DOCS-NAV-04) fails if this drifts out of
+# sync with the files on disk. Link text and URLs are not duplicated here —
+# the breadcrumb and nav includes read each page's own front-matter `title`
+# via site.pages, so this file only needs the folder, a display name, and the
+# member filenames.
+families:
+  - dir: 02-requirements
+    name: Requirements
+    files:
+      - index.md
+      - pages-navigation.md
+      - schedule-and-detail.md
+      - add-edit-forms.md
+      - event-data.md
+      - build-deploy.md
+      - caching-performance.md
+      - platform-security.md
+      - design-and-content.md
+      - archive.md
+  - dir: 03-architecture
+    name: Architecture
+    files:
+      - index.md
+      - data-layer.md
+      - rendering.md
+      - forms-and-api.md
+      - ci-and-deploy.md
+      - pages-and-content.md
+      - platform-and-security.md
+      - appendix.md
+  - dir: 07-design
+    name: Design
+    files:
+      - index.md
+      - components.md
+      - css-strategy.md
+      - imagery-and-accessibility.md
+  - dir: 99-traceability
+    name: Traceability
+    files:
+      - index.md
+      - 02-requirements.md
+      - 03-architecture.md
+      - 05-data-contract.md
+      - 07-design.md
+      - claude.md
+      - test-id-legend.md

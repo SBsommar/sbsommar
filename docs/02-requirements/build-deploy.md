@@ -1,3 +1,7 @@
+---
+title: "SB Sommar – Requirements: Build and Deploy"
+---
+
 # SB Sommar – Requirements: Build and Deploy
 
 CI pipelines, lint gates, environments (local/QA/production), zero-downtime deploy, release docs, footer version, the docs site build.
@@ -825,3 +829,42 @@ existing deployment workflow.
   `<head>` regardless of which default theme GitHub Pages selects. <!-- 02-§97.20 -->
 - No sitemap, Open Graph tags, or other discoverability metadata are
   added to the documentation site. <!-- 02-§97.21 -->
+
+### 97.9 Page layout and chrome
+
+- Every rendered documentation page is wrapped in a shared layout that
+  gives it consistent chrome: a header strip above the content and a
+  single content column below it. A newly added documentation file
+  receives this chrome automatically, with no per-file opt-in. <!-- 02-§97.22 -->
+- The chrome header shows the documentation site's title, and the title
+  links to the landing page (`docs/index.md`). <!-- 02-§97.23 -->
+- Page content renders within a constrained maximum width, so that lines
+  of text stay short enough to read comfortably on a wide screen. <!-- 02-§97.24 -->
+
+### 97.10 Page front-matter
+
+- Every Markdown file under `docs/` carries YAML front-matter with a
+  `title` field. <!-- 02-§97.25 -->
+- A page's front-matter `title` matches the document's first in-content
+  heading. The shared layout renders no title of its own as a page
+  heading; the document's existing top-level `#` heading is the only
+  visible page title. <!-- 02-§97.26 -->
+
+### 97.11 Breadcrumb
+
+- A documentation page that lives inside a subfolder (for example
+  `02-requirements/`, `03-architecture/`, `07-design/`, or
+  `99-traceability/`) shows a one-level breadcrumb in the chrome that
+  links back to the landing page and names the family the page belongs
+  to. <!-- 02-§97.27 -->
+
+### 97.12 Within-family navigation
+
+- Each topic file inside a documentation family (`02-requirements/`,
+  `03-architecture/`, `07-design/`, and `99-traceability/`) renders a
+  navigation block that lists the other files in the same family, each
+  linking to its rendered page, so that a reader on a deep page can move
+  to a sibling without first returning to the landing page. <!-- 02-§97.28 -->
+- The list of files in each family is maintained in a single place, so
+  that adding or removing a family member updates every sibling's
+  navigation block without editing each file by hand. <!-- 02-§97.29 -->

@@ -1,3 +1,7 @@
+---
+title: "SB Sommar – Requirements"
+---
+
 # SB Sommar – Requirements
 
 This document defines what the site must do and for whom.

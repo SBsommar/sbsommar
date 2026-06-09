@@ -1,3 +1,7 @@
+---
+title: "SB Sommar – Environments"
+---
+
 # SB Sommar – Environments
 
 Three environments serve different stages of the development-to-production pipeline.
@@ -214,28 +218,42 @@ so the CI status of a docs-only change does not gate publication.
 
 ### Configuration
 
-The project owns four files under `docs/` that shape the published
-site:
+The project owns the following files under `docs/` that shape the
+published site:
 
-- `docs/_config.yml` activates the
+- `docs/_config.yml` sets `theme: jekyll-theme-primer` (GitHub Pages'
+  default theme, whitelisted — no Gemfile needed), activates the
   [`jekyll-relative-links`](https://github.com/benbalter/jekyll-relative-links)
-  plugin (whitelisted on GitHub Pages) so that relative links between
-  Markdown files such as `[text](other-file.md)` resolve correctly to
-  the rendered HTML pages on the published site.
+  plugin so that relative links between Markdown files such as
+  `[text](other-file.md)` resolve correctly to the rendered HTML pages,
+  and applies `layout: default` to every page via `defaults` so new docs
+  inherit the layout without per-file opt-in.
+- `docs/_layouts/default.html` is the project layout. It shadows the
+  theme's own layout: it links Primer's stylesheet, renders the site
+  title as a link (not a heading) so each page has a single `<h1>`, and
+  adds a breadcrumb above the content and a within-family navigation
+  block below it.
+- `docs/_data/docs-nav.yml` is the single source listing each
+  documentation family (`02-requirements/`, `03-architecture/`,
+  `07-design/`, `99-traceability/`) and the files in it. The breadcrumb
+  (`docs/_includes/breadcrumb.html`) and within-family navigation
+  (`docs/_includes/family-nav.html`) are generated from it, so adding or
+  removing a family member updates every sibling without per-file edits.
+- Every Markdown file under `docs/` carries YAML front-matter with a
+  `title`, used for the page `<title>` and the navigation labels.
 - `docs/robots.txt` (`User-agent: *` / `Disallow: /`) blocks every
   crawler at the documentation site root.
 - `docs/_includes/head-custom.html` and `docs/_includes/head_custom.html`
-  inject `<meta name="robots" content="noindex, nofollow">` into every
-  rendered page. Two filenames are shipped because GitHub Pages themes
-  use different conventions: Primer/Minima look for the dashed name,
-  Cayman looks for the underscored name. Whichever default GitHub
-  Pages selects, the meta tag still lands in `<head>`.
+  both carry `<meta name="robots" content="noindex, nofollow">`. The
+  project layout includes the dashed name; both filenames are shipped so
+  the meta tag lands in `<head>` regardless of theme convention
+  (Primer/Minima use the dashed name, Cayman the underscored one).
 - `docs/index.md` is the landing page — it carries a project-technical
   reverse-discoverability banner pointing back to the source
   repository, README, and issue tracker on github.com.
 
-No other Jekyll configuration is owned by the project; the default
-GitHub Pages theme and defaults are used as-is.
+The layout and navigation design is documented in
+[`03-architecture/ci-and-deploy.md` §34](03-architecture/ci-and-deploy.md).
 
 ### Visibility policy
 
