@@ -1,3 +1,7 @@
+---
+title: "SB Sommar – Design Specification"
+---
+
 # SB Sommar – Design Specification
 
 Visual design reference for SB Sommar. Inspired by sbsommar.se, the live production site.

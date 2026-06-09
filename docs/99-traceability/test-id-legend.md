@@ -1,3 +1,7 @@
+---
+title: "Test ID Legend"
+---
+
 # Test ID Legend
 
 Part of [the traceability index](./index.md).

@@ -1,3 +1,7 @@
+---
+title: "SB Sommar – Architecture: Appendix"
+---
+
 # SB Sommar – Architecture: Appendix
 
 Trailing sections from the original architecture document: decisions deliberately rejected, and the design philosophy that frames the system. Both `§10` and `§11` here are out of numerical order with the rest of the document and `§11` is a duplicate heading (the other `§11` is "Event Data CI Pipeline" in [`ci-and-deploy.md`](./ci-and-deploy.md)). These irregularities are preserved as-is — the section IDs are stable strings, not encoded positions.

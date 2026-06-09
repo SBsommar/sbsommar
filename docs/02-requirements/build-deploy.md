@@ -1,3 +1,7 @@
+---
+title: "SB Sommar – Requirements: Build and Deploy"
+---
+
 # SB Sommar – Requirements: Build and Deploy
 
 CI pipelines, lint gates, environments (local/QA/production), zero-downtime deploy, release docs, footer version, the docs site build.

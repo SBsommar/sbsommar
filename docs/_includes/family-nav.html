@@ -1,0 +1,27 @@
+{%- comment -%}
+Within-family navigation block (02-§97.28). Lists the other files in the
+current page's family, each linked by its own front-matter title, resolved
+from site.pages via the filenames in _data/docs-nav.yml (02-§97.29). The
+current page is omitted. Top-level and landing pages match no family and
+render nothing.
+{%- endcomment -%}
+{%- assign nav = site.data["docs-nav"] -%}
+{%- assign parts = page.path | split: "/" -%}
+{%- assign current_dir = parts[0] -%}
+{%- for family in nav.families -%}
+  {%- if family.dir == current_dir -%}
+    <nav class="docs-family-nav" aria-label="More in {{ family.name }}">
+      <strong>More in {{ family.name }}</strong>
+      <ul>
+        {%- for file in family.files -%}
+          {%- assign target = family.dir | append: "/" | append: file -%}
+          {%- for p in site.pages -%}
+            {%- if p.path == target and p.url != page.url -%}
+              <li><a href="{{ p.url | relative_url }}">{{ p.title }}</a></li>
+            {%- endif -%}
+          {%- endfor -%}
+        {%- endfor -%}
+      </ul>
+    </nav>
+  {%- endif -%}
+{%- endfor -%}

@@ -1,3 +1,7 @@
+---
+title: "Traceability — 05-data-contract"
+---
+
 # Traceability — 05-data-contract
 
 Part of [the traceability index](./index.md).

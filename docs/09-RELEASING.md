@@ -1,3 +1,7 @@
+---
+title: "Releasing to Production"
+---
+
 # Releasing to Production
 
 How to deploy the site to production. This guide assumes your changes are

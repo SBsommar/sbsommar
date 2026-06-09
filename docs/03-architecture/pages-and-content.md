@@ -1,3 +1,7 @@
+---
+title: "SB Sommar – Architecture: Pages and Content"
+---
+
 # SB Sommar – Architecture: Pages and Content
 
 Unified site navigation, the upcoming-camps section, the hero redesign, location accordions, the iCal calendar export, analytics, image dimension attributes, static asset cache headers, the feedback button, and the registration banner.

@@ -1,3 +1,7 @@
+---
+title: "Contributing to SB Sommar"
+---
+
 # Contributing to SB Sommar
 
 There are two types of contributors: **content editors** and **developers**.

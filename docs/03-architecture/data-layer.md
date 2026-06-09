@@ -1,3 +1,7 @@
+---
+title: "SB Sommar – Architecture: Data Layer"
+---
+
 # SB Sommar – Architecture: Data Layer
 
 Camp YAML files, the central metadata registry, active-camp resolution, the archive layer, the shared footer, and search-engine blocking.

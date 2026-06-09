@@ -1,3 +1,7 @@
+---
+title: "SB Sommar – Requirements: Platform and Security"
+---
+
 # SB Sommar – Requirements: Platform and Security
 
 Cross-cutting platform concerns: reliability, accessibility, Swedish language, security hardening, analytics, feedback, PWA, admin token, rate limiting.

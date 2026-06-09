@@ -1,3 +1,7 @@
+---
+title: "SB Sommar – Design: Imagery, Accessibility, and Guardrails"
+---
+
 # SB Sommar – Design: Imagery, Accessibility, and Guardrails
 
 Photography guidance, accessibility minimums, and the list of design moves to avoid.

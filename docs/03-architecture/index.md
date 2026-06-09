@@ -1,3 +1,7 @@
+---
+title: "SB Sommar – Architecture Overview"
+---
+
 # SB Sommar – Architecture Overview
 
 This project is a static, YAML-driven camp platform with a small API server for live event submissions. Two API implementations exist: a Node.js version (`app.js`) for local development and Node.js-capable hosts, and a PHP version (`api/`) for shared hosting environments (e.g. Loopia) that do not support Node.js.

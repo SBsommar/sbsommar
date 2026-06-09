@@ -1,3 +1,7 @@
+---
+title: "SB Sommar – Design: Components"
+---
+
 # SB Sommar – Design: Components
 
 Component-level visual rules: header, hero, banners, buttons, cards, accordions, form errors, modals, the Markdown toolbar/preview, the day grid, the locale-overview grid, and the conflict-warning banner.

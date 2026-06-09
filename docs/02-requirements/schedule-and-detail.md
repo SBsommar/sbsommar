@@ -1,3 +1,7 @@
+---
+title: "SB Sommar – Requirements: Schedule and Activity Detail"
+---
+
 # SB Sommar – Requirements: Schedule and Activity Detail
 
 Schedule views (weekly, today, display), inline activity detail, static per-event pages, RSS, iCal, Markdown rendering of descriptions.

@@ -1,3 +1,7 @@
+---
+title: "SB Sommar – Architecture: CI and Deploy"
+---
+
 # SB Sommar – Architecture: CI and Deploy
 
 The event-data CI pipeline, the camps.yaml validator, the Markdown converter, the PHP API for shared hosting, and content-hash asset cache-busting.

@@ -1,3 +1,7 @@
+---
+title: "Traceability — CLAUDE.md"
+---
+
 # Traceability — CLAUDE.md
 
 Part of [the traceability index](./index.md).
