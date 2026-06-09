@@ -781,7 +781,7 @@ existing deployment workflow.
   `build-deploy.md`, `caching-performance.md`, `platform-security.md`,
   `design-and-content.md`, `archive.md`, then
   `03-architecture/`, `04-OPERATIONS.md`, `05-DATA_CONTRACT.md`,
-  `06-EVENT_DATA_MODEL.md`, `07-DESIGN.md`, `08-ENVIRONMENTS.md`,
+  `06-EVENT_DATA_MODEL.md`, `07-design/`, `08-ENVIRONMENTS.md`,
   `09-RELEASING.md`, and `99-traceability.md`), each with a one-line
   description and a link that works both on GitHub's file viewer and
   on the rendered documentation site. <!-- 02-§97.14 -->

@@ -352,7 +352,7 @@ accessible without network connectivity.
 - The manifest must set `display` to `"standalone"`. <!-- 02-§83.3 -->
 - The manifest must set `start_url` to `"/"`. <!-- 02-§83.4 -->
 - The manifest must set `theme_color` and `background_color` to values from
-  the design palette (`07-DESIGN.md §2`). <!-- 02-§83.5 -->
+  the design palette (`07-design/index.md §2`). <!-- 02-§83.5 -->
 - The manifest must declare at least two icon sizes: 192×192 and
   512×512, both PNG. <!-- 02-§83.6 -->
 - The manifest `icons` array must include a `"purpose": "any"` entry. <!-- 02-§83.7 -->
@@ -544,7 +544,7 @@ discover this without being intrusive.
 
 - The install button logic must be implemented in a dedicated vanilla
   JavaScript file (`pwa-install.js`). <!-- 02-§88.12 -->
-- CSS must use custom properties from `docs/07-DESIGN.md §7`. <!-- 02-§88.13 -->
+- CSS must use custom properties from `docs/07-design/css-strategy.md §7`. <!-- 02-§88.13 -->
 - No new npm dependencies. <!-- 02-§88.14 -->
 - Existing pages and functionality must not break. <!-- 02-§88.15 -->
 - All user-facing text must be in Swedish. <!-- 02-§88.16 -->
@@ -641,7 +641,7 @@ behaviour that uses this token is defined in §7, §18, and §89.
 ### 91.7 Constraints
 
 - All user-facing text must be in Swedish. <!-- 02-§91.25 -->
-- CSS must use custom properties from `docs/07-DESIGN.md §7`. <!-- 02-§91.26 -->
+- CSS must use custom properties from `docs/07-design/css-strategy.md §7`. <!-- 02-§91.26 -->
 - The activation page must be accessible (keyboard-navigable,
   screen-reader friendly). <!-- 02-§91.27 -->
 - The admin token must never be sent in cookies — it is stored only in
@@ -721,7 +721,7 @@ an internet connection.
 ### 92.5 Constraints
 
 - All user-facing text is in Swedish. <!-- 02-§92.21 -->
-- CSS uses custom properties from `docs/07-DESIGN.md §7`. <!-- 02-§92.22 -->
+- CSS uses custom properties from `docs/07-design/css-strategy.md §7`. <!-- 02-§92.22 -->
 - No npm dependencies are added. <!-- 02-§92.23 -->
 - The service worker is vanilla JavaScript with no external
   libraries. <!-- 02-§92.24 -->

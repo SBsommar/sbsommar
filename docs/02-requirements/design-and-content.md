@@ -71,7 +71,7 @@ and connects visitors to community channels.
 
 ### 30.6 Implementation constraints
 
-- All styling uses CSS custom properties from `docs/07-DESIGN.md §7`.
+- All styling uses CSS custom properties from `docs/07-design/css-strategy.md §7`.
   No hardcoded colors, spacing, or typography. <!-- 02-§30.19 -->
 - The countdown client-side script is minimal — no framework, no external
   dependency. <!-- 02-§30.20 -->
@@ -329,7 +329,7 @@ inside the section itself that replaces the inline markdown link.
 ### 94.7 Constraints
 
 - All user-facing text is in Swedish. <!-- 02-§94.20 -->
-- CSS uses existing design tokens from `07-DESIGN.md §7`; no hardcoded
+- CSS uses existing design tokens from `07-design/css-strategy.md §7`; no hardcoded
   colours, spacing, or typography. <!-- 02-§94.21 -->
 - No new JavaScript files are added; the visibility script is inline in
   the generated `index.html`, consistent with §71.11. <!-- 02-§94.22 -->
@@ -411,7 +411,7 @@ overview, is covered in a later section. Issue #332.
   renderer `source/build/render-lokaler.js`. The page requires no
   client-side JavaScript to render or position the grid. <!-- 02-§98.13 -->
 - The grid's visual styling — colors, spacing, and typography — uses
-  the custom properties defined in `docs/07-DESIGN.md §7`; no colors,
+  the custom properties defined in `docs/07-design/css-strategy.md §7`; no colors,
   spacing, or font sizes are hardcoded. <!-- 02-§98.14 -->
 
 ### 98.6 Mobile behaviour
