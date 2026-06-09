@@ -32,14 +32,17 @@ describe('02-§100.7 — deploy never writes .env into the web root', () => {
 
   it('ENVLOC-02: no step copies/moves .env into the API staging or web root', () => {
     // Any restore of .env into a web-served path reintroduces the exposure.
+    // The patterns match a destination position only (`cp|mv SRC DST`), so the
+    // §100.8 migration — which reads $PUBLIC_DIR/api/.env as the *source* and
+    // moves it out — is correctly allowed.
     assert.doesNotMatch(
       SRC,
-      /(cp|mv)[^\n]*"\$API_STAGING\/\.env"/,
+      /(cp|mv)\s+[^\n]+\s+"\$API_STAGING\/\.env"/,
       'nothing may write .env into $API_STAGING (which becomes public_html/api)',
     );
     assert.doesNotMatch(
       SRC,
-      /(cp|mv)[^\n]*"\$PUBLIC_DIR\/api\/\.env"/,
+      /(cp|mv)\s+[^\n]+\s+"\$PUBLIC_DIR\/api\/\.env"/,
       'nothing may write .env into $PUBLIC_DIR/api',
     );
   });

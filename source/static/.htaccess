@@ -1,3 +1,10 @@
+# Deny HTTP access to any .env file under the web root (§100, 02-§100.5).
+# Defense in depth: the API .env lives outside the web root, but a stray
+# .env anywhere under public_html must never be served.
+<Files ".env">
+  Require all denied
+</Files>
+
 # Cache headers for static assets (02-§67.1–67.3)
 #
 # Images: 1 year (immutable content, filename changes on update)

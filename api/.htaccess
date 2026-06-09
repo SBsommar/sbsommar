@@ -1,3 +1,10 @@
+# Deny HTTP access to dotfiles (.env, .git, .htpasswd, …) before routing.
+# The RewriteCond below skips existing files, so without this an existing
+# .env would be served as plaintext (§100, 02-§100.4).
+<FilesMatch "^\.">
+  Require all denied
+</FilesMatch>
+
 RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^ index.php [QSA,L]
