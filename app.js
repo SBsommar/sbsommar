@@ -9,7 +9,12 @@ const yaml      = require('js-yaml');
 const { addEventToActiveCamp, updateEventInActiveCamp, removeEventFromActiveCamp, slugify } = require('./source/api/github');
 const { validateEventRequest, validateEditRequest }              = require('./source/api/validate');
 const { isEventPast }                                            = require('./source/api/edit-event');
-const { parseSessionIds, buildSetCookieHeader, mergeIds }        = require('./source/api/session');
+const {
+  parseVerifiedSessionIds,
+  createOwnershipEntry,
+  buildSetCookieHeader,
+  mergeOwnershipEntries,
+} = require('./source/api/session');
 const { isBeforeEditingPeriod, isAfterEditingPeriod }            = require('./source/api/time-gate');
 const { validateFeedbackRequest, createFeedbackIssue }           = require('./source/api/feedback');
 const { parseAdminTokens, verifyAdminToken }                     = require('./source/api/admin');
@@ -27,6 +32,7 @@ const campsData = yaml.load(fs.readFileSync(campsPath, 'utf8'));
 const BUILD_ENV = process.env.BUILD_ENV || undefined;
 const activeCamp = resolveActiveCamp(campsData.camps || [], undefined, BUILD_ENV);
 const adminTokens = parseAdminTokens(process.env.ADMIN_TOKENS);
+const sessionSecret = process.env.SESSION_SECRET || '';
 
 // ── Middleware ───────────────────────────────────────────────────────────────
 
@@ -108,6 +114,14 @@ app.post('/add-event', addEventLimiter, (req, res) => {
     return res.status(400).json({ success: false, error: v.error });
   }
 
+  const consentGiven = req.body.cookieConsent === true;
+  if (consentGiven && !sessionSecret) {
+    return res.status(500).json({
+      success: false,
+      error: 'Sessionen kunde inte sparas. Kontakta arrangören.',
+    });
+  }
+
   // Build the event ID the same way github.js does, so we can include it
   // in the session cookie before the GitHub commit completes.
   const title  = String(req.body.title).trim();
@@ -116,10 +130,10 @@ app.post('/add-event', addEventLimiter, (req, res) => {
   const eventId = `${slugify(title)}-${date}-${start.replace(':', '')}`;
 
   // If the client signalled cookie consent, update the session cookie.
-  const consentGiven = req.body.cookieConsent === true;
   if (consentGiven) {
-    const existing = parseSessionIds(req.headers.cookie || '');
-    const updated  = mergeIds(existing, eventId);
+    const existing = parseVerifiedSessionIds(req.headers.cookie || '', sessionSecret)
+      .map((id) => createOwnershipEntry(id, sessionSecret));
+    const updated  = mergeOwnershipEntries(existing, createOwnershipEntry(eventId, sessionSecret));
     res.setHeader('Set-Cookie', buildSetCookieHeader(updated, process.env.COOKIE_DOMAIN));
   }
 
@@ -151,9 +165,9 @@ app.post('/edit-event', editEventLimiter, (req, res) => {
 
   const eventId = String(req.body.id).trim();
 
-  // Verify ownership: event ID must be in the session cookie OR
+  // Verify ownership: event ID must have signed session ownership OR
   // the request must carry a valid admin token (02-§7.3, §18.31).
-  const ownedIds = parseSessionIds(req.headers.cookie || '');
+  const ownedIds = parseVerifiedSessionIds(req.headers.cookie || '', sessionSecret);
   if (!ownedIds.includes(eventId) && !isAdmin) {
     return res.status(403).json({ success: false, error: 'Ej behörig att redigera denna aktivitet.' });
   }
@@ -189,9 +203,9 @@ app.post('/delete-event', deleteEventLimiter, (req, res) => {
     return res.status(400).json({ success: false, error: 'Aktivitets-ID saknas.' });
   }
 
-  // Verify ownership: event ID must be in the session cookie OR
+  // Verify ownership: event ID must have signed session ownership OR
   // the request must carry a valid admin token (02-§7.3, §89.13).
-  const ownedIds = parseSessionIds(req.headers.cookie || '');
+  const ownedIds = parseVerifiedSessionIds(req.headers.cookie || '', sessionSecret);
   if (!ownedIds.includes(eventId) && !isAdmin) {
     return res.status(403).json({ success: false, error: 'Ej behörig att radera denna aktivitet.' });
   }

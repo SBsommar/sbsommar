@@ -18,6 +18,8 @@ describe('PHP signed session ownership parity (02-§44.15, §44.17, §101)', () 
     assert.match(src, /function\s+parseVerifiedSessionIds\b/);
     assert.match(src, /hash_hmac\s*\(\s*['"]sha256['"]/);
     assert.match(src, /hash_equals\s*\(/);
+    assert.match(src, /'exp'\s*=>/);
+    assert.match(src, /time\s*\(\s*\)\s*\+\s*self::MAX_AGE_SECONDS/);
   });
 
   it('PSES-02: edit/delete handlers use verified ownership, not display IDs', () => {
@@ -30,5 +32,7 @@ describe('PHP signed session ownership parity (02-§44.15, §44.17, §101)', () 
     const src = read('api/index.php');
     assert.match(src, /\$_ENV\['SESSION_SECRET'\]/);
     assert.match(src, /Session::createOwnershipEntry/);
+    assert.match(src, /handleAddEvent\(\$activeCamp,\s*\$adminTokens,\s*\$sessionSecret\)/);
+    assert.match(src, /function\s+handleAddEvent\([^)]*string\s+\$sessionSecret/);
   });
 });

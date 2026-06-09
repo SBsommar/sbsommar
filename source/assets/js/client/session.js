@@ -11,7 +11,40 @@
 
   // ── Cookie helpers ──────────────────────────────────────────────────────────
 
-  function readSessionIds() {
+  function entryId(entry) {
+    if (typeof entry === 'string' && entry.length > 0) return entry;
+    if (entry && typeof entry === 'object' && typeof entry.id === 'string' && entry.id.length > 0) {
+      return entry.id;
+    }
+    return null;
+  }
+
+  function normalizeEntries(entries) {
+    if (!Array.isArray(entries)) return [];
+    return entries.filter(function (entry) { return entryId(entry); });
+  }
+
+  function isSignedEntry(entry) {
+    return Boolean(
+      entry &&
+      typeof entry === 'object' &&
+      typeof entry.id === 'string' &&
+      entry.id.length > 0 &&
+      typeof entry.exp === 'number' &&
+      isFinite(entry.exp) &&
+      entry.exp >= Math.floor(Date.now() / 1000) &&
+      typeof entry.sig === 'string' &&
+      entry.sig.length > 0,
+    );
+  }
+
+  function signedEntryIds(entries) {
+    return normalizeEntries(entries)
+      .filter(isSignedEntry)
+      .map(entryId);
+  }
+
+  function readSessionEntries() {
     var pairs = document.cookie.split(';');
     for (var i = 0; i < pairs.length; i++) {
       var pair = pairs[i].trim();
@@ -20,7 +53,7 @@
           var raw = pair.slice(COOKIE_NAME.length + 1);
           var parsed = JSON.parse(decodeURIComponent(raw));
           if (Array.isArray(parsed)) {
-            return parsed.filter(function (id) { return typeof id === 'string' && id.length > 0; });
+            return normalizeEntries(parsed);
           }
         } catch { /* malformed — ignore */ }
         return [];
@@ -29,25 +62,28 @@
     return [];
   }
 
-  function writeSessionIds(ids) {
-    if (!ids || ids.length === 0) {
+  function writeSessionEntries(entries) {
+    entries = normalizeEntries(entries);
+    if (!entries.length) {
       // Delete the cookie by setting Max-Age=0
       document.cookie = COOKIE_NAME + '=; Path=/; Max-Age=0; Secure; SameSite=Strict' + domainPart;
       return;
     }
-    var value = encodeURIComponent(JSON.stringify(ids));
+    var value = encodeURIComponent(JSON.stringify(entries));
     document.cookie = COOKIE_NAME + '=' + value +
       '; Path=/; Max-Age=' + MAX_AGE_SECONDS + '; Secure; SameSite=Strict' + domainPart;
   }
 
   // ── Expiry cleanup ──────────────────────────────────────────────────────────
 
-  // Remove IDs for events whose date is strictly before today.
+  // Remove entries for events whose date is strictly before today.
   // IDs not found in events.json are kept — a newly-submitted event may not
   // yet appear because the event-data deploy is still in progress (02-§18.49).
-  function removeExpiredIds(ids, events) {
+  function removeExpiredEntries(entries, events) {
     var today = new Date().toISOString().slice(0, 10);
-    return ids.filter(function (id) {
+    return normalizeEntries(entries).filter(function (entry) {
+      if (typeof entry !== 'string' && !isSignedEntry(entry)) return false;
+      var id = entryId(entry);
       var ev = events[id];
       if (!ev) return true; // unknown — keep (deploy may be in progress)
       return ev.date >= today;
@@ -145,22 +181,31 @@
         try {
           var parsed = JSON.parse(decodeURIComponent(raw));
           if (Array.isArray(parsed)) {
-            found.push(parsed.filter(function (id) { return typeof id === 'string' && id.length > 0; }));
+            found.push(normalizeEntries(parsed));
           }
         } catch { /* skip malformed */ }
       }
     }
-    if (found.length <= 1) return { repaired: false, ids: found[0] || [] };
+    if (found.length <= 1) return { repaired: false, entries: found[0] || [] };
 
-    // Merge all ID arrays, deduplicate.
+    // Merge all ownership arrays, deduplicate by event ID. Prefer signed
+    // objects over legacy strings when both exist for the same ID.
     var seen = {};
     var merged = [];
     for (var j = 0; j < found.length; j++) {
       for (var k = 0; k < found[j].length; k++) {
-        var id = found[j][k];
+        var entry = found[j][k];
+        var id = entryId(entry);
         if (!seen[id]) {
           seen[id] = true;
-          merged.push(id);
+          merged.push(entry);
+        } else if (isSignedEntry(entry)) {
+          for (var m = 0; m < merged.length; m++) {
+            if (entryId(merged[m]) === id && !isSignedEntry(merged[m])) {
+              merged[m] = entry;
+              break;
+            }
+          }
         }
       }
     }
@@ -172,15 +217,16 @@
     }
 
     // Write back a single correct cookie.
-    writeSessionIds(merged);
-    return { repaired: true, ids: merged };
+    writeSessionEntries(merged);
+    return { repaired: true, entries: merged };
   }
 
   // ── Main ────────────────────────────────────────────────────────────────────
 
   // Repair duplicates first (before expiry cleanup).
   var repair = repairDuplicateCookies();
-  var ids = repair.repaired ? repair.ids : readSessionIds();
+  var entries = repair.repaired ? repair.entries : readSessionEntries();
+  var ids = signedEntryIds(entries);
   var isAdmin = hasValidAdminToken();
 
   // If no cookie IDs and not admin, nothing to do.
@@ -191,12 +237,12 @@
     .then(function (r) { return r.json(); })
     .then(function (eventsArray) {
       var eventMap = buildEventMap(eventsArray);
-      var active = removeExpiredIds(ids, eventMap);
+      var active = removeExpiredEntries(entries, eventMap);
 
       // Persist the cleaned list back.
-      writeSessionIds(active);
+      writeSessionEntries(active);
 
-      injectEditLinks(active, isAdmin);
+      injectEditLinks(signedEntryIds(active), isAdmin);
     })
     .catch(function () {
       // If events.json is unavailable, still inject links for what we have.

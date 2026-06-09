@@ -87,6 +87,7 @@ try {
 // ── Parse configured admin tokens once ───────────────────────────────────
 
 $adminTokens = Admin::parseAdminTokens($_ENV['ADMIN_TOKENS'] ?? null);
+$sessionSecret = (string) ($_ENV['SESSION_SECRET'] ?? '');
 
 // ── Handlers ─────────────────────────────────────────────────────────────
 
@@ -101,16 +102,16 @@ try {
             => handleCleanupCookies(),
 
         $method === 'POST' && $route === '/add-event'
-            => handleAddEvent($activeCamp, $adminTokens),
+            => handleAddEvent($activeCamp, $adminTokens, $sessionSecret),
 
         $method === 'POST' && $route === '/add-events'
-            => handleAddEvents($activeCamp, $adminTokens),
+            => handleAddEvents($activeCamp, $adminTokens, $sessionSecret),
 
         $method === 'POST' && $route === '/edit-event'
-            => handleEditEvent($activeCamp, $adminTokens),
+            => handleEditEvent($activeCamp, $adminTokens, $sessionSecret),
 
         $method === 'POST' && $route === '/delete-event'
-            => handleDeleteEvent($activeCamp, $adminTokens),
+            => handleDeleteEvent($activeCamp, $adminTokens, $sessionSecret),
 
         $method === 'POST' && $route === '/feedback'
             => handleFeedback(),
@@ -156,7 +157,7 @@ function handleCleanupCookies(): void
 }
 
 /** @param list<string> $adminTokens */
-function handleAddEvent(?array $activeCamp, array $adminTokens): void
+function handleAddEvent(?array $activeCamp, array $adminTokens, string $sessionSecret): void
 {
     if (RateLimit::isLimited(clientIp(), 'add-event', RATE_LIMIT_ADD_EVENT, HOUR_SECONDS)) {
         jsonResponse(['success' => false, 'error' => RATE_LIMIT_MSG], 429);
@@ -191,6 +192,16 @@ function handleAddEvent(?array $activeCamp, array $adminTokens): void
         return;
     }
 
+    $consentGiven = ($body['cookieConsent'] ?? false) === true;
+    if ($consentGiven && $sessionSecret === '') {
+        jsonResponse([
+            'success' => false,
+            'error'   => 'Sessionen kunde inte sparas. Kontakta arrangören.',
+        ], 500);
+
+        return;
+    }
+
     // Build event ID (same logic as github.js)
     $title   = trim((string) ($body['title'] ?? ''));
     $date    = trim((string) ($body['date'] ?? ''));
@@ -210,10 +221,15 @@ function handleAddEvent(?array $activeCamp, array $adminTokens): void
 
     // Session cookie (only if consent given) — set AFTER successful GitHub
     // commit so the browser never stores an ID for an event that failed to save.
-    $consentGiven = ($body['cookieConsent'] ?? false) === true;
     if ($consentGiven) {
-        $existing = Session::parseSessionIds($_SERVER['HTTP_COOKIE'] ?? '');
-        $updated  = Session::mergeIds($existing, $eventId);
+        $existing = array_map(
+            static fn(string $id): array => Session::createOwnershipEntry($id, $sessionSecret),
+            Session::parseVerifiedSessionIds($_SERVER['HTTP_COOKIE'] ?? '', $sessionSecret),
+        );
+        $updated  = Session::mergeOwnershipEntries(
+            $existing,
+            Session::createOwnershipEntry($eventId, $sessionSecret),
+        );
         $cookieDomain = !empty($_ENV['COOKIE_DOMAIN']) ? $_ENV['COOKIE_DOMAIN'] : null;
         header('Set-Cookie: ' . Session::buildSetCookieHeader($updated, $cookieDomain));
     }
@@ -222,7 +238,7 @@ function handleAddEvent(?array $activeCamp, array $adminTokens): void
 }
 
 /** @param list<string> $adminTokens */
-function handleAddEvents(?array $activeCamp, array $adminTokens): void
+function handleAddEvents(?array $activeCamp, array $adminTokens, string $sessionSecret): void
 {
     if (RateLimit::isLimited(clientIp(), 'add-events', RATE_LIMIT_ADD_EVENT, HOUR_SECONDS)) {
         jsonResponse(['success' => false, 'error' => RATE_LIMIT_MSG], 429);
@@ -257,6 +273,16 @@ function handleAddEvents(?array $activeCamp, array $adminTokens): void
         return;
     }
 
+    $consentGiven = ($body['cookieConsent'] ?? false) === true;
+    if ($consentGiven && $sessionSecret === '') {
+        jsonResponse([
+            'success' => false,
+            'error'   => 'Sessionen kunde inte sparas. Kontakta arrangören.',
+        ], 500);
+
+        return;
+    }
+
     // Commit all events to GitHub in a single PR
     try {
         $gh = new GitHub();
@@ -269,12 +295,17 @@ function handleAddEvents(?array $activeCamp, array $adminTokens): void
     }
 
     // Session cookie — add all event IDs (only if consent given)
-    $consentGiven = ($body['cookieConsent'] ?? false) === true;
     if ($consentGiven) {
-        $existing = Session::parseSessionIds($_SERVER['HTTP_COOKIE'] ?? '');
+        $existing = array_map(
+            static fn(string $id): array => Session::createOwnershipEntry($id, $sessionSecret),
+            Session::parseVerifiedSessionIds($_SERVER['HTTP_COOKIE'] ?? '', $sessionSecret),
+        );
         $updated  = $existing;
         foreach ($eventIds as $eid) {
-            $updated = Session::mergeIds($updated, $eid);
+            $updated = Session::mergeOwnershipEntries(
+                $updated,
+                Session::createOwnershipEntry((string) $eid, $sessionSecret),
+            );
         }
         $cookieDomain = !empty($_ENV['COOKIE_DOMAIN']) ? $_ENV['COOKIE_DOMAIN'] : null;
         header('Set-Cookie: ' . Session::buildSetCookieHeader($updated, $cookieDomain));
@@ -284,7 +315,7 @@ function handleAddEvents(?array $activeCamp, array $adminTokens): void
 }
 
 /** @param list<string> $adminTokens */
-function handleEditEvent(?array $activeCamp, array $adminTokens): void
+function handleEditEvent(?array $activeCamp, array $adminTokens, string $sessionSecret): void
 {
     if (RateLimit::isLimited(clientIp(), 'edit-event', RATE_LIMIT_EDIT_EVENT, HOUR_SECONDS)) {
         jsonResponse(['success' => false, 'error' => RATE_LIMIT_MSG], 429);
@@ -321,9 +352,9 @@ function handleEditEvent(?array $activeCamp, array $adminTokens): void
 
     $eventId = trim((string) ($body['id'] ?? ''));
 
-    // Verify ownership: event ID in session cookie OR valid admin token
+    // Verify ownership: signed session ownership OR valid admin token
     // (02-§7.3, §18.31).
-    $ownedIds = Session::parseSessionIds($_SERVER['HTTP_COOKIE'] ?? '');
+    $ownedIds = Session::parseVerifiedSessionIds($_SERVER['HTTP_COOKIE'] ?? '', $sessionSecret);
     if (!in_array($eventId, $ownedIds, true) && !$isAdmin) {
         jsonResponse([
             'success' => false,
@@ -359,7 +390,7 @@ function handleEditEvent(?array $activeCamp, array $adminTokens): void
 }
 
 /** @param list<string> $adminTokens */
-function handleDeleteEvent(?array $activeCamp, array $adminTokens): void
+function handleDeleteEvent(?array $activeCamp, array $adminTokens, string $sessionSecret): void
 {
     if (RateLimit::isLimited(clientIp(), 'delete-event', RATE_LIMIT_DELETE_EVENT, HOUR_SECONDS)) {
         jsonResponse(['success' => false, 'error' => RATE_LIMIT_MSG], 429);
@@ -394,9 +425,9 @@ function handleDeleteEvent(?array $activeCamp, array $adminTokens): void
         return;
     }
 
-    // Verify ownership: event ID in session cookie OR valid admin token
+    // Verify ownership: signed session ownership OR valid admin token
     // (02-§7.3, §89.13).
-    $ownedIds = Session::parseSessionIds($_SERVER['HTTP_COOKIE'] ?? '');
+    $ownedIds = Session::parseVerifiedSessionIds($_SERVER['HTTP_COOKIE'] ?? '', $sessionSecret);
     if (!in_array($eventId, $ownedIds, true) && !$isAdmin) {
         jsonResponse([
             'success' => false,

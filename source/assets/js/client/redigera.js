@@ -192,7 +192,44 @@
 
   // ── Cookie helper ────────────────────────────────────────────────────────────
 
-  function readSessionIds() {
+  function entryId(entry) {
+    if (typeof entry === 'string' && entry.length > 0) return entry;
+    if (entry && typeof entry === 'object' && typeof entry.id === 'string' && entry.id.length > 0) {
+      return entry.id;
+    }
+    return null;
+  }
+
+  function normalizeEntries(entries) {
+    if (!Array.isArray(entries)) return [];
+    return entries.filter(function (entry) { return entryId(entry); });
+  }
+
+  function entryIds(entries) {
+    return normalizeEntries(entries).map(entryId);
+  }
+
+  function isSignedEntry(entry) {
+    return Boolean(
+      entry &&
+      typeof entry === 'object' &&
+      typeof entry.id === 'string' &&
+      entry.id.length > 0 &&
+      typeof entry.exp === 'number' &&
+      isFinite(entry.exp) &&
+      entry.exp >= Math.floor(Date.now() / 1000) &&
+      typeof entry.sig === 'string' &&
+      entry.sig.length > 0,
+    );
+  }
+
+  function signedEntryIds(entries) {
+    return normalizeEntries(entries)
+      .filter(isSignedEntry)
+      .map(entryId);
+  }
+
+  function readSessionEntries() {
     var pairs = document.cookie.split(';');
     for (var i = 0; i < pairs.length; i++) {
       var pair = pairs[i].trim();
@@ -200,12 +237,16 @@
         try {
           var raw = pair.slice(COOKIE_NAME.length + 1);
           var parsed = JSON.parse(decodeURIComponent(raw));
-          if (Array.isArray(parsed)) return parsed;
+          if (Array.isArray(parsed)) return normalizeEntries(parsed);
         } catch { /* ignore */ }
         return [];
       }
     }
     return [];
+  }
+
+  function readSessionIds() {
+    return signedEntryIds(readSessionEntries());
   }
 
   // ── Admin token helper (02-§7.3) ─────────────────────────────────────────────
@@ -709,7 +750,7 @@
   }
 
   function removeIdFromCookie(idToRemove) {
-    var ids = readSessionIds().filter(function (id) { return id !== idToRemove; });
+    var entries = readSessionEntries().filter(function (entry) { return entryId(entry) !== idToRemove; });
     // Delete both cookie variants (with and without Domain) to avoid
     // orphaned duplicates — same pattern as repairDuplicateCookies (02-§90.9).
     document.cookie = COOKIE_NAME + '=; Path=/; Max-Age=0; Secure; SameSite=Strict';
@@ -717,8 +758,8 @@
       document.cookie = COOKIE_NAME + '=; Path=/; Max-Age=0; Secure; SameSite=Strict' + domainPart;
     }
     // Write back the cleaned list.
-    if (ids.length) {
-      var encoded = encodeURIComponent(JSON.stringify(ids));
+    if (entries.length) {
+      var encoded = encodeURIComponent(JSON.stringify(entries));
       document.cookie = COOKIE_NAME + '=' + encoded +
         '; Path=/; Max-Age=604800; Secure; SameSite=Strict' + domainPart;
     }
@@ -773,7 +814,8 @@
 
     var isSecure = location.protocol === 'https:';
     var domain = cookieDomain || 'ej satt';
-    var ids = readSessionIds();
+    var entries = readSessionEntries();
+    var ids = entryIds(entries);
     var eventMap = {};
     if (Array.isArray(eventsArray)) {
       for (var i = 0; i < eventsArray.length; i++) {
@@ -806,9 +848,16 @@
       var debugToday = new Date().toISOString().slice(0, 10);
       for (var j = 0; j < ids.length; j++) {
         var id = ids[j];
+        var isLegacy = typeof entries[j] === 'string';
+        var isExpiredOwnership = !isLegacy && entries[j] && typeof entries[j].exp === 'number' &&
+          entries[j].exp < Math.floor(Date.now() / 1000);
         var ev = eventMap[id];
         var status;
-        if (!ev) {
+        if (isLegacy) {
+          status = '<span class="cookie-status-unknown">gammal cookie – behöver läggas till igen för redigering</span>';
+        } else if (isExpiredOwnership) {
+          status = '<span class="cookie-status-expired">signaturen har gått ut</span>';
+        } else if (!ev) {
           status = '<span class="cookie-status-unknown">hittades inte i schemat (kan vara under publicering)</span>';
         } else if (ev.date < debugToday) {
           status = '<span class="cookie-status-expired">passerat</span>';

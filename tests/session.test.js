@@ -38,7 +38,8 @@ describe('parseSessionIds', () => {
   });
 
   it('SES-05: filters out malformed entries but keeps legacy strings for display only', () => { // SES-05
-    const cookieHeader = `sb_session=${encodeURIComponent(JSON.stringify([42, '', 'legacy-id', null, { id: 'signed-id', sig: 'abc' }]))}`;
+    const signed = createOwnershipEntry('signed-id', SECRET);
+    const cookieHeader = `sb_session=${encodeURIComponent(JSON.stringify([42, '', 'legacy-id', null, signed]))}`;
     assert.deepStrictEqual(parseSessionIds(cookieHeader), ['legacy-id', 'signed-id']);
   });
 });
@@ -48,8 +49,9 @@ describe('parseSessionIds', () => {
 describe('signed ownership entries', () => {
   it('SES-16: createOwnershipEntry binds id to a signature', () => {
     const entry = createOwnershipEntry('event-a', SECRET);
-    assert.deepStrictEqual(Object.keys(entry).sort(), ['id', 'sig']);
+    assert.deepStrictEqual(Object.keys(entry).sort(), ['exp', 'id', 'sig']);
     assert.strictEqual(entry.id, 'event-a');
+    assert.ok(entry.exp > Math.floor(Date.now() / 1000));
     assert.match(entry.sig, /^[a-f0-9]{64}$/);
   });
 
@@ -75,6 +77,14 @@ describe('signed ownership entries', () => {
     const cookieHeader = `sb_session=${encodeURIComponent(JSON.stringify([{ ...entry, id: 'event-b' }]))}`;
     assert.deepStrictEqual(parseVerifiedSessionIds(cookieHeader, SECRET), []);
   });
+
+  it('SES-21: parseVerifiedSessionIds rejects expired ownership entries', () => {
+    const now = Date.UTC(2026, 0, 1, 12, 0, 0);
+    const entry = createOwnershipEntry('event-a', SECRET, now);
+    const afterExpiry = now + (7 * 24 * 60 * 60 * 1000) + 1000;
+    const cookieHeader = `sb_session=${encodeURIComponent(JSON.stringify([entry]))}`;
+    assert.deepStrictEqual(parseVerifiedSessionIds(cookieHeader, SECRET, afterExpiry), []);
+  });
 });
 
 // ── buildSetCookieHeader ──────────────────────────────────────────────────────
@@ -84,6 +94,7 @@ describe('buildSetCookieHeader', () => {
     const header = buildSetCookieHeader([createOwnershipEntry('my-event-id', SECRET)]);
     assert.ok(header.startsWith('sb_session='), `Expected header to start with sb_session=, got: ${header}`);
     assert.ok(header.includes('my-event-id'));
+    assert.ok(header.includes('exp'));
     assert.ok(header.includes('sig'));
   });
 
