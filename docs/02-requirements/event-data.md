@@ -28,19 +28,22 @@ that requires no login.
 ### 18.1 Ownership and session cookie
 
 - When a participant's event is successfully created, the server sets a session
-  cookie in the response containing the new event's ID. <!-- 02-§18.1 -->
-- The session cookie stores a JSON array of event IDs the current browser owns. <!-- 02-§18.2 -->
-- The cookie has a `Max-Age` of 7 days; submitting another event updates (extends) it. <!-- 02-§18.3 -->
+  cookie in the response containing an ownership entry for the event. <!-- 02-§18.1 -->
+- The session cookie stores a JSON array of ownership entries for events the
+  current browser owns; see §101 for the signed authorization format. <!-- 02-§18.2 -->
+- The cookie has a `Max-Age` of 7 days; submitting another event refreshes the
+  cookie lifetime. <!-- 02-§18.3 -->
 - The cookie uses the `Secure` flag (HTTPS only) and `SameSite=Strict` to prevent
   cross-site misuse. <!-- 02-§18.4 -->
 - **The session cookie is intentionally JavaScript-readable (not `httpOnly`).**
   Because the schedule pages are static HTML pre-rendered at build time, client-side
   JavaScript is the only layer that can read the cookie and show or hide edit links
-  per event. Server-side validation on every edit request compensates for the
-  absence of `httpOnly`. This trade-off is explicit and documented. <!-- 02-§18.5 -->
+  per event. Server-side validation of signed ownership on every edit/delete
+  request compensates for the absence of `httpOnly`. This trade-off is explicit
+  and documented. <!-- 02-§18.5 -->
 - The session cookie is initially set only by the server. Client-side JavaScript
   may write back the cookie solely during expiry cleanup (§18.14), but must never
-  create a new session or add event IDs. <!-- 02-§18.6 -->
+  create ownership proof or add unauthorized ownership entries. <!-- 02-§18.6 -->
 - The cookie name is `sb_session`. <!-- 02-§18.7 -->
 - When the API server and the static site are deployed on different subdomains
   (e.g. `api.sommar.example.com` and `sommar.example.com`), the session cookie
@@ -67,9 +70,9 @@ that requires no login.
 ### 18.3 Expiry management
 
 - On every page load, client-side JavaScript reads the session cookie and removes
-  any event IDs whose date has already passed. <!-- 02-§18.13 -->
-- The cleaned cookie is written back. If no event IDs remain after cleaning, the
-  cookie is deleted. <!-- 02-§18.14 -->
+  ownership entries for events whose date has already passed. <!-- 02-§18.13 -->
+- The cleaned cookie is written back. If no ownership entries remain after
+  cleaning, the cookie is deleted. <!-- 02-§18.14 -->
 - When the client writes back the cleaned cookie, it must include the same
   `Domain` attribute the server used. The domain value is injected at build time
   via a `data-cookie-domain` attribute on the `<body>` element. If the attribute
@@ -78,16 +81,17 @@ that requires no login.
   it as a `data-cookie-domain` attribute on the `<body>` element of every page
   that loads `session.js`. <!-- 02-§18.48 -->
 - "Passed" means the event's date is strictly before today's local date. <!-- 02-§18.15 -->
-- Event IDs present in the session cookie but not found in `events.json` must be
-  kept — not removed. A newly-submitted event may not yet appear in the JSON
-  because the event-data deploy is still in progress. Removing unknown IDs would
-  silently discard the session cookie the server just set. <!-- 02-§18.49 -->
+- Ownership entries present in the session cookie but not found in `events.json`
+  must be kept — not removed. A recently submitted event may not yet appear in
+  the JSON because the event-data deploy is still in progress. Removing unknown
+  entries would silently discard the session cookie the server just set.
+  <!-- 02-§18.49 -->
 
 ### 18.4 Edit links on schedule pages
 
-- Schedule pages add an "Redigera" link next to each event whose ID is present
-  in the session cookie **or** whose user holds a valid admin token (§91), and
-  whose date has not passed. <!-- 02-§18.16 -->
+- Schedule pages add an "Redigera" link next to each event with an ownership
+  entry in the session cookie **or** whose user holds a valid admin token (§91),
+  and whose date has not passed. <!-- 02-§18.16 -->
 - The link is injected by client-side JavaScript after page load; it is never
   part of the static HTML. <!-- 02-§18.17 -->
 - Each event row in the generated HTML carries a `data-event-id` attribute
@@ -110,12 +114,12 @@ that requires no login.
 ### 18.5 Edit form
 
 - An edit page exists at `/redigera.html`. <!-- 02-§18.20 -->
-- When loaded, it reads the `id` query parameter, checks the session cookie,
-  and fetches `/events.json` to pre-populate the form with the event's current
-  values. <!-- 02-§18.21 -->
-- If the event ID is not in the session cookie and the user does not hold a
-  valid admin token (§91), or the event has already passed, the page shows a
-  clear error and no form is rendered. <!-- 02-§18.22 -->
+- When loaded, it reads the `id` query parameter, checks the session cookie for
+  a matching ownership entry, and fetches `/events.json` to pre-populate the form
+  with the event's current values. <!-- 02-§18.21 -->
+- If the event has no matching ownership entry in the session cookie and the user
+  does not hold a valid admin token (§91), or the event has already passed, the
+  page shows a clear error and no form is rendered. <!-- 02-§18.22 -->
 - The edit form exposes the same fields as the add-activity form (title, date,
   start time, end time, location, responsible person, description, link). <!-- 02-§18.23 -->
 - The event's stable `id` must not change after creation, even when mutable
@@ -137,11 +141,11 @@ that requires no login.
 ### 18.10 Server-side edit endpoint
 
 - A `POST /edit-event` endpoint accepts edit requests. <!-- 02-§18.30 -->
-- The server reads the `sb_session` cookie from the request, parses the event
-  ID array, and verifies the target event ID is present — or that the request
-  body contains a valid `adminToken` (§91). <!-- 02-§18.31 -->
-- If the event ID is not in the cookie and no valid admin token is provided,
-  the server responds with HTTP 403. <!-- 02-§18.32 -->
+- The server reads the `sb_session` cookie from the request and verifies a valid
+  ownership entry for the target event ID — or that the request body contains a
+  valid `adminToken` (§91). <!-- 02-§18.31 -->
+- If the cookie does not contain valid ownership for the event and no valid admin
+  token is provided, the server responds with HTTP 403. <!-- 02-§18.32 -->
 - If the event's date has already passed, the server responds with HTTP 400. <!-- 02-§18.33 -->
 - If validation passes, the server reads the YAML file from GitHub, replaces the
   target event's mutable fields in place, and commits the change via an ephemeral

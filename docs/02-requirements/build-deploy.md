@@ -336,12 +336,12 @@ that supports Node.js.
 ### 44.5 Session cookies (site requirements)
 
 - The PHP API must read and write the `sb_session` cookie using the same
-  format (JSON-encoded array of event IDs, URL-encoded) as the Node.js
+  format (URL-encoded JSON array of ownership entries) as the Node.js
   implementation. <!-- 02-§44.15 -->
 - Cookie attributes must match: `Path=/`, `Max-Age=604800`, `Secure`,
   `SameSite=Strict`, and optional `Domain` when `COOKIE_DOMAIN` is set. <!-- 02-§44.16 -->
-- Edit requests must verify that the event ID is present in the session
-  cookie; return HTTP 403 if not. <!-- 02-§44.17 -->
+- Edit requests must verify that the session cookie contains valid ownership
+  for the target event; return HTTP 403 if not. <!-- 02-§44.17 -->
 - The cookie is only set when the client signals consent
   (`cookieConsent: true` in the request body). <!-- 02-§44.18 -->
 

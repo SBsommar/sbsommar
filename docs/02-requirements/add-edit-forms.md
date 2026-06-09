@@ -755,8 +755,8 @@ submission.
   created event IDs. <!-- 02-§80.17 -->
 - Time-gating (§26) and injection scanning (§49) apply to the batch endpoint
   identically. <!-- 02-§80.18 -->
-- The session cookie is updated with all new event IDs when consent is
-  given. <!-- 02-§80.19 -->
+- The session cookie is updated with ownership entries for all submitted events
+  when consent is given. <!-- 02-§80.19 -->
 
 ### 80.4 Confirmation and submit flow (user requirements)
 
@@ -986,11 +986,11 @@ Deletion removes the event entirely from the camp's YAML file.
 ### 89.3 Server-side delete endpoint (site requirements)
 
 - A `POST /delete-event` endpoint accepts delete requests. <!-- 02-§89.12 -->
-- The server reads the `sb_session` cookie from the request, parses the
-  event ID array, and verifies the target event ID is present — or that the
-  request body contains a valid `adminToken` (§91). <!-- 02-§89.13 -->
-- If the event ID is not in the cookie and no valid admin token is provided,
-  the server responds with HTTP 403. <!-- 02-§89.14 -->
+- The server reads the `sb_session` cookie from the request and verifies a valid
+  ownership entry for the target event ID — or that the request body contains a
+  valid `adminToken` (§91). <!-- 02-§89.13 -->
+- If the cookie does not contain valid ownership for the event and no valid admin
+  token is provided, the server responds with HTTP 403. <!-- 02-§89.14 -->
 - If the event's date has already passed, the server responds with
   HTTP 400. <!-- 02-§89.15 -->
 - If the editing period is closed, the server responds with
