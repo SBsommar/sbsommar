@@ -17,7 +17,18 @@ render nothing.
           {%- assign target = family.dir | append: "/" | append: file -%}
           {%- for p in site.pages -%}
             {%- if p.path == target and p.url != page.url -%}
-              <li><a href="{{ p.url | relative_url }}">{{ p.title }}</a></li>
+              {%- comment -%}
+              Short link label: drop the repeated family prefix so the list
+              reads "Pages and Navigation" rather than the full page title
+              "SB Sommar – Requirements: Pages and Navigation".
+              {%- endcomment -%}
+              {%- assign label = p.title -%}
+              {%- if label contains ": " -%}
+                {%- assign label = label | split: ": " | last -%}
+              {%- elsif label contains "SB Sommar – " -%}
+                {%- assign label = label | remove_first: "SB Sommar – " -%}
+              {%- endif -%}
+              <li><a href="{{ p.url | relative_url }}">{{ label }}</a></li>
             {%- endif -%}
           {%- endfor -%}
         {%- endfor -%}
