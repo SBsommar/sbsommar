@@ -871,8 +871,8 @@ Audit date: 2026-02-24. Last updated: 2026-04-24 (locale overview page delivered
 | `02-§44.23` | Secrets never appear in error responses | 03-architecture/ci-and-deploy.md §21 | manual: deploy and test | `api/index.php` | implemented |
 | `02-§44.24` | PHP API lives in api/ at project root | 03-architecture/ci-and-deploy.md §21 | manual: inspect structure | `api/` | implemented |
 | `02-§44.25` | Dependencies managed via Composer | 03-architecture/ci-and-deploy.md §21 | manual: inspect | `api/composer.json` | implemented |
-| `02-§44.26` | Directory structure: index.php, src/, composer.json, .env | 03-architecture/ci-and-deploy.md §21 | manual: inspect structure | `api/` | implemented |
-| `02-§44.27` | .htaccess routes all requests to index.php | 03-architecture/ci-and-deploy.md §21 | manual: deploy and verify | `api/.htaccess` | implemented |
+| `02-§44.26` | Directory structure: index.php, src/, composer.json, .env.example; runtime .env outside web root (§100) | 03-architecture/ci-and-deploy.md §21 | manual: inspect structure | `api/` | implemented |
+| `02-§44.27` | .htaccess denies dotfiles (§100), then routes requests to index.php | 03-architecture/ci-and-deploy.md §21 | HTACC-03 (structure); manual: deploy and verify routing | `api/.htaccess` | implemented |
 | `02-§44.28` | .htaccess works on Apache 2.4 with mod_rewrite | 03-architecture/ci-and-deploy.md §21 | manual: deploy and verify | `api/.htaccess` | covered |
 | `02-§44.29` | Deploy workflow uploads api/ with vendor/ | 04-OPERATIONS.md | manual: inspect workflow | deploy workflow | covered |
 | `02-§44.30` | composer install --no-dev runs in CI or vendor/ included in archive | 04-OPERATIONS.md | manual: inspect workflow | deploy workflow | covered |
@@ -1001,9 +1001,9 @@ Audit date: 2026-02-24. Last updated: 2026-04-24 (locale overview page delivered
 | `02-§53.9` | On success, all stages show green checks and success message appears | — | manual: browser visual check | `source/assets/js/client/lagg-till.js` `setModalSuccess()` | implemented |
 | `02-§53.10` | On error, progress stops and error message displayed | — | manual: disconnect API and submit | `source/assets/js/client/lagg-till.js` `setModalError()` | implemented |
 | `02-§53.11` | Progress list used for both add-event and edit-event forms | — | PROG-03..04 | `source/assets/js/client/redigera.js` | covered |
-| `02-§53.12` | Deploy workflow maintains `.env.api.persistent` backup | 04-OPERATIONS.md | ENV-01 | `.github/workflows/deploy-reusable.yml` | covered |
-| `02-§53.13` | Restore falls back to `.env.api.persistent` if `.bak` missing | 04-OPERATIONS.md | ENV-02 | `.github/workflows/deploy-reusable.yml` | covered |
-| `02-§53.14` | Persistent backup not deleted by restore step (`cp`, not `mv`) | 04-OPERATIONS.md | ENV-03 | `.github/workflows/deploy-reusable.yml` | covered |
+| `02-§53.12` | Deploy workflow maintains `.env.api.persistent` backup — **superseded by 02-§100.1, 02-§100.11** (`.env` now lives at `$DEPLOY_DIR/.env`, outside the swapped `public_html`, so no backup is needed) | archive.md | — | `.github/workflows/deploy-reusable.yml` | superseded |
+| `02-§53.13` | Restore falls back to `.env.api.persistent` if `.bak` missing — **superseded by 02-§100.7** (no restore-into-web-root step exists) | archive.md | — | `.github/workflows/deploy-reusable.yml` | superseded |
+| `02-§53.14` | Persistent backup not deleted by restore step (`cp`, not `mv`) — **superseded by 02-§100** | archive.md | — | `.github/workflows/deploy-reusable.yml` | superseded |
 | `02-§54.1` | When `end < start`, calculate duration as `(24×60 − startMins) + endMins` | 05-DATA_CONTRACT.md §4.3 | VLD-56..58 | `source/api/validate.js` `timeToMinutes()`, `source/assets/js/client/lagg-till.js` `checkEndTime()`, `source/scripts/lint-yaml.js` | covered |
 | `02-§54.2` | Midnight-crossing ≤ 1 020 min accepted by all validation layers | 05-DATA_CONTRACT.md §4.3 | VLD-56..58, VLD-62, LNT-24 | `validate.js`, `lagg-till.js`, `redigera.js`, `lint-yaml.js` | covered |
 | `02-§54.3` | Midnight-crossing > 1 020 min rejected with clear error | 05-DATA_CONTRACT.md §4.3 | VLD-59, VLD-63, LNT-25 | `validate.js`, `lagg-till.js`, `redigera.js`, `lint-yaml.js` | covered |
@@ -1121,11 +1121,17 @@ Audit date: 2026-02-24. Last updated: 2026-04-24 (locale overview page delivered
 ## Summary
 
 ```text
-Total requirements:            1279
-Covered (implemented + tested): 658
-Implemented, not tested:        621
+Total requirements:            1287
+Covered (implemented + tested): 662
+Implemented, not tested:        625
 Gap (no implementation):          0
 Orphan tests (no requirement):    0
+
+Note: §100 (API .env outside web root) adds 11 requirements
+  (02-§100.1–100.11): 7 covered (HTACC-01..06, ENVLOC-01..04) and 4
+  implemented (02-§100.3/100.6 manual server checkpoints, 02-§100.9/100.10
+  structural). §53.12–53.14 (persistent .env backup) are superseded by §100
+  and excluded from the totals above (were covered; backup mechanism removed).
 
 Note: Archive timeline implemented (02-§2.6, 02-§16.2, 02-§16.4, 02-§21.1–21.11).
 8 of 11 new requirements are covered (ARK-01..08 tests).
@@ -1358,6 +1364,8 @@ Matrix cleanup (2026-02-25):
   4 implemented (browser-only visual/timing, manual verification): 02-§53.7–53.10.
   API: synchronous GitHub operations, real error messages to user.
   Client: progress step list with green checkboxes during submission.
+  02-§53.12–53.14 (ENV-01..03) later superseded by §100; the backup-and-restore
+  mechanism and its tests (tests/deploy-env-backup.test.js) were removed.
   Deploy: persistent .env backup outside public_html.
 11 requirements added for midnight-crossing events (02-§54.1–54.11):
   10 covered (VLD-56..63, LNT-24..25, LVD-07..09): server, client, lint validation.
@@ -1649,9 +1657,12 @@ manual/browser verification only. See 02-requirements/design-and-content.md §98
 | SYNC-01..02 | `tests/api-sync-errors.test.js` | `02-§53.5 — flushToClient and ob_start removed` |
 | SYNC-03..04 | `tests/api-sync-errors.test.js` | `02-§53.1/53.2 — GitHub operation before response` |
 | SYNC-05..06 | `tests/api-sync-errors.test.js` | `02-§53.3/53.4 — Error response on GitHub failure` |
-| ENV-01 | `tests/deploy-env-backup.test.js` | `02-§53.12 — Persistent .env backup created` |
-| ENV-02 | `tests/deploy-env-backup.test.js` | `02-§53.13 — Restore fallback to persistent` |
-| ENV-03 | `tests/deploy-env-backup.test.js` | `02-§53.14 — Persistent uses cp not mv` |
+| HTACC-01..03 | `tests/htaccess-security.test.js` | `02-§100.4 — api/.htaccess denies dotfiles (2.4 + 2.2), before rewrite` |
+| HTACC-04 | `tests/htaccess-security.test.js` | `02-§100.5 — source/static/.htaccess denies .env (2.4 + 2.2)` |
+| HTACC-05..06 | `tests/htaccess-security.test.js` | `02-§100.2 — index.php loads .env from dirname(__DIR__, 2)` |
+| ENVLOC-01..02 | `tests/deploy-env-location.test.js` | `02-§100.1/100.7 — no .env written into the web root` |
+| ENVLOC-03 | `tests/deploy-env-location.test.js` | `02-§100.8 — legacy .env migrated to $DEPLOY_DIR/.env` |
+| ENVLOC-04 | `tests/deploy-env-location.test.js` | `02-§100.11 — backup-and-restore mechanism removed` |
 | PROG-01..02 | `tests/submit-progress.test.js` | `02-§53.6 — Progress stage messages` |
 | PROG-03..04 | `tests/submit-progress.test.js` | `02-§53.11 — Progress in both forms` |
 | BUILD-QA-01 | `tests/build-qa-filter.test.js` | `build.js QA camp filtering (02-§42.13, 02-§42.30)` |
@@ -2316,6 +2327,22 @@ refactor of `render-lokaler.js` onto the shared module).
 | `02-§99.16` | covered | Both renderers emit `<div class="conflict-warning">…__lead/__list/__footer</div>`; a single CSS rule in `style.css` styles both. Tests CNF-50, CNF-53, CNF-60..64 |
 | `02-§99.17` | covered | `render-event.js` template interpolates `${conflictHtml}${descriptionHtml}${linkHtml}` inside `.event-detail`. Test CNF-63 |
 | `02-§99.18` | implemented | `redigera.js` `ensureConflictBanner()` inserts before the first `<fieldset>` in `#edit-form`. Manual: open /redigera.html?id=<clashing>, confirm banner appears between the "Redigera aktivitet" heading and the Rubrik field |
+
+### §100 — Secret File Protection: API `.env` Outside the Web Root
+
+| ID | Status | Notes |
+| --- | --- | --- |
+| `02-§100.1` | covered | ENVLOC-02: workflow writes no `.env` into `$API_STAGING`/`$PUBLIC_DIR/api`; `.github/workflows/deploy-reusable.yml`. Manual: `ls $DEPLOY_DIR/public_html/api/.env` absent after deploy |
+| `02-§100.2` | covered | HTACC-05, HTACC-06: `api/index.php` loads via `Dotenv::createImmutable(dirname(__DIR__, 2))` and never `createImmutable(__DIR__)` |
+| `02-§100.3` | implemented | PHP runtime reads `GITHUB_*`, origins, `COOKIE_DOMAIN`, `BUILD_ENV`, `ADMIN_TOKENS` from `$DEPLOY_DIR/.env`; no PHP test harness — manual server verification (submit an event end-to-end) |
+| `02-§100.4` | covered | HTACC-01, HTACC-02, HTACC-03: `api/.htaccess` denies dotfiles (2.4 + 2.2) before the rewrite. Manual: `curl -sI .../api/.env` → 403 |
+| `02-§100.5` | covered | HTACC-04: `source/static/.htaccess` denies `.env` (2.4 + 2.2); build copies it to `public/.htaccess` |
+| `02-§100.6` | implemented | Manual checkpoint — `curl -sI https://sbsommar.se/api/.env` and QA return 403/404 (live Apache/LiteSpeed only) |
+| `02-§100.7` | covered | ENVLOC-01, ENVLOC-02: API tar uses `--exclude='.env'`; no step writes `.env` into the web root |
+| `02-§100.8` | covered | ENVLOC-03: guarded `mv "$PUBLIC_DIR/api/.env" "$DEPLOY_DIR/.env"` when canonical file absent |
+| `02-§100.9` | implemented | `package.json` and `api/composer.json` unchanged by this feature |
+| `02-§100.10` | implemented | Local Node API unaffected — `app.js` uses `--env-file=.env`; no PHP runs locally (manual: `npm start`) |
+| `02-§100.11` | covered | ENVLOC-04: no `.env.api.persistent`/`.env.api.bak` reference remains; supersedes §53.3 |
 
 ### §1 — Camp registry fields (camps.yaml)
 

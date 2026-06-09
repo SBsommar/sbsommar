@@ -97,8 +97,10 @@ The site is deployed to shared PHP hosting (Loopia):
 
 The PHP API runs via Apache `mod_rewrite` + PHP 8.4. No process manager needed.
 The `api/` directory (including `vendor/` from `composer install --no-dev`)
-is uploaded alongside the static site. The `api/.env` file on the server is
-managed manually and is not part of the deploy archive.
+is uploaded alongside the static site. The PHP API `.env` file is managed
+manually on the server and lives at `$DEPLOY_DIR/.env` — outside the web
+root, never under `public_html/api` — so it is unreachable by URL and is
+not part of the deploy archive (§100).
 
 ### CI/CD Workflows
 
@@ -209,8 +211,8 @@ omit `ADMIN_TOKENS` to disable it entirely.
    a Unix timestamp 60 days in the future) and prints instructions.
    The token is shown only once — save it immediately.
 2. Add the token to `ADMIN_TOKENS` in all three locations (see script
-   output): `.env`, `api/.env` on the server, and GitHub Environment
-   secrets for QA/Production.
+   output): `.env` (local), `$DEPLOY_DIR/.env` on the server (outside the
+   web root), and GitHub Environment secrets for QA/Production.
 3. Share the token privately with the admin (e.g. via SMS or in person).
 4. The admin visits `/admin.html`, enters the token, and gains admin
    status for 30 days.
@@ -246,5 +248,6 @@ Git history provides a full audit trail of all changes, including every event su
 ### Server not responding
 
 1. Check Apache/PHP error logs on the host.
-2. Verify the `api/.env` file exists and contains valid credentials.
+2. Verify the `$DEPLOY_DIR/.env` file (outside the web root) exists and
+   contains valid credentials.
 3. Re-deploy via `workflow_dispatch` if the static site is missing.

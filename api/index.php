@@ -16,10 +16,13 @@ use SBSommar\TimeGate;
 use SBSommar\Validate;
 use Symfony\Component\Yaml\Yaml;
 
-// Load .env if present (server-managed, not committed)
-$envPath = __DIR__ . '/.env';
-if (file_exists($envPath)) {
-    \Dotenv\Dotenv::createImmutable(__DIR__)->load();
+// Load .env from outside the web root (server-managed, not committed).
+// On the server the API runs from $DEPLOY_DIR/public_html/api/, so the
+// secret lives two levels up at $DEPLOY_DIR/.env — never under public_html
+// (§100, 02-§100.1–02-§100.2).
+$envDir = dirname(__DIR__, 2);
+if (file_exists($envDir . '/.env')) {
+    \Dotenv\Dotenv::createImmutable($envDir)->load();
 }
 
 // ── CORS ─────────────────────────────────────────────────────────────────

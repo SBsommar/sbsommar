@@ -372,13 +372,16 @@ that supports Node.js.
   separate from the Node.js source. <!-- 02-§44.24 -->
 - Dependencies are managed via Composer (`api/composer.json`). <!-- 02-§44.25 -->
 - The directory structure must be: `api/index.php` (router/entry point),
-  `api/src/` (modules), `api/composer.json`, `api/.env` (not committed,
-  git-ignored). <!-- 02-§44.26 -->
+  `api/src/` (modules), `api/composer.json`, and `api/.env.example` (the
+  committed template). The runtime `.env` is not committed (git-ignored)
+  and, on the server, lives outside the web root at `$DEPLOY_DIR/.env`
+  (§100), not under `api/`. <!-- 02-§44.26 -->
 
 ### 44.9 Apache routing (site requirements)
 
-- An `.htaccess` file in the `api/` directory must route all requests
-  to `index.php` (front-controller pattern). <!-- 02-§44.27 -->
+- An `.htaccess` file in the `api/` directory must route requests to
+  `index.php` (front-controller pattern), after first denying dotfiles
+  (§100, 02-§100.4). <!-- 02-§44.27 -->
 - The `.htaccess` must work on Loopia's Apache 2.4 with `mod_rewrite`
   enabled. <!-- 02-§44.28 -->
 
