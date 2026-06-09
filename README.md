@@ -131,4 +131,10 @@ read it directly on GitHub.
 | 7c | [docs/07-design/imagery-and-accessibility.md](docs/07-design/imagery-and-accessibility.md) | Imagery guidance, accessibility minimums, what not to do |
 | 8  | [docs/08-ENVIRONMENTS.md](docs/08-ENVIRONMENTS.md) | Local / QA / Production environments, secrets schema, documentation site setup |
 | 9  | [docs/09-RELEASING.md](docs/09-RELEASING.md) | Step-by-step guide for deploying to production, rollback, release tagging |
-| 99 | [docs/99-traceability.md](docs/99-traceability.md) | Requirements traceability matrix — every requirement, its tests, and its implementation |
+| 99  | [docs/99-traceability/](docs/99-traceability/index.md) | Traceability index — how to read the matrix, summary, top gaps, and a map to the per-family files below |
+| 99a | [docs/99-traceability/02-requirements.md](docs/99-traceability/02-requirements.md) | Traceability rows for `02-§` requirement IDs |
+| 99b | [docs/99-traceability/03-architecture.md](docs/99-traceability/03-architecture.md) | Traceability rows for `03-§` requirement IDs |
+| 99c | [docs/99-traceability/05-data-contract.md](docs/99-traceability/05-data-contract.md) | Traceability rows for `05-§` requirement IDs |
+| 99d | [docs/99-traceability/07-design.md](docs/99-traceability/07-design.md) | Traceability rows for `07-§` requirement IDs |
+| 99e | [docs/99-traceability/claude.md](docs/99-traceability/claude.md) | Traceability rows for `CL-§` requirement IDs |
+| 99f | [docs/99-traceability/test-id-legend.md](docs/99-traceability/test-id-legend.md) | Test ID legend — maps test-ID prefixes to their files and `describe` suites |

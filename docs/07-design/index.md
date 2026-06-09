@@ -3,7 +3,7 @@
 Visual design reference for SB Sommar. Inspired by sbsommar.se, the live production site.
 This document is the single source of truth for design decisions.
 
-Design is split across topic files for readability. Section IDs (`07-§N.M`) are stable strings cited from source code, tests, and `99-traceability.md` — the ID does not encode the file path, so a section can be moved between files without breaking references.
+Design is split across topic files for readability. Section IDs (`07-§N.M`) are stable strings cited from source code, tests, and `99-traceability/` — the ID does not encode the file path, so a section can be moved between files without breaking references.
 
 ---
 

@@ -9,7 +9,7 @@ The system is intentionally simple:
 - No server-side rendering — HTML is generated at build time
 - Git is the archive
 
-Architecture is split across topic files for readability. Section IDs (`03-§N.M`) are stable strings cited from source code, tests, and `99-traceability.md` — the ID does not encode the file path, so a section can be moved between files without breaking references.
+Architecture is split across topic files for readability. Section IDs (`03-§N.M`) are stable strings cited from source code, tests, and `99-traceability/` — the ID does not encode the file path, so a section can be moved between files without breaking references.
 
 ---
 

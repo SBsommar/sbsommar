@@ -10,7 +10,7 @@ Part of [the requirements index](./index.md). Section IDs (`02-§N.M`) are stabl
 
 This section preserves prose from requirements that have been replaced by later
 requirements. Their `02-§N.M` IDs remain in this document because they are still
-cited from code, tests, and `99-traceability.md`. Live sections elsewhere in this
+cited from code, tests, and `99-traceability/`. Live sections elsewhere in this
 file keep a one-line pointer back to the archive so the live flow stays compact.
 
 ### Archived: §23 — Event Data CI Pipeline (superseded by §49, §50, §52)

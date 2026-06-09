@@ -47,7 +47,13 @@ environments, releasing, and the full requirements traceability matrix.
 | [07-design/imagery-and-accessibility.md](07-design/imagery-and-accessibility.md) | Imagery guidance, accessibility minimums, what not to do |
 | [08-ENVIRONMENTS.md](08-ENVIRONMENTS.md) | Local / QA / Production environments, secrets schema, this docs site |
 | [09-RELEASING.md](09-RELEASING.md) | Step-by-step guide for deploying to production, rollback, release tagging |
-| [99-traceability.md](99-traceability.md) | Requirements traceability matrix — every requirement, its tests, and its implementation |
+| [99-traceability/](99-traceability/index.md) | Traceability index — how to read the matrix, summary, top gaps, and a map to the per-family files below |
+| [99-traceability/02-requirements.md](99-traceability/02-requirements.md) | Traceability rows for `02-§` requirement IDs |
+| [99-traceability/03-architecture.md](99-traceability/03-architecture.md) | Traceability rows for `03-§` requirement IDs |
+| [99-traceability/05-data-contract.md](99-traceability/05-data-contract.md) | Traceability rows for `05-§` requirement IDs |
+| [99-traceability/07-design.md](99-traceability/07-design.md) | Traceability rows for `07-§` requirement IDs |
+| [99-traceability/claude.md](99-traceability/claude.md) | Traceability rows for `CL-§` requirement IDs |
+| [99-traceability/test-id-legend.md](99-traceability/test-id-legend.md) | Test ID legend — maps test-ID prefixes to their files and `describe` suites |
 
 ## About this site
 
