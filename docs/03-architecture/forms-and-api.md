@@ -19,7 +19,7 @@ date passes. No server-side session store is used.
 | Property | Value |
 | --- | --- |
 | Name | `sb_session` |
-| Content | JSON array of ownership entries (`{ id, sig }`) |
+| Content | JSON array of ownership entries (`{ id, exp, sig }`) |
 | Max-Age | 7 days (604 800 s) |
 | Secure | Yes (HTTPS only) |
 | SameSite | Strict |
@@ -32,8 +32,9 @@ only layer that can read the cookie and selectively show edit links for events
 the current visitor owns. Making the cookie `httpOnly` would prevent this.
 Security is maintained through server-side validation: edit and delete endpoints
 verify that the cookie contains a signed ownership entry for the target event.
-The signature uses a server-side `SESSION_SECRET`, so a caller can read the
-event ID for UI purposes without being able to mint ownership for public IDs.
+The signature uses a server-side `SESSION_SECRET` and covers both `id` and
+`exp`, so a caller can read the event ID for UI purposes without being able to
+mint ownership for public IDs or extend an expired ownership entry.
 
 Legacy cookies that contain plain event ID strings may be read by the client for
 display or cleanup, but the server treats them as unauthorised for edit/delete.
@@ -43,7 +44,8 @@ display or cleanup, but the server treats them as unauthorised for edit/delete.
 1. User submits the add-activity form and accepts cookie consent.
 2. Server validates the event, responds with `Set-Cookie: sb_session=…`.
 3. The cookie contains the event's signed ownership entry merged with any
-   existing valid ownership entries.
+   existing valid ownership entries. Existing valid entries are reissued so
+   their signed expiry matches the refreshed cookie lifetime.
 4. On every page load, `source/assets/js/client/session.js` reads the
    cookie, removes entries for events whose dates have passed, and writes the
    cleaned cookie back (or deletes it if the array becomes empty). The client

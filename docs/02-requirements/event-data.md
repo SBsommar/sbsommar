@@ -31,8 +31,9 @@ that requires no login.
   cookie in the response containing an ownership entry for the event. <!-- 02-§18.1 -->
 - The session cookie stores a JSON array of ownership entries for events the
   current browser owns; see §101 for the signed authorization format. <!-- 02-§18.2 -->
-- The cookie has a `Max-Age` of 7 days; submitting another event refreshes the
-  cookie lifetime. <!-- 02-§18.3 -->
+- The cookie has a `Max-Age` of 7 days; each ownership entry carries the same
+  signed expiry horizon, and submitting another event refreshes both the cookie
+  lifetime and existing valid ownership entries. <!-- 02-§18.3 -->
 - The cookie uses the `Secure` flag (HTTPS only) and `SameSite=Strict` to prevent
   cross-site misuse. <!-- 02-§18.4 -->
 - **The session cookie is intentionally JavaScript-readable (not `httpOnly`).**

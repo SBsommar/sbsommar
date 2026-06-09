@@ -1216,8 +1216,9 @@ but not for server-side authorization.
 
 - The session cookie must contain ownership entries that are tamper-resistant
   for server-side authorization. <!-- 02-§101.1 -->
-- Each ownership entry must bind an event ID to an unguessable server-generated
-  proof, such as a signed capability or equivalent verifier. <!-- 02-§101.2 -->
+- Each ownership entry must bind an event ID and expiry time to an unguessable
+  server-generated proof, such as a signed capability or equivalent verifier.
+  <!-- 02-§101.2 -->
 - The cookie must remain readable by client-side JavaScript so static schedule
   pages can show edit links for events owned in the current browser.
   <!-- 02-§101.3 -->

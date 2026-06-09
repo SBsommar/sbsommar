@@ -111,13 +111,13 @@ Part of [the traceability index](./index.md).
 | `02-§2.11` | Edit-activity page exists at `/redigera.html` | 03-architecture/forms-and-api.md §7 | REDT-01..03 | `source/build/render-edit.js` → `public/redigera.html` | covered |
 | `02-§7.1` | Participants can edit their own active events (events not yet passed) via session-cookie ownership | 03-architecture/forms-and-api.md §7 | — | `app.js` – `POST /edit-event`; `source/assets/js/client/session.js`; `source/assets/js/client/redigera.js` | implemented |
 | `02-§7.2` | Administrators with a valid admin token (§91) can edit or remove any activity through the same edit and delete flows available to participants | 03-architecture/forms-and-api.md §7, §9 | — | `app.js` – admin token OR in `/edit-event` and `/delete-event`; `session.js` – `injectEditLinks()` for admins; `redigera.js` – admin bypass | implemented |
-| `02-§7.3` | A user may edit or delete an event if their session cookie contains valid signed ownership for the event or the user holds a valid admin token | 03-architecture/forms-and-api.md §7 | — | Planned: signed ownership verification in Node/PHP session helpers and edit/delete handlers | gap |
-| `02-§18.1` | When an event is successfully created, the server sets the `sb_session` cookie containing an ownership entry for the event | 03-architecture/forms-and-api.md §7 | — | Planned: add-event/add-events build signed ownership entries | gap |
-| `02-§18.2` | The session cookie stores a JSON array of ownership entries for events the current browser owns | 03-architecture/forms-and-api.md §7 | — | Planned: `source/api/session.js`, `api/src/Session.php` ownership-entry format | gap |
-| `02-§18.3` | The session cookie has Max-Age of 7 days; submitting another event refreshes the cookie lifetime | 03-architecture/forms-and-api.md §7 | — | Planned: ownership-entry merge preserves Max-Age behavior | gap |
+| `02-§7.3` | A user may edit or delete an event if their session cookie contains valid signed ownership for the event or the user holds a valid admin token | 03-architecture/forms-and-api.md §7 | ADED-01..08, SES-17..21, PSES-02 | `source/api/session.js` / `api/src/Session.php` parse verified signed ownership; `app.js` and `api/index.php` apply ownership OR admin checks | covered |
+| `02-§18.1` | When an event is successfully created, the server sets the `sb_session` cookie containing an ownership entry for the event | 03-architecture/forms-and-api.md §7 | SES-06, SES-16, PSES-03 | `app.js` `/add-event`; `api/index.php` `handleAddEvent()` set signed ownership cookies when consent is true | covered |
+| `02-§18.2` | The session cookie stores a JSON array of ownership entries for events the current browser owns | 03-architecture/forms-and-api.md §7 | SES-03, SES-16, SES-06, PSES-01 | `source/api/session.js` and `api/src/Session.php` use `{ id, exp, sig }` ownership entries | covered |
+| `02-§18.3` | The session cookie has Max-Age of 7 days; submitting another event refreshes the cookie lifetime | 03-architecture/forms-and-api.md §7 | SES-07, SES-21 | `createOwnershipEntry()` signs a 7-day expiry; add handlers reissue existing verified entries before writing `Max-Age=604800` cookie | covered |
 | `02-§18.4` | The session cookie uses the `Secure` flag (HTTPS only) and `SameSite=Strict` | 03-architecture/forms-and-api.md §7 | SES-08, SES-09, EEC-20..21 | `source/api/session.js` – `buildSetCookieHeader()` | covered |
-| `02-§18.5` | The session cookie is JavaScript-readable (not httpOnly); server-side validation of signed ownership compensates | 03-architecture/forms-and-api.md §7 | — | Planned: readable entries with server-verified signatures | gap |
-| `02-§18.6` | The session cookie is initially set only by the server; client cleanup never creates ownership proof | 03-architecture/forms-and-api.md §7 | — | Planned: client preserves signatures during cleanup only | gap |
+| `02-§18.5` | The session cookie is JavaScript-readable (not httpOnly); server-side validation of signed ownership compensates | 03-architecture/forms-and-api.md §7 | EEC-26, SES-17..21 | `buildSetCookieHeader()` omits HttpOnly; edit/delete authorization uses `parseVerifiedSessionIds()` server-side | covered |
+| `02-§18.6` | The session cookie is initially set only by the server; client cleanup never creates ownership proof | 03-architecture/forms-and-api.md §7 | — (manual/code review: verify `session.js`/`redigera.js` preserve entries and never calculate signatures) | `app.js`/`api/index.php` create signatures; `session.js` and `redigera.js` preserve and filter existing entries only | implemented |
 | `02-§18.7` | The session cookie name is `sb_session` | 03-architecture/forms-and-api.md §7 | SES-06, EEC-18 | `source/api/session.js` – `COOKIE_NAME = 'sb_session'` | covered |
 | `02-§18.41` | When API and static site are on different subdomains, the session cookie must include `Domain` covering the shared parent domain, supplied via `COOKIE_DOMAIN` env var; omitted for single-origin deployments | 03-architecture/forms-and-api.md §7 | SES-14, SES-15 | `source/api/session.js` – `buildSetCookieHeader(ids, domain)`; `app.js` – passes `process.env.COOKIE_DOMAIN` | covered |
 | `02-§18.8` | Before setting the session cookie, the client displays a modal consent prompt on the add-activity form | 03-architecture/forms-and-api.md §7 | — (manual: submit form without prior consent and confirm modal appears) | `source/assets/js/client/cookie-consent.js` – `showConsentModal()` | implemented |
@@ -125,11 +125,11 @@ Part of [the traceability index](./index.md).
 | `02-§18.10` | If the user declines consent, the event is still submitted but no session cookie is set | 03-architecture/forms-and-api.md §7 | — | `lagg-till.js` passes `cookieConsent: false`; `app.js` skips `Set-Cookie` | implemented |
 | `02-§18.11` | Only an accepted consent decision is stored in `localStorage` as `sb_cookie_consent`; declining is not persisted so the user can change their mind | 03-architecture/forms-and-api.md §7 | — | `cookie-consent.js` – `saveConsent()` stores only `'accepted'`; decline handler omits `saveConsent()` | implemented |
 | `02-§18.12` | The consent prompt is written in Swedish | 02-requirements/platform-security.md §14 | — | `cookie-consent.js` – banner innerHTML is Swedish text | implemented |
-| `02-§18.13` | On every page load, JS removes ownership entries for events whose date has already passed | 03-architecture/forms-and-api.md §7 | — | Planned: `session.js` cleans ownership entries by `id` | gap |
-| `02-§18.14` | After cleaning, if no ownership entries remain the cookie is deleted; otherwise the cleaned cookie is written back | 03-architecture/forms-and-api.md §7 | — | Planned: `session.js` writes ownership entries and preserves signatures | gap |
+| `02-§18.13` | On every page load, JS removes ownership entries for events whose date has already passed | 03-architecture/forms-and-api.md §7 | — (browser-only: open schedule with owned past event and confirm cookie cleanup) | `source/assets/js/client/session.js` – `removeExpiredEntries()` filters by event date and signed-entry expiry | implemented |
+| `02-§18.14` | After cleaning, if no ownership entries remain the cookie is deleted; otherwise the cleaned cookie is written back | 03-architecture/forms-and-api.md §7 | — (browser-only: inspect `sb_session` after schedule page cleanup) | `source/assets/js/client/session.js` – `writeSessionEntries()` deletes empty cookies or writes preserved ownership entries | implemented |
 | `02-§18.15` | "Passed" means the event date is strictly before today's local date | 03-architecture/forms-and-api.md §7 | EDIT-01..03 | `source/api/edit-event.js` – `isEventPast()`; `session.js` – `date >= today` | covered |
 | `02-§18.49` | Event IDs in the session cookie but not found in `events.json` must be kept, not removed — newly-submitted events may not yet appear in the JSON | 03-architecture/forms-and-api.md §7 | — (manual: submit event, navigate to schema before deploy completes, verify cookie still contains new ID) | `session.js` – `removeExpiredIds()` keeps unknown IDs | implemented |
-| `02-§18.16` | Schedule pages show a "Redigera" link for events with ownership entries or valid admin token, and that have not passed | 03-architecture/forms-and-api.md §7 | — | Planned: `session.js` reads ownership entries for UI hints | gap |
+| `02-§18.16` | Schedule pages show a "Redigera" link for events with ownership entries or valid admin token, and that have not passed | 03-architecture/forms-and-api.md §7 | — (browser-only: set signed `sb_session`, open `schema.html`, confirm edit links only for signed owned future events) | `source/assets/js/client/session.js` – `signedEntryIds()` plus admin-token branch in `injectEditLinks()` | implemented |
 | `02-§18.17` | Edit links are injected by client-side JS; they are never part of the static HTML | 03-architecture/forms-and-api.md §7 | — | `source/build/render.js` – no edit links at build time; `session.js` injects at runtime | implemented |
 | `02-§18.18` | Event rows in generated HTML carry a `data-event-id` attribute with the event's stable ID | 03-architecture/forms-and-api.md §7 | RND-46, RND-47 | `source/build/render.js` – `renderEventRow()` adds `data-event-id` | covered |
 | `02-§18.19` | The "Redigera" link navigates to `/redigera.html?id={eventId}` | 03-architecture/forms-and-api.md §7 | — | `session.js` – `link.href = 'redigera.html?id=' + encodeURIComponent(id)` | implemented |
@@ -137,8 +137,8 @@ Part of [the traceability index](./index.md).
 | `02-§18.43` | The events JSON embedded in `idag.html` includes the event `id` field | 03-architecture/forms-and-api.md §7 | IDAG-01, IDAG-02 | `source/build/render-idag.js` – `id: e.id \|\| null` in events map | covered |
 | `02-§18.44` | Event rows rendered dynamically on `idag.html` carry `data-event-id` and `data-event-date` attributes for edit-link injection | 03-architecture/forms-and-api.md §7 | — | `source/assets/js/client/events-today.js` – `idAttr`/`dateAttr` added to both row types; browser-only: verify manually (open idag.html, run `document.querySelectorAll('[data-event-id]')` in console) | implemented |
 | `02-§18.20` | An edit page exists at `/redigera.html` | 03-architecture/forms-and-api.md §7 | REDT-01..03 | `source/build/render-edit.js` → `public/redigera.html` | covered |
-| `02-§18.21` | The edit page reads the `id` query param, checks for a matching ownership entry, and fetches `/events.json` to pre-populate the form | 03-architecture/forms-and-api.md §7 | — | Planned: `redigera.js` reads ownership-entry IDs | gap |
-| `02-§18.22` | If the event has no matching ownership entry and the user has no valid admin token, or the event has passed, the edit page shows an error and no form | 03-architecture/forms-and-api.md §7 | — | Planned: client UI check mirrors ownership-entry format; server remains authority | gap |
+| `02-§18.21` | The edit page reads the `id` query param, checks for a matching ownership entry, and fetches `/events.json` to pre-populate the form | 03-architecture/forms-and-api.md §7 | — (browser-only: open `redigera.html?id=<owned>` with signed cookie and confirm form populates) | `source/assets/js/client/redigera.js` – `readSessionIds()` returns only signed, non-expired ownership IDs before fetching `/events.json` | implemented |
+| `02-§18.22` | If the event has no matching ownership entry and the user has no valid admin token, or the event has passed, the edit page shows an error and no form | 03-architecture/forms-and-api.md §7 | — (browser-only: open `redigera.html?id=<legacy-only>` and confirm Swedish authorization error) | `source/assets/js/client/redigera.js` – client gate uses signed ownership IDs or admin token before showing the form | implemented |
 | `02-§18.23` | The edit form exposes the same fields as the add-activity form | 03-architecture/forms-and-api.md §7 | REDT-04..11 | `source/build/render-edit.js` – all add-activity fields present | covered |
 | `02-§18.24` | The event's stable `id` must not change after creation even when mutable fields are edited | 06-EVENT_DATA_MODEL.md §4 | EDIT-13 | `source/api/edit-event.js` – `patchEventInYaml()` preserves `event.id` | covered |
 | `02-§18.25` | The edit form is subject to the same validation rules as the add-activity form (§9) | 03-architecture/forms-and-api.md §7 | VLD-27..32 | `source/api/validate.js` – `validateEditRequest()`; `redigera.js` client-side validate | covered |
@@ -147,8 +147,8 @@ Part of [the traceability index](./index.md).
 | `02-§18.28` | A static `/events.json` file is generated at build time containing all events for the active camp | 03-architecture/forms-and-api.md §7 | — | `source/build/build.js` – writes `public/events.json` | implemented |
 | `02-§18.29` | `/events.json` contains only public fields (id, title, date, start, end, location, responsible, description, link); owner and meta are excluded | 03-architecture/forms-and-api.md §7 | STR-JSON-01..02 | `build.js` – `PUBLIC_EVENT_FIELDS` array | covered |
 | `02-§18.30` | A `POST /edit-event` endpoint accepts edit requests | 03-architecture/forms-and-api.md §7 | — | `app.js` – `app.post('/edit-event', …)` | implemented |
-| `02-§18.31` | The server reads `sb_session` and verifies valid ownership for the target ID, or that the request body contains a valid `adminToken` (§91) | 03-architecture/forms-and-api.md §7 | — | Planned: signed ownership verification in `app.js` and PHP API | gap |
-| `02-§18.32` | If the cookie lacks valid ownership and no valid admin token is provided, the server responds with HTTP 403 | 03-architecture/forms-and-api.md §7 | — | Planned: forged/legacy cookies rejected server-side | gap |
+| `02-§18.31` | The server reads `sb_session` and verifies valid ownership for the target ID, or that the request body contains a valid `adminToken` (§91) | 03-architecture/forms-and-api.md §7 | ADED-01..08, SES-17..21, PSES-02 | `app.js` `/edit-event`; `api/index.php` `handleEditEvent()` use `parseVerifiedSessionIds()` plus admin-token bypass | covered |
+| `02-§18.32` | If the cookie lacks valid ownership and no valid admin token is provided, the server responds with HTTP 403 | 03-architecture/forms-and-api.md §7 | ADED-01b, ADED-04..07, SES-18..21, PSES-02 | `app.js` and `api/index.php` reject missing/legacy/tampered/expired ownership without a valid admin token | covered |
 | `02-§18.33` | If the event's date has already passed, the server responds with HTTP 400 | 03-architecture/forms-and-api.md §7 | EDIT-01..03 | `app.js` – `isEventPast(req.body.date)` → `res.status(400)` | covered |
 | `02-§18.34` | On a valid edit, the server reads YAML from GitHub, replaces mutable fields, commits via ephemeral branch + PR with auto-merge | 03-architecture/forms-and-api.md §7 | EDIT-04..17 | `source/api/github.js` – `updateEventInActiveCamp()`; `edit-event.js` – `patchEventInYaml()` | covered |
 | `02-§18.35` | The event's `meta.updated_at` is updated on every successful edit | 06-EVENT_DATA_MODEL.md §6 | EDIT-15 | `source/api/edit-event.js` – `patchEventInYaml()` sets `meta.updated_at = now` | covered |
@@ -566,9 +566,9 @@ Part of [the traceability index](./index.md).
 | `02-§44.12` | Edit requests patch existing event in YAML | 03-architecture/ci-and-deploy.md §21 | manual: deploy and test | `api/src/GitHub.php` | implemented |
 | `02-§44.13` | Active camp resolved from camps.yaml on GitHub | 03-architecture/ci-and-deploy.md §21 | manual: deploy and test | `api/src/ActiveCamp.php` | implemented |
 | `02-§44.14` | YAML serialisation compatible with data contract | 03-architecture/ci-and-deploy.md §21 | manual: deploy and test | `api/src/GitHub.php` | implemented |
-| `02-§44.15` | PHP API reads and writes `sb_session` using the same URL-encoded JSON ownership-entry format as Node.js | 03-architecture/ci-and-deploy.md §21 | — | Planned: align `api/src/Session.php` with Node session helper | gap |
+| `02-§44.15` | PHP API reads and writes `sb_session` using the same URL-encoded JSON ownership-entry format as Node.js | 03-architecture/ci-and-deploy.md §21 | PSES-01, PSES-03, SES-16 | `api/src/Session.php` mirrors Node `{ id, exp, sig }` ownership entries; `api/index.php` add handlers write those entries | covered |
 | `02-§44.16` | Cookie attributes match Node.js (Path, Max-Age, Secure, SameSite, Domain) | 03-architecture/ci-and-deploy.md §21 | manual: deploy and test | `api/src/Session.php` | implemented |
-| `02-§44.17` | Edit requests verify valid cookie ownership for the target event; 403 if not | 03-architecture/ci-and-deploy.md §21 | — | Planned: PHP edit handler verifies signed ownership entries | gap |
+| `02-§44.17` | Edit requests verify valid cookie ownership for the target event; 403 if not | 03-architecture/ci-and-deploy.md §21 | PSES-02, ADED-01..08 | `api/index.php` edit/delete handlers call `Session::parseVerifiedSessionIds()` and reject unauthorized requests with 403 | covered |
 | `02-§44.18` | Cookie only set when cookieConsent is true | 03-architecture/ci-and-deploy.md §21 | manual: deploy and test | `api/index.php` | implemented |
 | `02-§44.19` | CORS headers set for ALLOWED_ORIGIN and QA_ORIGIN | 03-architecture/ci-and-deploy.md §21 | manual: deploy and test | `api/index.php` | implemented |
 | `02-§44.20` | OPTIONS preflight returns 204 with CORS headers | 03-architecture/ci-and-deploy.md §21 | manual: deploy and test | `api/index.php` | implemented |
@@ -1045,7 +1045,7 @@ its requirement rows together with the test-legend rows that evidence them.
 | `02-§80.16` | manual | All events committed in single branch and PR (integration) |
 | `02-§80.17` | BATCH-08 | Response includes eventIds array |
 | `02-§80.18` | BATCH-09 | Time-gating and injection scanning apply to batch |
-| `02-§80.19` | gap | Batch endpoint must store ownership entries for all submitted events |
+| `02-§80.19` | implemented | `app.js` and `api/index.php` `/add-events` merge signed ownership entries for all returned event IDs when cookie consent is accepted; manual integration: submit multi-day activity and inspect `sb_session` |
 | `02-§80.20` | manual | Confirmation modal shown before every submission (browser-only) |
 | `02-§80.21` | manual | Success message states number of created activities (browser-only) |
 | `02-§80.22` | manual | Error displays message; no partial state (browser-only) |
@@ -1203,8 +1203,8 @@ its requirement rows together with the test-legend rows that evidence them.
 | `02-§89.10` | manual | Browser-only: verify success modal shows "Gå till schemat" link |
 | `02-§89.11` | manual | Browser-only: verify error modal shows "Försök igen" button |
 | `02-§89.12` | implemented | app.js POST /delete-event route; api/index.php POST /delete-event route |
-| `02-§89.13` | gap | Delete endpoint must verify signed ownership entry OR valid admin token |
-| `02-§89.14` | gap | Delete endpoint must return 403 when cookie ownership is invalid/missing and no valid admin token is provided |
+| `02-§89.13` | covered | ADED-01..08 and PSES-02: Node/PHP delete authorization uses signed ownership entry OR valid admin token |
+| `02-§89.14` | covered | ADED-01b, ADED-04..07, SES-18..21: missing/legacy/tampered/expired ownership is rejected without valid admin token |
 | `02-§89.15` | implemented | app.js returns 400 when isEventPast is true; api/index.php same |
 | `02-§89.16` | implemented | app.js returns 400 when isOutsideEditingPeriod is true; api/index.php same |
 | `02-§89.17` | covered | DEL-01–DEL-07: removeEventFromYaml tested; github.js + GitHub.php removeEventFromActiveCamp implemented |
@@ -1491,16 +1491,16 @@ refactor of `render-lokaler.js` onto the shared module).
 
 | ID | Status | Notes |
 | --- | --- | --- |
-| `02-§101.1` | gap | Session cookie must contain tamper-resistant ownership entries |
-| `02-§101.2` | gap | Each entry must bind event ID to server-generated proof |
-| `02-§101.3` | gap | Cookie remains JavaScript-readable for static schedule edit links |
-| `02-§101.4` | gap | Cookie attributes stay Path, Max-Age, Secure, SameSite, and optional Domain |
-| `02-§101.5` | gap | `POST /edit-event` must require valid ownership entry for participant edits |
-| `02-§101.6` | gap | `POST /delete-event` must require valid ownership entry for participant deletes |
-| `02-§101.7` | gap | Raw public event-ID cookies must not authorize edit/delete |
-| `02-§101.8` | gap | Invalid, malformed, expired, or unverifiable entries must be ignored |
-| `02-§101.9` | gap | Valid admin token bypass remains available |
-| `02-§101.10` | gap | Add-event responses store ownership entries when cookie consent is accepted |
-| `02-§101.11` | gap | Existing valid ownership entries are preserved and deduplicated |
-| `02-§101.12` | gap | Legacy ID-only cookies may be read for display/cleanup but not authorization |
-| `02-§101.13` | gap | Cookie debug panel describes unverifiable legacy entries clearly |
+| `02-§101.1` | covered | SES-16 and PSES-01: Node/PHP ownership entries include signed proof fields |
+| `02-§101.2` | covered | SES-19, SES-20, SES-21: signature binds secret, event ID, and expiry |
+| `02-§101.3` | implemented | Cookie intentionally omits `HttpOnly`; `session.js` and `redigera.js` read signed-entry IDs for UI hints |
+| `02-§101.4` | covered | SES-07..09, SES-14..15, EEC-18..26 verify cookie name, Max-Age, Secure, SameSite, no HttpOnly, and optional Domain |
+| `02-§101.5` | covered | ADED-01..08 and PSES-02: edit authorization uses signed ownership OR valid admin token |
+| `02-§101.6` | covered | ADED-01..08 and PSES-02: delete authorization uses signed ownership OR valid admin token |
+| `02-§101.7` | covered | SES-18 and ADED-01b: raw public event-ID strings do not authorize edit/delete |
+| `02-§101.8` | covered | SES-04, SES-05, SES-18..21: malformed, legacy, wrong-secret, tampered, and expired entries are ignored for authorization |
+| `02-§101.9` | covered | ADED-02, ADED-03, ADED-08: valid admin token bypass remains available without cookie ownership |
+| `02-§101.10` | covered | PSES-03, SES-06, SES-16: add handlers create signed ownership entries and write them through `Set-Cookie` helpers |
+| `02-§101.11` | covered | SES-10..13 and EEC-14..17: ownership entries are merged and deduplicated by event ID |
+| `02-§101.12` | covered | SES-05, SES-18, ADED-01b: legacy ID-only cookies may be displayed but never authorize |
+| `02-§101.13` | implemented | `redigera.js` debug panel labels legacy entries as old/unverifiable and explains they need to be re-added for editing; browser-only manual check |

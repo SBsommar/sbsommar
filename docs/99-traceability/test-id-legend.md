@@ -28,8 +28,11 @@ Part of [the traceability index](./index.md).
 | IMG-01..06 | `tests/render-index.test.js` | `renderIndexPage – image loading performance` |
 | SES-01..05 | `tests/session.test.js` | `parseSessionIds` |
 | SES-06..09 | `tests/session.test.js` | `buildSetCookieHeader` |
-| SES-10..13 | `tests/session.test.js` | `mergeIds` |
+| SES-10..13 | `tests/session.test.js` | `mergeOwnershipEntries` |
 | SES-14..15 | `tests/session.test.js` | `buildSetCookieHeader – domain` |
+| SES-16..21 | `tests/session.test.js` | `signed ownership entries` |
+| ADED-01..08 | `tests/admin-edit-delete.test.js` | `edit/delete authorisation OR condition (02-§7.3, §18.31, §89.13)` |
+| PSES-01..03 | `tests/php-session-ownership.test.js` | `PHP signed session ownership parity (02-§44.15, §44.17, §101)` |
 | SNP-01..06 | `tests/snapshot.test.js` | `renderSchedulePage` |
 | ARK-01..08 | `tests/render-arkiv.test.js` | `renderArkivPage` (original timeline tests) |
 | ARK-09..24 | `tests/render-arkiv.test.js` | `renderArkivPage` (header layout, FB logo, event list) |
@@ -78,7 +81,7 @@ Part of [the traceability index](./index.md).
 | EEC-04 | `tests/coverage-edit-event.test.js` | meta.created_at preserved (02-§18.35) |
 | EEC-05..08 | `tests/coverage-edit-event.test.js` | addOneDay date arithmetic |
 | EEC-09..13 | `tests/coverage-edit-event.test.js` | isOutsideEditingPeriod time-gate logic |
-| EEC-14..17 | `tests/coverage-edit-event.test.js` | mergeIds session cookie deduplication |
+| EEC-14..17 | `tests/coverage-edit-event.test.js` | mergeOwnershipEntries session cookie deduplication |
 | EEC-18..26 | `tests/coverage-edit-event.test.js` | Session cookie properties (02-§18.4, 02-§18.5, 02-§18.7, 02-§18.41) |
 | VCMP-01..08 | `tests/validate-camps.test.js` | `validateCamps – required fields (02-§37.1)` |
 | VCMP-09..12 | `tests/validate-camps.test.js` | `validateCamps – date format (02-§37.2)` |

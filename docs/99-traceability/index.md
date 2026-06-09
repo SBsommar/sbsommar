@@ -112,7 +112,7 @@ ID ranges.
 
 ---
 
-Audit date: 2026-02-24. Last updated: 2026-04-24 (locale overview page delivered, 02-§98.1–98.20 all covered/implemented).
+Audit date: 2026-02-24. Last updated: 2026-06-09 (signed session ownership delivered, 02-§101.1–101.13 covered/implemented).
 
 ---
 
@@ -122,7 +122,7 @@ The matrix is split by ID family. Each file carries the rows for one family.
 
 | Family | Source | Rows | File |
 | --- | --- | --- | --- |
-| `02` | `docs/02-requirements/` | 1264 | [02-requirements](./02-requirements.md) |
+| `02` | `docs/02-requirements/` | 1277 | [02-requirements](./02-requirements.md) |
 | `03` | `docs/03-architecture/` | 0 | [03-architecture](./03-architecture.md) |
 | `05` | `docs/05-DATA_CONTRACT.md` | 18 | [05-data-contract](./05-data-contract.md) |
 | `07` | `docs/07-design/` | 91 | [07-design](./07-design.md) |
@@ -134,11 +134,16 @@ Test IDs referenced in the `Test(s)` column are defined in the
 ## Summary
 
 ```text
-Total requirements:            1287
-Covered (implemented + tested): 662
-Implemented, not tested:        625
+Total requirements:            1300
+Covered (implemented + tested): 672
+Implemented, not tested:        628
 Gap (no implementation):          0
 Orphan tests (no requirement):    0
+
+Note: §101 (signed session ownership) adds 13 requirements:
+  10 covered (SES-16..21, ADED-01..08, PSES-01..03) and 3 implemented
+  (browser/manual checkpoints for JavaScript-readable cookie UI hints,
+  cleanup/debug-panel behaviour).
 
 Note: §100 (API .env outside web root) adds 11 requirements
   (02-§100.1–100.11): 7 covered (HTACC-01..06, ENVLOC-01..04) and 4
