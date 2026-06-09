@@ -1122,15 +1122,16 @@ Audit date: 2026-02-24. Last updated: 2026-04-24 (locale overview page delivered
 
 ```text
 Total requirements:            1287
-Covered (implemented + tested): 655
-Implemented, not tested:        621
-Gap (no implementation):         11
+Covered (implemented + tested): 662
+Implemented, not tested:        625
+Gap (no implementation):          0
 Orphan tests (no requirement):    0
 
 Note: §100 (API .env outside web root) adds 11 requirements
-  (02-§100.1–100.11), all gap pending implementation in this PR.
-  §53.12–53.14 (persistent .env backup) are superseded by §100 and
-  excluded from the totals above (were covered; backup mechanism removed).
+  (02-§100.1–100.11): 7 covered (HTACC-01..06, ENVLOC-01..04) and 4
+  implemented (02-§100.3/100.6 manual server checkpoints, 02-§100.9/100.10
+  structural). §53.12–53.14 (persistent .env backup) are superseded by §100
+  and excluded from the totals above (were covered; backup mechanism removed).
 
 Note: Archive timeline implemented (02-§2.6, 02-§16.2, 02-§16.4, 02-§21.1–21.11).
 8 of 11 new requirements are covered (ARK-01..08 tests).
@@ -1654,8 +1655,12 @@ manual/browser verification only. See 02-requirements/design-and-content.md §98
 | SYNC-01..02 | `tests/api-sync-errors.test.js` | `02-§53.5 — flushToClient and ob_start removed` |
 | SYNC-03..04 | `tests/api-sync-errors.test.js` | `02-§53.1/53.2 — GitHub operation before response` |
 | SYNC-05..06 | `tests/api-sync-errors.test.js` | `02-§53.3/53.4 — Error response on GitHub failure` |
-| HTACC-01..NN | `tests/htaccess-security.test.js` | `02-§100.2/100.4/100.5 — env path + dotfile denial` |
-| ENVLOC-01..NN | `tests/deploy-env-location.test.js` | `02-§100.7/100.8/100.11 — .env outside web root in deploy` |
+| HTACC-01..03 | `tests/htaccess-security.test.js` | `02-§100.4 — api/.htaccess denies dotfiles (2.4 + 2.2), before rewrite` |
+| HTACC-04 | `tests/htaccess-security.test.js` | `02-§100.5 — source/static/.htaccess denies .env (2.4 + 2.2)` |
+| HTACC-05..06 | `tests/htaccess-security.test.js` | `02-§100.2 — index.php loads .env from dirname(__DIR__, 2)` |
+| ENVLOC-01..02 | `tests/deploy-env-location.test.js` | `02-§100.1/100.7 — no .env written into the web root` |
+| ENVLOC-03 | `tests/deploy-env-location.test.js` | `02-§100.8 — legacy .env migrated to $DEPLOY_DIR/.env` |
+| ENVLOC-04 | `tests/deploy-env-location.test.js` | `02-§100.11 — backup-and-restore mechanism removed` |
 | PROG-01..02 | `tests/submit-progress.test.js` | `02-§53.6 — Progress stage messages` |
 | PROG-03..04 | `tests/submit-progress.test.js` | `02-§53.11 — Progress in both forms` |
 | BUILD-QA-01 | `tests/build-qa-filter.test.js` | `build.js QA camp filtering (02-§42.13, 02-§42.30)` |
@@ -2325,17 +2330,17 @@ refactor of `render-lokaler.js` onto the shared module).
 
 | ID | Status | Notes |
 | --- | --- | --- |
-| `02-§100.1` | gap | Planned: deploy workflow keeps `.env` at `$DEPLOY_DIR/.env`, never under `public_html`; ENVLOC tests + manual server check |
-| `02-§100.2` | gap | Planned: `api/index.php` loads via `Dotenv::createImmutable(dirname(__DIR__, 2))`; HTACC test asserts path |
-| `02-§100.3` | gap | Planned: PHP reads `GITHUB_*`, origins, `COOKIE_DOMAIN`, `BUILD_ENV`, `ADMIN_TOKENS` from `$DEPLOY_DIR/.env` — manual server verification |
-| `02-§100.4` | gap | Planned: `api/.htaccess` denies dotfiles; HTACC test asserts deny rule + manual `curl /api/.env` → 403 |
-| `02-§100.5` | gap | Planned: `source/static/.htaccess` denies `.env`; HTACC test asserts rule propagated to `public/.htaccess` |
-| `02-§100.6` | gap | Planned: manual verification — `curl -I https://sbsommar.se/api/.env` and QA return 403/404 |
-| `02-§100.7` | gap | Planned: API tar uses `--exclude='.env'`; ENVLOC test asserts no restore-into-webroot step |
-| `02-§100.8` | gap | Planned: workflow migrates legacy `public_html/api/.env` to `$DEPLOY_DIR/.env`; ENVLOC test asserts migration block |
-| `02-§100.9` | gap | Planned: no new npm/Composer deps — `package.json`/`composer.json` unchanged |
-| `02-§100.10` | gap | Planned: local Node API unaffected — `app.js` uses `--env-file=.env`; no PHP locally |
-| `02-§100.11` | gap | Supersedes §53.3 — `.env` outside swapped `public_html` persists without backup; ENVLOC test asserts backup/restore steps removed |
+| `02-§100.1` | covered | ENVLOC-02: workflow writes no `.env` into `$API_STAGING`/`$PUBLIC_DIR/api`; `.github/workflows/deploy-reusable.yml`. Manual: `ls $DEPLOY_DIR/public_html/api/.env` absent after deploy |
+| `02-§100.2` | covered | HTACC-05, HTACC-06: `api/index.php` loads via `Dotenv::createImmutable(dirname(__DIR__, 2))` and never `createImmutable(__DIR__)` |
+| `02-§100.3` | implemented | PHP runtime reads `GITHUB_*`, origins, `COOKIE_DOMAIN`, `BUILD_ENV`, `ADMIN_TOKENS` from `$DEPLOY_DIR/.env`; no PHP test harness — manual server verification (submit an event end-to-end) |
+| `02-§100.4` | covered | HTACC-01, HTACC-02, HTACC-03: `api/.htaccess` denies dotfiles (2.4 + 2.2) before the rewrite. Manual: `curl -sI .../api/.env` → 403 |
+| `02-§100.5` | covered | HTACC-04: `source/static/.htaccess` denies `.env` (2.4 + 2.2); build copies it to `public/.htaccess` |
+| `02-§100.6` | implemented | Manual checkpoint — `curl -sI https://sbsommar.se/api/.env` and QA return 403/404 (live Apache/LiteSpeed only) |
+| `02-§100.7` | covered | ENVLOC-01, ENVLOC-02: API tar uses `--exclude='.env'`; no step writes `.env` into the web root |
+| `02-§100.8` | covered | ENVLOC-03: guarded `mv "$PUBLIC_DIR/api/.env" "$DEPLOY_DIR/.env"` when canonical file absent |
+| `02-§100.9` | implemented | `package.json` and `api/composer.json` unchanged by this feature |
+| `02-§100.10` | implemented | Local Node API unaffected — `app.js` uses `--env-file=.env`; no PHP runs locally (manual: `npm start`) |
+| `02-§100.11` | covered | ENVLOC-04: no `.env.api.persistent`/`.env.api.bak` reference remains; supersedes §53.3 |
 
 ### §1 — Camp registry fields (camps.yaml)
 

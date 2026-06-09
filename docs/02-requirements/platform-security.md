@@ -998,7 +998,10 @@ dotfiles (so a stray copy inside the web root is still refused).
 
 - `api/.htaccess` denies HTTP access to every file whose name begins with
   `.` (dotfiles), returning 403 — independent of whether the file exists
-  on disk and independent of the `index.php` rewrite. <!-- 02-§100.4 -->
+  on disk and independent of the `index.php` rewrite. The denial is
+  expressed for both Apache 2.4 (`Require all denied`, via
+  `mod_authz_core`) and Apache 2.2 (`Order allow,deny` / `Deny from all`),
+  so it holds whatever authorization module the host loads. <!-- 02-§100.4 -->
 - The site-root `.htaccess`, built from `source/static/.htaccess`, denies
   HTTP access to any file named `.env`, returning 403. <!-- 02-§100.5 -->
 - A request for `/api/.env` on production and QA returns HTTP 403 or
