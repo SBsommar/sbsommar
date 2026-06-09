@@ -37,6 +37,21 @@ file keep a one-line pointer back to the archive so the live flow stays compact.
 - The workflow must determine whether the changed file belongs to a QA camp
   and set an `is_qa` output. <!-- 02-§50.14 -->
 
+### Archived: §53.12–§53.14 — Persistent .env backup (superseded by §100)
+
+> §100 moves the PHP API `.env` to `$DEPLOY_DIR/.env`, outside the
+> `public_html` directory that release swaps replace. Because the file no
+> longer lives inside the swapped directory, it persists across deploys
+> without the backup-and-restore dance these requirements described.
+
+- The reusable deploy workflow must maintain a persistent copy of the PHP
+  API `.env` file at `$DEPLOY_DIR/.env.api.persistent`, updated on every
+  successful deploy where the `.env` file exists. <!-- 02-§53.12 -->
+- The restore step must fall back to `.env.api.persistent` if the primary
+  backup (`.env.api.bak`) is missing. <!-- 02-§53.13 -->
+- The persistent backup must not be deleted by the restore step
+  (`cp`, not `mv`). <!-- 02-§53.14 -->
+
 ### Archived: §50.1–§50.7 — Docker image and build workflow (superseded by §52)
 
 > The post-merge event-data deploy workflow no longer uses a Docker image.

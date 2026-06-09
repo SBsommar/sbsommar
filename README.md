@@ -125,7 +125,10 @@ read it directly on GitHub.
 | 4  | [docs/04-OPERATIONS.md](docs/04-OPERATIONS.md) | Commands, camp lifecycle, deployment, disaster recovery |
 | 5  | [docs/05-DATA_CONTRACT.md](docs/05-DATA_CONTRACT.md) | YAML schema, required fields, ID format, stability policy |
 | 6  | [docs/06-EVENT_DATA_MODEL.md](docs/06-EVENT_DATA_MODEL.md) | Event field definitions, ownership, and metadata |
-| 7  | [docs/07-DESIGN.md](docs/07-DESIGN.md) | Colors, typography, spacing tokens, component rules |
+| 7  | [docs/07-design/](docs/07-design/index.md) | Design index — philosophy, colors, typography, layout/spacing, breakpoints, and a map to the topic files below |
+| 7a | [docs/07-design/components.md](docs/07-design/components.md) | Component visual rules: header, hero, banners, buttons, cards, accordions, form errors, modals, Markdown toolbar/preview, day grid, locale-overview grid, conflict warning |
+| 7b | [docs/07-design/css-strategy.md](docs/07-design/css-strategy.md) | How to write CSS, file structure, and the `:root` design tokens |
+| 7c | [docs/07-design/imagery-and-accessibility.md](docs/07-design/imagery-and-accessibility.md) | Imagery guidance, accessibility minimums, what not to do |
 | 8  | [docs/08-ENVIRONMENTS.md](docs/08-ENVIRONMENTS.md) | Local / QA / Production environments, secrets schema, documentation site setup |
 | 9  | [docs/09-RELEASING.md](docs/09-RELEASING.md) | Step-by-step guide for deploying to production, rollback, release tagging |
 | 99 | [docs/99-traceability.md](docs/99-traceability.md) | Requirements traceability matrix — every requirement, its tests, and its implementation |

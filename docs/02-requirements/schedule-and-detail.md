@@ -391,7 +391,7 @@ appropriate output for each context.
 - The `.event-description p` rule must no longer apply `font-style:
   italic`, so that Markdown emphasis renders distinctly. <!-- 02-§56.8 -->
 - CSS for rendered descriptions must use existing design tokens from
-  `07-DESIGN.md`. No new custom properties are introduced. <!-- 02-§56.9 -->
+  `07-design/css-strategy.md`. No new custom properties are introduced. <!-- 02-§56.9 -->
 - A shared build-time helper must provide both `renderDescriptionHtml()`
   and `stripMarkdown()` to avoid duplicating Markdown processing logic
   across render modules. <!-- 02-§56.10 -->

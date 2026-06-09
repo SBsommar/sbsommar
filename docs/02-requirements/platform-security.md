@@ -352,7 +352,7 @@ accessible without network connectivity.
 - The manifest must set `display` to `"standalone"`. <!-- 02-§83.3 -->
 - The manifest must set `start_url` to `"/"`. <!-- 02-§83.4 -->
 - The manifest must set `theme_color` and `background_color` to values from
-  the design palette (`07-DESIGN.md §2`). <!-- 02-§83.5 -->
+  the design palette (`07-design/index.md §2`). <!-- 02-§83.5 -->
 - The manifest must declare at least two icon sizes: 192×192 and
   512×512, both PNG. <!-- 02-§83.6 -->
 - The manifest `icons` array must include a `"purpose": "any"` entry. <!-- 02-§83.7 -->
@@ -544,7 +544,7 @@ discover this without being intrusive.
 
 - The install button logic must be implemented in a dedicated vanilla
   JavaScript file (`pwa-install.js`). <!-- 02-§88.12 -->
-- CSS must use custom properties from `docs/07-DESIGN.md §7`. <!-- 02-§88.13 -->
+- CSS must use custom properties from `docs/07-design/css-strategy.md §7`. <!-- 02-§88.13 -->
 - No new npm dependencies. <!-- 02-§88.14 -->
 - Existing pages and functionality must not break. <!-- 02-§88.15 -->
 - All user-facing text must be in Swedish. <!-- 02-§88.16 -->
@@ -641,7 +641,7 @@ behaviour that uses this token is defined in §7, §18, and §89.
 ### 91.7 Constraints
 
 - All user-facing text must be in Swedish. <!-- 02-§91.25 -->
-- CSS must use custom properties from `docs/07-DESIGN.md §7`. <!-- 02-§91.26 -->
+- CSS must use custom properties from `docs/07-design/css-strategy.md §7`. <!-- 02-§91.26 -->
 - The activation page must be accessible (keyboard-navigable,
   screen-reader friendly). <!-- 02-§91.27 -->
 - The admin token must never be sent in cookies — it is stored only in
@@ -721,7 +721,7 @@ an internet connection.
 ### 92.5 Constraints
 
 - All user-facing text is in Swedish. <!-- 02-§92.21 -->
-- CSS uses custom properties from `docs/07-DESIGN.md §7`. <!-- 02-§92.22 -->
+- CSS uses custom properties from `docs/07-design/css-strategy.md §7`. <!-- 02-§92.22 -->
 - No npm dependencies are added. <!-- 02-§92.23 -->
 - The service worker is vanilla JavaScript with no external
   libraries. <!-- 02-§92.24 -->
@@ -957,3 +957,72 @@ from a stale cache.
   feedback modal continue to show the offline guard when
   `navigator.onLine` is false, and `offline.html` remains the last-resort
   fallback for navigation requests that are not in the cache. <!-- 02-§96.15 -->
+
+---
+
+## 100. Secret File Protection: API `.env` Outside the Web Root
+
+### 100.1 Context
+
+The PHP API reads its credentials — the GitHub write token and the admin
+tokens — from a server-managed `.env` file. That file sat inside the web
+root at `public_html/api/.env`, and the API's `.htaccess` routed only
+*non-existent* paths to `index.php` (`RewriteCond %{REQUEST_FILENAME} !-f`)
+while denying nothing. Because `.env` exists on disk, the web server served
+it directly as plaintext: `https://sbsommar.se/api/.env` and
+`https://qa.sbsommar.se/api/.env` both returned the file contents. The
+credentials are treated as compromised and rotated out of band; this
+section defines the desired state that keeps a secret file from ever being
+web-reachable again.
+
+The protection has two independent layers: the secret lives outside the
+web root (so no web server can map a URL to it), and the web server denies
+dotfiles (so a stray copy inside the web root is still refused).
+
+### 100.2 Secret file location (site requirements)
+
+- The PHP API's environment file is stored outside the web root at
+  `$DEPLOY_DIR/.env`. No copy of it exists anywhere under
+  `public_html`. <!-- 02-§100.1 -->
+- `api/index.php` resolves its environment file directory as
+  `dirname(__DIR__, 2)` — `$DEPLOY_DIR` when the API runs from
+  `$DEPLOY_DIR/public_html/api/` — and loads `.env` from that directory
+  with `Dotenv::createImmutable()`. It loads environment variables from no
+  location inside the web root. <!-- 02-§100.2 -->
+- The PHP API reads its configuration (`GITHUB_OWNER`, `GITHUB_REPO`,
+  `GITHUB_BRANCH`, `GITHUB_TOKEN`, `ALLOWED_ORIGIN`, `QA_ORIGIN`,
+  `COOKIE_DOMAIN`, `BUILD_ENV`, `ADMIN_TOKENS`) from
+  `$DEPLOY_DIR/.env`. <!-- 02-§100.3 -->
+
+### 100.3 Web server denial (site requirements)
+
+- `api/.htaccess` denies HTTP access to every file whose name begins with
+  `.` (dotfiles), returning 403 — independent of whether the file exists
+  on disk and independent of the `index.php` rewrite. The denial is
+  expressed for both Apache 2.4 (`Require all denied`, via
+  `mod_authz_core`) and Apache 2.2 (`Order allow,deny` / `Deny from all`),
+  so it holds whatever authorization module the host loads. <!-- 02-§100.4 -->
+- The site-root `.htaccess`, built from `source/static/.htaccess`, denies
+  HTTP access to any file named `.env`, returning 403. <!-- 02-§100.5 -->
+- A request for `/api/.env` on production and QA returns HTTP 403 or
+  404. <!-- 02-§100.6 -->
+
+### 100.4 Deploy workflow (site requirements)
+
+- The reusable deploy workflow never writes `.env`, or any copy of it,
+  into `public_html`. The PHP API archive uploaded to the server excludes
+  `.env`. <!-- 02-§100.7 -->
+- On deploy, when `$DEPLOY_DIR/.env` does not exist and a legacy
+  `public_html/api/.env` exists, the workflow moves the legacy file to
+  `$DEPLOY_DIR/.env`. After a deploy completes, no `.env` remains under
+  `public_html`. <!-- 02-§100.8 -->
+
+### 100.5 Constraints
+
+- No new npm or Composer dependencies. <!-- 02-§100.9 -->
+- Local development is unaffected: the Node/Express server (`app.js`)
+  loads the repository-root `.env` via `--env-file` and never executes the
+  PHP API, so the relocation applies only to QA and production. <!-- 02-§100.10 -->
+- The §53.3 persistent-backup mechanism is superseded: because
+  `$DEPLOY_DIR/.env` already lives outside the swapped `public_html`, it
+  survives release swaps without a separate backup copy. <!-- 02-§100.11 -->

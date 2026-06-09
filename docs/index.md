@@ -41,7 +41,10 @@ environments, releasing, and the full requirements traceability matrix.
 | [04-OPERATIONS.md](04-OPERATIONS.md) | Operational lifecycle, deployment, disaster recovery |
 | [05-DATA_CONTRACT.md](05-DATA_CONTRACT.md) | YAML schema, required fields, validation rules, ID format |
 | [06-EVENT_DATA_MODEL.md](06-EVENT_DATA_MODEL.md) | Why event data is shaped the way it is — ownership, metadata, stability |
-| [07-DESIGN.md](07-DESIGN.md) | Color palette, typography scale, spacing tokens, component rules |
+| [07-design/](07-design/index.md) | Design index — philosophy, color palette, typography, layout/spacing, breakpoints, and a map to the topic files below |
+| [07-design/components.md](07-design/components.md) | Component visual rules: header, hero, banners, buttons, cards, accordions, form errors, modals, Markdown toolbar/preview, day grid, locale-overview grid, conflict warning |
+| [07-design/css-strategy.md](07-design/css-strategy.md) | How to write CSS, file structure, and the `:root` design tokens |
+| [07-design/imagery-and-accessibility.md](07-design/imagery-and-accessibility.md) | Imagery guidance, accessibility minimums, what not to do |
 | [08-ENVIRONMENTS.md](08-ENVIRONMENTS.md) | Local / QA / Production environments, secrets schema, this docs site |
 | [09-RELEASING.md](09-RELEASING.md) | Step-by-step guide for deploying to production, rollback, release tagging |
 | [99-traceability.md](99-traceability.md) | Requirements traceability matrix — every requirement, its tests, and its implementation |

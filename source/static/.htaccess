@@ -1,3 +1,17 @@
+# Deny HTTP access to any .env file under the web root (§100, 02-§100.5).
+# Defense in depth: the API .env lives outside the web root, but a stray
+# .env anywhere under public_html must never be served. The IfModule pair
+# covers both Apache 2.4 (mod_authz_core) and 2.2 (Order/Deny).
+<Files ".env">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</Files>
+
 # Cache headers for static assets (02-§67.1–67.3)
 #
 # Images: 1 year (immutable content, filename changes on update)

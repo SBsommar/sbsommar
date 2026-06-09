@@ -38,16 +38,19 @@ These are the authoritative sources. CLAUDE.md summarises principles; the docs d
 | `docs/04-OPERATIONS.md` | Camp lifecycle: before/during/after, deployment, disaster recovery |
 | `docs/05-DATA_CONTRACT.md` | YAML schema, required fields, validation rules, ID format |
 | `docs/06-EVENT_DATA_MODEL.md` | Why the event data is shaped the way it is — ownership, metadata, stability reasoning |
-| `docs/07-DESIGN.md` | Color palette, typography scale, spacing tokens, component rules |
+| `docs/07-design/index.md` | Design index — philosophy, color palette, typography, layout/spacing, breakpoints, and a map to the topic files below |
+| `docs/07-design/components.md` | Component visual rules: header, hero, banners, buttons, cards, accordions, form errors, modals, Markdown toolbar/preview, day grid, locale-overview grid, conflict warning |
+| `docs/07-design/css-strategy.md` | How to write CSS, file structure, and the `:root` design tokens |
+| `docs/07-design/imagery-and-accessibility.md` | Imagery guidance, accessibility minimums, what not to do |
 | `docs/08-ENVIRONMENTS.md` | Local / QA / Production environments, secrets schema, GitHub Environments setup |
 | `docs/09-RELEASING.md` | Step-by-step guide for deploying to production, rollback, release tagging |
 
 Rules:
 
-- Do not invent colors, spacing, or layout patterns not present in `07-DESIGN.md`.
+- Do not invent colors, spacing, or layout patterns not present in `07-design/`.
 - Do not modify YAML files or the data schema without checking `05-DATA_CONTRACT.md` first.
 - Do not change the camp lifecycle flow without checking `04-OPERATIONS.md` first.
-- CSS must use the custom properties defined in `07-DESIGN.md §7` — do not hardcode colors, spacing, or typography values.
+- CSS must use the custom properties defined in `07-design/css-strategy.md §7` — do not hardcode colors, spacing, or typography values.
 
 ---
 
@@ -301,7 +304,7 @@ Before writing any code: <!-- CL-§11.2 -->
 
 ## Phase 2 — Documentation and Traceability
 
-- Document how each requirement is or will be implemented in the relevant architecture and design docs (`docs/03-architecture/`, `docs/07-DESIGN.md`, etc.). <!-- CL-§11.3 -->
+- Document how each requirement is or will be implemented in the relevant architecture and design docs (`docs/03-architecture/`, `docs/07-design/`, etc.). <!-- CL-§11.3 -->
 - Add new sections to docs where needed; existing docs may already cover some requirements.
 - Add all new requirements to `docs/99-traceability.md` with status `gap`. <!-- CL-§11.4 -->
 - Commit: `docs: document design and traceability for [feature]`

@@ -155,7 +155,7 @@ New classes in `style.css`:
 - `.camp-meta` — location and date range; inline within `.camp-body`
 - `.camp-info` — information text
 
-All values use CSS custom properties from `07-DESIGN.md §7`.
+All values use CSS custom properties from `07-design/css-strategy.md §7`.
 
 ### 14.7 Files changed
 
@@ -230,7 +230,7 @@ All values use CSS custom properties.
 | `source/build/build.js` | Compute countdown target date, pass social links |
 | `source/assets/cs/style.css` | Redesign `.hero` layout, add new hero classes |
 | `source/content/images/` | Add Discord and Facebook icon images |
-| `docs/07-DESIGN.md` | Add `--radius-lg` token |
+| `docs/07-design/css-strategy.md` | Add `--radius-lg` token |
 
 ---
 
@@ -684,7 +684,7 @@ surrounding padding of their own.
 - `.registration-cta-btn` — a modifier on `.btn-primary` that only
   widens the button on mobile.
 
-All values come from existing tokens in `07-DESIGN.md §7`.
+All values come from existing tokens in `07-design/css-strategy.md §7`.
 
 ### 32.6 Accessibility
 

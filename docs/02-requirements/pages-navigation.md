@@ -340,7 +340,7 @@ active camp.
 - The buttons must only appear on the index page. <!-- 02-§71.10 -->
 - No new JavaScript files may be added — the script must be inline in
   `index.html`. <!-- 02-§71.11 -->
-- CSS must use existing design tokens from `07-DESIGN.md §7`. <!-- 02-§71.12 -->
+- CSS must use existing design tokens from `07-design/css-strategy.md §7`. <!-- 02-§71.12 -->
 
 ---
 
