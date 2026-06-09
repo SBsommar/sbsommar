@@ -279,14 +279,24 @@ api/
 
 ### Routing
 
-Apache `mod_rewrite` in `api/.htaccess` routes all requests to `index.php`.
+Apache `mod_rewrite` in `api/.htaccess` routes requests to `index.php`.
 The router reads `$_SERVER['REQUEST_URI']` and dispatches to the correct handler.
+Before the rewrite, `api/.htaccess` denies HTTP access to any dotfile
+(name beginning with `.`), so a request for `/api/.env` returns 403 even
+though `mod_rewrite` would otherwise leave existing files untouched
+(§100, 02-§100.4).
 
 ### Configuration
 
 Same environment variables as the Node.js API: `GITHUB_OWNER`, `GITHUB_REPO`,
 `GITHUB_BRANCH`, `GITHUB_TOKEN`, `ALLOWED_ORIGIN`, `QA_ORIGIN`, `COOKIE_DOMAIN`,
-`BUILD_ENV`. Loaded from `api/.env` via `vlucas/phpdotenv`.
+`BUILD_ENV`, `ADMIN_TOKENS`. Loaded via `vlucas/phpdotenv` from
+`$DEPLOY_DIR/.env` — **outside** the web root, not from any path under
+`public_html`. `index.php` resolves the directory as `dirname(__DIR__, 2)`
+(the parent of `public_html`) and calls `Dotenv::createImmutable()` on it
+(§100, 02-§100.1–02-§100.3). Keeping the secret outside the web root means
+no URL can map to it; the dotfile denial above is a second, independent
+layer.
 
 ### Coexistence
 
@@ -304,8 +314,18 @@ The form JavaScript reads `data-api-url` from the HTML and submits to that URL.
 ### Deployment
 
 The deploy workflow uploads the `api/` directory (with `vendor/` from
-`composer install --no-dev`) alongside the static site via SCP. The `api/.env`
-file is managed manually on the server — it is not part of the deploy archive.
+`composer install --no-dev`) alongside the static site via SCP. The API
+archive is built with `--exclude='.env'`, so no `.env` is ever uploaded
+into the web root (02-§100.7).
+
+The PHP API `.env` is managed manually on the server and lives at
+`$DEPLOY_DIR/.env`, outside `public_html`. Because it sits outside the
+directory that the zero-downtime swap replaces, it survives every release
+without a backup-and-restore step (this supersedes the §53.3 persistent
+backup). On deploy, if `$DEPLOY_DIR/.env` is absent but a legacy
+`public_html/api/.env` exists, the static-site swap step moves it out to
+`$DEPLOY_DIR/.env` once; afterwards no `.env` remains under `public_html`
+(02-§100.8).
 
 ---
 
