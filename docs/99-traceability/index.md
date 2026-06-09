@@ -21,10 +21,11 @@ This document makes those gaps visible so they can be planned and prioritised.
 A short, stable reference you can use in issues, pull requests, and commit messages.
 For example: `"this PR closes 02-§9.5"`.
 
-The ID appears in **two places**: in this matrix (the Table section below), and inline in the
-source document next to the requirement text as an HTML comment. To find requirement `02-§9.5`,
-search for `02-§9.5` in either this file or anywhere under `docs/02-requirements/` — it will appear
-on the line that says `` `location` is present and non-empty ``.
+The ID appears in **two places**: in this matrix (the per-family table file in this folder —
+here, [02-requirements.md](./02-requirements.md)), and inline in the source document next to the
+requirement text as an HTML comment. To find requirement `02-§9.5`, search for `02-§9.5` in the
+matching per-family file or anywhere under `docs/02-requirements/` — it will appear on the line
+that says `` `location` is present and non-empty ``.
 
 Format: `{doc}-§{section}.{counter}`
 
@@ -103,8 +104,8 @@ Aim to move all `implemented` rows toward `covered` over time.
 
 ### Archived (superseded) requirements
 
-Rows below marked **superseded by 02-§X** describe requirements whose prose has
-been moved to `docs/02-requirements/archive.md`. The IDs are kept verbatim because
+Rows in the per-family files marked **superseded by 02-§X** describe requirements
+whose prose has been moved to `docs/02-requirements/archive.md`. The IDs are kept verbatim because
 they are still cited from code and from this matrix; the moved prose is preserved
 there for historical context. Refer to that file for the current list of archived
 ID ranges.
