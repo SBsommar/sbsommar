@@ -19,7 +19,7 @@ const yaml = require('js-yaml');
 //
 // When docs/_config.yml does not yet exist (e.g. in Phase 3, before the
 // implementation lands in Phase 4), the suite skips — a missing file is
-// a gap captured by 02-§97.5 / 02-§97.6 in 99-traceability.md.
+// a gap captured by 02-§97.5 / 02-§97.6 in 99-traceability/.
 
 const DOCS_DIR = path.resolve(__dirname, '..', 'docs');
 const CONFIG_PATH = path.join(DOCS_DIR, '_config.yml');

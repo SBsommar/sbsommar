@@ -4,7 +4,7 @@ This document defines what the site must do and for whom.
 
 Architecture, data design, and rendering logic are downstream of these requirements. Read this before reading any other technical document.
 
-Requirements are split across topic files for readability. Section IDs (`02-§N.M`) are stable strings cited from source code, tests, and `99-traceability.md` — the ID does not encode the file path, so a section can be moved between files without breaking references.
+Requirements are split across topic files for readability. Section IDs (`02-§N.M`) are stable strings cited from source code, tests, and `99-traceability/` — the ID does not encode the file path, so a section can be moved between files without breaking references.
 
 ---
 

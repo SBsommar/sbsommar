@@ -243,7 +243,7 @@ Do not skip phases. Each phase ends with a commit. <!-- CL-§11.1 -->
 
 ## Parallel-work rebase rule
 
-When multiple branches are in flight, shared documentation files (`99-traceability.md`, `02-requirements/`, architecture and design docs) change frequently on `main` and are prone to renumbering conflicts. <!-- CL-§11.24 -->
+When multiple branches are in flight, shared documentation files (`99-traceability/`, `02-requirements/`, architecture and design docs) change frequently on `main` and are prone to renumbering conflicts. <!-- CL-§11.24 -->
 
 Before editing any shared documentation file, rebase on the latest `main`: <!-- CL-§11.25 -->
 
@@ -306,7 +306,7 @@ Before writing any code: <!-- CL-§11.2 -->
 
 - Document how each requirement is or will be implemented in the relevant architecture and design docs (`docs/03-architecture/`, `docs/07-design/`, etc.). <!-- CL-§11.3 -->
 - Add new sections to docs where needed; existing docs may already cover some requirements.
-- Add all new requirements to `docs/99-traceability.md` with status `gap`. <!-- CL-§11.4 -->
+- Add all new requirements to the matching per-family file under `docs/99-traceability/` (e.g. `02-requirements.md` for `02-§` IDs) with status `gap`. <!-- CL-§11.4 -->
 - Commit: `docs: document design and traceability for [feature]`
 
 ## Phase 3 — Tests
