@@ -530,15 +530,13 @@ before the backup step runs.
 - The progress list must be used for both the add-event and edit-event
   forms. <!-- 02-§53.11 -->
 
-### 53.3 Persistent .env backup (site requirements)
+### 53.3 Persistent .env backup (superseded by §100)
 
-- The reusable deploy workflow must maintain a persistent copy of the PHP
-  API `.env` file at `$DEPLOY_DIR/.env.api.persistent`, updated on every
-  successful deploy where the `.env` file exists. <!-- 02-§53.12 -->
-- The restore step must fall back to `.env.api.persistent` if the primary
-  backup (`.env.api.bak`) is missing. <!-- 02-§53.13 -->
-- The persistent backup must not be deleted by the restore step
-  (`cp`, not `mv`). <!-- 02-§53.14 -->
+> `02-§53.12`–`02-§53.14` are superseded by §100 (API `.env` outside the
+> web root). The PHP API `.env` now lives at `$DEPLOY_DIR/.env`, outside the
+> `public_html` that release swaps replace, so it persists without a
+> separate backup-and-restore step. Prose preserved in
+> [`archive.md`](./archive.md).
 
 ---
 
