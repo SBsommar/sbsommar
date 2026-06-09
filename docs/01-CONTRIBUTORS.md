@@ -167,7 +167,7 @@ Before making structural changes, read:
 - Static output only. No backend, no database.
 - No client-side frameworks (React, Vue, etc.).
 - Minimal JavaScript.
-- CSS must use the custom properties defined in [07-DESIGN.md](07-DESIGN.md) — do not hardcode colors or spacing.
+- CSS must use the custom properties defined in [07-design/css-strategy.md](07-design/css-strategy.md) — do not hardcode colors or spacing.
 - Build must pass before merge.
 - Lint must pass before merge.
 

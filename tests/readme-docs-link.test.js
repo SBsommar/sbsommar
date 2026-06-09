@@ -47,7 +47,9 @@ const EXPECTED_DOC_FILES = [
   '04-OPERATIONS.md',
   '05-DATA_CONTRACT.md',
   '06-EVENT_DATA_MODEL.md',
-  '07-DESIGN.md',
+  '07-design/components.md',
+  '07-design/css-strategy.md',
+  '07-design/imagery-and-accessibility.md',
   '08-ENVIRONMENTS.md',
   '09-RELEASING.md',
   '99-traceability.md',
@@ -56,7 +58,7 @@ const EXPECTED_DOC_FILES = [
 // README links to the subfolder index via the folder URL `docs/02-requirements/`
 // rather than the file path `docs/02-requirements/index.md`. The test asserts
 // that link separately so it stays in sync with the README format.
-const EXPECTED_FOLDER_INDEX_LINKS = ['02-requirements/', '03-architecture/'];
+const EXPECTED_FOLDER_INDEX_LINKS = ['02-requirements/', '03-architecture/', '07-design/'];
 
 function listMarkdownFilesRecursive(dir, base = '') {
   const out = [];

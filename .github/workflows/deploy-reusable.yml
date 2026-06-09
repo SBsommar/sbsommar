@@ -60,8 +60,9 @@ jobs:
           source: site.tar.gz
           target: ${{ secrets.DEPLOY_DIR }}
 
-      # Zero-downtime swap: extract into staging dir, back up the PHP API
-      # .env, then swap with two mv ops.
+      # Zero-downtime swap: extract into staging dir, then swap with two mv
+      # ops. The PHP API .env lives outside public_html at $DEPLOY_DIR/.env
+      # (§100), so the swap never touches it.
       # Stale dirs from previous failed deploys are cleaned first.
       - name: Deploy with zero-downtime swap
         uses: appleboy/ssh-action@v1.2.5
@@ -84,10 +85,12 @@ jobs:
             tar -xzf "$DEPLOY_DIR/site.tar.gz" -C "$RELEASE_DIR"
             rm "$DEPLOY_DIR/site.tar.gz"
 
-            # Preserve PHP API .env (server-managed, not in repo)
-            if [ -f "$PUBLIC_DIR/api/.env" ]; then
-              cp "$PUBLIC_DIR/api/.env" "$DEPLOY_DIR/.env.api.bak"
-              cp "$PUBLIC_DIR/api/.env" "$DEPLOY_DIR/.env.api.persistent"
+            # The PHP API .env lives outside the web root at $DEPLOY_DIR/.env
+            # (§100). One-time migration: if the canonical file is missing but
+            # a legacy in-web-root copy exists, move it out before the swap
+            # wipes the old public_html.
+            if [ ! -f "$DEPLOY_DIR/.env" ] && [ -f "$PUBLIC_DIR/api/.env" ]; then
+              mv "$PUBLIC_DIR/api/.env" "$DEPLOY_DIR/.env"
             fi
 
             # Swap (millisecond downtime)
@@ -133,13 +136,8 @@ jobs:
             tar -xzf "$DEPLOY_DIR/api.tar.gz" -C "$API_STAGING"
             rm "$DEPLOY_DIR/api.tar.gz"
 
-            # Restore server-managed .env (backed up during static site swap)
-            if [ -f "$DEPLOY_DIR/.env.api.bak" ]; then
-              mv "$DEPLOY_DIR/.env.api.bak" "$API_STAGING/.env"
-            elif [ -f "$DEPLOY_DIR/.env.api.persistent" ]; then
-              cp "$DEPLOY_DIR/.env.api.persistent" "$API_STAGING/.env"
-              echo "Restored .env from persistent backup"
-            fi
+            # No .env is placed under public_html — the PHP API loads it from
+            # $DEPLOY_DIR/.env, outside the web root (§100).
 
             # Install PHP dependencies
             cd "$API_STAGING"

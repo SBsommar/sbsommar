@@ -220,7 +220,7 @@ progress modal → result.
 
 ### 19.6 Implementation constraints
 
-- The modal uses only CSS custom properties defined in `docs/07-DESIGN.md §7`.
+- The modal uses only CSS custom properties defined in `docs/07-design/css-strategy.md §7`.
   No hardcoded colors, spacing, or typography values. <!-- 02-§19.15 -->
 - The modal is implemented in vanilla JavaScript; no library or framework is
   added. <!-- 02-§19.16 -->
@@ -272,7 +272,7 @@ and actions appropriate for an edit rather than a new submission.
 
 ### 20.5 Implementation constraints
 
-- The modal uses only CSS custom properties defined in `docs/07-DESIGN.md §7`.
+- The modal uses only CSS custom properties defined in `docs/07-design/css-strategy.md §7`.
   No hardcoded colors, spacing, or typography values. <!-- 02-§20.11 -->
 - The modal is implemented in vanilla JavaScript; no library or framework is
   added. <!-- 02-§20.12 -->
@@ -530,15 +530,13 @@ before the backup step runs.
 - The progress list must be used for both the add-event and edit-event
   forms. <!-- 02-§53.11 -->
 
-### 53.3 Persistent .env backup (site requirements)
+### 53.3 Persistent .env backup (superseded by §100)
 
-- The reusable deploy workflow must maintain a persistent copy of the PHP
-  API `.env` file at `$DEPLOY_DIR/.env.api.persistent`, updated on every
-  successful deploy where the `.env` file exists. <!-- 02-§53.12 -->
-- The restore step must fall back to `.env.api.persistent` if the primary
-  backup (`.env.api.bak`) is missing. <!-- 02-§53.13 -->
-- The persistent backup must not be deleted by the restore step
-  (`cp`, not `mv`). <!-- 02-§53.14 -->
+> `02-§53.12`–`02-§53.14` are superseded by §100 (API `.env` outside the
+> web root). The PHP API `.env` now lives at `$DEPLOY_DIR/.env`, outside the
+> `public_html` that release swaps replace, so it persists without a
+> separate backup-and-restore step. Prose preserved in
+> [`archive.md`](./archive.md).
 
 ---
 
@@ -629,7 +627,7 @@ users write Markdown without memorising syntax.
 - Each button must have an accessible label (`aria-label`) describing its
   action. <!-- 02-§57.8 -->
 - The toolbar must be styled using existing design tokens from
-  `07-DESIGN.md` — no hardcoded colours, spacing, or typography
+  `07-design/css-strategy.md` — no hardcoded colours, spacing, or typography
   values. <!-- 02-§57.9 -->
 - The toolbar logic must live in a single shared JS file
   (`markdown-toolbar.js`) that is loaded by both forms. <!-- 02-§57.10 -->
@@ -693,7 +691,7 @@ shows the user how their Markdown will render.
 - The inner content of the preview must match the `.event-description`
   styling used in the schedule, so the user sees an accurate
   representation of the final output. <!-- 02-§58.14 -->
-- All styling must use existing design tokens from `07-DESIGN.md` — no
+- All styling must use existing design tokens from `07-design/css-strategy.md` — no
   hardcoded colours, spacing, or typography values. <!-- 02-§58.15 -->
 
 ---
@@ -780,7 +778,7 @@ submission.
 ### 80.6 Implementation constraints
 
 - The day grid is implemented in vanilla JavaScript. <!-- 02-§80.25 -->
-- The day grid uses CSS custom properties from `docs/07-DESIGN.md §7`. <!-- 02-§80.26 -->
+- The day grid uses CSS custom properties from `docs/07-design/css-strategy.md §7`. <!-- 02-§80.26 -->
 - The batch endpoint must be implemented in both Node.js and PHP with identical
   validation and response format. <!-- 02-§80.27 -->
 
@@ -907,7 +905,7 @@ maximum length.
 ### 82.6 Implementation constraints
 
 - The counters are implemented in vanilla JavaScript. <!-- 02-§82.13 -->
-- The counters use CSS custom properties from `docs/07-DESIGN.md
+- The counters use CSS custom properties from `docs/07-design/css-strategy.md
   §7`. <!-- 02-§82.14 -->
 - No new npm dependencies are added. <!-- 02-§82.15 -->
 
@@ -1010,7 +1008,7 @@ Deletion removes the event entirely from the camp's YAML file.
 
 - The delete flow must reuse existing modal, progress, and accessibility
   patterns from the edit submit flow. <!-- 02-§89.19 -->
-- CSS must use custom properties from `docs/07-DESIGN.md §7`. <!-- 02-§89.20 -->
+- CSS must use custom properties from `docs/07-design/css-strategy.md §7`. <!-- 02-§89.20 -->
 - No new npm dependencies. <!-- 02-§89.21 -->
 - All user-facing text must be in Swedish. <!-- 02-§89.22 -->
 - The delete endpoint must use `credentials: 'include'` so that the
@@ -1094,7 +1092,7 @@ problems difficult to diagnose.
 ### 90.6 Constraints
 
 - All user-facing text must be in Swedish. <!-- 02-§90.14 -->
-- CSS must use custom properties from `docs/07-DESIGN.md §7`. <!-- 02-§90.15 -->
+- CSS must use custom properties from `docs/07-design/css-strategy.md §7`. <!-- 02-§90.15 -->
 - The debug panel must be accessible (keyboard-navigable, screen-reader
   friendly). <!-- 02-§90.16 -->
 
@@ -1180,7 +1178,7 @@ schedule. Issue #332 (Session 2).
 - All user-facing text in the banner is in Swedish, consistent with
   §14. <!-- 02-§99.13 -->
 - Banner styling uses the CSS custom properties defined in
-  `docs/07-DESIGN.md §7`. The banner reuses the same
+  `docs/07-design/css-strategy.md §7`. The banner reuses the same
   `var(--color-error)` accent and
   `color-mix(in srgb, var(--color-error) 35%, var(--color-white))`
   background as the clash marker on the Locale Overview

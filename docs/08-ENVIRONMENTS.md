@@ -104,10 +104,11 @@ the secrets.
 Example values: `SITE_URL=https://qa.sbsommar.se`,
 `API_URL=https://qa.sbsommar.se/api/add-event`.
 
-The PHP API is deployed alongside the static site via SCP. The `api/.env`
-file on the server is managed manually and contains the `GITHUB_*`,
-`ALLOWED_ORIGIN`, `QA_ORIGIN`, `COOKIE_DOMAIN`, and `BUILD_ENV` variables
-needed by the PHP API at runtime.
+The PHP API is deployed alongside the static site via SCP. Its `.env` file
+on the server is managed manually and lives at `$DEPLOY_DIR/.env` — outside
+the web root, never under `public_html/api` (§100). It contains the
+`GITHUB_*`, `ALLOWED_ORIGIN`, `QA_ORIGIN`, `COOKIE_DOMAIN`, `BUILD_ENV`, and
+`ADMIN_TOKENS` variables needed by the PHP API at runtime.
 
 ### GitHub Environment: `production`
 
