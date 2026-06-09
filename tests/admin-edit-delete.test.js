@@ -5,7 +5,7 @@
 //
 // Testable in Node.js:
 //   - verifyAdminToken correctly gates access (reuses admin module)
-//   - parseSessionIds + verifyAdminToken OR condition
+//   - parseVerifiedSessionIds + verifyAdminToken OR condition
 //
 // Browser-only (manual checkpoints documented in traceability):
 //   - 02-§18.16: Edit links injected for all events when admin is active
@@ -17,17 +17,18 @@ const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
 
 const { verifyAdminToken } = require('../source/api/admin');
-const { parseSessionIds } = require('../source/api/session');
+const { createOwnershipEntry, parseVerifiedSessionIds } = require('../source/api/session');
 
 // Future epoch so tokens are not rejected by expiry check
 const futureEpoch = Math.floor(Date.now() / 1000) + 86400;
 const VALID_TOKEN = `admin_test-uuid_${futureEpoch}`;
 const ADMIN_TOKENS = [VALID_TOKEN];
+const SESSION_SECRET = 'test-session-secret';
 
 // Simulates the OR condition that app.js will use:
-// authorised if event ID is in session cookie OR admin token is valid.
-function isAuthorised(cookieHeader, eventId, adminToken, validTokens) {
-  const ownedIds = parseSessionIds(cookieHeader);
+// authorised if event ID has valid signed ownership OR admin token is valid.
+function isAuthorised(cookieHeader, eventId, adminToken, validTokens, sessionSecret = SESSION_SECRET) {
+  const ownedIds = parseVerifiedSessionIds(cookieHeader, sessionSecret);
   if (ownedIds.includes(eventId)) return true;
   if (adminToken && verifyAdminToken(adminToken, validTokens)) return true;
   return false;
@@ -37,12 +38,17 @@ function isAuthorised(cookieHeader, eventId, adminToken, validTokens) {
 
 describe('edit/delete authorisation OR condition (02-§7.3, §18.31, §89.13)', () => {
   const eventId = 'test-event-2099-06-01-1000';
-  const cookieWithId = `sb_session=${encodeURIComponent(JSON.stringify([eventId]))}`;
-  const cookieWithoutId = 'sb_session=%5B%22other-event%22%5D';
+  const cookieWithOwnership = `sb_session=${encodeURIComponent(JSON.stringify([createOwnershipEntry(eventId, SESSION_SECRET)]))}`;
+  const cookieWithLegacyId = `sb_session=${encodeURIComponent(JSON.stringify([eventId]))}`;
+  const cookieWithoutId = `sb_session=${encodeURIComponent(JSON.stringify([createOwnershipEntry('other-event', SESSION_SECRET)]))}`;
   const noCookie = '';
 
-  it('ADED-01: authorised when event ID is in session cookie (no admin token)', () => {
-    assert.strictEqual(isAuthorised(cookieWithId, eventId, undefined, []), true);
+  it('ADED-01: authorised when event has signed ownership in session cookie (no admin token)', () => {
+    assert.strictEqual(isAuthorised(cookieWithOwnership, eventId, undefined, []), true);
+  });
+
+  it('ADED-01b: rejected when cookie only contains a legacy raw event ID', () => {
+    assert.strictEqual(isAuthorised(cookieWithLegacyId, eventId, undefined, []), false);
   });
 
   it('ADED-02: authorised when admin token is valid (event ID not in cookie)', () => {
@@ -50,7 +56,7 @@ describe('edit/delete authorisation OR condition (02-§7.3, §18.31, §89.13)', 
   });
 
   it('ADED-03: authorised when both cookie ownership and admin token are present', () => {
-    assert.strictEqual(isAuthorised(cookieWithId, eventId, VALID_TOKEN, ADMIN_TOKENS), true);
+    assert.strictEqual(isAuthorised(cookieWithOwnership, eventId, VALID_TOKEN, ADMIN_TOKENS), true);
   });
 
   it('ADED-04: rejected when neither cookie ownership nor admin token', () => {

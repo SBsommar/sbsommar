@@ -6,7 +6,15 @@ const yaml = require('js-yaml');
 
 const { patchEventInYaml } = require('../source/api/edit-event');
 const { addOneDay, isOutsideEditingPeriod } = require('../source/api/time-gate');
-const { mergeIds, buildSetCookieHeader, COOKIE_NAME, MAX_AGE_SECONDS } = require('../source/api/session');
+const {
+  createOwnershipEntry,
+  mergeOwnershipEntries,
+  buildSetCookieHeader,
+  COOKIE_NAME,
+  MAX_AGE_SECONDS,
+} = require('../source/api/session');
+
+const SESSION_SECRET = 'test-session-secret';
 
 // ── 05-§6.2  Event id stable after creation ─────────────────────────────────
 
@@ -123,23 +131,29 @@ describe('isOutsideEditingPeriod — time-gate logic', () => {
   });
 });
 
-// ── mergeIds ────────────────────────────────────────────────────────────────
+// ── mergeOwnershipEntries ───────────────────────────────────────────────────
 
-describe('mergeIds — session cookie deduplication', () => {
-  it('EEC-14: appends a new id', () => {
-    assert.deepStrictEqual(mergeIds(['a'], 'b'), ['a', 'b']);
+describe('mergeOwnershipEntries — session cookie deduplication', () => {
+  it('EEC-14: appends a new ownership entry', () => {
+    const a = createOwnershipEntry('a', SESSION_SECRET);
+    const b = createOwnershipEntry('b', SESSION_SECRET);
+    assert.deepStrictEqual(mergeOwnershipEntries([a], b), [a, b]);
   });
 
   it('EEC-15: does not duplicate an existing id', () => {
-    assert.deepStrictEqual(mergeIds(['a', 'b'], 'a'), ['a', 'b']);
+    const a = createOwnershipEntry('a', SESSION_SECRET);
+    const duplicate = createOwnershipEntry('a', SESSION_SECRET);
+    assert.deepStrictEqual(mergeOwnershipEntries([a], duplicate), [a]);
   });
 
   it('EEC-16: handles empty array', () => {
-    assert.deepStrictEqual(mergeIds([], 'x'), ['x']);
+    const x = createOwnershipEntry('x', SESSION_SECRET);
+    assert.deepStrictEqual(mergeOwnershipEntries([], x), [x]);
   });
 
   it('EEC-17: handles null existing', () => {
-    assert.deepStrictEqual(mergeIds(null, 'x'), ['x']);
+    const x = createOwnershipEntry('x', SESSION_SECRET);
+    assert.deepStrictEqual(mergeOwnershipEntries(null, x), [x]);
   });
 });
 
@@ -155,22 +169,22 @@ describe('02-§18.4 / 02-§18.7 — Session cookie properties', () => {
   });
 
   it('EEC-20: cookie header includes Secure flag', () => {
-    const header = buildSetCookieHeader(['id1']);
+    const header = buildSetCookieHeader([createOwnershipEntry('id1', SESSION_SECRET)]);
     assert.ok(header.includes('Secure'), 'has Secure');
   });
 
   it('EEC-21: cookie header includes SameSite=Strict', () => {
-    const header = buildSetCookieHeader(['id1']);
+    const header = buildSetCookieHeader([createOwnershipEntry('id1', SESSION_SECRET)]);
     assert.ok(header.includes('SameSite=Strict'), 'has SameSite=Strict');
   });
 
   it('EEC-22: cookie header includes Path=/', () => {
-    const header = buildSetCookieHeader(['id1']);
+    const header = buildSetCookieHeader([createOwnershipEntry('id1', SESSION_SECRET)]);
     assert.ok(header.includes('Path=/'), 'has Path=/');
   });
 
   it('EEC-23: cookie header starts with sb_session=', () => {
-    const header = buildSetCookieHeader(['id1']);
+    const header = buildSetCookieHeader([createOwnershipEntry('id1', SESSION_SECRET)]);
     assert.ok(header.startsWith('sb_session='), 'starts with cookie name');
   });
 });
@@ -179,12 +193,12 @@ describe('02-§18.4 / 02-§18.7 — Session cookie properties', () => {
 
 describe('02-§18.41 — Cookie domain for cross-subdomain', () => {
   it('EEC-24: no Domain= when domain not provided', () => {
-    const header = buildSetCookieHeader(['id1']);
+    const header = buildSetCookieHeader([createOwnershipEntry('id1', SESSION_SECRET)]);
     assert.ok(!header.includes('Domain='), 'no Domain by default');
   });
 
   it('EEC-25: Domain= included when domain provided', () => {
-    const header = buildSetCookieHeader(['id1'], '.example.com');
+    const header = buildSetCookieHeader([createOwnershipEntry('id1', SESSION_SECRET)], '.example.com');
     assert.ok(header.includes('Domain=.example.com'), 'Domain included');
   });
 });
@@ -193,7 +207,7 @@ describe('02-§18.41 — Cookie domain for cross-subdomain', () => {
 
 describe('02-§18.5 — Session cookie is JS-readable', () => {
   it('EEC-26: cookie header does NOT include HttpOnly', () => {
-    const header = buildSetCookieHeader(['id1']);
+    const header = buildSetCookieHeader([createOwnershipEntry('id1', SESSION_SECRET)]);
     assert.ok(!header.includes('HttpOnly'), 'no HttpOnly flag');
   });
 });

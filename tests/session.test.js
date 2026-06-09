@@ -3,7 +3,15 @@
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
 
-const { parseSessionIds, buildSetCookieHeader, mergeIds } = require('../source/api/session');
+const {
+  parseSessionIds,
+  parseVerifiedSessionIds,
+  createOwnershipEntry,
+  buildSetCookieHeader,
+  mergeOwnershipEntries,
+} = require('../source/api/session');
+
+const SECRET = 'test-session-secret';
 
 // ── parseSessionIds ───────────────────────────────────────────────────────────
 
@@ -16,29 +24,67 @@ describe('parseSessionIds', () => {
     assert.deepStrictEqual(parseSessionIds('other=value; another=foo'), []);
   });
 
-  it('SES-03: correctly parses a valid sb_session cookie', () => { // SES-03
-    const ids = ['event-a', 'event-b'];
-    const cookieHeader = `sb_session=${encodeURIComponent(JSON.stringify(ids))}; Path=/`;
-    assert.deepStrictEqual(parseSessionIds(cookieHeader), ids);
+  it('SES-03: returns display IDs from signed ownership entries', () => { // SES-03
+    const entries = [
+      createOwnershipEntry('event-a', SECRET),
+      createOwnershipEntry('event-b', SECRET),
+    ];
+    const cookieHeader = `sb_session=${encodeURIComponent(JSON.stringify(entries))}; Path=/`;
+    assert.deepStrictEqual(parseSessionIds(cookieHeader), ['event-a', 'event-b']);
   });
 
   it('SES-04: returns [] for malformed JSON in sb_session', () => { // SES-04
     assert.deepStrictEqual(parseSessionIds('sb_session=not-json'), []);
   });
 
-  it('SES-05: filters out non-string and empty-string entries', () => { // SES-05
-    const cookieHeader = `sb_session=${encodeURIComponent(JSON.stringify([42, '', 'valid-id', null]))}`;
-    assert.deepStrictEqual(parseSessionIds(cookieHeader), ['valid-id']);
+  it('SES-05: filters out malformed entries but keeps legacy strings for display only', () => { // SES-05
+    const cookieHeader = `sb_session=${encodeURIComponent(JSON.stringify([42, '', 'legacy-id', null, { id: 'signed-id', sig: 'abc' }]))}`;
+    assert.deepStrictEqual(parseSessionIds(cookieHeader), ['legacy-id', 'signed-id']);
+  });
+});
+
+// ── signed ownership verification ────────────────────────────────────────────
+
+describe('signed ownership entries', () => {
+  it('SES-16: createOwnershipEntry binds id to a signature', () => {
+    const entry = createOwnershipEntry('event-a', SECRET);
+    assert.deepStrictEqual(Object.keys(entry).sort(), ['id', 'sig']);
+    assert.strictEqual(entry.id, 'event-a');
+    assert.match(entry.sig, /^[a-f0-9]{64}$/);
+  });
+
+  it('SES-17: parseVerifiedSessionIds accepts a valid signed ownership entry', () => {
+    const entry = createOwnershipEntry('event-a', SECRET);
+    const cookieHeader = `sb_session=${encodeURIComponent(JSON.stringify([entry]))}`;
+    assert.deepStrictEqual(parseVerifiedSessionIds(cookieHeader, SECRET), ['event-a']);
+  });
+
+  it('SES-18: parseVerifiedSessionIds rejects legacy raw event ID strings', () => {
+    const cookieHeader = `sb_session=${encodeURIComponent(JSON.stringify(['event-a']))}`;
+    assert.deepStrictEqual(parseVerifiedSessionIds(cookieHeader, SECRET), []);
+  });
+
+  it('SES-19: parseVerifiedSessionIds rejects entries signed with another secret', () => {
+    const entry = createOwnershipEntry('event-a', 'other-secret');
+    const cookieHeader = `sb_session=${encodeURIComponent(JSON.stringify([entry]))}`;
+    assert.deepStrictEqual(parseVerifiedSessionIds(cookieHeader, SECRET), []);
+  });
+
+  it('SES-20: parseVerifiedSessionIds rejects a tampered event ID', () => {
+    const entry = createOwnershipEntry('event-a', SECRET);
+    const cookieHeader = `sb_session=${encodeURIComponent(JSON.stringify([{ ...entry, id: 'event-b' }]))}`;
+    assert.deepStrictEqual(parseVerifiedSessionIds(cookieHeader, SECRET), []);
   });
 });
 
 // ── buildSetCookieHeader ──────────────────────────────────────────────────────
 
 describe('buildSetCookieHeader', () => {
-  it('SES-06: includes the cookie name and encoded event IDs', () => { // SES-06
-    const header = buildSetCookieHeader(['my-event-id']);
+  it('SES-06: includes the cookie name and encoded ownership entries', () => { // SES-06
+    const header = buildSetCookieHeader([createOwnershipEntry('my-event-id', SECRET)]);
     assert.ok(header.startsWith('sb_session='), `Expected header to start with sb_session=, got: ${header}`);
     assert.ok(header.includes('my-event-id'));
+    assert.ok(header.includes('sig'));
   });
 
   it('SES-07: includes Max-Age of 604800 (7 days)', () => { // SES-07
@@ -57,36 +103,42 @@ describe('buildSetCookieHeader', () => {
   });
 
   it('SES-14: includes Domain attribute when a domain is provided', () => { // SES-14
-    const header = buildSetCookieHeader(['my-event'], 'sommar.example.com');
+    const header = buildSetCookieHeader([createOwnershipEntry('my-event', SECRET)], 'sommar.example.com');
     assert.ok(header.includes('Domain=sommar.example.com'), `Missing Domain= in: ${header}`);
   });
 
   it('SES-15: omits Domain attribute when no domain is provided', () => { // SES-15
-    const header = buildSetCookieHeader(['my-event']);
+    const header = buildSetCookieHeader([createOwnershipEntry('my-event', SECRET)]);
     assert.ok(!header.includes('Domain='), `Unexpected Domain= in: ${header}`);
   });
 });
 
-// ── mergeIds ─────────────────────────────────────────────────────────────────
+// ── mergeOwnershipEntries ─────────────────────────────────────────────────────
 
-describe('mergeIds', () => {
-  it('SES-10: adds a new ID to an existing array', () => { // SES-10
-    const result = mergeIds(['a', 'b'], 'c');
-    assert.deepStrictEqual(result, ['a', 'b', 'c']);
+describe('mergeOwnershipEntries', () => {
+  it('SES-10: adds a new ownership entry to an existing array', () => { // SES-10
+    const a = createOwnershipEntry('a', SECRET);
+    const b = createOwnershipEntry('b', SECRET);
+    const result = mergeOwnershipEntries([a], b);
+    assert.deepStrictEqual(result, [a, b]);
   });
 
-  it('SES-11: does not duplicate an ID already present', () => { // SES-11
-    const result = mergeIds(['a', 'b'], 'a');
-    assert.deepStrictEqual(result, ['a', 'b']);
+  it('SES-11: does not duplicate an event ID already present', () => { // SES-11
+    const a = createOwnershipEntry('a', SECRET);
+    const duplicate = createOwnershipEntry('a', SECRET);
+    const result = mergeOwnershipEntries([a], duplicate);
+    assert.deepStrictEqual(result, [a]);
   });
 
   it('SES-12: handles an empty existing array', () => { // SES-12
-    const result = mergeIds([], 'new-event');
-    assert.deepStrictEqual(result, ['new-event']);
+    const entry = createOwnershipEntry('new-event', SECRET);
+    const result = mergeOwnershipEntries([], entry);
+    assert.deepStrictEqual(result, [entry]);
   });
 
   it('SES-13: handles a non-array existing value gracefully', () => { // SES-13
-    const result = mergeIds(null, 'new-event');
-    assert.deepStrictEqual(result, ['new-event']);
+    const entry = createOwnershipEntry('new-event', SECRET);
+    const result = mergeOwnershipEntries(null, entry);
+    assert.deepStrictEqual(result, [entry]);
   });
 });
