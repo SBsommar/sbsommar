@@ -106,4 +106,22 @@ final class AdminTokenTest extends TestCase
         self::assertFalse(Admin::isTokenExpired(Admin::signToken('e', 'admin', self::future(), self::SECRET)));
         self::assertTrue(Admin::isTokenExpired('a_b_c'));
     }
+
+    public function testVerifyPreCampBypassTokenAcceptsAllRoles(): void
+    {
+        // 02-§105.1, §105.5 — early bypasses the pre-camp gate like admins.
+        self::assertTrue(Admin::verifyPreCampBypassToken(Admin::signToken('a', 'admin', self::future(), self::SECRET), self::SECRET));
+        self::assertTrue(Admin::verifyPreCampBypassToken(Admin::signToken('e', 'early', self::future(), self::SECRET), self::SECRET));
+        self::assertTrue(Admin::verifyPreCampBypassToken(Admin::signToken('s', 'superadmin', self::future(), self::SECRET), self::SECRET));
+        self::assertTrue(Admin::verifyPreCampBypassToken(self::VEC_EARLY, self::VEC_SECRET));
+    }
+
+    public function testVerifyPreCampBypassTokenRejectsInvalid(): void
+    {
+        self::assertFalse(Admin::verifyPreCampBypassToken(Admin::signToken('x', 'root', self::future(), self::SECRET), self::SECRET));
+        self::assertFalse(Admin::verifyPreCampBypassToken(Admin::signToken('e', 'early', time() - 10, self::SECRET), self::SECRET));
+        self::assertFalse(Admin::verifyPreCampBypassToken(Admin::signToken('e', 'early', self::future(), 'other'), self::SECRET));
+        self::assertFalse(Admin::verifyPreCampBypassToken(self::VEC_EARLY, ''));
+        self::assertFalse(Admin::verifyPreCampBypassToken(null, self::SECRET));
+    }
 }
