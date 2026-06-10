@@ -138,11 +138,20 @@ Test IDs referenced in the `Test(s)` column are defined in the
 ## Summary
 
 ```text
-Total requirements:            1300
-Covered (implemented + tested): 672
+Total requirements:            1320
+Covered (implemented + tested): 692
 Implemented, not tested:        628
 Gap (no implementation):          0
 Orphan tests (no requirement):    0
+
+Note: §104 (Security Hardening 2026-06) adds 20 requirements
+  (02-§104.1–104.20), all covered by SEC-369..387 (tests/security-hardening.test.js)
+  and the PHPUnit SecurityHardeningTest. Covers feedback metadata sanitisation,
+  render-layer link-protocol validation, constant-time admin-token comparison,
+  SESSION_SECRET documentation, trusted-proxy (right-most XFF) + flock rate
+  limiting, fail-closed time-gating, the event-data PR validation gate
+  (injection-safe), and HTTP security headers (CSP with build-time API-origin
+  injection, nosniff, frame, referrer, permissions, HSTS).
 
 Note: §101 (signed session ownership) adds 13 requirements:
   10 covered (SES-16..21, ADED-01..08, PSES-01..03) and 3 implemented
