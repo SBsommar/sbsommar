@@ -358,6 +358,29 @@ backup). On deploy, if `$DEPLOY_DIR/.env` is absent but a legacy
 `$DEPLOY_DIR/.env` once; afterwards no `.env` remains under `public_html`
 (02-§100.8).
 
+### PHP API tests (02-§103)
+
+The PHP API is a hand-maintained mirror of the Node API, so it is tested with a
+PHPUnit suite that asserts the same behaviour as the Node tests.
+
+- **Layout:** `phpunit/phpunit` is a `require-dev` entry in `api/composer.json`;
+  `api/phpunit.xml` registers a single test suite rooted at `api/tests/`;
+  test classes there use the Composer PSR-4 autoloader (`SBSommar\` → `src/`).
+  `composer test` (a script in `api/composer.json`) runs the suite.
+- **Coverage:** `api/tests/ValidateTest.php` and `api/tests/GitHubTest.php`
+  mirror `tests/validate.test.js` and `tests/github.test.js`, including the
+  §102 hardening (control characters, `assertEventYamlValid`,
+  `detectEventIndent`, CR normalisation) and the `responsible` 60-char limit
+  (§82.3). `GitHub.php`'s network methods (`getFile`, `putFile`, the PR flow)
+  are not exercised; only the pure helpers are.
+- **CI:** `ci.yml` adds `shivammathur/setup-php` (PHP 8.2, with a Composer
+  cache), `composer install` and `composer test` steps, all guarded by the same
+  `has_code` condition as the Node steps so data-only changes skip them
+  (02-§103.5, 02-§103.6). A failing PHP test fails the job (02-§103.7).
+- **Local:** after `composer install` in `api/`, `composer test` runs the suite.
+  The git pre-commit hook stays Node-only, so a missing PHP toolchain never
+  blocks a commit (02-§103.9).
+
 ---
 
 ## 27. Asset Cache-Busting (CSS, JS, Images)

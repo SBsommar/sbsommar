@@ -1529,3 +1529,17 @@ refactor of `render-lokaler.js` onto the shared module).
 | `02-§102.6` | implemented | Architectural: edit/delete rebuild via the YAML serializer (02-§10.4) and need no re-parse; existing EDIT/DEL tests confirm valid serialiser output. `source/api/edit-event.js` + `GitHub::patchEventInYaml`/`removeEventFromYaml` |
 | `02-§102.7` | implemented | PHP mirror has no test harness; parity verified by review (manual). `api/src/Validate.php` + `api/src/GitHub.php` mirror the Node implementation; PHP batch flow also covered |
 | `02-§102.8` | covered | YSEC-17..19, YSEC-23: `detectEventIndent()` reads the existing list indentation (default 2); appended block matches it so the document stays valid; `source/api/github.js` + `api/src/GitHub.php` |
+
+### §103 — PHP API Automated Tests
+
+| ID | Status | Notes |
+| --- | --- | --- |
+| `02-§103.1` | gap | `phpunit/phpunit` added as `require-dev` in `api/composer.json`; no production dependency added |
+| `02-§103.2` | gap | `api/phpunit.xml` defines a suite over `api/tests/` |
+| `02-§103.3` | gap | `composer test` script in `api/composer.json` runs PHPUnit |
+| `02-§103.4` | gap | PHPV-* (planned): `api/tests/ValidateTest.php` + `GitHubTest.php` mirror `tests/validate.test.js`/`github.test.js` incl. §102 cases and `responsible` = 60 |
+| `02-§103.5` | gap | `ci.yml`: `shivammathur/setup-php` + `composer install` + `composer test` on push/PR |
+| `02-§103.6` | gap | PHP steps guarded by the existing `has_code` detection; data-only changes skip them (CL-§9.4) |
+| `02-§103.7` | gap | A failing PHP test fails the CI job |
+| `02-§103.8` | gap | `composer test` runs the suite locally after `composer install` in `api/` |
+| `02-§103.9` | gap | Pre-commit hook stays Node-only (`.githooks/pre-commit`); no PHP invocation |
