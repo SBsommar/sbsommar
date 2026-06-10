@@ -1534,12 +1534,12 @@ refactor of `render-lokaler.js` onto the shared module).
 
 | ID | Status | Notes |
 | --- | --- | --- |
-| `02-§103.1` | gap | `phpunit/phpunit` added as `require-dev` in `api/composer.json`; no production dependency added |
-| `02-§103.2` | gap | `api/phpunit.xml` defines a suite over `api/tests/` |
-| `02-§103.3` | gap | `composer test` script in `api/composer.json` runs PHPUnit |
-| `02-§103.4` | gap | PHPV-* (planned): `api/tests/ValidateTest.php` + `GitHubTest.php` mirror `tests/validate.test.js`/`github.test.js` incl. §102 cases and `responsible` = 60 |
-| `02-§103.5` | gap | `ci.yml`: `shivammathur/setup-php` + `composer install` + `composer test` on push/PR |
-| `02-§103.6` | gap | PHP steps guarded by the existing `has_code` detection; data-only changes skip them (CL-§9.4) |
-| `02-§103.7` | gap | A failing PHP test fails the CI job |
-| `02-§103.8` | gap | `composer test` runs the suite locally after `composer install` in `api/` |
-| `02-§103.9` | gap | Pre-commit hook stays Node-only (`.githooks/pre-commit`); no PHP invocation |
+| `02-§103.1` | covered | PHARN-01, PHARN-02: `phpunit/phpunit` is a `require-dev` entry in `api/composer.json`; not a production dependency |
+| `02-§103.2` | covered | PHARN-05: `api/phpunit.xml` defines a suite over `api/tests/` |
+| `02-§103.3` | covered | PHARN-03: `composer test` script in `api/composer.json` runs PHPUnit |
+| `02-§103.4` | covered | `api/tests/ValidateTest.php` + `GitHubTest.php` (37 PHPUnit tests) mirror `tests/validate.test.js`/`github.test.js` incl. §102 cases and `responsible` = 60 |
+| `02-§103.5` | covered | PHARN-06, PHARN-07: `ci.yml` runs `shivammathur/setup-php` + `composer install` + `composer test` |
+| `02-§103.6` | covered | PHARN-08: PHP steps guarded by the existing `has_code` detection; data-only changes skip them (CL-§9.4) |
+| `02-§103.7` | implemented | A failing PHPUnit test exits non-zero, failing the `Run PHP tests` step; manual (CI behaviour) |
+| `02-§103.8` | implemented | `composer test` runs the suite locally after `composer install` in `api/` (verified: 37 tests, 57 assertions pass) |
+| `02-§103.9` | covered | PHARN-09: pre-commit hook (`.githooks/pre-commit`) invokes no `php`/`composer` |
