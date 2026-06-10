@@ -1221,6 +1221,11 @@ unsafe YAML and must run real validation.
   — including `event-delete/` branches and manually opened PRs — and checks
   out with enough git history for the diff against the base to resolve
   (CL-§9.5). <!-- 02-§104.16 -->
+- Untrusted values consumed by the validation job — the changed filenames and
+  the PR base SHA — are passed to the shell via environment variables and never
+  interpolated as literal text into a `run:` script, so a crafted filename such
+  as `source/data/x$(…).yaml` is treated as inert data and cannot inject shell
+  commands on the runner. <!-- 02-§104.20 -->
 
 ### 104.9 HTTP security headers
 
@@ -1245,4 +1250,7 @@ calls without weakening the rest.
 - The site `.htaccess` also sets `X-Content-Type-Options: nosniff`,
   `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`,
   a `Permissions-Policy` disabling geolocation/microphone/camera/interest-cohort,
-  and `Strict-Transport-Security` (`max-age` one year, `includeSubDomains`). <!-- 02-§104.19 -->
+  and `Strict-Transport-Security` with `max-age` of one year. `includeSubDomains`
+  and `preload` are intentionally omitted until every `*.sbsommar.se` subdomain
+  is confirmed HTTPS-only, because the directive is hard to reverse within the
+  `max-age` window. <!-- 02-§104.19 -->

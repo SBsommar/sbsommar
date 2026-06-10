@@ -55,5 +55,9 @@
   Header always set X-Frame-Options "DENY"
   Header always set Referrer-Policy "strict-origin-when-cross-origin"
   Header always set Permissions-Policy "geolocation=(), microphone=(), camera=(), interest-cohort=()"
-  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+  # HSTS for the site host only. `includeSubDomains`/`preload` are deliberately
+  # omitted: they make a hard-to-reverse (1-year) HTTPS claim over every
+  # *.sbsommar.se subdomain, which must not be asserted until the full subdomain
+  # inventory is confirmed HTTPS-only. Add them once that is verified.
+  Header always set Strict-Transport-Security "max-age=31536000"
 </IfModule>

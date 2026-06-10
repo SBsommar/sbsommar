@@ -204,8 +204,26 @@ describe('#369 — event-data PR workflow validates', () => {
     // and the workflow derives the non-archived set from camps.yaml.
     assert.match(runText, /filter\(c=>!c\.archived\)/);
     assert.match(runText, /::warning::schema issues in archived/);
-    // The loop runs in this shell via a here-string, not a fragile pipe.
-    assert.match(runText, /done <<EOF/);
+    // The loop reads a quoted here-string from the env var, not a pipe.
+    assert.match(runText, /done <<< "\$CHANGED_FILES"/);
+  });
+
+  it('SEC-369-05: no untrusted ${{ }} is interpolated into a run script (injection-safe)', () => {
+    // GitHub Actions script-injection hardening: untrusted values (changed
+    // filenames, base SHA) must arrive via env vars, never as literal text in
+    // a run: block — otherwise a filename like `x$(...).yaml` executes on the
+    // runner. No run script may contain a ${{ ... }} expression at all.
+    for (const s of steps) {
+      if (typeof s.run === 'string') {
+        assert.ok(!s.run.includes('${{'), `run script interpolates an expression: ${s.name}`);
+      }
+    }
+    // The changed filenames reach the validator as an env var consumed as data.
+    const validate = steps.find((s) => typeof s.run === 'string' && s.run.includes('CHANGED_FILES'));
+    assert.ok(validate, 'validate step must exist');
+    assert.strictEqual(validate.env.CHANGED_FILES, '${{ steps.changed.outputs.files }}');
+    const changed = steps.find((s) => s.id === 'changed');
+    assert.strictEqual(changed.env.BASE_SHA, '${{ github.event.pull_request.base.sha }}');
   });
 });
 

@@ -187,7 +187,7 @@ Part of [the traceability index](./index.md).
 | PHARN-01..09 | `tests/php-harness.test.js` | PHP harness wiring: Composer, PHPUnit, CI, Node-only hook (02-§103) |
 | (PHPUnit) | `api/tests/ValidateTest.php` | PHP mirror of `validate.test.js`, run via `composer test` (02-§103.4) |
 | (PHPUnit) | `api/tests/GitHubTest.php` | PHP mirror of `github.test.js`, run via `composer test` (02-§103.4) |
-| SEC-369-01..03 | `tests/security-hardening.test.js` | Event-data PR workflow runs real validation (02-§104.15, 02-§104.16) |
+| SEC-369-01..05 | `tests/security-hardening.test.js` | Event-data PR workflow: real validation, archived scope, script-injection-safe (02-§104.15, 02-§104.16, 02-§104.20) |
 | SEC-370-01..03 | `tests/security-hardening.test.js` | PHP time-gating fails closed; bundled camps.yaml (02-§104.13, 02-§104.14) |
 | SEC-371-01..02 | `tests/security-hardening.test.js` | PHP rate-limit trusted-proxy IP + `flock` counter (02-§104.10, 02-§104.11) |
 | SEC-383-01..05 | `tests/security-hardening.test.js` | Feedback metadata sanitisation (02-§104.1–104.3) |
