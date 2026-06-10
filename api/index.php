@@ -232,14 +232,15 @@ function handleAddEvent(?array $activeCamp, string $adminTokenSecret, string $se
 
     $body = getJsonBody();
 
-    // Time-gating with admin bypass (02-§26.17, 02-§26.18)
+    // Time-gating with pre-camp bypass for admin/early roles (02-§26.17,
+    // 02-§26.18, 02-§105.1, 02-§105.3)
     if ($activeCamp !== null) {
         $today   = date('Y-m-d');
         $opens   = (string) ($activeCamp['opens_for_editing'] ?? '');
         $endDate = (string) ($activeCamp['end_date'] ?? '');
         if (TimeGate::isAfterEditingPeriod($today, $endDate)
             || (TimeGate::isBeforeEditingPeriod($today, $opens)
-                && !Admin::verifyAdminToken($body['adminToken'] ?? null, $adminTokenSecret))
+                && !Admin::verifyPreCampBypassToken($body['adminToken'] ?? null, $adminTokenSecret))
         ) {
             jsonResponse([
                 'success' => false,
@@ -319,14 +320,15 @@ function handleAddEvents(?array $activeCamp, string $adminTokenSecret, string $s
 
     $body = getJsonBody();
 
-    // Time-gating with admin bypass (02-§26.17, 02-§26.18)
+    // Time-gating with pre-camp bypass for admin/early roles (02-§26.17,
+    // 02-§26.18, 02-§105.1, 02-§105.3)
     if ($activeCamp !== null) {
         $today   = date('Y-m-d');
         $opens   = (string) ($activeCamp['opens_for_editing'] ?? '');
         $endDate = (string) ($activeCamp['end_date'] ?? '');
         if (TimeGate::isAfterEditingPeriod($today, $endDate)
             || (TimeGate::isBeforeEditingPeriod($today, $opens)
-                && !Admin::verifyAdminToken($body['adminToken'] ?? null, $adminTokenSecret))
+                && !Admin::verifyPreCampBypassToken($body['adminToken'] ?? null, $adminTokenSecret))
         ) {
             jsonResponse([
                 'success' => false,
@@ -403,13 +405,15 @@ function handleEditEvent(?array $activeCamp, string $adminTokenSecret, string $s
     $body    = getJsonBody();
     $isAdmin = Admin::verifyAdminToken($body['adminToken'] ?? null, $adminTokenSecret);
 
-    // Time-gating with admin bypass (02-§26.17, 02-§26.18)
+    // Time-gating with pre-camp bypass for admin/early roles (02-§26.17,
+    // 02-§26.18, 02-§105.1, 02-§105.3)
     if ($activeCamp !== null) {
         $today   = date('Y-m-d');
         $opens   = (string) ($activeCamp['opens_for_editing'] ?? '');
         $endDate = (string) ($activeCamp['end_date'] ?? '');
         if (TimeGate::isAfterEditingPeriod($today, $endDate)
-            || (TimeGate::isBeforeEditingPeriod($today, $opens) && !$isAdmin)
+            || (TimeGate::isBeforeEditingPeriod($today, $opens)
+                && !Admin::verifyPreCampBypassToken($body['adminToken'] ?? null, $adminTokenSecret))
         ) {
             jsonResponse([
                 'success' => false,
@@ -429,8 +433,8 @@ function handleEditEvent(?array $activeCamp, string $adminTokenSecret, string $s
 
     $eventId = trim((string) ($body['id'] ?? ''));
 
-    // Verify ownership: signed session ownership OR valid admin token
-    // (02-§7.3, §18.31).
+    // Verify ownership: signed session ownership OR an admin-role token —
+    // the early role does not bypass ownership (02-§7.3, §18.31, 02-§105.2).
     $ownedIds = Session::parseVerifiedSessionIds($_SERVER['HTTP_COOKIE'] ?? '', $sessionSecret);
     if (!in_array($eventId, $ownedIds, true) && !$isAdmin) {
         jsonResponse([
@@ -484,13 +488,15 @@ function handleDeleteEvent(?array $activeCamp, string $adminTokenSecret, string 
     $body    = getJsonBody();
     $isAdmin = Admin::verifyAdminToken($body['adminToken'] ?? null, $adminTokenSecret);
 
-    // Time-gating with admin bypass (02-§26.17, 02-§26.18)
+    // Time-gating with pre-camp bypass for admin/early roles (02-§26.17,
+    // 02-§26.18, 02-§105.1, 02-§105.3)
     if ($activeCamp !== null) {
         $today   = date('Y-m-d');
         $opens   = (string) ($activeCamp['opens_for_editing'] ?? '');
         $endDate = (string) ($activeCamp['end_date'] ?? '');
         if (TimeGate::isAfterEditingPeriod($today, $endDate)
-            || (TimeGate::isBeforeEditingPeriod($today, $opens) && !$isAdmin)
+            || (TimeGate::isBeforeEditingPeriod($today, $opens)
+                && !Admin::verifyPreCampBypassToken($body['adminToken'] ?? null, $adminTokenSecret))
         ) {
             jsonResponse([
                 'success' => false,
@@ -508,8 +514,8 @@ function handleDeleteEvent(?array $activeCamp, string $adminTokenSecret, string 
         return;
     }
 
-    // Verify ownership: signed session ownership OR valid admin token
-    // (02-§7.3, §89.13).
+    // Verify ownership: signed session ownership OR an admin-role token —
+    // the early role does not bypass ownership (02-§7.3, §89.13, 02-§105.2).
     $ownedIds = Session::parseVerifiedSessionIds($_SERVER['HTTP_COOKIE'] ?? '', $sessionSecret);
     if (!in_array($eventId, $ownedIds, true) && !$isAdmin) {
         jsonResponse([
@@ -600,7 +606,10 @@ function handleVerifyAdmin(string $adminTokenSecret): void
     $body  = getJsonBody();
     $token = trim((string) ($body['token'] ?? ''));
 
-    if (Admin::verifyAdminToken($token, $adminTokenSecret)) {
+    // Any recognised role validates here — including early — so every token
+    // kind activates through the same /token.html flow (02-§91.6, 02-§105.4).
+    // Each privileged action applies its own role check.
+    if (Admin::verifyToken($token, $adminTokenSecret) !== null) {
         jsonResponse(['valid' => true]);
     } else {
         jsonResponse(['valid' => false], 403);
