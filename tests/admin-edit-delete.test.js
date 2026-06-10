@@ -16,21 +16,22 @@
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
 
-const { verifyAdminToken } = require('../source/api/admin');
+const { verifyAdminToken, signToken } = require('../source/api/admin');
 const { createOwnershipEntry, parseVerifiedSessionIds } = require('../source/api/session');
 
-// Future epoch so tokens are not rejected by expiry check
+// Future epoch so tokens are not rejected by expiry check.
 const futureEpoch = Math.floor(Date.now() / 1000) + 86400;
-const VALID_TOKEN = `admin_test-uuid_${futureEpoch}`;
-const ADMIN_TOKENS = [VALID_TOKEN];
+const SECRET = 'edit-delete-test-secret-value!!!';
+const VALID_TOKEN = signToken('admin', 'admin', futureEpoch, SECRET);
 const SESSION_SECRET = 'test-session-secret';
 
-// Simulates the OR condition that app.js will use:
-// authorised if event ID has valid signed ownership OR admin token is valid.
-function isAuthorised(cookieHeader, eventId, adminToken, validTokens, sessionSecret = SESSION_SECRET) {
+// Simulates the OR condition app.js uses: authorised if the event ID has valid
+// signed ownership OR the request carries a valid admin token (verified against
+// the signing secret).
+function isAuthorised(cookieHeader, eventId, adminToken, secret, sessionSecret = SESSION_SECRET) {
   const ownedIds = parseVerifiedSessionIds(cookieHeader, sessionSecret);
   if (ownedIds.includes(eventId)) return true;
-  if (adminToken && verifyAdminToken(adminToken, validTokens)) return true;
+  if (adminToken && verifyAdminToken(adminToken, secret)) return true;
   return false;
 }
 
@@ -44,41 +45,41 @@ describe('edit/delete authorisation OR condition (02-§7.3, §18.31, §89.13)', 
   const noCookie = '';
 
   it('ADED-01: authorised when event has signed ownership in session cookie (no admin token)', () => {
-    assert.strictEqual(isAuthorised(cookieWithOwnership, eventId, undefined, []), true);
+    assert.strictEqual(isAuthorised(cookieWithOwnership, eventId, undefined, ''), true);
   });
 
   it('ADED-01b: rejected when cookie only contains a legacy raw event ID', () => {
-    assert.strictEqual(isAuthorised(cookieWithLegacyId, eventId, undefined, []), false);
+    assert.strictEqual(isAuthorised(cookieWithLegacyId, eventId, undefined, ''), false);
   });
 
   it('ADED-02: authorised when admin token is valid (event ID not in cookie)', () => {
-    assert.strictEqual(isAuthorised(cookieWithoutId, eventId, VALID_TOKEN, ADMIN_TOKENS), true);
+    assert.strictEqual(isAuthorised(cookieWithoutId, eventId, VALID_TOKEN, SECRET), true);
   });
 
   it('ADED-03: authorised when both cookie ownership and admin token are present', () => {
-    assert.strictEqual(isAuthorised(cookieWithOwnership, eventId, VALID_TOKEN, ADMIN_TOKENS), true);
+    assert.strictEqual(isAuthorised(cookieWithOwnership, eventId, VALID_TOKEN, SECRET), true);
   });
 
   it('ADED-04: rejected when neither cookie ownership nor admin token', () => {
-    assert.strictEqual(isAuthorised(cookieWithoutId, eventId, undefined, []), false);
+    assert.strictEqual(isAuthorised(cookieWithoutId, eventId, undefined, ''), false);
   });
 
-  it('ADED-05: rejected when admin token is invalid', () => {
-    const badToken = `wrong_token_${futureEpoch}`;
-    assert.strictEqual(isAuthorised(noCookie, eventId, badToken, ADMIN_TOKENS), false);
+  it('ADED-05: rejected when admin token signature is invalid', () => {
+    const badToken = signToken('admin', 'admin', futureEpoch, 'a-different-secret');
+    assert.strictEqual(isAuthorised(noCookie, eventId, badToken, SECRET), false);
   });
 
   it('ADED-06: rejected when admin token is expired', () => {
     const pastEpoch = Math.floor(Date.now() / 1000) - 86400;
-    const expired = `admin_test-uuid_${pastEpoch}`;
-    assert.strictEqual(isAuthorised(noCookie, eventId, expired, [expired]), false);
+    const expired = signToken('admin', 'admin', pastEpoch, SECRET);
+    assert.strictEqual(isAuthorised(noCookie, eventId, expired, SECRET), false);
   });
 
-  it('ADED-07: rejected when ADMIN_TOKENS is empty (§91.3)', () => {
-    assert.strictEqual(isAuthorised(noCookie, eventId, VALID_TOKEN, []), false);
+  it('ADED-07: rejected when the signing secret is unset (§91.3)', () => {
+    assert.strictEqual(isAuthorised(noCookie, eventId, VALID_TOKEN, ''), false);
   });
 
   it('ADED-08: authorised via admin even with no cookie at all', () => {
-    assert.strictEqual(isAuthorised(noCookie, eventId, VALID_TOKEN, ADMIN_TOKENS), true);
+    assert.strictEqual(isAuthorised(noCookie, eventId, VALID_TOKEN, SECRET), true);
   });
 });

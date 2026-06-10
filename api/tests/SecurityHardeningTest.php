@@ -64,23 +64,24 @@ final class SecurityHardeningTest extends TestCase
 
     // ── #386 Constant-time admin token ──────────────────────────────────────
 
-    public function testAdminTokenAcceptsMatchRegardlessOfListLengths(): void
+    private const HARDENING_SECRET = 'hardening-test-secret-value-xyz!';
+
+    public function testAdminTokenAcceptsValidSignature(): void
     {
-        $future = time() + 86400;
-        $tok    = 'admin_' . str_repeat('a', 20) . '_' . $future;
-        self::assertTrue(Admin::verifyAdminToken($tok, ['short', $tok, 'another_longer_token_value']));
+        $tok = Admin::signToken('admin', 'admin', time() + 86400, self::HARDENING_SECRET);
+        self::assertTrue(Admin::verifyAdminToken($tok, self::HARDENING_SECRET));
     }
 
-    public function testAdminTokenRejectsEqualLengthMismatch(): void
+    public function testAdminTokenRejectsWrongSecret(): void
     {
-        $future = time() + 86400;
-        self::assertFalse(Admin::verifyAdminToken("aaaaa_{$future}", ["bbbbb_{$future}"]));
+        $tok = Admin::signToken('admin', 'admin', time() + 86400, 'other-secret');
+        self::assertFalse(Admin::verifyAdminToken($tok, self::HARDENING_SECRET));
     }
 
     public function testAdminTokenRejectsExpired(): void
     {
-        $past = time() - 10;
-        self::assertFalse(Admin::verifyAdminToken("admin_uuid_{$past}", ["admin_uuid_{$past}"]));
+        $tok = Admin::signToken('admin', 'admin', time() - 10, self::HARDENING_SECRET);
+        self::assertFalse(Admin::verifyAdminToken($tok, self::HARDENING_SECRET));
     }
 
     // ── #371 Rate-limit counting under the lock ─────────────────────────────

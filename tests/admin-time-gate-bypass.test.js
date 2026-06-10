@@ -23,21 +23,21 @@ const {
   isBeforeEditingPeriod,
   isAfterEditingPeriod,
 } = require('../source/api/time-gate');
-const { verifyAdminToken } = require('../source/api/admin');
+const { verifyAdminToken, signToken } = require('../source/api/admin');
 
 const futureEpoch = Math.floor(Date.now() / 1000) + 86400;
-const VALID_TOKEN = `admin_test-uuid_${futureEpoch}`;
-const ADMIN_TOKENS = [VALID_TOKEN];
+const SECRET = 'time-gate-test-secret-value-!!!!';
+const VALID_TOKEN = signToken('admin', 'admin', futureEpoch, SECRET);
 
 const OPENS = '2026-06-14';
 const END_DATE = '2026-06-27';
 // end_date + 1 = 2026-06-28 = last allowed day
 
-// Mirrors the time-gate admission logic the endpoints will use.
-function isTimeGateAccepted(today, opens, endDate, adminToken, validTokens) {
+// Mirrors the time-gate admission logic the endpoints use.
+function isTimeGateAccepted(today, opens, endDate, adminToken, secret) {
   if (isAfterEditingPeriod(today, endDate)) return false;
   if (!isBeforeEditingPeriod(today, opens)) return true;
-  return !!adminToken && verifyAdminToken(adminToken, validTokens);
+  return !!adminToken && verifyAdminToken(adminToken, secret);
 }
 
 // ── Admin bypasses pre-period lock (02-§26.17) ─────────────────────────────
@@ -45,45 +45,45 @@ function isTimeGateAccepted(today, opens, endDate, adminToken, validTokens) {
 describe('admin bypass — before opens_for_editing (02-§26.17)', () => {
   it('ABYP-01: non-admin rejected before opens_for_editing', () => {
     assert.strictEqual(
-      isTimeGateAccepted('2026-06-13', OPENS, END_DATE, undefined, ADMIN_TOKENS),
+      isTimeGateAccepted('2026-06-13', OPENS, END_DATE, undefined, SECRET),
       false,
     );
   });
 
   it('ABYP-02: admin accepted before opens_for_editing', () => {
     assert.strictEqual(
-      isTimeGateAccepted('2026-06-13', OPENS, END_DATE, VALID_TOKEN, ADMIN_TOKENS),
+      isTimeGateAccepted('2026-06-13', OPENS, END_DATE, VALID_TOKEN, SECRET),
       true,
     );
   });
 
   it('ABYP-03: admin accepted well before opens_for_editing', () => {
     assert.strictEqual(
-      isTimeGateAccepted('2026-01-01', OPENS, END_DATE, VALID_TOKEN, ADMIN_TOKENS),
+      isTimeGateAccepted('2026-01-01', OPENS, END_DATE, VALID_TOKEN, SECRET),
       true,
     );
   });
 
   it('ABYP-04: invalid admin token rejected before opens', () => {
-    const bad = `wrong_token_${futureEpoch}`;
+    const bad = signToken('admin', 'admin', futureEpoch, 'a-different-secret');
     assert.strictEqual(
-      isTimeGateAccepted('2026-06-13', OPENS, END_DATE, bad, ADMIN_TOKENS),
+      isTimeGateAccepted('2026-06-13', OPENS, END_DATE, bad, SECRET),
       false,
     );
   });
 
   it('ABYP-05: expired admin token rejected before opens', () => {
     const pastEpoch = Math.floor(Date.now() / 1000) - 86400;
-    const expired = `admin_test-uuid_${pastEpoch}`;
+    const expired = signToken('admin', 'admin', pastEpoch, SECRET);
     assert.strictEqual(
-      isTimeGateAccepted('2026-06-13', OPENS, END_DATE, expired, [expired]),
+      isTimeGateAccepted('2026-06-13', OPENS, END_DATE, expired, SECRET),
       false,
     );
   });
 
   it('ABYP-06: admin accepted on day before opens', () => {
     assert.strictEqual(
-      isTimeGateAccepted('2026-06-13', OPENS, END_DATE, VALID_TOKEN, ADMIN_TOKENS),
+      isTimeGateAccepted('2026-06-13', OPENS, END_DATE, VALID_TOKEN, SECRET),
       true,
     );
   });
@@ -94,28 +94,28 @@ describe('admin bypass — before opens_for_editing (02-§26.17)', () => {
 describe('admin does NOT bypass post-period lock (02-§26.18)', () => {
   it('ABYP-07: admin rejected on end_date + 2 days', () => {
     assert.strictEqual(
-      isTimeGateAccepted('2026-06-29', OPENS, END_DATE, VALID_TOKEN, ADMIN_TOKENS),
+      isTimeGateAccepted('2026-06-29', OPENS, END_DATE, VALID_TOKEN, SECRET),
       false,
     );
   });
 
   it('ABYP-08: admin rejected long after camp end', () => {
     assert.strictEqual(
-      isTimeGateAccepted('2027-01-01', OPENS, END_DATE, VALID_TOKEN, ADMIN_TOKENS),
+      isTimeGateAccepted('2027-01-01', OPENS, END_DATE, VALID_TOKEN, SECRET),
       false,
     );
   });
 
   it('ABYP-09: non-admin also rejected after period', () => {
     assert.strictEqual(
-      isTimeGateAccepted('2026-06-29', OPENS, END_DATE, undefined, ADMIN_TOKENS),
+      isTimeGateAccepted('2026-06-29', OPENS, END_DATE, undefined, SECRET),
       false,
     );
   });
 
   it('ABYP-10: admin accepted on end_date + 1 (last allowed day)', () => {
     assert.strictEqual(
-      isTimeGateAccepted('2026-06-28', OPENS, END_DATE, VALID_TOKEN, ADMIN_TOKENS),
+      isTimeGateAccepted('2026-06-28', OPENS, END_DATE, VALID_TOKEN, SECRET),
       true,
     );
   });
@@ -126,21 +126,21 @@ describe('admin does NOT bypass post-period lock (02-§26.18)', () => {
 describe('admin bypass has no effect inside the open window', () => {
   it('ABYP-11: non-admin accepted inside the window', () => {
     assert.strictEqual(
-      isTimeGateAccepted('2026-06-21', OPENS, END_DATE, undefined, ADMIN_TOKENS),
+      isTimeGateAccepted('2026-06-21', OPENS, END_DATE, undefined, SECRET),
       true,
     );
   });
 
   it('ABYP-12: admin accepted inside the window', () => {
     assert.strictEqual(
-      isTimeGateAccepted('2026-06-21', OPENS, END_DATE, VALID_TOKEN, ADMIN_TOKENS),
+      isTimeGateAccepted('2026-06-21', OPENS, END_DATE, VALID_TOKEN, SECRET),
       true,
     );
   });
 
   it('ABYP-13: non-admin accepted on opens_for_editing date', () => {
     assert.strictEqual(
-      isTimeGateAccepted('2026-06-14', OPENS, END_DATE, undefined, ADMIN_TOKENS),
+      isTimeGateAccepted('2026-06-14', OPENS, END_DATE, undefined, SECRET),
       true,
     );
   });

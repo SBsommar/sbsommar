@@ -1,80 +1,175 @@
 'use strict';
 
-// Tests for admin token infrastructure — 02-§91.1–91.28.
+// Tests for admin token infrastructure — 02-§91.1–91.32.
 //
 // Testable in Node.js:
-//   - verify-admin module: token validation, constant-time comparison,
-//     disabled when ADMIN_TOKENS is unset (ADM-01..07)
-//   - render-admin.js: page structure, layout, form elements (ADM-08..12)
-//   - layout.js: footer includes admin-icon container (ADM-13..14)
-//   - token-embedded expiry: extractTokenExpiry, isTokenExpired (ADM-25..35)
+//   - admin module: signToken/verifyToken/verifyAdminToken, role gating,
+//     tamper/expiry rejection, embedded-expiry helpers (TOK-01..TOK-20)
+//   - cross-runtime parity: a fixed (secret, claims) → one known token string
+//     that both Node and PHP must reproduce (TOK-01); PHP behaviour is covered
+//     by api/tests/AdminTokenTest.php, which asserts the SAME vector
+//   - render-admin.js: page structure, layout, form elements (ADM-11..17)
 //
 // Browser-only (manual checkpoints documented in traceability):
 //   - 02-§91.11: Calls POST /verify-admin on submit
 //   - 02-§91.12: Valid → store token in localStorage, show success
 //   - 02-§91.13: Invalid → show error, store nothing
-//   - 02-§91.19: Footer shows admin icon when token in localStorage
-//   - 02-§91.20: No token → nothing displayed
-//   - 02-§91.21: Valid token → filled/locked icon
-//   - 02-§91.22: Expired token → open/unlocked icon, links to /admin.html
+//   - 02-§91.19..22: Footer admin-icon states
 
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
 
-// ── verify-admin module ─────────────────────────────────────────────────────
+const read = (rel) => fs.readFileSync(path.join(__dirname, '..', rel), 'utf8');
 
-const { verifyAdminToken, parseAdminTokens } = require('../source/api/admin');
+const {
+  signToken,
+  verifyToken,
+  verifyAdminToken,
+  isTokenExpired,
+  extractTokenExpiry,
+} = require('../source/api/admin');
 
-describe('parseAdminTokens (02-§91.1, §91.2)', () => {
-  it('ADM-01: parses comma-separated tokens', () => {
-    const tokens = parseAdminTokens('aaa,bbb,ccc');
-    assert.deepStrictEqual(tokens, ['aaa', 'bbb', 'ccc']);
+// ── Deterministic cross-runtime vector ───────────────────────────────────────
+// Fixed secret + claims → one known token. api/tests/AdminTokenTest.php asserts
+// the identical strings, proving Node and PHP sign byte-for-byte the same.
+const VEC_SECRET = '0123456789abcdef0123456789abcdef';
+const VEC_EPOCH = 2000000000;
+const VEC = {
+  admin: 'erik_admin_2000000000_BxCLVBJtH61eKTpsn8zsTvYzhL83yf-nF-2HwbBIBVI',
+  early: 'anna_early_2000000000_0jz-8E6aG-x-z2jjKaEY2YgV6Me9qFAJyG5s4mLl61w',
+  superadmin: 'sigge_superadmin_2000000000_4oTZ8CsILnVAvDRIqO8ZZj1tuVF52KAxRDKjPs7xyAQ',
+};
+
+const SECRET = 'unit-test-secret-32-bytes-long!!';
+const future = () => Math.floor(Date.now() / 1000) + 86400;
+const past = () => Math.floor(Date.now() / 1000) - 86400;
+
+// ── Signing ──────────────────────────────────────────────────────────────────
+
+describe('signToken (02-§91.2)', () => {
+  it('TOK-01: produces namn_roll_epoch_sig and matches the fixed vector', () => {
+    assert.strictEqual(signToken('erik', 'admin', VEC_EPOCH, VEC_SECRET), VEC.admin);
+    assert.strictEqual(signToken('anna', 'early', VEC_EPOCH, VEC_SECRET), VEC.early);
+    assert.strictEqual(signToken('sigge', 'superadmin', VEC_EPOCH, VEC_SECRET), VEC.superadmin);
   });
 
-  it('ADM-02: returns empty array when input is empty string', () => {
-    assert.deepStrictEqual(parseAdminTokens(''), []);
-  });
-
-  it('ADM-03: returns empty array when input is undefined', () => {
-    assert.deepStrictEqual(parseAdminTokens(undefined), []);
-  });
-
-  it('ADM-04: trims whitespace around tokens', () => {
-    const tokens = parseAdminTokens(' aaa , bbb ');
-    assert.deepStrictEqual(tokens, ['aaa', 'bbb']);
-  });
-
-  it('ADM-05: filters out empty entries from trailing commas', () => {
-    const tokens = parseAdminTokens('aaa,,bbb,');
-    assert.deepStrictEqual(tokens, ['aaa', 'bbb']);
+  it('TOK-02: a different secret yields a different signature', () => {
+    assert.notStrictEqual(signToken('erik', 'admin', VEC_EPOCH, 'a-different-secret'), VEC.admin);
   });
 });
 
-describe('verifyAdminToken (02-§91.3, §91.6, §91.7, §91.8)', () => {
-  // Use future epoch so tokens are not rejected by expiry check
-  const futureEpoch = Math.floor(Date.now() / 1000) + 86400;
+// ── Verification ─────────────────────────────────────────────────────────────
 
-  it('ADM-06: returns true when token matches one in the list', () => {
-    const tok = `my_token_${futureEpoch}`;
-    assert.strictEqual(verifyAdminToken(tok, ['other', tok]), true);
+describe('verifyToken (02-§91.2, §91.29)', () => {
+  it('TOK-03: accepts a freshly signed token and returns its claims', () => {
+    const epoch = future();
+    assert.deepStrictEqual(verifyToken(signToken('erik', 'admin', epoch, SECRET), SECRET),
+      { name: 'erik', role: 'admin', epoch });
   });
 
-  it('ADM-07: returns false when token does not match', () => {
-    const tok = `wrong_${futureEpoch}`;
-    assert.strictEqual(verifyAdminToken(tok, ['aaa', 'bbb']), false);
+  it('TOK-04: validates the fixed vector', () => {
+    assert.strictEqual(verifyToken(VEC.admin, VEC_SECRET).role, 'admin');
+    assert.strictEqual(verifyToken(VEC.early, VEC_SECRET).role, 'early');
   });
 
-  it('ADM-08: returns false when token list is empty (§91.3)', () => {
-    const tok = `anything_${futureEpoch}`;
-    assert.strictEqual(verifyAdminToken(tok, []), false);
+  it('TOK-05: rejects a token signed with a different secret', () => {
+    assert.strictEqual(verifyToken(signToken('erik', 'admin', future(), 'a-secret'), SECRET), null);
   });
 
-  it('ADM-09: returns false when token is empty string', () => {
-    assert.strictEqual(verifyAdminToken('', ['aaa']), false);
+  it('TOK-06: rejects a tampered role (signature no longer matches)', () => {
+    const tok = signToken('erik', 'early', future(), SECRET);
+    assert.strictEqual(verifyToken(tok.replace('_early_', '_admin_'), SECRET), null);
   });
 
-  it('ADM-10: returns false when token is undefined', () => {
-    assert.strictEqual(verifyAdminToken(undefined, ['aaa']), false);
+  it('TOK-07: rejects a tampered epoch', () => {
+    const epoch = future();
+    const tok = signToken('erik', 'admin', epoch, SECRET);
+    assert.strictEqual(verifyToken(tok.replace(`_${epoch}_`, `_${epoch + 1}_`), SECRET), null);
+  });
+
+  it('TOK-08: rejects an unknown role even with a valid signature', () => {
+    // signToken will happily sign any role; verifyToken must reject unknown ones.
+    assert.strictEqual(verifyToken(signToken('erik', 'root', future(), SECRET), SECRET), null);
+  });
+
+  it('TOK-09: rejects an expired token', () => {
+    assert.strictEqual(verifyToken(signToken('erik', 'admin', past(), SECRET), SECRET), null);
+  });
+
+  it('TOK-10: returns null when the secret is empty (admin disabled)', () => {
+    assert.strictEqual(verifyToken(VEC.admin, ''), null);
+  });
+
+  it('TOK-11: returns null for malformed tokens', () => {
+    for (const bad of ['', null, undefined, 'noseparators', 'a_b_c', 'a_b_notnum_sig']) {
+      assert.strictEqual(verifyToken(bad, SECRET), null);
+    }
+  });
+
+  it('TOK-12: round-trips names whose signatures contain "_" and "-" (base64url)', () => {
+    for (let i = 0; i < 50; i++) {
+      const epoch = future();
+      assert.deepStrictEqual(verifyToken(signToken(`user${i}`, 'admin', epoch, SECRET), SECRET),
+        { name: `user${i}`, role: 'admin', epoch });
+    }
+  });
+});
+
+// ── Admin role gating ────────────────────────────────────────────────────────
+
+describe('verifyAdminToken (02-§91.31)', () => {
+  it('TOK-13: true for admin and superadmin', () => {
+    assert.strictEqual(verifyAdminToken(signToken('a', 'admin', future(), SECRET), SECRET), true);
+    assert.strictEqual(verifyAdminToken(signToken('s', 'superadmin', future(), SECRET), SECRET), true);
+  });
+
+  it('TOK-14: false for early (recognised role, but not admin-equivalent)', () => {
+    assert.strictEqual(verifyAdminToken(signToken('e', 'early', future(), SECRET), SECRET), false);
+  });
+
+  it('TOK-15: false for wrong secret / empty token', () => {
+    assert.strictEqual(verifyAdminToken(VEC.admin, 'wrong-secret'), false);
+    assert.strictEqual(verifyAdminToken('', SECRET), false);
+  });
+});
+
+// ── Embedded-expiry helpers ──────────────────────────────────────────────────
+
+describe('embedded expiry helpers (02-§91.29)', () => {
+  it('TOK-16: extractTokenExpiry reads the epoch segment of the new format', () => {
+    assert.strictEqual(extractTokenExpiry(VEC.admin), VEC_EPOCH);
+  });
+
+  it('TOK-17: extractTokenExpiry returns 0 for malformed tokens', () => {
+    assert.strictEqual(extractTokenExpiry('a_b_c'), 0);
+    assert.strictEqual(extractTokenExpiry(''), 0);
+  });
+
+  it('TOK-18: isTokenExpired true for past epoch, false for future', () => {
+    assert.strictEqual(isTokenExpired(signToken('e', 'admin', past(), SECRET)), true);
+    assert.strictEqual(isTokenExpired(signToken('e', 'admin', future(), SECRET)), false);
+  });
+
+  it('TOK-19: isTokenExpired true (fail-closed) for malformed tokens', () => {
+    assert.strictEqual(isTokenExpired('a_b_c'), true);
+    assert.strictEqual(isTokenExpired(''), true);
+  });
+});
+
+// ── PHP parity (structural; behavioural vector parity in AdminTokenTest.php) ──
+
+describe('PHP token parity (structural) (02-§91.8)', () => {
+  const php = read('api/src/Admin.php');
+
+  it('TOK-20: Admin.php exposes the same helpers and primitives', () => {
+    assert.match(php, /function\s+signToken\b/);
+    assert.match(php, /function\s+verifyToken\b/);
+    assert.match(php, /function\s+verifyAdminToken\b/);
+    assert.match(php, /hash_hmac\('sha256'/);
+    assert.match(php, /strtr\(base64_encode/);
+    assert.match(php, /hash_equals\(self::tokenDigest/);
   });
 });
 
@@ -117,7 +212,6 @@ describe('renderAdminPage (02-§91.9, §91.10, §91.14, §91.15)', () => {
 
   it('ADM-15: page is not listed in navigation links', () => {
     const html = renderAdminPage(CAMP, FOOTER_HTML);
-    // The nav links should not contain admin.html
     const navMatch = html.match(/<nav[^>]*>[\s\S]*?<\/nav>/);
     assert.ok(navMatch, 'Expected nav element');
     assert.ok(!navMatch[0].includes('admin.html'), 'admin.html must not be in nav');
@@ -135,66 +229,5 @@ describe('renderAdminPage (02-§91.9, §91.10, §91.14, §91.15)', () => {
 });
 
 // ── Footer admin-icon container ─────────────────────────────────────────────
-// ADM-18: admin-status is now injected by build.js inside the version
-// paragraph, not by pageFooter. Verified by snapshot tests.
-
-// ── Token-embedded expiry ───────────────────────────────────────────────────
-
-const { isTokenExpired, extractTokenExpiry } = require('../source/api/admin');
-
-describe('extractTokenExpiry', () => {
-  it('ADM-25: extracts epoch from valid token format', () => {
-    assert.strictEqual(extractTokenExpiry('erik_abc123_1752710400'), 1752710400);
-  });
-
-  it('ADM-26: returns 0 for token without epoch suffix', () => {
-    assert.strictEqual(extractTokenExpiry('erik_abc123'), 0);
-  });
-
-  it('ADM-27: returns 0 for empty string', () => {
-    assert.strictEqual(extractTokenExpiry(''), 0);
-  });
-
-  it('ADM-28: returns 0 for undefined', () => {
-    assert.strictEqual(extractTokenExpiry(undefined), 0);
-  });
-
-  it('ADM-29: returns 0 when last segment is not a number', () => {
-    assert.strictEqual(extractTokenExpiry('erik_abc123_notanumber'), 0);
-  });
-});
-
-describe('isTokenExpired', () => {
-  it('ADM-30: returns false for token with future epoch', () => {
-    const future = Math.floor(Date.now() / 1000) + 86400;
-    assert.strictEqual(isTokenExpired(`test_uuid_${future}`), false);
-  });
-
-  it('ADM-31: returns true for token with past epoch', () => {
-    const past = Math.floor(Date.now() / 1000) - 86400;
-    assert.strictEqual(isTokenExpired(`test_uuid_${past}`), true);
-  });
-
-  it('ADM-32: returns true for token without epoch', () => {
-    assert.strictEqual(isTokenExpired('test_uuid'), true);
-  });
-
-  it('ADM-33: returns true for undefined', () => {
-    assert.strictEqual(isTokenExpired(undefined), true);
-  });
-});
-
-describe('verifyAdminToken with embedded expiry', () => {
-  it('ADM-34: rejects expired token even if it matches list', () => {
-    const past = Math.floor(Date.now() / 1000) - 86400;
-    const token = `test_uuid_${past}`;
-    assert.strictEqual(verifyAdminToken(token, [token]), false);
-  });
-
-  it('ADM-35: accepts valid non-expired token', () => {
-    const future = Math.floor(Date.now() / 1000) + 86400;
-    const token = `test_uuid_${future}`;
-    assert.strictEqual(verifyAdminToken(token, [token]), true);
-  });
-});
-
+// ADM-18: admin-status is injected by build.js inside the version paragraph,
+// not by pageFooter. Verified by snapshot tests.
