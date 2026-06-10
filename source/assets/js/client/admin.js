@@ -219,12 +219,16 @@
       mintMessage.hidden = true;
       mintResult.hidden = true;
 
+      // Read the stored token fresh on every mint, in case it was replaced
+      // since the section was revealed. The server is the real gate.
+      var stored = getAdminData() || {};
+
       var base = apiBase();
       fetch(base ? base + '/mint-token' : '/mint-token', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          token: mintData.token,
+          token: stored.token,
           name: document.getElementById('mint-name').value,
           role: mintRoleSel.value,
           days: parseInt(mintDays.value, 10),
