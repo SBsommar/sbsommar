@@ -21,8 +21,8 @@ async function main() {
   const secret = process.env.ADMIN_TOKEN_SECRET || '';
 
   console.log('');
-  console.log('Skapa admin-token');
-  console.log('─────────────────');
+  console.log('Skapa token (admin / tidig åtkomst / superadmin)');
+  console.log('────────────────────────────────────────────────');
   console.log('');
 
   if (!secret) {
@@ -42,7 +42,7 @@ async function main() {
     console.warn('');
   }
 
-  const rawName = await ask('Namn på admin: ');
+  const rawName = await ask('Namn på mottagaren: ');
   // Hyphen-separated identifier, no underscores (underscore is the token
   // field delimiter, so the name must never contain one).
   const name = rawName.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-zåäö0-9-]/g, '');
