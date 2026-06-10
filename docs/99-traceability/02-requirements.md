@@ -1075,7 +1075,7 @@ its requirement rows together with the test-legend rows that evidence them.
 | | | **§82 — Character Counter on Text Input Fields** |
 | `02-§82.1` | CC-01..CC-08 | Fields: title 80, responsible 60, description 2000, link 500 |
 | `02-§82.2` | CC-01..CC-08 | maxlength attribute on inputs in render-add.js and render-edit.js |
-| `02-§82.3` | CC-09, CC-10 | API validate.js responsible limit reduced to 60 |
+| `02-§82.3` | CC-09, CC-10 | Both validators enforce the table limits; `responsible` = 60 in `source/api/validate.js` (CC-09/CC-10) and `api/src/Validate.php` (mirror, manual) |
 | `02-§82.4` | manual | Counter hidden below 70% of max (browser-only) |
 | `02-§82.5` | manual | Counter visible at ≥70% of max (browser-only) |
 | `02-§82.6` | CC-12 | Counter turns terracotta at ≥90% of max; `.char-counter.warn` in CSS |
@@ -1521,11 +1521,11 @@ refactor of `render-lokaler.js` onto the shared module).
 
 | ID | Status | Notes |
 | --- | --- | --- |
-| `02-§102.1` | gap | YSEC-01..06 (planned): line breaks / control chars (U+0000–U+001F, U+007F) rejected in `title`, `location`, `responsible`, `link`, `ownerName`; `source/api/validate.js` + `api/src/Validate.php` |
-| `02-§102.2` | gap | YSEC-01..06 (planned): rejection returns an error naming the offending field; nothing written to git |
-| `02-§102.3` | gap | YSEC-07..08 (planned): `description` permits `\t`/`\n`/`\r`, rejects all other control chars; `source/api/validate.js` + `api/src/Validate.php` |
-| `02-§102.4` | gap | YSEC-09 (planned): carriage returns in `description` normalised to `\n` in `buildEventYaml()`; `source/api/github.js` + `api/src/GitHub.php` |
-| `02-§102.5` | gap | YSEC-10..12 (planned): add/batch flows parse the full proposed document and confirm the new event id(s) before any branch/PR; `source/api/github.js` + `api/src/GitHub.php` |
-| `02-§102.6` | gap | Architectural: edit/delete rebuild via the YAML serializer (02-§10.4) and need no re-parse; `source/api/edit-event.js` + `GitHub::patchEventInYaml`/`removeEventFromYaml` |
-| `02-§102.7` | gap | PHP mirror has no test harness; parity verified by review (manual). `api/src/Validate.php` + `api/src/GitHub.php` mirror the Node implementation; PHP batch flow also covered |
-| `02-§102.8` | gap | YSEC-17..19, YSEC-23 (planned): `detectEventIndent()` reads the existing list indentation (default 2); appended block matches it so the document stays valid; `source/api/github.js` + `api/src/GitHub.php` |
+| `02-§102.1` | covered | YSEC-01..09, YSEC-13..14: line breaks / control chars (U+0000–U+001F, U+007F) rejected in `title`, `location`, `responsible`, `link`, `ownerName` (add + edit); checked on the trimmed value. `source/api/validate.js` – `hasControlChar()` over `SINGLE_LINE_FIELDS`; `api/src/Validate.php` mirrors |
+| `02-§102.2` | covered | YSEC-01..08: the rejection error names the offending field; `app.js` returns HTTP 400 before any GitHub write |
+| `02-§102.3` | covered | YSEC-10..12: `description` permits `\t`/`\n`/`\r`, rejects all other control chars; `source/api/validate.js` – `DESCRIPTION_ALLOWED_CONTROLS`; `api/src/Validate.php` mirrors |
+| `02-§102.4` | covered | YSEC-15..16: carriage returns in `description` normalised to `\n` in `buildEventYaml()`; `source/api/github.js` + `api/src/GitHub.php` |
+| `02-§102.5` | covered | YSEC-20..23: add/batch flows call `assertEventYamlValid()` to parse the full proposed document and confirm the new event id(s) before any branch/PR; `source/api/github.js` (add) + `api/src/GitHub.php` (add + batch) |
+| `02-§102.6` | implemented | Architectural: edit/delete rebuild via the YAML serializer (02-§10.4) and need no re-parse; existing EDIT/DEL tests confirm valid serialiser output. `source/api/edit-event.js` + `GitHub::patchEventInYaml`/`removeEventFromYaml` |
+| `02-§102.7` | implemented | PHP mirror has no test harness; parity verified by review (manual). `api/src/Validate.php` + `api/src/GitHub.php` mirror the Node implementation; PHP batch flow also covered |
+| `02-§102.8` | covered | YSEC-17..19, YSEC-23: `detectEventIndent()` reads the existing list indentation (default 2); appended block matches it so the document stays valid; `source/api/github.js` + `api/src/GitHub.php` |
