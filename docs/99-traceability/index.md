@@ -138,11 +138,17 @@ Test IDs referenced in the `Test(s)` column are defined in the
 ## Summary
 
 ```text
-Total requirements:            1320
-Covered (implemented + tested): 692
-Implemented, not tested:        628
+Total requirements:            1331
+Covered (implemented + tested): 699
+Implemented, not tested:        632
 Gap (no implementation):          0
 Orphan tests (no requirement):    0
+
+Note: §105 (Early Access Role, tidig åtkomst) adds 11 requirements
+  (02-§105.1–105.11): 7 covered (EARLY-01..23, tests/early-access.test.js,
+  plus PHPUnit AdminTokenTest verifyPreCampBypassToken parity) and 4
+  implemented (browser/manual checkpoints for edit-link suppression,
+  role-aware bypass labels, ownership message, Swedish text).
 
 Note: §104 (Security Hardening 2026-06) adds 20 requirements
   (02-§104.1–104.20), all covered by SEC-369..387 (tests/security-hardening.test.js)
