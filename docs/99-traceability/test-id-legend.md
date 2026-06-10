@@ -184,3 +184,6 @@ Part of [the traceability index](./index.md).
 | MDT-23 | `tests/markdown-toolbar.test.js` | `02-§57.13 — Focus indicator` |
 | DOCS-NAV-01..04 | `tests/docs-nav.test.js` | `docs-nav.yml — single source for within-family navigation (02-§97.28, 02-§97.29)` |
 | DOCS-NAV-05 | `tests/docs-nav.test.js` | `docs front-matter — every page carries a title (02-§97.25)` |
+| PHARN-01..09 | `tests/php-harness.test.js` | PHP harness wiring: Composer, PHPUnit, CI, Node-only hook (02-§103) |
+| (PHPUnit) | `api/tests/ValidateTest.php` | PHP mirror of `validate.test.js`, run via `composer test` (02-§103.4) |
+| (PHPUnit) | `api/tests/GitHubTest.php` | PHP mirror of `github.test.js`, run via `composer test` (02-§103.4) |

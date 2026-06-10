@@ -22,7 +22,7 @@ Sections §1 and §1a (audiences, crawler policy) are kept here because they fra
 | [`schedule-and-detail.md`](./schedule-and-detail.md) | Schedule and Activity Detail | §4, §5, §15, §36, §45, §46, §56, §59 |
 | [`add-edit-forms.md`](./add-edit-forms.md) | Add and Edit Forms | §6, §7, §8, §9, §10, §19, §20, §26, §27, §48, §53, §54, §57, §58, §80, §81, §82, §85, §89, §90, §99, §101 |
 | [`event-data.md`](./event-data.md) | Event Data | §16, §18, §21, §28, §29, §34, §37, §42 |
-| [`build-deploy.md`](./build-deploy.md) | Build and Deploy | §23, §32, §33, §40, §41, §43, §44, §50, §51, §52, §60, §62, §97 |
+| [`build-deploy.md`](./build-deploy.md) | Build and Deploy | §23, §32, §33, §40, §41, §43, §44, §50, §51, §52, §60, §62, §97, §103 |
 | [`caching-performance.md`](./caching-performance.md) | Caching and Performance | §25, §38, §65, §66, §67, §68, §69, §77, §78, §86 |
 | [`platform-security.md`](./platform-security.md) | Platform and Security | §12, §13, §14, §39, §49, §63, §73, §83, §84, §87, §88, §91, §92, §93, §95, §96, §100, §102 |
 | [`design-and-content.md`](./design-and-content.md) | Design and Content | §30, §31, §47, §55, §64, §94, §98 |

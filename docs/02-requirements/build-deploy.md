@@ -868,3 +868,47 @@ existing deployment workflow.
 - The list of files in each family is maintained in a single place, so
   that adding or removing a family member updates every sibling's
   navigation block without editing each file by hand. <!-- 02-§97.29 -->
+
+---
+
+## 103. PHP API Automated Tests
+
+### 103.1 Context
+
+The PHP API in `api/src/` is a hand-maintained mirror of the Node API in
+`source/api/`. It historically had no automated tests — correctness relied on
+review, which let drift through (for example, the `responsible` maximum length
+was 200 in PHP while the form and Node enforced 60, found during the §102 work).
+Automated PHP tests that run in CI and locally close that gap.
+
+### 103.2 PHPUnit harness (site requirements)
+
+- `api/composer.json` declares `phpunit/phpunit` as a `require-dev` dependency.
+  No new production (non-dev) dependency is added. <!-- 02-§103.1 -->
+- A `phpunit.xml` at `api/` defines a test suite that runs the test classes
+  under `api/tests/`. <!-- 02-§103.2 -->
+- `api/composer.json` defines a `test` script so the suite runs with
+  `composer test` from the `api/` directory. <!-- 02-§103.3 -->
+- The suite covers `api/src/Validate.php` and `api/src/GitHub.php`, asserting the
+  same behaviour as the Node suites `tests/validate.test.js` and
+  `tests/github.test.js` — including the control-character rejection,
+  whole-document validation, indentation matching, and carriage-return
+  normalisation from §102, and the `responsible` 60-character limit from
+  §82.3. <!-- 02-§103.4 -->
+
+### 103.3 CI integration (site requirements)
+
+- The CI workflow runs the PHP test suite on every push and pull request, using
+  `shivammathur/setup-php`, `composer install`, and `composer test`. <!-- 02-§103.5 -->
+- The PHP test steps run only when the change includes code (the existing
+  `has_code` detection in `ci.yml`), so data-only changes skip them, consistent
+  with the data-only CI behaviour in section 9 of `CLAUDE.md`. <!-- 02-§103.6 -->
+- A failing PHP test fails CI. <!-- 02-§103.7 -->
+
+### 103.4 Local development (site requirements)
+
+- After `composer install` in `api/`, the PHP tests run locally with
+  `composer test`. <!-- 02-§103.8 -->
+- The git pre-commit hook remains Node-only (`npm run lint`, `npm run lint:md`,
+  `npm test`); it does not invoke PHP, so contributors without a PHP toolchain
+  are not blocked. <!-- 02-§103.9 -->

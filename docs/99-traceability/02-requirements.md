@@ -658,8 +658,8 @@ Part of [the traceability index](./index.md).
 | `02-§49.2` | Injection patterns rejected: `<script`, `javascript:`, `on*=`, `<iframe`, `<object`, `<embed`, `data:text/html` | 03-architecture/ci-and-deploy.md §11.6 | ASEC-01..07 | `source/api/validate.js` – `INJECTION_PATTERNS` array | covered |
 | `02-§49.3` | Error message identifies offending field and pattern category | 03-architecture/ci-and-deploy.md §11.6 | ASEC-01..07 | `source/api/validate.js` – error string includes field name and pattern label | covered |
 | `02-§49.4` | Non-empty link must start with `http://` or `https://` | 03-architecture/ci-and-deploy.md §11.6 | ASEC-08..10 | `source/api/validate.js` – protocol regex check on `link` field | covered |
-| `02-§49.5` | Injection and link checks identical in Node.js and PHP implementations | 03-architecture/ci-and-deploy.md §11.6 | ASEC-01..16 | `source/api/validate.js` + `api/src/Validate.php` | covered |
-| `02-§49.6` | Both implementations produce equivalent error messages | 03-architecture/ci-and-deploy.md §11.6 | ASEC-01..16 | `source/api/validate.js` + `api/src/Validate.php` | covered |
+| `02-§49.5` | Injection and link checks identical in Node.js and PHP implementations | 03-architecture/ci-and-deploy.md §11.6 | ASEC-01..16; PHP `ValidateTest::testRejectsScriptTagInTitle`, `testRejectsNonHttpLink` (§103) | `source/api/validate.js` + `api/src/Validate.php` | covered |
+| `02-§49.6` | Both implementations produce equivalent error messages | 03-architecture/ci-and-deploy.md §11.6 | ASEC-01..16; PHP `ValidateTest` (§103) asserts the same field-named errors | `source/api/validate.js` + `api/src/Validate.php` | covered |
 | `02-§50.1` | Docker image contains Node.js 20 and production dependencies — **superseded by 02-§52.1 (setup-node + npm cache)** | 03-architecture/ci-and-deploy.md §11.1 | manual: inspect `.github/docker/Dockerfile` | `.github/docker/Dockerfile` | implemented |
 | `02-§50.2` | Image based on `node:20` (full, not slim) — **superseded by 02-§52.1** | 03-architecture/ci-and-deploy.md §11.1 | manual: inspect Dockerfile FROM line | `.github/docker/Dockerfile` | implemented |
 | `02-§50.3` | Dockerfile lives in `.github/docker/Dockerfile` — **superseded by 02-§52.1** | 03-architecture/ci-and-deploy.md §11.1 | manual: file exists at path | `.github/docker/Dockerfile` | implemented |
@@ -1075,7 +1075,7 @@ its requirement rows together with the test-legend rows that evidence them.
 | | | **§82 — Character Counter on Text Input Fields** |
 | `02-§82.1` | CC-01..CC-08 | Fields: title 80, responsible 60, description 2000, link 500 |
 | `02-§82.2` | CC-01..CC-08 | maxlength attribute on inputs in render-add.js and render-edit.js |
-| `02-§82.3` | CC-09, CC-10 | Both validators enforce the table limits; `responsible` = 60 in `source/api/validate.js` (CC-09/CC-10) and `api/src/Validate.php` (mirror, manual) |
+| `02-§82.3` | CC-09, CC-10 | Both validators enforce the table limits; `responsible` = 60 in `source/api/validate.js` (CC-09/CC-10) and `api/src/Validate.php` (PHPUnit `ValidateTest::testRejects/AcceptsResponsible*`, §103) |
 | `02-§82.4` | manual | Counter hidden below 70% of max (browser-only) |
 | `02-§82.5` | manual | Counter visible at ≥70% of max (browser-only) |
 | `02-§82.6` | CC-12 | Counter turns terracotta at ≥90% of max; `.char-counter.warn` in CSS |
@@ -1527,5 +1527,19 @@ refactor of `render-lokaler.js` onto the shared module).
 | `02-§102.4` | covered | YSEC-15..16: carriage returns in `description` normalised to `\n` in `buildEventYaml()`; `source/api/github.js` + `api/src/GitHub.php` |
 | `02-§102.5` | covered | YSEC-20..23: add/batch flows call `assertEventYamlValid()` to parse the full proposed document and confirm the new event id(s) before any branch/PR; `source/api/github.js` (add) + `api/src/GitHub.php` (add + batch) |
 | `02-§102.6` | implemented | Architectural: edit/delete rebuild via the YAML serializer (02-§10.4) and need no re-parse; existing EDIT/DEL tests confirm valid serialiser output. `source/api/edit-event.js` + `GitHub::patchEventInYaml`/`removeEventFromYaml` |
-| `02-§102.7` | implemented | PHP mirror has no test harness; parity verified by review (manual). `api/src/Validate.php` + `api/src/GitHub.php` mirror the Node implementation; PHP batch flow also covered |
+| `02-§102.7` | covered | PHP parity is exercised by the PHPUnit suite (§103): `api/tests/ValidateTest.php` + `api/tests/GitHubTest.php` assert the same control-character, whole-document, indentation and CR behaviour as the Node tests; PHP batch flow also covered |
 | `02-§102.8` | covered | YSEC-17..19, YSEC-23: `detectEventIndent()` reads the existing list indentation (default 2); appended block matches it so the document stays valid; `source/api/github.js` + `api/src/GitHub.php` |
+
+### §103 — PHP API Automated Tests
+
+| ID | Status | Notes |
+| --- | --- | --- |
+| `02-§103.1` | covered | PHARN-01, PHARN-02: `phpunit/phpunit` is a `require-dev` entry in `api/composer.json`; not a production dependency |
+| `02-§103.2` | covered | PHARN-05: `api/phpunit.xml` defines a suite over `api/tests/` |
+| `02-§103.3` | covered | PHARN-03: `composer test` script in `api/composer.json` runs PHPUnit |
+| `02-§103.4` | covered | `api/tests/ValidateTest.php` + `GitHubTest.php` (37 PHPUnit tests) mirror `tests/validate.test.js`/`github.test.js` incl. §102 cases and `responsible` = 60 |
+| `02-§103.5` | covered | PHARN-06, PHARN-07: `ci.yml` runs `shivammathur/setup-php` + `composer install` + `composer test` |
+| `02-§103.6` | covered | PHARN-08: PHP steps guarded by the existing `has_code` detection; data-only changes skip them (CL-§9.4) |
+| `02-§103.7` | implemented | A failing PHPUnit test exits non-zero, failing the `Run PHP tests` step; manual (CI behaviour) |
+| `02-§103.8` | implemented | `composer test` runs the suite locally after `composer install` in `api/` (verified: 37 tests, 57 assertions pass) |
+| `02-§103.9` | covered | PHARN-09: pre-commit hook (`.githooks/pre-commit`) invokes no `php`/`composer` |
