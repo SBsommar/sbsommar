@@ -595,15 +595,15 @@ reuses the format, signing, and activation flow described here.
 - The roles `admin` and `superadmin` grant administrator privileges: they
   bypass per-event cookie ownership and pre-camp time-gating. `superadmin`
   additionally authorises minting new tokens. The role `early` is a
-  recognised role reserved for early-access contributors; its narrower
-  privileges are defined in their own requirement section. <!-- 02-§91.31 -->
+  recognised role for early-access contributors; its narrower privileges
+  are defined in §105. <!-- 02-§91.31 -->
 - `ADMIN_TOKEN_SECRET` is a high-entropy random value of at least 32 bytes.
   Both runtimes log a warning at startup when it is shorter. <!-- 02-§91.32 -->
 - The creation script `npm run admin:create` signs a token offline against
   `ADMIN_TOKEN_SECRET` for the chosen role — 60 days validity for `admin`,
-  180 days for `superadmin` — and prints the token to hand over. The
-  `superadmin` role is minted only by this script, never from the web
-  UI. <!-- 02-§91.30 -->
+  90 days for `early`, 180 days for `superadmin` — and prints the token to
+  hand over. The `superadmin` role is minted only by this script, never
+  from the web UI. <!-- 02-§91.30 -->
 - When `ADMIN_TOKEN_SECRET` is unset or empty, all admin functionality is
   disabled — no token validates and the site behaves as if no one is an
   administrator. <!-- 02-§91.3 -->
@@ -1283,3 +1283,70 @@ calls without weakening the rest.
   and `preload` are intentionally omitted until every `*.sbsommar.se` subdomain
   is confirmed HTTPS-only, because the directive is hard to reverse within the
   `max-age` window. <!-- 02-§104.19 -->
+
+---
+
+---
+
+## 105. Early Access Role (tidig åtkomst)
+
+### 105.1 Context
+
+Organisers want a skeleton schedule in place before the form opens for
+participants. The `admin` role can already do this, but it also grants the
+power to edit and delete every participant's activity — more than the need
+requires. The `early` role is a narrower credential: its holder works under
+the same rules as a regular participant, with one difference — the pre-camp
+time gate can be bypassed. The role reuses the token format, signing,
+activation page, and footer indicator defined in §91. Agreed in #380.
+
+### 105.2 Server authorisation (API requirements)
+
+- A request to add, edit, or delete an activity made before the active
+  camp's `opens_for_editing` date is admitted by the time gate when it
+  carries a valid token whose role is `admin`, `superadmin`, or
+  `early`. <!-- 02-§105.1 -->
+- Edit and delete authorisation for an `early` token holder is decided
+  solely by the session-cookie ownership model. The ownership bypass that
+  lets administrators act on any activity applies only to the roles
+  `admin` and `superadmin` — an `early` token holder edits and deletes
+  only activities owned by their browser's session cookie. <!-- 02-§105.2 -->
+- The post-camp lock applies to every role: when today is after
+  `end_date + 1 day` (§26), no token — `admin`, `superadmin`, or `early` —
+  admits add, edit, or delete requests. <!-- 02-§105.3 -->
+- `POST /verify-admin` answers `200 { "valid": true }` for a valid token of
+  any recognised role, including `early`, so an early-access token is
+  activated on `/token.html` exactly like an admin token. <!-- 02-§105.4 -->
+- Both runtimes (Node and PHP) expose two distinct role checks: the boolean
+  `verifyAdminToken` is true only for `admin` and `superadmin`, and a
+  separate pre-camp-bypass check is true for `admin`, `superadmin`, and
+  `early`. The time gate uses the pre-camp-bypass check; ownership uses
+  `verifyAdminToken`. <!-- 02-§105.5 -->
+
+### 105.3 Issuing (site requirements)
+
+- `npm run admin:create` mints `early` tokens with 90 days
+  validity. <!-- 02-§105.6 -->
+
+### 105.4 Client behaviour (user requirements)
+
+- Edit links on all schedule events are injected only when the stored
+  token's role is `admin` or `superadmin`. A stored `early` token injects
+  no all-event edit links; the holder's own activities receive edit links
+  through the session cookie, as for any participant. <!-- 02-§105.7 -->
+- Before `opens_for_editing`, the add form and the edit page show the
+  "open anyway" bypass button for a valid stored token of role `admin`,
+  `superadmin`, or `early`. The button label is "Öppna ändå (admin)" for
+  administrator roles and "Öppna ändå (tidig åtkomst)" for
+  `early`. <!-- 02-§105.8 -->
+- On the edit page, the client-side shortcut that skips the ownership
+  check applies only to the roles `admin` and `superadmin`. A visitor
+  whose stored token role is `early` passes the ownership check only for
+  activities in their session cookie. <!-- 02-§105.9 -->
+
+### 105.5 Constraints
+
+- All user-facing text is in Swedish. <!-- 02-§105.10 -->
+- The role is read from the token's second underscore-separated segment;
+  the client never needs to verify the signature — the server remains the
+  authority on every privileged action. <!-- 02-§105.11 -->
