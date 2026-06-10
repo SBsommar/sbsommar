@@ -145,6 +145,7 @@
             message.hidden = false;
             if (removeBtn) removeBtn.hidden = false;
             renderFooterIcon();
+            initMintSection();
           } else {
             message.textContent = data.error || 'Ogiltig token. Försök igen.';
             message.classList.add('admin-message--error');
@@ -180,10 +181,14 @@
 
   // ── Mint UI (only on /token.html, superadmin only — 02-§106.9–106.13) ──────
   // The role check decides visibility only; the server authorises every mint.
+  // Runs at load and again after a successful activation, so a superadmin who
+  // just activated sees the section without reloading.
 
-  var mintSection = document.getElementById('mint-section');
-  var mintData = getAdminData();
-  if (mintSection && mintData && !isExpired(mintData) && tokenRole(mintData.token) === 'superadmin') {
+  function initMintSection() {
+    var mintSection = document.getElementById('mint-section');
+    if (!mintSection || !mintSection.hidden) return;
+    var mintData = getAdminData();
+    if (!mintData || isExpired(mintData) || tokenRole(mintData.token) !== 'superadmin') return;
     mintSection.hidden = false;
 
     var mintForm = document.getElementById('mint-form');
@@ -261,6 +266,8 @@
         .catch(function () { /* user cancelled the share sheet */ });
     });
   }
+
+  initMintSection();
 
   // Run footer icon on page load
   renderFooterIcon();
