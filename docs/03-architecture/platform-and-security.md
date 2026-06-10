@@ -398,3 +398,92 @@ no broader refactor is needed.
 | `tests/regex-escape.test.js`          | New test — verifies helper covers every metacharacter                    |
 
 ---
+
+## 34. Security Hardening (2026-06)
+
+Implements the desired states in `02-requirements/platform-security.md §104`.
+Each subsection notes the design decision and the Node/PHP parity. The review
+that motivated the work is recorded in `SECURITY-ASSESSMENT-2026-06.md`.
+
+### 34.1 Feedback metadata sanitisation (02-§104.1–104.3)
+
+`buildFeedbackIssue()` is extracted as a pure function (Node) so the
+sanitisation is unit-testable without the network. `sanitizeMetaField(value,
+maxLen)` collapses `[\x00-\x1f\x7f]+` to a single space, escapes `|` to `\|`,
+trims, and truncates to `maxLen`. Per-field caps live in `META_MAX_LENGTHS`
+(url 500, viewport 20, userAgent 400, timestamp 40, name 200). `description`
+sits above the table and is left multi-line. PHP mirrors this in
+`Feedback::sanitizeMetaField()` and the same `META_MAX_LENGTHS` constant.
+
+### 34.2 Link protocol validation in the render layer (02-§104.4–104.5)
+
+`source/build/utils.js` exports `safeLinkHref(url)` — returns the URL only when
+it matches `^https?://`i, else `''`. `render.js` and `render-arkiv.js` route
+`e.link`/`ev.link` through it and skip the anchor when it returns empty. The
+client `events-today.js` has an equivalent inline `safeHttp()` and gates both
+`hasExtra` and the anchor on its result. This is independent of the API (§49.4)
+and CI (`check-yaml-security.js`) link checks — defence-in-depth for legacy or
+hand-edited YAML that never passed the API.
+
+### 34.3 Constant-time admin-token comparison (02-§104.6–104.7)
+
+A per-process random key (`crypto.randomBytes(32)` / PHP `random_bytes(32)`)
+is used only to hash both candidate and each configured token to a fixed-width
+HMAC-SHA256 digest. `crypto.timingSafeEqual` / `hash_equals` then compares the
+equal-length digests for every token with no early return, so neither the
+match nor the candidate length is observable through timing. Expiry is still
+checked first (the epoch is not secret).
+
+### 34.4 Session secret configuration (02-§104.8–104.9)
+
+`SESSION_SECRET`, `TRUSTED_PROXIES`, and the existing variables are documented
+in `.env.example`. `app.js` and `api/index.php` log a startup warning when the
+secret is set but shorter than 32 characters; an unset secret already disables
+cookie ownership (fails closed), so no fatal error is raised.
+
+### 34.5 Trusted-proxy rate-limit key and atomic counter (02-§104.10–104.12)
+
+`clientIp()` in `api/index.php` returns `REMOTE_ADDR` unless that peer is in
+the `TRUSTED_PROXIES` list, in which case the left-most `X-Forwarded-For`
+entry is used after `FILTER_VALIDATE_IP`. This prevents a direct client from
+rotating the header to mint fresh rate-limit buckets (the Node side already
+uses Express's trust-proxy-aware `req.ip`, §31.3). `RateLimit::isLimited()`
+opens the counter file with `fopen(…, 'c+')`, holds `LOCK_EX` across the
+read-modify-write, and `ftruncate`s before rewriting, so concurrent requests
+cannot lose updates. A filesystem error fails open rather than blocking
+legitimate traffic.
+
+### 34.6 Fail-closed time-gating (02-§104.13–104.14)
+
+`api/index.php` resolves camps from `__DIR__/data/camps.yaml` (bundled with the
+API deploy) first, then `dirname(__DIR__)/source/data/camps.yaml` (repo layout
+for local dev and tests). `ActiveCamp::resolve()` throws when no camp can be
+resolved, leaving `$activeCamp` null; each mutation handler then returns HTTP
+503 instead of skipping the gate. The deploy workflow copies `camps.yaml` into
+`api/data/` before packaging the API, and `api/.gitignore` excludes the
+generated `data/` directory.
+
+### 34.7 Event-data PR validation gate (02-§104.15–104.16)
+
+`event-data-deploy.yml` checks out with `fetch-depth: 0`, installs deps,
+diffs the changed `source/data/*.yaml` files against the PR base (excluding
+`camps.yaml`/`local.yaml`), and runs `lint-yaml.js` + `check-yaml-security.js`
+on each. The job-level `if` that previously restricted it to `event/` and
+`event-edit/` branches is removed, so `event-delete/` branches and manual data
+PRs are all validated. Build and deploy remain post-merge
+(`event-data-deploy-post-merge.yml`).
+
+### 34.8 Files changed
+
+| File | Change |
+| ---- | ------ |
+| `source/api/feedback.js`, `api/src/Feedback.php` | Metadata sanitiser + `buildFeedbackIssue` |
+| `source/build/utils.js`, `render.js`, `render-arkiv.js`, `events-today.js` | `safeLinkHref`/`safeHttp` link guard |
+| `source/api/admin.js`, `api/src/Admin.php` | Digest-based constant-time token compare |
+| `.env.example`, `app.js`, `api/index.php` | `SESSION_SECRET`/`TRUSTED_PROXIES` docs + weak-secret warning |
+| `api/index.php`, `api/src/RateLimit.php` | Trusted-proxy IP + `flock` counter |
+| `api/index.php`, `.github/workflows/deploy-reusable.yml`, `api/.gitignore` | Fail-closed time-gating + bundled `camps.yaml` |
+| `.github/workflows/event-data-deploy.yml` | Real schema + security validation |
+| `tests/security-hardening.test.js`, `api/tests/SecurityHardeningTest.php` | Node + PHP coverage |
+
+---

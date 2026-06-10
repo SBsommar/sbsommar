@@ -1103,3 +1103,115 @@ keep working.
   messages for the same invalid input. The PHP API additionally applies the
   whole-document validation and indentation matching to its batch (recurring)
   add flow, which has no Node.js counterpart. <!-- 02-§102.7 -->
+
+---
+
+## 104. Security Hardening (2026-06)
+
+### 104.1 Context
+
+A point-in-time security review of the API, render pipeline, web-server
+configuration, and deploy/secret handling (recorded in
+`SECURITY-ASSESSMENT-2026-06.md`) identified a set of hardening gaps. This
+section is the desired-state declaration for each. It complements the
+adjacent security sections (§39, §49, §73, §91, §93, §95, §100, §102) and the
+already-tracked workflow/proxy/time-gating items.
+
+### 104.2 Feedback metadata sanitisation
+
+The feedback endpoint embeds client-supplied metadata in a GitHub-issue
+Markdown table. These metadata fields are not part of the injection-pattern
+scan (§73.12) and must not be able to break the table or carry an unbounded
+payload.
+
+- The feedback API caps the length of the client-supplied metadata fields
+  before embedding them in the issue: page URL ≤ 500, viewport ≤ 20,
+  User-Agent ≤ 400, timestamp ≤ 40, and name ≤ 200 characters. <!-- 02-§104.1 -->
+- Each metadata value placed in the issue's Markdown table has its control
+  characters (including carriage return, line feed, and tab) collapsed to a
+  single space and its `|` characters escaped, so a submission cannot add
+  table rows or columns or smuggle structure into the issue. <!-- 02-§104.2 -->
+- The metadata sanitisation is implemented identically in
+  `source/api/feedback.js` and `api/src/Feedback.php`. <!-- 02-§104.3 -->
+
+### 104.3 Link protocol validation in the render layer
+
+The event `link` field is rendered as a clickable anchor. The render layer
+must not depend solely on API-time (§49.4) and CI validation, because
+hand-edited or legacy camp YAML never passes the API.
+
+- When an event's `link` field is rendered as an anchor, the `href` is emitted
+  only when the link begins with `http://` or `https://` (case-insensitive);
+  any other value renders no external link. <!-- 02-§104.4 -->
+- This render-time check is applied in the build renderers
+  (`source/build/render.js`, `source/build/render-arkiv.js`) and the client
+  today/display script (`source/assets/js/client/events-today.js`),
+  independent of the API and CI link validation. <!-- 02-§104.5 -->
+
+### 104.4 Constant-time admin-token comparison
+
+§91.8 requires constant-time admin-token comparison. The comparison must not
+leak the candidate's length.
+
+- Admin-token verification compares a candidate against each configured token
+  by hashing both sides to a fixed-width keyed digest and comparing the
+  digests in constant time, with no length pre-check and no early return, so
+  neither a match nor the candidate's length is observable through
+  timing. <!-- 02-§104.6 -->
+- This comparison is implemented identically in `source/api/admin.js` and
+  `api/src/Admin.php`. <!-- 02-§104.7 -->
+
+### 104.5 Session secret configuration
+
+Activity-ownership authorisation rests on an HMAC signature keyed by
+`SESSION_SECRET`. A weak secret allows ownership forgery.
+
+- The session-signing secret is supplied via the `SESSION_SECRET` environment
+  variable and is documented in `.env.example` with its purpose and a minimum
+  strength of 32 random bytes. <!-- 02-§104.8 -->
+- When `SESSION_SECRET` is set but shorter than 32 characters, both runtimes
+  (`app.js`, `api/index.php`) log a warning at startup. An unset secret
+  disables cookie-based ownership and fails closed. <!-- 02-§104.9 -->
+
+### 104.6 Trusted-proxy rate-limit key and atomic counter
+
+The PHP rate-limiter keys on the client IP. `X-Forwarded-For` is
+attacker-controlled and the counter file must update atomically.
+
+- The PHP rate-limiter uses `REMOTE_ADDR` as the client key, honouring the
+  left-most `X-Forwarded-For` entry only when `REMOTE_ADDR` is listed in the
+  `TRUSTED_PROXIES` environment variable and that entry is a syntactically
+  valid IP (see §93.6). <!-- 02-§104.10 -->
+- The PHP rate-limit counter file is read and written under an exclusive lock
+  (`flock`) for the whole read-modify-write, so concurrent requests cannot
+  lose updates and a client cannot exceed a limit by racing. <!-- 02-§104.11 -->
+- `TRUSTED_PROXIES` is documented in `.env.example`; when it is unset,
+  `X-Forwarded-For` is never trusted. <!-- 02-§104.12 -->
+
+### 104.7 Fail-closed time-gating when camp metadata is unavailable
+
+The PHP time-gating depends on local camp metadata. When that metadata is
+unavailable it must not silently skip the gate.
+
+- When the PHP API cannot load, parse, or resolve the active camp metadata,
+  the mutation endpoints (`/add-event`, `/add-events`, `/edit-event`,
+  `/delete-event`) reject the request with HTTP 503 rather than skipping
+  time-gating. <!-- 02-§104.13 -->
+- The PHP API resolves the camps metadata from `api/data/camps.yaml` (bundled
+  with the API deploy) first, falling back to the repository
+  `source/data/camps.yaml`; the deploy workflow copies `camps.yaml` into the
+  API package so the file is always present on the server. <!-- 02-§104.14 -->
+
+### 104.8 Event-data pull-request validation gate
+
+The event-data PR check is the branch-protection backstop for malformed or
+unsafe YAML and must run real validation.
+
+- The event-data pull-request workflow (`event-data-deploy.yml`) runs the
+  schema validator (`lint-yaml.js`) and the security scanner
+  (`check-yaml-security.js`) against every changed per-camp event file,
+  excluding `camps.yaml` and `local.yaml`. <!-- 02-§104.15 -->
+- The workflow validates every pull request that touches `source/data/*.yaml`
+  — including `event-delete/` branches and manually opened PRs — and checks
+  out with enough git history for the diff against the base to resolve
+  (CL-§9.5). <!-- 02-§104.16 -->
