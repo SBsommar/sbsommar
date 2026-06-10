@@ -72,3 +72,21 @@ jobs:
       - name: Validate HTML
         if: steps.changes.outputs.has_code == 'true'
         run: npm run lint:html
+
+      - name: Set up PHP
+        if: steps.changes.outputs.has_code == 'true'
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, dom, xml
+          tools: composer
+
+      - name: Install PHP dependencies
+        if: steps.changes.outputs.has_code == 'true'
+        working-directory: api
+        run: composer install --no-interaction --no-progress
+
+      - name: Run PHP tests
+        if: steps.changes.outputs.has_code == 'true'
+        working-directory: api
+        run: composer test

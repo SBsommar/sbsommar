@@ -373,10 +373,10 @@ PHPUnit suite that asserts the same behaviour as the Node tests.
   `detectEventIndent`, CR normalisation) and the `responsible` 60-char limit
   (§82.3). `GitHub.php`'s network methods (`getFile`, `putFile`, the PR flow)
   are not exercised; only the pure helpers are.
-- **CI:** `ci.yml` adds `shivammathur/setup-php` (PHP 8.2, with a Composer
-  cache), `composer install` and `composer test` steps, all guarded by the same
-  `has_code` condition as the Node steps so data-only changes skip them
-  (02-§103.5, 02-§103.6). A failing PHP test fails the job (02-§103.7).
+- **CI:** `ci.yml` adds `shivammathur/setup-php` (PHP 8.2), `composer install`,
+  and `composer test` steps, all guarded by the same `has_code` condition as the
+  Node steps so data-only changes skip them (02-§103.5, 02-§103.6). A failing PHP
+  test fails the job (02-§103.7).
 - **Local:** after `composer install` in `api/`, `composer test` runs the suite.
   The git pre-commit hook stays Node-only, so a missing PHP toolchain never
   blocks a commit (02-§103.9).
