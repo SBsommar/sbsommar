@@ -103,7 +103,7 @@ the secrets.
 | `SERVER_SSH_KEY`        | QA SSH private key                                                                                                                                      |
 | `SERVER_SSH_PORT`       | QA SSH port                                                                                                                                             |
 | `DEPLOY_DIR`            | QA deploy directory                                                                                                                                     |
-| `ADMIN_TOKENS`          | Comma-separated list of admin tokens (format: `namn_uuid_epoch`). Optional — omit to disable admin features. Create tokens with `npm run admin:create`. |
+| `ADMIN_TOKEN_SECRET`    | HMAC signing secret (≥32 bytes) that validates admin tokens (format: `namn_roll_epoch_sig`). Optional — omit to disable admin features. Generate with `openssl rand -base64 48`; mint tokens with `npm run admin:create`. Must differ between QA and Production. |
 | `SESSION_SECRET`        | Secret signing key for participant event-ownership cookies. Must differ between QA and Production.                                                       |
 
 Example values: `SITE_URL=https://qa.sbsommar.se`,
@@ -113,12 +113,12 @@ The PHP API is deployed alongside the static site via SCP. Its `.env` file
 on the server is managed manually and lives at `$DEPLOY_DIR/.env` — outside
 the web root, never under `public_html/api` (§100). It contains the
 `GITHUB_*`, `ALLOWED_ORIGIN`, `QA_ORIGIN`, `COOKIE_DOMAIN`, `BUILD_ENV`,
-`ADMIN_TOKENS`, and `SESSION_SECRET` variables needed by the PHP API at
+`ADMIN_TOKEN_SECRET`, and `SESSION_SECRET` variables needed by the PHP API at
 runtime.
 
 ### GitHub Environment: `production`
 
-Same secret names as `qa` (including `ADMIN_TOKENS`), but with production values:
+Same secret names as `qa` (including `ADMIN_TOKEN_SECRET`), but with production values:
 
 | Secret            | Purpose                                               |
 | ----------------- | ----------------------------------------------------- |

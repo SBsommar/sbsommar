@@ -123,23 +123,21 @@ describe('#385 — link protocol validation', () => {
 
 // ── #386 Constant-time admin-token comparison ────────────────────────────────
 
-const { verifyAdminToken } = require('../source/api/admin');
+const { verifyAdminToken, signToken } = require('../source/api/admin');
 
-describe('#386 — admin token comparison has no length pre-check', () => {
+describe('#386 — admin token comparison is constant-time', () => {
+  const SECRET = 'hardening-test-secret-value-xyz!';
   const future = Math.floor(Date.now() / 1000) + 86400;
 
-  it('SEC-386-01: accepts a matching token regardless of other tokens length', () => {
-    const tok = `admin_${'a'.repeat(20)}_${future}`;
-    assert.strictEqual(verifyAdminToken(tok, ['short', tok, 'another_longer_token_value']), true);
+  it('SEC-386-01: accepts a validly signed admin token', () => {
+    assert.strictEqual(verifyAdminToken(signToken('admin', 'admin', future, SECRET), SECRET), true);
   });
 
-  it('SEC-386-02: rejects a non-matching token of equal length', () => {
-    const a = `aaaaa_${future}`;
-    const b = `bbbbb_${future}`;
-    assert.strictEqual(verifyAdminToken(a, [b]), false);
+  it('SEC-386-02: rejects a token signed with a different secret', () => {
+    assert.strictEqual(verifyAdminToken(signToken('admin', 'admin', future, 'other-secret'), SECRET), false);
   });
 
-  it('SEC-386-03: source has no length equality short-circuit', () => {
+  it('SEC-386-03: source compares fixed-width digests, no length short-circuit', () => {
     const src = read('source/api/admin.js');
     assert.doesNotMatch(src, /candidate\.length === valid\.length/);
     assert.match(src, /timingSafeEqual/);

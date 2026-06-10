@@ -156,7 +156,7 @@ flowchart TD
 | `GITHUB_REPO`    | —       | GitHub repository name                                   |
 | `GITHUB_BRANCH`  | —       | Branch to commit events to (typically `main`)            |
 | `GITHUB_TOKEN`   | —       | Personal access token with repo write access             |
-| `ADMIN_TOKENS`   | —       | Comma-separated admin tokens (UUIDs). Omit to disable.   |
+| `ADMIN_TOKEN_SECRET` | —   | HMAC signing secret (≥32 bytes) that validates admin tokens. Omit to disable. |
 | `SESSION_SECRET` | —       | Secret signing key for participant ownership cookies.    |
 
 `API_URL`, `ALLOWED_ORIGIN`, `COOKIE_DOMAIN`, `GITHUB_*`, `SESSION_SECRET`, and SSH credentials are stored as GitHub Actions secrets and server environment variables. They are not needed for local development. Without `API_URL` set, the built form will have no submit endpoint — this is expected in local builds. Without `GITHUB_*` set, event submission via the API will fail; all other functionality works normally.
@@ -207,25 +207,41 @@ to fix or remove entries.
 
 Admin tokens grant one or two people the ability to edit or delete any
 event through the site UI — not just their own. The feature is optional;
-omit `ADMIN_TOKENS` to disable it entirely.
+omit `ADMIN_TOKEN_SECRET` to disable it entirely.
+
+Tokens are signed, not listed: the runtimes validate a token by recomputing
+its HMAC signature against `ADMIN_TOKEN_SECRET`, so issuing or retiring a
+person never requires an environment edit or a redeploy.
+
+### One-time setup of the signing secret
+
+Generate a high-entropy secret once and store it like any other server
+secret — in `.env` (local), `$DEPLOY_DIR/.env` on the server (outside the
+web root), and the GitHub Environment secrets for QA/Production:
+
+```bash
+openssl rand -base64 48
+```
+
+Rotating this secret invalidates every existing token at once.
 
 ### Issuing a token
 
-1. Run `npm run admin:create` and follow the prompts. The script
-   generates a token in the format `namn_uuid_epoch` (where `epoch` is
-   a Unix timestamp 60 days in the future) and prints instructions.
-   The token is shown only once — save it immediately.
-2. Add the token to `ADMIN_TOKENS` in all three locations (see script
-   output): `.env` (local), `$DEPLOY_DIR/.env` on the server (outside the
-   web root), and GitHub Environment secrets for QA/Production.
-3. Share the token privately with the admin (e.g. via SMS or in person).
-4. The admin visits `/admin.html`, enters the token, and gains admin
-   status for 30 days.
+1. Run `npm run admin:create` and follow the prompts (name + role). The
+   script signs a token in the format `namn_roll_epoch_sig` against
+   `ADMIN_TOKEN_SECRET` — 60 days validity for `admin`, 180 days for
+   `superadmin`. The token is shown only once — save it immediately.
+2. Share the token privately with the admin (e.g. via SMS or in person).
+   No environment edit and no redeploy are needed.
+3. The admin visits `/token.html`, enters the token, and gains admin
+   status until the token's embedded expiry.
 
-### Revoking a token
+### Revoking access
 
-Remove the token from `ADMIN_TOKENS` and redeploy. No code change is
-needed.
+Because tokens are stateless, an individual token cannot be revoked on its
+own. To revoke everyone, rotate `ADMIN_TOKEN_SECRET` and redeploy, then
+re-issue tokens to the people who should keep access. Short expiries bound
+the exposure of a leaked token in the meantime.
 
 ---
 

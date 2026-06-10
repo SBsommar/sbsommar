@@ -13,7 +13,7 @@
     "lint:yaml": "node source/scripts/lint-yaml.js",
     "validate:camps": "node source/scripts/validate-camps.js",
     "check:security": "node source/scripts/check-yaml-security.js",
-    "admin:create": "node source/scripts/create-admin-token.js",
+    "admin:create": "node --env-file-if-exists=.env source/scripts/create-admin-token.js",
     "lint:md": "markdownlint \"content/**/*.md\" \"docs/**/*.md\" README.md CLAUDE.md",
     "lint:css": "stylelint \"source/assets/cs/**/*.css\"",
     "lint:html": "html-validate \"public/**/*.html\"",

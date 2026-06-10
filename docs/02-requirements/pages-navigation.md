@@ -26,7 +26,7 @@ The following pages must exist:
 | `02-§2.11` | Edit activity | `/redigera.html` | Participants who submitted the event |
 | `02-§2.12` | iCal feed | `/schema.ics` | Anyone subscribing to the schedule |
 | `02-§2.13` | Calendar tips | `/kalender.html` | Participants wanting to sync the schedule |
-| `02-§2.14` | Admin activation | `/admin.html` | Administrators |
+| `02-§2.14` | Admin activation | `/token.html` | Administrators |
 
 The homepage, schedule pages, add-activity form, and archive share the same header and navigation. <!-- 02-§2.8 -->
 None require login. <!-- 02-§2.9 -->

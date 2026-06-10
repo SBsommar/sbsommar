@@ -2,67 +2,107 @@
 
 const crypto = require('crypto');
 
-// ── parseAdminTokens ────────────────────────────────────────────────────────
+// Tokens are self-validating: each carries its claims and an HMAC signature
+// keyed by ADMIN_TOKEN_SECRET, so the server validates a token by recomputing
+// its signature — there is no stored list of issued tokens (02-§91.1, §91.2).
+//
+// Format: namn_roll_epoch_sig
+//   namn  — lowercase identifier, never contains an underscore
+//   roll  — one of admin | early | superadmin
+//   epoch — Unix expiry (seconds)
+//   sig   — base64url HMAC-SHA256 of "namn_roll_epoch" keyed by the secret
 
-// Parse the ADMIN_TOKENS environment variable (comma-separated string)
-// into an array of non-empty trimmed strings.
-function parseAdminTokens(raw) {
-  if (!raw || typeof raw !== 'string') return [];
-  return raw.split(',').map((s) => s.trim()).filter(Boolean);
-}
+const VALID_ROLES = new Set(['admin', 'early', 'superadmin']);
+const ADMIN_ROLES = new Set(['admin', 'superadmin']);
 
-// ── Token expiry ────────────────────────────────────────────────────────────
-
-// Extract the Unix epoch (seconds) from the last segment of a token.
-// Token format: namn_uuid_epoch — e.g. "erik_e0d6229c-...-xxxx_1752710400"
-// Returns the epoch as a number, or 0 if the token has no valid epoch suffix.
-function extractTokenExpiry(token) {
-  if (!token || typeof token !== 'string') return 0;
-  const lastUnderscore = token.lastIndexOf('_');
-  if (lastUnderscore === -1) return 0;
-  const epoch = Number(token.slice(lastUnderscore + 1));
-  return Number.isFinite(epoch) && epoch > 0 ? epoch : 0;
-}
-
-// Check if a token's embedded expiry has passed.
-// Returns true (= expired) when: no epoch found, or epoch is in the past.
-function isTokenExpired(token) {
-  const expiry = extractTokenExpiry(token);
-  if (expiry === 0) return true;
-  return Math.floor(Date.now() / 1000) > expiry;
-}
-
-// ── verifyAdminToken ────────────────────────────────────────────────────────
+// ── Constant-time comparison helper (retained from #386) ─────────────────────
 
 // Per-process random key used only to equalise lengths before comparison.
-// Hashing both sides to a fixed-width digest lets us run timingSafeEqual on
-// every candidate/valid pair without a length pre-check, so the comparison
-// leaks neither the match nor the token length via timing (02-§91.8, #386).
+// Hashing both sides to a fixed-width digest lets us run timingSafeEqual on any
+// pair without a length pre-check, so the comparison leaks neither validity nor
+// value length via timing (02-§91.8).
 const COMPARE_KEY = crypto.randomBytes(32);
 
 function tokenDigest(value) {
   return crypto.createHmac('sha256', COMPARE_KEY).update(String(value)).digest();
 }
 
-// Check if a candidate token matches any entry in the valid tokens list.
-// Uses constant-time comparison to prevent timing attacks (02-§91.8).
-// Rejects tokens whose embedded expiry epoch has passed.
-function verifyAdminToken(candidate, validTokens) {
-  if (!candidate || typeof candidate !== 'string' || !Array.isArray(validTokens)) return false;
+// ── Signing ──────────────────────────────────────────────────────────────────
 
-  // Check embedded expiry before comparing
-  if (isTokenExpired(candidate)) return false;
-
-  const candidateDigest = tokenDigest(candidate);
-  let match = false;
-  // Compare against every token (no early return) so neither which token
-  // matched nor the candidate's length is observable through timing.
-  for (const valid of validTokens) {
-    if (crypto.timingSafeEqual(tokenDigest(valid), candidateDigest)) {
-      match = true;
-    }
-  }
-  return match;
+// Compute the base64url HMAC-SHA256 signature of the claim string.
+function signClaims(message, secret) {
+  return crypto.createHmac('sha256', secret).update(message).digest('base64url');
 }
 
-module.exports = { parseAdminTokens, verifyAdminToken, isTokenExpired, extractTokenExpiry };
+// Produce a signed token for the given claims (02-§91.2).
+function signToken(name, role, epoch, secret) {
+  const message = `${name}_${role}_${epoch}`;
+  return `${message}_${signClaims(message, secret)}`;
+}
+
+// ── Parsing ──────────────────────────────────────────────────────────────────
+
+// Split on the first three underscores: namn/roll/epoch are underscore-free,
+// while the base64url signature may itself contain '_' or '-'.
+function parseToken(token) {
+  if (!token || typeof token !== 'string') return null;
+  const parts = token.split('_');
+  if (parts.length < 4) return null;
+  const [name, role, epochStr] = parts;
+  const sig = parts.slice(3).join('_');
+  if (!name || !role || !sig) return null;
+  if (!/^\d+$/.test(epochStr)) return null;
+  const epoch = Number(epochStr);
+  if (!Number.isInteger(epoch) || epoch <= 0) return null;
+  return { name, role, epoch, sig, message: `${name}_${role}_${epoch}` };
+}
+
+// ── Embedded expiry ──────────────────────────────────────────────────────────
+
+// Extract the embedded expiry epoch (seconds) from a token, or 0 if malformed.
+function extractTokenExpiry(token) {
+  const parsed = parseToken(token);
+  return parsed ? parsed.epoch : 0;
+}
+
+// Check if a token's embedded expiry has passed. A malformed token (expiry 0)
+// is treated as expired (fail-closed).
+function isTokenExpired(token) {
+  const expiry = extractTokenExpiry(token);
+  if (expiry === 0) return true;
+  return Math.floor(Date.now() / 1000) > expiry;
+}
+
+// ── Verification ─────────────────────────────────────────────────────────────
+
+// Validate a token against the signing secret. Returns { name, role, epoch }
+// when the recomputed signature matches (constant-time), the role is recognised,
+// and the epoch is in the future; otherwise null (02-§91.2, §91.29).
+function verifyToken(candidate, secret) {
+  if (!secret || typeof secret !== 'string') return null;
+  const parsed = parseToken(candidate);
+  if (!parsed) return null;
+  if (!VALID_ROLES.has(parsed.role)) return null;
+  if (Math.floor(Date.now() / 1000) > parsed.epoch) return null;
+
+  const expected = signClaims(parsed.message, secret);
+  if (!crypto.timingSafeEqual(tokenDigest(expected), tokenDigest(parsed.sig))) return null;
+
+  return { name: parsed.name, role: parsed.role, epoch: parsed.epoch };
+}
+
+// True only for administrator-equivalent roles (admin, superadmin). Preserves
+// the boolean contract used by the add/edit/delete handlers (02-§91.31).
+function verifyAdminToken(candidate, secret) {
+  const token = verifyToken(candidate, secret);
+  return !!token && ADMIN_ROLES.has(token.role);
+}
+
+module.exports = {
+  signToken,
+  verifyToken,
+  verifyAdminToken,
+  isTokenExpired,
+  extractTokenExpiry,
+  VALID_ROLES,
+};

@@ -567,41 +567,63 @@ administrators need the ability to edit or delete any event — for example
 to correct mistakes, remove duplicates, or update events on behalf of
 participants who lost their cookie.
 
-This requirement covers the token infrastructure: storage, activation,
-verification, and a visual status indicator. The edit/delete authorisation
-behaviour that uses this token is defined in §7, §18, and §89.
+This requirement covers the token infrastructure: the signing secret,
+activation, verification, and a visual status indicator. The edit/delete
+authorisation behaviour that uses this token is defined in §7, §18, and §89.
+
+Tokens are self-validating: each token carries a role and an expiry and is
+signed with a single server secret, so the server validates a token by
+recomputing its signature — there is no stored list of issued tokens. The same
+infrastructure carries more than one role, so a narrower "early access" role
+reuses the format, signing, and activation flow described here.
 
 ### 91.2 Admin tokens (site requirements)
 
-- The server must accept a comma-separated list of valid admin tokens
-  via the environment variable `ADMIN_TOKENS`. <!-- 02-§91.1 -->
-- Each token follows the format `namn_uuid_epoch`, where `namn` is a
-  lowercase identifier for the admin, `uuid` is a v4 UUID, and `epoch`
-  is a Unix timestamp (seconds) representing the token's expiry
-  date. <!-- 02-§91.2 -->
-- A token whose embedded epoch is in the past is rejected server-side
-  regardless of whether it appears in `ADMIN_TOKENS`. <!-- 02-§91.29 -->
-- The creation script `npm run admin:create` generates a token with
-  60 days validity and prints instructions for where to store
-  it. <!-- 02-§91.30 -->
-- When `ADMIN_TOKENS` is unset or empty, all admin functionality is
-  disabled — the site behaves exactly as before. <!-- 02-§91.3 -->
+- The server validates tokens against a single signing secret in the
+  environment variable `ADMIN_TOKEN_SECRET`. There is no list of issued
+  tokens. <!-- 02-§91.1 -->
+- Each token follows the format `namn_roll_epoch_sig`, where `namn` is a
+  lowercase identifier (`a–ö`, digits, hyphen — never an underscore),
+  `roll` is one of `admin`, `early`, or `superadmin`, `epoch` is a Unix
+  timestamp (seconds) representing the token's expiry, and `sig` is the
+  base64url-encoded HMAC-SHA256 of the string `namn_roll_epoch` keyed by
+  `ADMIN_TOKEN_SECRET`. <!-- 02-§91.2 -->
+- A token is valid only when its recomputed signature matches `sig`
+  (constant-time), its `roll` is a recognised role, and its `epoch` is in
+  the future. A token with any tampered field, an unknown role, or a past
+  epoch is rejected. <!-- 02-§91.29 -->
+- The roles `admin` and `superadmin` grant administrator privileges: they
+  bypass per-event cookie ownership and pre-camp time-gating. `superadmin`
+  additionally authorises minting new tokens. The role `early` is a
+  recognised role reserved for early-access contributors; its narrower
+  privileges are defined in their own requirement section. <!-- 02-§91.31 -->
+- `ADMIN_TOKEN_SECRET` is a high-entropy random value of at least 32 bytes.
+  Both runtimes log a warning at startup when it is shorter. <!-- 02-§91.32 -->
+- The creation script `npm run admin:create` signs a token offline against
+  `ADMIN_TOKEN_SECRET` for the chosen role — 60 days validity for `admin`,
+  180 days for `superadmin` — and prints the token to hand over. The
+  `superadmin` role is minted only by this script, never from the web
+  UI. <!-- 02-§91.30 -->
+- When `ADMIN_TOKEN_SECRET` is unset or empty, all admin functionality is
+  disabled — no token validates and the site behaves as if no one is an
+  administrator. <!-- 02-§91.3 -->
 
 ### 91.3 Token verification endpoint (API requirements)
 
 - The API must expose `POST /verify-admin`. <!-- 02-§91.4 -->
 - The request body must contain `{ "token": "<string>" }`. <!-- 02-§91.5 -->
-- If the token matches any entry in `ADMIN_TOKENS`, the response is
-  `200 { "valid": true }`. <!-- 02-§91.6 -->
-- If the token does not match, the response is
+- If the token has a valid signature, a recognised role, and an unexpired
+  epoch, the response is `200 { "valid": true }`. <!-- 02-§91.6 -->
+- If the token fails validation, the response is
   `403 { "valid": false }`. <!-- 02-§91.7 -->
-- The endpoint enforces the rate limits defined in §93 and performs
-  token comparison using constant-time string comparison to prevent
-  timing attacks. <!-- 02-§91.8 -->
+- The endpoint enforces the rate limits defined in §93 and compares the
+  recomputed and supplied signatures using constant-time comparison over
+  fixed-width digests, so neither validity nor token length leaks via
+  timing. <!-- 02-§91.8 -->
 
 ### 91.4 Admin activation page (user requirements)
 
-- A page at `/admin.html` must allow an administrator to enter their
+- A page at `/token.html` must allow an administrator to enter their
   token. <!-- 02-§91.9 -->
 - The page must contain a single text input and a submit button. <!-- 02-§91.10 -->
 - On submit, the page must call `POST /verify-admin` with the entered
@@ -636,11 +658,11 @@ behaviour that uses this token is defined in §7, §18, and §89.
   indicating active admin status. <!-- 02-§91.21 -->
 - **Expired token (> 30 days)**: an open/unlocked icon is displayed,
   indicating the token needs renewal. Clicking the icon navigates to
-  `/admin.html`. <!-- 02-§91.22 -->
+  `/token.html`. <!-- 02-§91.22 -->
 - The icon must be small and unobtrusive — it is not intended for
   regular visitors. <!-- 02-§91.23 -->
 - The icon must have a `title` attribute explaining its meaning in
-  Swedish (e.g. "Admin aktiv" / "Admin utgången"). <!-- 02-§91.24 -->
+  Swedish (e.g. "Token aktiv" / "Token utgången"). <!-- 02-§91.24 -->
 
 ### 91.7 Constraints
 
@@ -1005,7 +1027,7 @@ dotfiles (so a stray copy inside the web root is still refused).
   location inside the web root. <!-- 02-§100.2 -->
 - The PHP API reads its configuration (`GITHUB_OWNER`, `GITHUB_REPO`,
   `GITHUB_BRANCH`, `GITHUB_TOKEN`, `ALLOWED_ORIGIN`, `QA_ORIGIN`,
-  `COOKIE_DOMAIN`, `BUILD_ENV`, `ADMIN_TOKENS`) from
+  `COOKIE_DOMAIN`, `BUILD_ENV`, `ADMIN_TOKEN_SECRET`) from
   `$DEPLOY_DIR/.env`. <!-- 02-§100.3 -->
 
 ### 100.3 Web server denial (site requirements)

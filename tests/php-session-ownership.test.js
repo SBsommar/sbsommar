@@ -32,7 +32,7 @@ describe('PHP signed session ownership parity (02-§44.15, §44.17, §101)', () 
     const src = read('api/index.php');
     assert.match(src, /\$_ENV\['SESSION_SECRET'\]/);
     assert.match(src, /Session::createOwnershipEntry/);
-    assert.match(src, /handleAddEvent\(\$activeCamp,\s*\$adminTokens,\s*\$sessionSecret\)/);
+    assert.match(src, /handleAddEvent\(\$activeCamp,\s*\$adminTokenSecret,\s*\$sessionSecret\)/);
     assert.match(src, /function\s+handleAddEvent\([^)]*string\s+\$sessionSecret/);
   });
 });

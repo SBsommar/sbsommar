@@ -282,10 +282,10 @@ async function main() {
   fs.writeFileSync(path.join(OUTPUT_DIR, 'kalender.html'), kalenderHtml, 'utf8');
   console.log('Built: public/kalender.html');
 
-  // ── Render admin activation page ─────────────────────────────────────────
+  // ── Render token activation page ─────────────────────────────────────────
   const adminHtml = renderAdminPage(camp, footerWithVersion, navSections, GOATCOUNTER_CODE);
-  fs.writeFileSync(path.join(OUTPUT_DIR, 'admin.html'), adminHtml, 'utf8');
-  console.log('Built: public/admin.html');
+  fs.writeFileSync(path.join(OUTPUT_DIR, 'token.html'), adminHtml, 'utf8');
+  console.log('Built: public/token.html');
 
   // ── Render offline fallback page ────────────────────────────────────────
   const offlineHtml = renderOfflinePage(footerWithVersion, navSections, GOATCOUNTER_CODE);

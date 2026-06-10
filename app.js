@@ -17,7 +17,7 @@ const {
 } = require('./source/api/session');
 const { isBeforeEditingPeriod, isAfterEditingPeriod }            = require('./source/api/time-gate');
 const { validateFeedbackRequest, createFeedbackIssue }           = require('./source/api/feedback');
-const { parseAdminTokens, verifyAdminToken }                     = require('./source/api/admin');
+const { verifyAdminToken }                                       = require('./source/api/admin');
 const { resolveActiveCamp }                                      = require('./source/scripts/resolve-active-camp');
 
 const app = express();
@@ -31,7 +31,7 @@ const campsPath = path.join(__dirname, 'source', 'data', 'camps.yaml');
 const campsData = yaml.load(fs.readFileSync(campsPath, 'utf8'));
 const BUILD_ENV = process.env.BUILD_ENV || undefined;
 const activeCamp = resolveActiveCamp(campsData.camps || [], undefined, BUILD_ENV);
-const adminTokens = parseAdminTokens(process.env.ADMIN_TOKENS);
+const adminTokenSecret = process.env.ADMIN_TOKEN_SECRET || '';
 const sessionSecret = process.env.SESSION_SECRET || '';
 
 // Warn (don't crash) when SESSION_SECRET is set but too weak to resist
@@ -39,6 +39,13 @@ const sessionSecret = process.env.SESSION_SECRET || '';
 // entirely and fails closed, which is safe.
 if (sessionSecret && sessionSecret.length < 32) {
   console.warn('WARNING: SESSION_SECRET is shorter than 32 characters — use a long random value to protect activity-ownership signatures.');
+}
+
+// Warn (don't crash) when ADMIN_TOKEN_SECRET is set but too weak to resist
+// token forgery (02-§91.32). An unset secret disables admin functionality
+// entirely (no token validates), which fails closed and is safe.
+if (adminTokenSecret && adminTokenSecret.length < 32) {
+  console.warn('WARNING: ADMIN_TOKEN_SECRET is shorter than 32 characters — use a long random value to protect admin token signatures.');
 }
 
 // ── Middleware ───────────────────────────────────────────────────────────────
@@ -97,7 +104,7 @@ app.get('/api/health', (req, res) => {
 
 app.post('/verify-admin', verifyAdminLimiter, (req, res) => {
   const { token } = req.body || {};
-  if (verifyAdminToken(token, adminTokens)) {
+  if (verifyAdminToken(token, adminTokenSecret)) {
     return res.json({ valid: true });
   }
   return res.status(403).json({ valid: false });
@@ -111,7 +118,7 @@ app.post('/add-event', addEventLimiter, (req, res) => {
       return res.status(403).json({ success: false, error: 'Det går inte att lägga till aktiviteter just nu. Formuläret är inte öppet.' });
     }
     if (isBeforeEditingPeriod(today, activeCamp.opens_for_editing)
-        && !verifyAdminToken(req.body.adminToken, adminTokens)) {
+        && !verifyAdminToken(req.body.adminToken, adminTokenSecret)) {
       return res.status(403).json({ success: false, error: 'Det går inte att lägga till aktiviteter just nu. Formuläret är inte öppet.' });
     }
   }
@@ -152,7 +159,7 @@ app.post('/add-event', addEventLimiter, (req, res) => {
 });
 
 app.post('/edit-event', editEventLimiter, (req, res) => {
-  const isAdmin = verifyAdminToken(req.body.adminToken, adminTokens);
+  const isAdmin = verifyAdminToken(req.body.adminToken, adminTokenSecret);
 
   // Time-gating with admin bypass (02-§26.17, 02-§26.18).
   if (activeCamp) {
@@ -192,7 +199,7 @@ app.post('/edit-event', editEventLimiter, (req, res) => {
 });
 
 app.post('/delete-event', deleteEventLimiter, (req, res) => {
-  const isAdmin = verifyAdminToken(req.body.adminToken, adminTokens);
+  const isAdmin = verifyAdminToken(req.body.adminToken, adminTokenSecret);
 
   // Time-gating with admin bypass (02-§26.17, 02-§26.18).
   if (activeCamp) {

@@ -321,7 +321,7 @@ though `mod_rewrite` would otherwise leave existing files untouched
 
 Same environment variables as the Node.js API: `GITHUB_OWNER`, `GITHUB_REPO`,
 `GITHUB_BRANCH`, `GITHUB_TOKEN`, `ALLOWED_ORIGIN`, `QA_ORIGIN`, `COOKIE_DOMAIN`,
-`BUILD_ENV`, `ADMIN_TOKENS`. Loaded via `vlucas/phpdotenv` from
+`BUILD_ENV`, `ADMIN_TOKEN_SECRET`. Loaded via `vlucas/phpdotenv` from
 `$DEPLOY_DIR/.env` — **outside** the web root, not from any path under
 `public_html`. `index.php` resolves the directory as `dirname(__DIR__, 2)`
 (the parent of `public_html`) and calls `Dotenv::createImmutable()` on it

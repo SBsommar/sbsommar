@@ -7,54 +7,25 @@ namespace SBSommar;
 /**
  * Admin token helpers – mirrors source/api/admin.js.
  *
- * Tokens have the shape "name_uuid_epoch"; the trailing `_epoch` is a Unix
- * timestamp after which the token expires (02-§91.5).
+ * Tokens are self-validating: each carries its claims and an HMAC signature
+ * keyed by ADMIN_TOKEN_SECRET, so the server validates a token by recomputing
+ * its signature — there is no stored list of issued tokens (02-§91.1, §91.2).
+ *
+ * Format: "namn_roll_epoch_sig", where `sig` is the base64url HMAC-SHA256 of
+ * "namn_roll_epoch" keyed by the secret; `roll` is admin | early | superadmin.
  */
 final class Admin
 {
-    /**
-     * Parses a comma-separated ADMIN_TOKENS value into a trimmed array
-     * (02-§91.1, §91.2).
-     *
-     * @return list<string>
-     */
-    public static function parseAdminTokens(?string $raw): array
-    {
-        if ($raw === null || $raw === '') {
-            return [];
-        }
+    /** @var list<string> */
+    private const VALID_ROLES = ['admin', 'early', 'superadmin'];
 
-        $parts = explode(',', $raw);
-        $result = [];
-        foreach ($parts as $part) {
-            $trimmed = trim($part);
-            if ($trimmed !== '') {
-                $result[] = $trimmed;
-            }
-        }
-
-        return $result;
-    }
+    /** @var list<string> */
+    private const ADMIN_ROLES = ['admin', 'superadmin'];
 
     /**
-     * Returns true when the embedded expiry timestamp has passed.
-     */
-    public static function isTokenExpired(string $token): bool
-    {
-        $i = strrpos($token, '_');
-        if ($i === false) {
-            return false;
-        }
-        $epoch = (int) substr($token, $i + 1);
-        if ($epoch <= 0) {
-            return false;
-        }
-
-        return time() > $epoch;
-    }
-
-    /**
-     * Per-process random key used only to equalise lengths before comparison.
+     * Per-process random key used only to equalise lengths before comparison,
+     * so the comparison leaks neither validity nor value length via timing
+     * (02-§91.8, #386).
      */
     private static function compareKey(): string
     {
@@ -66,44 +37,110 @@ final class Admin
         return $key;
     }
 
-    /**
-     * Hash a token to a fixed-width digest so comparison leaks neither the
-     * match nor the token length via timing (02-§91.8, #386).
-     */
     private static function tokenDigest(string $value): string
     {
         return hash_hmac('sha256', $value, self::compareKey(), true);
     }
 
-    /**
-     * Constant-time check of a candidate against the list of valid tokens.
-     * Returns false for empty/expired candidates and empty token lists.
-     *
-     * Hashing both sides to a fixed-width digest lets hash_equals run on every
-     * candidate/valid pair without a length pre-check, so the comparison leaks
-     * neither which token matched nor the candidate's length.
-     *
-     * @param list<string> $validTokens
-     */
-    public static function verifyAdminToken(?string $candidate, array $validTokens): bool
+    private static function base64url(string $raw): string
     {
-        if ($candidate === null || $candidate === '') {
-            return false;
+        return rtrim(strtr(base64_encode($raw), '+/', '-_'), '=');
+    }
+
+    /**
+     * Compute the base64url HMAC-SHA256 signature of the claim string.
+     */
+    private static function signClaims(string $message, string $secret): string
+    {
+        return self::base64url(hash_hmac('sha256', $message, $secret, true));
+    }
+
+    /**
+     * Produce a signed token for the given claims (02-§91.2).
+     */
+    public static function signToken(string $name, string $role, int $epoch, string $secret): string
+    {
+        $message = "{$name}_{$role}_{$epoch}";
+
+        return "{$message}_" . self::signClaims($message, $secret);
+    }
+
+    /**
+     * Extract the embedded expiry epoch (seconds), or 0 if malformed. `namn`,
+     * `roll`, `epoch` are underscore-free, so the first three underscores are
+     * the field delimiters (the base64url signature may contain underscores).
+     */
+    private static function embeddedEpoch(string $token): int
+    {
+        $parts = explode('_', $token, 4);
+        if (count($parts) < 4 || preg_match('/^\d+$/', $parts[2]) !== 1) {
+            return 0;
         }
-        if (self::isTokenExpired($candidate)) {
-            return false;
+        $epoch = (int) $parts[2];
+
+        return $epoch > 0 ? $epoch : 0;
+    }
+
+    /**
+     * Returns true when the embedded expiry has passed. A malformed token
+     * (epoch 0) is treated as expired (fail-closed).
+     */
+    public static function isTokenExpired(string $token): bool
+    {
+        $epoch = self::embeddedEpoch($token);
+        if ($epoch === 0) {
+            return true;
         }
 
-        $candidateDigest = self::tokenDigest($candidate);
-        $match = false;
-        // Compare against every token (no early return) so neither which token
-        // matched nor the candidate's length is observable through timing.
-        foreach ($validTokens as $valid) {
-            if (hash_equals(self::tokenDigest($valid), $candidateDigest)) {
-                $match = true;
-            }
+        return time() > $epoch;
+    }
+
+    /**
+     * Validate a token against the signing secret. Returns
+     * ['name' => ..., 'role' => ..., 'epoch' => ...] when the recomputed
+     * signature matches (constant-time), the role is recognised, and the epoch
+     * is in the future; otherwise null (02-§91.2, §91.29).
+     *
+     * @return array{name: string, role: string, epoch: int}|null
+     */
+    public static function verifyToken(?string $candidate, string $secret): ?array
+    {
+        if ($secret === '' || $candidate === null || $candidate === '') {
+            return null;
+        }
+        $parts = explode('_', $candidate, 4);
+        if (count($parts) < 4) {
+            return null;
+        }
+        [$name, $role, $epochStr, $sig] = $parts;
+        if ($name === '' || $role === '' || $sig === '' || preg_match('/^\d+$/', $epochStr) !== 1) {
+            return null;
+        }
+        $epoch = (int) $epochStr;
+        if ($epoch <= 0 || !in_array($role, self::VALID_ROLES, true)) {
+            return null;
+        }
+        if (time() > $epoch) {
+            return null;
         }
 
-        return $match;
+        $expected = self::signClaims("{$name}_{$role}_{$epoch}", $secret);
+        if (!hash_equals(self::tokenDigest($expected), self::tokenDigest($sig))) {
+            return null;
+        }
+
+        return ['name' => $name, 'role' => $role, 'epoch' => $epoch];
+    }
+
+    /**
+     * True only for administrator-equivalent roles (admin, superadmin).
+     * Preserves the boolean contract used by the add/edit/delete handlers
+     * (02-§91.31).
+     */
+    public static function verifyAdminToken(?string $candidate, string $secret): bool
+    {
+        $token = self::verifyToken($candidate, $secret);
+
+        return $token !== null && in_array($token['role'], self::ADMIN_ROLES, true);
     }
 }

@@ -131,7 +131,7 @@ try {
 
 // ── Parse configured admin tokens once ───────────────────────────────────
 
-$adminTokens = Admin::parseAdminTokens($_ENV['ADMIN_TOKENS'] ?? null);
+$adminTokenSecret = (string) ($_ENV['ADMIN_TOKEN_SECRET'] ?? '');
 $sessionSecret = (string) ($_ENV['SESSION_SECRET'] ?? '');
 
 // Warn (don't fail) when SESSION_SECRET is set but too weak to resist
@@ -139,6 +139,13 @@ $sessionSecret = (string) ($_ENV['SESSION_SECRET'] ?? '');
 // entirely and fails closed, which is safe.
 if ($sessionSecret !== '' && strlen($sessionSecret) < 32) {
     error_log('WARNING: SESSION_SECRET is shorter than 32 characters — use a long random value to protect activity-ownership signatures.');
+}
+
+// Warn (don't fail) when ADMIN_TOKEN_SECRET is set but too weak to resist
+// token forgery (02-§91.32). An unset secret disables admin functionality
+// entirely (no token validates), which fails closed and is safe.
+if ($adminTokenSecret !== '' && strlen($adminTokenSecret) < 32) {
+    error_log('WARNING: ADMIN_TOKEN_SECRET is shorter than 32 characters — use a long random value to protect admin token signatures.');
 }
 
 // ── Handlers ─────────────────────────────────────────────────────────────
@@ -154,22 +161,22 @@ try {
             => handleCleanupCookies(),
 
         $method === 'POST' && $route === '/add-event'
-            => handleAddEvent($activeCamp, $adminTokens, $sessionSecret),
+            => handleAddEvent($activeCamp, $adminTokenSecret, $sessionSecret),
 
         $method === 'POST' && $route === '/add-events'
-            => handleAddEvents($activeCamp, $adminTokens, $sessionSecret),
+            => handleAddEvents($activeCamp, $adminTokenSecret, $sessionSecret),
 
         $method === 'POST' && $route === '/edit-event'
-            => handleEditEvent($activeCamp, $adminTokens, $sessionSecret),
+            => handleEditEvent($activeCamp, $adminTokenSecret, $sessionSecret),
 
         $method === 'POST' && $route === '/delete-event'
-            => handleDeleteEvent($activeCamp, $adminTokens, $sessionSecret),
+            => handleDeleteEvent($activeCamp, $adminTokenSecret, $sessionSecret),
 
         $method === 'POST' && $route === '/feedback'
             => handleFeedback(),
 
         $method === 'POST' && $route === '/verify-admin'
-            => handleVerifyAdmin($adminTokens),
+            => handleVerifyAdmin($adminTokenSecret),
 
         default
             => jsonResponse(['error' => 'Not found'], 404),
@@ -208,8 +215,7 @@ function handleCleanupCookies(): void
     jsonResponse(['cleaned' => count(array_unique($stale))]);
 }
 
-/** @param list<string> $adminTokens */
-function handleAddEvent(?array $activeCamp, array $adminTokens, string $sessionSecret): void
+function handleAddEvent(?array $activeCamp, string $adminTokenSecret, string $sessionSecret): void
 {
     if (RateLimit::isLimited(clientIp(), 'add-event', RATE_LIMIT_ADD_EVENT, HOUR_SECONDS)) {
         jsonResponse(['success' => false, 'error' => RATE_LIMIT_MSG], 429);
@@ -233,7 +239,7 @@ function handleAddEvent(?array $activeCamp, array $adminTokens, string $sessionS
         $endDate = (string) ($activeCamp['end_date'] ?? '');
         if (TimeGate::isAfterEditingPeriod($today, $endDate)
             || (TimeGate::isBeforeEditingPeriod($today, $opens)
-                && !Admin::verifyAdminToken($body['adminToken'] ?? null, $adminTokens))
+                && !Admin::verifyAdminToken($body['adminToken'] ?? null, $adminTokenSecret))
         ) {
             jsonResponse([
                 'success' => false,
@@ -296,8 +302,7 @@ function handleAddEvent(?array $activeCamp, array $adminTokens, string $sessionS
     jsonResponse(['success' => true, 'eventId' => $eventId]);
 }
 
-/** @param list<string> $adminTokens */
-function handleAddEvents(?array $activeCamp, array $adminTokens, string $sessionSecret): void
+function handleAddEvents(?array $activeCamp, string $adminTokenSecret, string $sessionSecret): void
 {
     if (RateLimit::isLimited(clientIp(), 'add-events', RATE_LIMIT_ADD_EVENT, HOUR_SECONDS)) {
         jsonResponse(['success' => false, 'error' => RATE_LIMIT_MSG], 429);
@@ -321,7 +326,7 @@ function handleAddEvents(?array $activeCamp, array $adminTokens, string $session
         $endDate = (string) ($activeCamp['end_date'] ?? '');
         if (TimeGate::isAfterEditingPeriod($today, $endDate)
             || (TimeGate::isBeforeEditingPeriod($today, $opens)
-                && !Admin::verifyAdminToken($body['adminToken'] ?? null, $adminTokens))
+                && !Admin::verifyAdminToken($body['adminToken'] ?? null, $adminTokenSecret))
         ) {
             jsonResponse([
                 'success' => false,
@@ -380,8 +385,7 @@ function handleAddEvents(?array $activeCamp, array $adminTokens, string $session
     jsonResponse(['success' => true, 'eventIds' => $eventIds]);
 }
 
-/** @param list<string> $adminTokens */
-function handleEditEvent(?array $activeCamp, array $adminTokens, string $sessionSecret): void
+function handleEditEvent(?array $activeCamp, string $adminTokenSecret, string $sessionSecret): void
 {
     if (RateLimit::isLimited(clientIp(), 'edit-event', RATE_LIMIT_EDIT_EVENT, HOUR_SECONDS)) {
         jsonResponse(['success' => false, 'error' => RATE_LIMIT_MSG], 429);
@@ -397,7 +401,7 @@ function handleEditEvent(?array $activeCamp, array $adminTokens, string $session
     }
 
     $body    = getJsonBody();
-    $isAdmin = Admin::verifyAdminToken($body['adminToken'] ?? null, $adminTokens);
+    $isAdmin = Admin::verifyAdminToken($body['adminToken'] ?? null, $adminTokenSecret);
 
     // Time-gating with admin bypass (02-§26.17, 02-§26.18)
     if ($activeCamp !== null) {
@@ -462,8 +466,7 @@ function handleEditEvent(?array $activeCamp, array $adminTokens, string $session
     jsonResponse(['success' => true]);
 }
 
-/** @param list<string> $adminTokens */
-function handleDeleteEvent(?array $activeCamp, array $adminTokens, string $sessionSecret): void
+function handleDeleteEvent(?array $activeCamp, string $adminTokenSecret, string $sessionSecret): void
 {
     if (RateLimit::isLimited(clientIp(), 'delete-event', RATE_LIMIT_DELETE_EVENT, HOUR_SECONDS)) {
         jsonResponse(['success' => false, 'error' => RATE_LIMIT_MSG], 429);
@@ -479,7 +482,7 @@ function handleDeleteEvent(?array $activeCamp, array $adminTokens, string $sessi
     }
 
     $body    = getJsonBody();
-    $isAdmin = Admin::verifyAdminToken($body['adminToken'] ?? null, $adminTokens);
+    $isAdmin = Admin::verifyAdminToken($body['adminToken'] ?? null, $adminTokenSecret);
 
     // Time-gating with admin bypass (02-§26.17, 02-§26.18)
     if ($activeCamp !== null) {
@@ -586,8 +589,7 @@ function handleFeedback(): void
     }
 }
 
-/** @param list<string> $adminTokens */
-function handleVerifyAdmin(array $adminTokens): void
+function handleVerifyAdmin(string $adminTokenSecret): void
 {
     if (RateLimit::isLimited(clientIp(), 'verify-admin', RATE_LIMIT_VERIFY_ADMIN, HOUR_SECONDS)) {
         jsonResponse(['error' => RATE_LIMIT_MSG], 429);
@@ -598,7 +600,7 @@ function handleVerifyAdmin(array $adminTokens): void
     $body  = getJsonBody();
     $token = trim((string) ($body['token'] ?? ''));
 
-    if (Admin::verifyAdminToken($token, $adminTokens)) {
+    if (Admin::verifyAdminToken($token, $adminTokenSecret)) {
         jsonResponse(['valid' => true]);
     } else {
         jsonResponse(['valid' => false], 403);

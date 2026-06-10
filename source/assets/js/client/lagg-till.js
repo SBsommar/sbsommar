@@ -405,9 +405,11 @@
       if (!raw) return null;
       var data = JSON.parse(raw);
       if (!data || !data.token || typeof data.token !== 'string') return null;
-      var i = data.token.lastIndexOf('_');
-      if (i === -1) return null;
-      var epoch = Number(data.token.slice(i + 1));
+      // Token format: namn_roll_epoch_sig — the epoch is the third segment
+      // (the base64url signature may contain underscores, so read by position).
+      var parts = data.token.split('_');
+      if (parts.length < 4) return null;
+      var epoch = Number(parts[2]);
       if (!isFinite(epoch) || epoch <= 0) return null;
       return Math.floor(Date.now() / 1000) <= epoch ? data.token : null;
     } catch {
