@@ -2,8 +2,8 @@
 
 ## **Restauranger och Take-away**
 
-**Baansuan Takeway Thai (även leverantör av matsedeln ovan)**
-[Baansuan Takeaway](https://www.baansuantakeaway.se/) har en hemsida där man kan beställa. På deras [Facebook-sida](https://www.facebook.com/profile.php?id=100086764924582) finns bilder med mera.
+**Baansuan Takeaway Thai (lägrets matleverantör – se [Mat](#mat))**
+[Baansuan Takeaway](https://www.baansuantakeaway.se/) har en hemsida där man kan beställa, och en [förbeställningssida](https://www.baansuantakeaway.se/pre-order/) för att beställa i förväg. På deras [Facebook-sida](https://www.facebook.com/profile.php?id=100086764924582) finns bilder med mera.
 
 **Pizzeria Sysslebäck**
 [Sysslebäcks pizzeria](https://www.sysslebackspizzeria.se/) har en hemsida med enkel beställning. Med utkörning ibland. Kolla hemsidan vad som gäller denna veckan.
