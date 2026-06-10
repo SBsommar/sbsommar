@@ -24,7 +24,7 @@ Sections §1 and §1a (audiences, crawler policy) are kept here because they fra
 | [`event-data.md`](./event-data.md) | Event Data | §16, §18, §21, §28, §29, §34, §37, §42 |
 | [`build-deploy.md`](./build-deploy.md) | Build and Deploy | §23, §32, §33, §40, §41, §43, §44, §50, §51, §52, §60, §62, §97, §103 |
 | [`caching-performance.md`](./caching-performance.md) | Caching and Performance | §25, §38, §65, §66, §67, §68, §69, §77, §78, §86 |
-| [`platform-security.md`](./platform-security.md) | Platform and Security | §12, §13, §14, §39, §49, §63, §73, §83, §84, §87, §88, §91, §92, §93, §95, §96, §100, §102, §104 |
+| [`platform-security.md`](./platform-security.md) | Platform and Security | §12, §13, §14, §39, §49, §63, §73, §83, §84, §87, §88, §91, §92, §93, §95, §96, §100, §102, §104, §105 |
 | [`design-and-content.md`](./design-and-content.md) | Design and Content | §30, §31, §47, §55, §64, §94, §98 |
 | [`archive.md`](./archive.md) | Archived Requirements | (superseded sections) |
 

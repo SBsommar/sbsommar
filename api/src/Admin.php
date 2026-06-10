@@ -22,6 +22,9 @@ final class Admin
     /** @var list<string> */
     private const ADMIN_ROLES = ['admin', 'superadmin'];
 
+    /** @var list<string> */
+    private const PRE_CAMP_BYPASS_ROLES = ['admin', 'early', 'superadmin'];
+
     /**
      * Per-process random key used only to equalise lengths before comparison,
      * so the comparison leaks neither validity nor value length via timing
@@ -142,5 +145,19 @@ final class Admin
         $token = self::verifyToken($candidate, $secret);
 
         return $token !== null && in_array($token['role'], self::ADMIN_ROLES, true);
+    }
+
+    /**
+     * True for roles allowed to bypass the pre-camp time gate: administrators
+     * plus early-access contributors (02-§105.1). Unlike verifyAdminToken,
+     * passing this check grants no ownership bypass — an early holder still
+     * only edits and deletes their own cookie-owned events (02-§105.2,
+     * §105.5).
+     */
+    public static function verifyPreCampBypassToken(?string $candidate, string $secret): bool
+    {
+        $token = self::verifyToken($candidate, $secret);
+
+        return $token !== null && in_array($token['role'], self::PRE_CAMP_BYPASS_ROLES, true);
     }
 }

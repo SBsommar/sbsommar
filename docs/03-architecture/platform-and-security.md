@@ -181,6 +181,37 @@ privileges. When the secret is unset or empty, no token validates and admin
 functionality is disabled. The runtimes log a warning when the secret is
 shorter than 32 bytes (same posture as `SESSION_SECRET`).
 
+### Role checks
+
+Two distinct role checks exist in both runtimes (02-§105.5), because the
+two privileges they guard have different blast radii:
+
+- `verifyAdminToken(candidate, secret)` — true only for `admin` and
+  `superadmin`. Used by the ownership OR-condition in `/edit-event` and
+  `/delete-event` (acting on **other people's** events).
+- `verifyPreCampBypassToken(candidate, secret)` — true for `admin`,
+  `superadmin`, and `early`. Used only by the pre-camp time gate in
+  `/add-event`, `/add-events`, `/edit-event`, and `/delete-event`
+  (acting **before `opens_for_editing`**).
+
+The post-camp lock (`isAfterEditingPeriod`, today > `end_date + 1`) is
+checked before either helper and no role bypasses it (02-§105.3).
+
+### Early access role (tidig åtkomst)
+
+The `early` role (02-§105) lets trusted organisers build a skeleton
+schedule before the form opens, without granting admin power over other
+people's events. An `early` token holder behaves exactly like a regular
+participant — cookie-based ownership of their own events — except that
+`verifyPreCampBypassToken` admits their add/edit/delete requests before
+`opens_for_editing`. Client-side, the stored token's role (second
+underscore-segment) decides what UI appears: the all-event edit links in
+`session.js` and the ownership shortcut in `redigera.js` require an
+admin-equivalent role, while the pre-camp "Öppna ändå" bypass button in
+`lagg-till.js` and `redigera.js` appears for any valid stored token,
+labelled "(admin)" or "(tidig åtkomst)" by role. The client role check is
+cosmetic — the server re-verifies the signature and role on every request.
+
 ### Verification endpoint
 
 `POST /verify-admin` accepts `{ "token": "<string>" }` and responds:
@@ -188,18 +219,22 @@ shorter than 32 bytes (same posture as `SESSION_SECRET`).
 - `200 { "valid": true }` — valid signature, recognised role, unexpired epoch
 - `403 { "valid": false }` — otherwise
 
-The supplied and recomputed signatures are compared in constant time over
-fixed-width digests (`tokenDigest()`, an HMAC keyed by a per-process random
-key, retained from #386), so neither validity nor token length leaks via
-timing.
+Any recognised role validates here — including `early` — so every token
+kind is activated through the same `/token.html` flow (02-§105.4). The
+endpoint verifies activation only; each privileged action applies its own
+role check. The supplied and recomputed signatures are compared in constant
+time over fixed-width digests (`tokenDigest()`, an HMAC keyed by a
+per-process random key, retained from #386), so neither validity nor token
+length leaks via timing.
 
 ### Provisioning and revocation
 
 `npm run admin:create` signs a token offline against `ADMIN_TOKEN_SECRET`
-for the chosen role and prints it to hand over — no environment edit and no
-redeploy per person, because the secret (not a list) is what the runtimes
-read. `superadmin` is minted only by this script (it grants the right to
-mint others), never from the web UI. Because tokens are stateless, an
+for the chosen role — 60 days validity for `admin`, 90 days for `early`,
+180 days for `superadmin` — and prints it to hand over: no environment edit
+and no redeploy per person, because the secret (not a list) is what the
+runtimes read. `superadmin` is minted only by this script (it grants the
+right to mint others), never from the web UI. Because tokens are stateless, an
 individual token cannot be revoked without rotating `ADMIN_TOKEN_SECRET`
 (which invalidates all tokens at once); short embedded expiries bound the
 exposure of a leaked token.

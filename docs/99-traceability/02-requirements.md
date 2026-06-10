@@ -1248,7 +1248,7 @@ its requirement rows together with the test-legend rows that evidence them.
 | `02-§91.2` | covered | TOK-01 fixed vector (Node + PHP `AdminTokenTest.php`); TOK-03/12 round-trips; `source/api/admin.js`, `api/src/Admin.php` |
 | `02-§91.3` | covered | TOK-10: `verifyToken` returns null when the secret is empty |
 | `02-§91.29` | covered | TOK-05..09: tampered field, unknown role, expired rejected (PHP parity in `AdminTokenTest.php`) |
-| `02-§91.30` | implemented | `npm run admin:create` signs offline for `admin`/`superadmin` (60/180 days); manual: minted token round-trips |
+| `02-§91.30` | implemented | `npm run admin:create` signs offline for `admin`/`early`/`superadmin` (60/90/180 days); manual: minted token round-trips |
 | `02-§91.31` | covered | TOK-13, TOK-14: `admin`/`superadmin` admin-equivalent; `early` recognised but not admin |
 | `02-§91.32` | covered | TOK-22: `app.js` / `api/index.php` warn when `ADMIN_TOKEN_SECRET` < 32 bytes (parallels SESSION_SECRET, §387) |
 | `02-§91.4` | implemented | `app.js` POST /verify-admin; `api/index.php` handleVerifyAdmin() |
@@ -1572,3 +1572,21 @@ Doc ref: `03-architecture/platform-and-security.md §34`.
 | `02-§104.17` | covered | SEC-384-01: `source/static/.htaccess` sets a CSP with `default-src 'self'`, `object-src 'none'`, `frame-ancestors 'none'`, `base-uri 'self'`, GoatCounter origins, `'unsafe-inline'` scripts/styles |
 | `02-§104.18` | covered | SEC-384-03: `injectHtaccessCsp()` injects the `API_URL` origin into `connect-src` (cross-origin added, same-origin/unset resolves clean, no placeholder left); `source/build/utils.js`, wired in `source/build/build.js` |
 | `02-§104.19` | covered | SEC-384-02: `.htaccess` sets `nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy`, `Permissions-Policy`, HSTS |
+
+### §105 — Early Access Role (tidig åtkomst)
+
+Doc ref: `03-architecture/platform-and-security.md §30`.
+
+| ID | Status | Notes |
+| --- | --- | --- |
+| `02-§105.1` | covered | EARLY-01..02, EARLY-07..10, EARLY-18 + PHPUnit `testVerifyPreCampBypassToken*`: pre-camp gate admits `admin`/`superadmin`/`early`; `source/api/admin.js` + `api/src/Admin.php` `verifyPreCampBypassToken()`, wired in `app.js` and `api/index.php` add/edit/delete |
+| `02-§105.2` | covered | EARLY-13..15, EARLY-19 + PHPUnit role gating: ownership OR-condition keeps `verifyAdminToken` (admin/superadmin only); early authorised only via cookie ownership |
+| `02-§105.3` | covered | EARLY-11..12: post-camp lock checked before any role bypass; no token admits after `end_date + 1` |
+| `02-§105.4` | covered | EARLY-17: `app.js` `/verify-admin` uses `verifyToken`, `api/index.php` `handleVerifyAdmin()` uses `Admin::verifyToken`; manual: activate an early token on `/token.html` |
+| `02-§105.5` | covered | EARLY-06, EARLY-19, EARLY-20: `verifyAdminToken` false for early while `verifyPreCampBypassToken` true, in both runtimes |
+| `02-§105.6` | covered | EARLY-16: `ROLE_DAYS` maps `early: 90` in `source/scripts/create-admin-token.js`; prompt offers admin/early/superadmin |
+| `02-§105.7` | implemented | EARLY-21 (structural: `session.js` `hasValidAdminToken()` requires role admin/superadmin); manual: activate an early token, open the schedule, confirm no edit links on others' events |
+| `02-§105.8` | implemented | EARLY-22, EARLY-23 (structural: role-aware label in `redigera.js` + `lagg-till.js`); manual: open `/lagg-till.html` before `opens_for_editing` with an early token and confirm "Öppna ändå (tidig åtkomst)" |
+| `02-§105.9` | implemented | EARLY-22 (structural: `redigera.js` ownership shortcut uses `hasAdminRole`); manual: open `redigera.html?id=<annans>` with an early token and confirm "inte rättighet" message |
+| `02-§105.10` | implemented | Swedish labels and error texts; manual/visual check (CLI prompts and bypass labels in Swedish) |
+| `02-§105.11` | covered | EARLY-21..23: clients read the role from segment 2 only for UI; every privileged action re-verified server-side (EARLY-18..19) |

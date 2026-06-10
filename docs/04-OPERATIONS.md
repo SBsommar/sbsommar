@@ -213,6 +213,18 @@ Tokens are signed, not listed: the runtimes validate a token by recomputing
 its HMAC signature against `ADMIN_TOKEN_SECRET`, so issuing or retiring a
 person never requires an environment edit or a redeploy.
 
+Three roles exist:
+
+| Role | Grants | Validity |
+| --- | --- | --- |
+| `admin` | Edit/delete any event; add/edit before the form opens | 60 days |
+| `early` | Add/edit/delete **own** events before the form opens (tidig åtkomst) | 90 days |
+| `superadmin` | As `admin`; reserved for minting tokens (only issued via CLI) | 180 days |
+
+`early` is handed to a small set of trusted organisers who need to build a
+skeleton schedule before `opens_for_editing`. It gives no access to other
+people's events, and the post-camp lock applies to it like everyone else.
+
 ### One-time setup of the signing secret
 
 Generate a high-entropy secret once and store it like any other server
@@ -229,12 +241,13 @@ Rotating this secret invalidates every existing token at once.
 
 1. Run `npm run admin:create` and follow the prompts (name + role). The
    script signs a token in the format `namn_roll_epoch_sig` against
-   `ADMIN_TOKEN_SECRET` — 60 days validity for `admin`, 180 days for
-   `superadmin`. The token is shown only once — save it immediately.
-2. Share the token privately with the admin (e.g. via SMS or in person).
+   `ADMIN_TOKEN_SECRET` — 60 days validity for `admin`, 90 days for
+   `early`, 180 days for `superadmin`. The token is shown only once —
+   save it immediately.
+2. Share the token privately with the holder (e.g. via SMS or in person).
    No environment edit and no redeploy are needed.
-3. The admin visits `/token.html`, enters the token, and gains admin
-   status until the token's embedded expiry.
+3. The holder visits `/token.html`, enters the token, and gains the role's
+   privileges until the token's embedded expiry.
 
 ### Revoking access
 

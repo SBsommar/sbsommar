@@ -14,6 +14,7 @@ const crypto = require('crypto');
 
 const VALID_ROLES = new Set(['admin', 'early', 'superadmin']);
 const ADMIN_ROLES = new Set(['admin', 'superadmin']);
+const PRE_CAMP_BYPASS_ROLES = new Set(['admin', 'early', 'superadmin']);
 
 // ── Constant-time comparison helper (retained from #386) ─────────────────────
 
@@ -98,10 +99,20 @@ function verifyAdminToken(candidate, secret) {
   return !!token && ADMIN_ROLES.has(token.role);
 }
 
+// True for roles allowed to bypass the pre-camp time gate: administrators
+// plus early-access contributors (02-§105.1). Unlike verifyAdminToken,
+// passing this check grants no ownership bypass — an early holder still only
+// edits and deletes their own cookie-owned events (02-§105.2, §105.5).
+function verifyPreCampBypassToken(candidate, secret) {
+  const token = verifyToken(candidate, secret);
+  return !!token && PRE_CAMP_BYPASS_ROLES.has(token.role);
+}
+
 module.exports = {
   signToken,
   verifyToken,
   verifyAdminToken,
+  verifyPreCampBypassToken,
   isTokenExpired,
   extractTokenExpiry,
   VALID_ROLES,
