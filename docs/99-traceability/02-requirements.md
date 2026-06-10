@@ -83,7 +83,7 @@ Part of [the traceability index](./index.md).
 | `02-§10.3` | String values are length-limited; extremely long strings are rejected | 03-architecture/data-layer.md §3 | VLD-42..49 | `source/api/validate.js` – `MAX_LENGTHS` map; `check-yaml-security.js` – `MAX_LENGTHS` (build-time) | covered |
 | `02-§10.4` | User-provided strings are never directly interpolated into YAML; all quoting is handled by the serializer | 05-DATA_CONTRACT.md §8, 06-EVENT_DATA_MODEL.md §8 | GH-12..23, GH-38 | `source/api/github.js` – `yamlScalar()` | covered |
 | `02-§10.5` | A validation failure results in an HTTP error response; nothing is committed to GitHub | 03-architecture/data-layer.md §3 | VLD-01..26 (validate logic; no HTTP integration test) | `app.js` – `res.status(400)` before calling `addEventToActiveCamp` | covered |
-| `02-§10.6` | Appended event YAML is indented to match the `events:` list; resulting file is valid YAML | 03-architecture/data-layer.md §3 | GH-39..43 | `source/api/github.js` – `buildEventYaml(event, indent)` with `indent=2` in `addEventToActiveCamp()` | covered |
+| `02-§10.6` | Appended event YAML is indented to match the `events:` list; resulting file is valid YAML | 03-architecture/data-layer.md §3; 02-requirements/platform-security.md §102.4 | GH-39..43, YSEC-17..19, YSEC-23 | `source/api/github.js` – `buildEventYaml(event, indent)` with `indent=detectEventIndent(campContent)` in `addEventToActiveCamp()`; `api/src/GitHub.php` mirrors | covered |
 | `02-§11.1` | Activities are always displayed in chronological order (by date, then start time) | 03-architecture/rendering.md §5 | RND-28..32, SNP-03 | `source/build/render.js` – `groupAndSortEvents()` | covered |
 | `02-§11.2` | Overlapping activities are allowed; the schedule must remain readable (see `02-§4.8`) | 03-architecture/rendering.md §5, 07-design/components.md §6 | — | No exclusion logic in `source/build/render.js`; CSS handles layout | implemented |
 | `02-§12.1` | A newly submitted activity appears in the live schedule within a few minutes | 03-architecture/data-layer.md §3 (PR auto-merge → deploy pipeline) | — | `source/api/github.js` – `createPullRequest()`, `enableAutoMerge()` | implemented |
@@ -1075,7 +1075,7 @@ its requirement rows together with the test-legend rows that evidence them.
 | | | **§82 — Character Counter on Text Input Fields** |
 | `02-§82.1` | CC-01..CC-08 | Fields: title 80, responsible 60, description 2000, link 500 |
 | `02-§82.2` | CC-01..CC-08 | maxlength attribute on inputs in render-add.js and render-edit.js |
-| `02-§82.3` | CC-09, CC-10 | API validate.js responsible limit reduced to 60 |
+| `02-§82.3` | CC-09, CC-10 | Both validators enforce the table limits; `responsible` = 60 in `source/api/validate.js` (CC-09/CC-10) and `api/src/Validate.php` (mirror, manual) |
 | `02-§82.4` | manual | Counter hidden below 70% of max (browser-only) |
 | `02-§82.5` | manual | Counter visible at ≥70% of max (browser-only) |
 | `02-§82.6` | CC-12 | Counter turns terracotta at ≥90% of max; `.char-counter.warn` in CSS |
@@ -1516,3 +1516,16 @@ refactor of `render-lokaler.js` onto the shared module).
 | `02-§101.11` | covered | SES-10..13 and EEC-14..17: ownership entries are merged and deduplicated by event ID |
 | `02-§101.12` | covered | SES-05, SES-18, ADED-01b: legacy ID-only cookies may be displayed but never authorize |
 | `02-§101.13` | implemented | `redigera.js` debug panel labels legacy entries as old/unverifiable and explains they need to be re-added for editing; browser-only manual check |
+
+### §102 — YAML Structure Integrity for Event Submissions
+
+| ID | Status | Notes |
+| --- | --- | --- |
+| `02-§102.1` | covered | YSEC-01..09, YSEC-13..14: line breaks / control chars (U+0000–U+001F, U+007F) rejected in `title`, `location`, `responsible`, `link`, `ownerName` (add + edit); checked on the trimmed value. `source/api/validate.js` – `hasControlChar()` over `SINGLE_LINE_FIELDS`; `api/src/Validate.php` mirrors |
+| `02-§102.2` | covered | YSEC-01..08: the rejection error names the offending field; `app.js` returns HTTP 400 before any GitHub write |
+| `02-§102.3` | covered | YSEC-10..12: `description` permits `\t`/`\n`/`\r`, rejects all other control chars; `source/api/validate.js` – `DESCRIPTION_ALLOWED_CONTROLS`; `api/src/Validate.php` mirrors |
+| `02-§102.4` | covered | YSEC-15..16: carriage returns in `description` normalised to `\n` in `buildEventYaml()`; `source/api/github.js` + `api/src/GitHub.php` |
+| `02-§102.5` | covered | YSEC-20..23: add/batch flows call `assertEventYamlValid()` to parse the full proposed document and confirm the new event id(s) before any branch/PR; `source/api/github.js` (add) + `api/src/GitHub.php` (add + batch) |
+| `02-§102.6` | implemented | Architectural: edit/delete rebuild via the YAML serializer (02-§10.4) and need no re-parse; existing EDIT/DEL tests confirm valid serialiser output. `source/api/edit-event.js` + `GitHub::patchEventInYaml`/`removeEventFromYaml` |
+| `02-§102.7` | implemented | PHP mirror has no test harness; parity verified by review (manual). `api/src/Validate.php` + `api/src/GitHub.php` mirror the Node implementation; PHP batch flow also covered |
+| `02-§102.8` | covered | YSEC-17..19, YSEC-23: `detectEventIndent()` reads the existing list indentation (default 2); appended block matches it so the document stays valid; `source/api/github.js` + `api/src/GitHub.php` |

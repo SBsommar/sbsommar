@@ -29,6 +29,29 @@ const INJECTION_PATTERNS = [
   { re: /data:text\/html/i, label: 'data:text/html URI' },
 ];
 
+// Single-line scalar fields scanned for control characters (02-§102.1).
+// A line break or other control character could break out of its line and
+// alter the appended YAML structure, so these fields reject all C0 control
+// characters (U+0000–U+001F) and DEL (U+007F).
+const SINGLE_LINE_FIELDS = ['title', 'location', 'responsible', 'link', 'ownerName'];
+
+// Control characters permitted inside the intentionally multi-line description
+// field (02-§102.3): tab (U+0009), line feed (U+000A), carriage return (U+000D).
+const DESCRIPTION_ALLOWED_CONTROLS = new Set([0x09, 0x0a, 0x0d]);
+
+// Returns true if `str` contains a C0 control character (U+0000–U+001F) or DEL
+// (U+007F) that is not in the `allowed` set. A regex is avoided here so the
+// no-control-regex lint rule stays satisfied without control chars in source.
+function hasControlChar(str, allowed) {
+  for (let i = 0; i < str.length; i++) {
+    const code = str.charCodeAt(i);
+    if ((code <= 0x1f || code === 0x7f) && !(allowed && allowed.has(code))) {
+      return true;
+    }
+  }
+  return false;
+}
+
 function isDatePast(dateStr) {
   const today = new Date().toISOString().slice(0, 10);
   return dateStr < today;
@@ -120,6 +143,21 @@ function validateFields(body, { requireId = false } = {}, campDates) {
     if (link.length > 0 && !/^https?:\/\//i.test(link)) {
       return fail('link måste använda http:// eller https://');
     }
+  }
+
+  // Control characters / line breaks (02-§102.1, 02-§102.2, 02-§102.3).
+  // Single-line fields are checked on their trimmed value, so a value whose
+  // only line break is leading/trailing whitespace is accepted (it is trimmed
+  // away before the event is written).
+  for (const field of SINGLE_LINE_FIELDS) {
+    const raw = body[field];
+    if (typeof raw === 'string' && hasControlChar(raw.trim())) {
+      return fail(`${field} får inte innehålla radbrytningar eller styrtecken`);
+    }
+  }
+  if (typeof body.description === 'string'
+      && hasControlChar(body.description.trim(), DESCRIPTION_ALLOWED_CONTROLS)) {
+    return fail('description får inte innehålla styrtecken');
   }
 
   return { ok: true };

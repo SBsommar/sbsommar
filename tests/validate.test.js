@@ -626,3 +626,99 @@ describe('validateEditRequest – link protocol validation', () => {
     assert.ok(r.error.includes('link'));
   });
 });
+
+// ── Control characters / line breaks in single-line fields (02-§102.1, .2) ───
+// A line break or control character in a single-line scalar field could break
+// out of its line and alter the appended YAML structure, so these are rejected
+// before anything reaches git.
+
+describe('validateEventRequest – control characters in single-line fields (02-§102)', () => {
+  it('YSEC-01: rejects a newline in title', () => {
+    const r = validateEventRequest(valid({ title: "Frukost\nresponsible: 'evil'" }));
+    assert.strictEqual(r.ok, false);
+    assert.ok(r.error.includes('title'));
+  });
+
+  it('YSEC-02: rejects a newline in location', () => {
+    const r = validateEventRequest(valid({ location: 'Matsalen\n  smuggled: true' }));
+    assert.strictEqual(r.ok, false);
+    assert.ok(r.error.includes('location'));
+  });
+
+  it('YSEC-03: rejects a newline in responsible', () => {
+    const r = validateEventRequest(valid({ responsible: 'Alla\nevil' }));
+    assert.strictEqual(r.ok, false);
+    assert.ok(r.error.includes('responsible'));
+  });
+
+  it('YSEC-04: rejects a newline in link', () => {
+    const r = validateEventRequest(valid({ link: 'https://example.com\nevil' }));
+    assert.strictEqual(r.ok, false);
+    assert.ok(r.error.includes('link'));
+  });
+
+  it('YSEC-05: rejects a newline in ownerName', () => {
+    const r = validateEventRequest(valid({ ownerName: 'Anna\nevil' }));
+    assert.strictEqual(r.ok, false);
+    assert.ok(r.error.includes('ownerName'));
+  });
+
+  it('YSEC-06: rejects a carriage return in title', () => {
+    const r = validateEventRequest(valid({ title: 'Frukost\rmiddag' }));
+    assert.strictEqual(r.ok, false);
+    assert.ok(r.error.includes('title'));
+  });
+
+  it('YSEC-07: rejects a tab in responsible', () => {
+    const r = validateEventRequest(valid({ responsible: 'Alla\tevil' }));
+    assert.strictEqual(r.ok, false);
+    assert.ok(r.error.includes('responsible'));
+  });
+
+  it('YSEC-08: rejects a NUL byte in location', () => {
+    const r = validateEventRequest(valid({ location: 'Mat\u0000salen' }));
+    assert.strictEqual(r.ok, false);
+    assert.ok(r.error.includes('location'));
+  });
+
+  it('YSEC-09: accepts a value whose only line break is trailing (trimmed away)', () => {
+    const r = validateEventRequest(valid({ title: 'Frukost\n' }));
+    assert.strictEqual(r.ok, true);
+  });
+});
+
+// ── description multi-line handling (02-§102.3) ──────────────────────────────
+// description is the only intentionally multi-line field: \t, \n, \r are
+// permitted; any other control character is rejected.
+
+describe('validateEventRequest – description multi-line handling (02-§102.3)', () => {
+  it('YSEC-10: accepts a newline inside description', () => {
+    const r = validateEventRequest(valid({ description: 'Rad ett.\nRad två.' }));
+    assert.strictEqual(r.ok, true);
+  });
+
+  it('YSEC-11: accepts a tab inside description', () => {
+    const r = validateEventRequest(valid({ description: 'Kolumn1\tKolumn2' }));
+    assert.strictEqual(r.ok, true);
+  });
+
+  it('YSEC-12: rejects a NUL byte in description', () => {
+    const r = validateEventRequest(valid({ description: 'Text\u0000slut' }));
+    assert.strictEqual(r.ok, false);
+    assert.ok(r.error.includes('description'));
+  });
+});
+
+describe('validateEditRequest – control characters in single-line fields (02-§102)', () => {
+  it('YSEC-13: rejects a newline in title', () => {
+    const r = validateEditRequest(validEdit({ title: 'Frukost\nevil' }));
+    assert.strictEqual(r.ok, false);
+    assert.ok(r.error.includes('title'));
+  });
+
+  it('YSEC-14: rejects a newline in ownerName', () => {
+    const r = validateEditRequest(validEdit({ ownerName: 'Anna\nevil' }));
+    assert.strictEqual(r.ok, false);
+    assert.ok(r.error.includes('ownerName'));
+  });
+});

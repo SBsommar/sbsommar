@@ -1030,3 +1030,70 @@ dotfiles (so a stray copy inside the web root is still refused).
 - The §53.3 persistent-backup mechanism is superseded: because
   `$DEPLOY_DIR/.env` already lives outside the swapped `public_html`, it
   survives release swaps without a separate backup copy. <!-- 02-§100.11 -->
+
+---
+
+## 102. YAML Structure Integrity for Event Submissions
+
+### 102.1 Context
+
+Event submissions are validated for length, injection patterns, and link
+protocol (§49), but a submission's single-line scalar fields can still carry
+line breaks or other control characters. The add and batch-add flows serialise
+the new event by appending hand-built YAML text to the camp file (§10.6), so a
+value containing a newline or control character can alter the document's
+structure — producing broken or unexpectedly nested YAML in the resulting pull
+request. A valid form submission must never be able to produce structurally
+invalid or smuggled YAML, while an intentional multi-line `description` must
+keep working.
+
+### 102.2 Single-line scalar field constraints (API requirements)
+
+- The API request validation (`validateEventRequest`, `validateEditRequest`,
+  `validateBatchEventRequest`) rejects any submission whose `title`,
+  `location`, `responsible`, `link`, or `ownerName` field contains a line break
+  or any other control character — concretely, any character in the range
+  U+0000–U+001F or U+007F (DEL). Leading and trailing whitespace is trimmed
+  before the check, so a value that merely has a trailing newline is accepted
+  after trimming. <!-- 02-§102.1 -->
+- A submission rejected for a control character returns a validation error that
+  names the offending field, and nothing is written to git. <!-- 02-§102.2 -->
+
+### 102.3 Multi-line description (API requirements)
+
+- The `description` field may contain line breaks; it is the only event field
+  that is intentionally multi-line. Within `description`, the only control
+  characters allowed are tab (U+0009), line feed (U+000A), and carriage return
+  (U+000D); any other control character is rejected. <!-- 02-§102.3 -->
+- Carriage-return characters in `description` are normalised to line feeds
+  before the description is serialised, so the stored value uses `\n` line
+  endings regardless of the submitter's platform. <!-- 02-§102.4 -->
+
+### 102.4 Whole-document validation before a pull request (API requirements)
+
+- Before the add-event and batch-add-event flows create a branch or pull
+  request, the complete proposed camp YAML document (the existing file content
+  plus the appended event block) is parsed. If it does not parse, or does not
+  contain an `events` list that includes every newly created event id, the
+  operation aborts with an error and no branch, commit, or pull request is
+  created. <!-- 02-§102.5 -->
+- The edit and delete flows build the new document with the YAML serializer
+  (§10.4), which guarantees a structurally valid result; they therefore rely on
+  serialisation rather than a separate re-parse. <!-- 02-§102.6 -->
+- The appended event block is indented to match the indentation of the existing
+  `events:` list items in the target camp file (defaulting to two spaces when the
+  list has no items yet), so the combined document is valid YAML regardless of
+  the file's existing indentation style (§10.6). This is what lets the
+  whole-document validation in §102.5 succeed for every well-formed
+  submission. <!-- 02-§102.8 -->
+
+### 102.5 Parity between Node.js and PHP implementations
+
+- The control-character constraints (§102.1, §102.3), the carriage-return
+  normalisation (§102.4), the whole-document validation (§102.5), and the
+  indentation matching (§102.8) are implemented identically in the Node.js API
+  (`source/api/validate.js`, `source/api/github.js`) and the PHP API
+  (`api/src/Validate.php`, `api/src/GitHub.php`), and produce equivalent error
+  messages for the same invalid input. The PHP API additionally applies the
+  whole-document validation and indentation matching to its batch (recurring)
+  add flow, which has no Node.js counterpart. <!-- 02-§102.7 -->

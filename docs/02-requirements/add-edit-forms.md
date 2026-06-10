@@ -873,9 +873,10 @@ maximum length.
 - The `maxlength` attribute is set on each `<input>` and `<textarea>` element in
   both the add-activity form (`render-add.js`) and the edit-activity form
   (`render-edit.js`). <!-- 02-§82.2 -->
-- The API validation in `validate.js` uses the same limits. The `responsible`
-  field limit is reduced from 200 to 60 to match the new client-side
-  constraint. <!-- 02-§82.3 -->
+- Both API validators — `source/api/validate.js` and `api/src/Validate.php` —
+  enforce the same maximum lengths as the table above. In particular, the
+  `responsible` field limit is 60 characters in both, matching the client-side
+  `maxlength` constraint. <!-- 02-§82.3 -->
 
 ### 82.2 Counter visibility (user requirements)
 

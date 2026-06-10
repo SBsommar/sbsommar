@@ -17,6 +17,9 @@ Part of [the traceability index](./index.md).
 | GH-01..11 | `tests/github.test.js` | `slugify` |
 | GH-12..23 | `tests/github.test.js` | `yamlScalar` |
 | GH-24..38 | `tests/github.test.js` | `buildEventYaml` |
+| YSEC-15..16 | `tests/github.test.js` | `buildEventYaml` (CR normalisation, 02-§102.4) |
+| YSEC-17..19 | `tests/github.test.js` | `detectEventIndent` (02-§10.6, 02-§102.8) |
+| YSEC-20..23 | `tests/github.test.js` | `assertEventYamlValid` (02-§102.5) |
 | RND-01..03 | `tests/render.test.js` | `toDateString` |
 | RND-04..09 | `tests/render.test.js` | `escapeHtml` |
 | RND-10..27 | `tests/render.test.js` | `formatDate` |
@@ -129,6 +132,9 @@ Part of [the traceability index](./index.md).
 | ASEC-08..10 | `tests/validate.test.js` | `validateEventRequest – link protocol validation (02-§49.4)` |
 | ASEC-11..14 | `tests/validate.test.js` | `validateEditRequest – injection scanning (02-§49.1–49.2)` |
 | ASEC-15..16 | `tests/validate.test.js` | `validateEditRequest – link protocol validation (02-§49.4)` |
+| YSEC-01..09 | `tests/validate.test.js` | `validateEventRequest – control characters in single-line fields (02-§102)` |
+| YSEC-10..12 | `tests/validate.test.js` | `validateEventRequest – description multi-line handling (02-§102.3)` |
+| YSEC-13..14 | `tests/validate.test.js` | `validateEditRequest – control characters in single-line fields (02-§102)` |
 | EDW-01 | `tests/event-deploy-workflow.test.js` | `02-§51.1 — No separate detect job` |
 | EDW-02..04 | `tests/event-deploy-workflow.test.js` | `02-§51.3 — Deploy jobs have no inter-job dependencies` |
 | EDW-05..07 | `tests/event-deploy-workflow.test.js` | `02-§51.4 — Checkout with fetch-depth: 2` |

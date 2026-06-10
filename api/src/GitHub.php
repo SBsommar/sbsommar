@@ -74,8 +74,12 @@ final class GitHub
         // 2. Fetch camp file
         [$campContent, $fileSha] = $this->getFile($campFilePath);
 
-        // 3. Build new content
-        $newContent = rtrim($campContent) . "\n" . self::buildEventYaml($event) . "\n";
+        // 3. Build new content. Match the existing list indentation so the result
+        // is valid YAML (02-§10.6, 02-§102.8), then verify the whole document
+        // parses and contains the new event before any branch/PR is created (02-§102.5).
+        $indent     = self::detectEventIndent($campContent);
+        $newContent = rtrim($campContent) . "\n" . self::buildEventYaml($event, $indent) . "\n";
+        self::assertEventYamlValid($newContent, [$event['id']]);
         $commitMsg  = "Add event to {$camp['name']}: {$title} ({$date})";
 
         // 4. Ephemeral branch
@@ -115,14 +119,14 @@ final class GitHub
 
         $dates    = $body['dates'];
         $eventIds = [];
-        $yamlBlocks = [];
+        $events   = [];
 
         foreach ($dates as $date) {
             $date = trim((string) $date);
             $eventId = self::slugify($title) . "-{$date}-" . str_replace(':', '', $start);
             $eventIds[] = $eventId;
 
-            $event = [
+            $events[] = [
                 'id'          => $eventId,
                 'title'       => $title,
                 'date'        => $date,
@@ -135,8 +139,6 @@ final class GitHub
                 'owner'       => ['name' => $ownerName, 'email' => ''],
                 'meta'        => ['created_at' => $now, 'updated_at' => $now],
             ];
-
-            $yamlBlocks[] = self::buildEventYaml($event);
         }
 
         // 1. Resolve active camp
@@ -146,8 +148,16 @@ final class GitHub
         // 2. Fetch camp file
         [$campContent, $fileSha] = $this->getFile($campFilePath);
 
-        // 3. Build new content — all events in one commit
+        // 3. Build new content — all events in one commit, matching the existing
+        // list indentation (02-§10.6, 02-§102.8), then verify the whole document
+        // parses and contains every new event before any branch/PR (02-§102.5).
+        $indent     = self::detectEventIndent($campContent);
+        $yamlBlocks = array_map(
+            static fn (array $event): string => self::buildEventYaml($event, $indent),
+            $events,
+        );
         $newContent = rtrim($campContent) . "\n" . implode("\n", $yamlBlocks) . "\n";
+        self::assertEventYamlValid($newContent, $eventIds);
         $commitMsg  = "Add " . count($dates) . " recurring events to {$camp['name']}: {$title}";
 
         // 4. Ephemeral branch
@@ -292,7 +302,10 @@ final class GitHub
 
         if ($event['description'] !== null) {
             $lines[] = "{$fp}description: |";
-            foreach (explode("\n", $event['description']) as $l) {
+            // Normalise CRLF / lone CR to LF so the literal block has no stray
+            // carriage returns regardless of the submitter's platform (02-§102.4).
+            $normalised = str_replace(["\r\n", "\r"], "\n", (string) $event['description']);
+            foreach (explode("\n", $normalised) as $l) {
                 $lines[] = "{$dp}{$l}";
             }
         } else {
@@ -308,6 +321,68 @@ final class GitHub
         $lines[] = "{$dp}updated_at: {$event['meta']['updated_at']}";
 
         return implode("\n", $lines);
+    }
+
+    /**
+     * Determine the indentation (number of leading spaces) of the existing
+     * `events:` list items so an appended block matches and the file stays valid
+     * YAML (02-§10.6, 02-§102.8). Defaults to 2 when the list has no items yet.
+     */
+    public static function detectEventIndent(string $campContent): int
+    {
+        $lines     = explode("\n", $campContent);
+        $eventsIdx = null;
+        foreach ($lines as $i => $line) {
+            if (preg_match('/^events:/', $line)) {
+                $eventsIdx = $i;
+                break;
+            }
+        }
+        if ($eventsIdx !== null) {
+            $count = count($lines);
+            for ($i = $eventsIdx + 1; $i < $count; $i++) {
+                if (preg_match('/^( *)- +id:/', $lines[$i], $m)) {
+                    return strlen($m[1]);
+                }
+                // A non-indented, non-empty line means the events list has ended.
+                if (preg_match('/^\S/', $lines[$i]) && trim($lines[$i]) !== '') {
+                    break;
+                }
+            }
+        }
+
+        return 2;
+    }
+
+    /**
+     * Defence-in-depth backstop (02-§102.5): parse the complete proposed camp
+     * document and confirm it contains every newly created event id before any
+     * branch or pull request is created. Throws on a parse failure or a missing
+     * id so the caller aborts without writing anything to git.
+     *
+     * @param string[] $expectedIds
+     */
+    public static function assertEventYamlValid(string $yamlContent, array $expectedIds): void
+    {
+        try {
+            $doc = Yaml::parse($yamlContent);
+        } catch (\Throwable $e) {
+            throw new \RuntimeException('Proposed camp YAML failed to parse: ' . $e->getMessage(), 0, $e);
+        }
+        if (!is_array($doc) || !is_array($doc['events'] ?? null)) {
+            throw new \RuntimeException('Proposed camp YAML is missing the events list');
+        }
+        $ids = [];
+        foreach ($doc['events'] as $e) {
+            if (is_array($e) && isset($e['id'])) {
+                $ids[] = $e['id'];
+            }
+        }
+        foreach ($expectedIds as $id) {
+            if (!in_array($id, $ids, true)) {
+                throw new \RuntimeException('Proposed camp YAML is missing expected event id: ' . $id);
+            }
+        }
     }
 
     /**

@@ -51,7 +51,9 @@ function buildEventYaml(event, indent = 0) {
 
   if (event.description) {
     lines.push(`${fp}description: |`);
-    event.description.split('\n').forEach((l) => lines.push(`${dp}${l}`));
+    // Normalise CRLF / lone CR to LF so the literal block has no stray carriage
+    // returns regardless of the submitter's platform (02-§102.4).
+    event.description.replace(/\r\n?/g, '\n').split('\n').forEach((l) => lines.push(`${dp}${l}`));
   } else {
     lines.push(`${fp}description: null`);
   }
@@ -65,6 +67,46 @@ function buildEventYaml(event, indent = 0) {
   lines.push(`${dp}updated_at: ${event.meta.updated_at}`);
 
   return lines.join('\n');
+}
+
+// Determine the indentation (number of leading spaces) of the existing
+// `events:` list items so an appended block matches and the combined file
+// stays valid YAML (02-§10.6, 02-§102.8). Defaults to 2 when the list has no
+// items yet.
+function detectEventIndent(campContent) {
+  const lines = campContent.split('\n');
+  const eventsIdx = lines.findIndex((l) => /^events:/.test(l));
+  if (eventsIdx !== -1) {
+    for (let i = eventsIdx + 1; i < lines.length; i++) {
+      const m = lines[i].match(/^( *)- +id:/);
+      if (m) return m[1].length;
+      // A non-indented, non-empty line means the events list has ended.
+      if (/^\S/.test(lines[i]) && lines[i].trim() !== '') break;
+    }
+  }
+  return 2;
+}
+
+// Defence-in-depth backstop (02-§102.5): parse the complete proposed camp
+// document and confirm it contains every newly created event id before any
+// branch or pull request is created. Throws on a parse failure or a missing id
+// so the caller aborts without writing anything to git.
+function assertEventYamlValid(yamlContent, expectedIds) {
+  let doc;
+  try {
+    doc = yaml.load(yamlContent);
+  } catch (e) {
+    throw new Error(`Proposed camp YAML failed to parse: ${e.message}`, { cause: e });
+  }
+  if (!doc || !Array.isArray(doc.events)) {
+    throw new Error('Proposed camp YAML is missing the events list');
+  }
+  const ids = new Set(doc.events.map((e) => e && e.id));
+  for (const id of expectedIds) {
+    if (!ids.has(id)) {
+      throw new Error(`Proposed camp YAML is missing expected event id: ${id}`);
+    }
+  }
 }
 
 // ── GitHub API primitives ────────────────────────────────────────────────────
@@ -244,8 +286,12 @@ async function addEventToActiveCamp(body) {
   // Step 2: fetch camp file + SHA (reads from main via GITHUB_BRANCH)
   const { content: campContent, sha: fileSha } = await getFile(campFilePath);
 
-  // Step 3: build new file content
-  const newContent = campContent.trimEnd() + '\n' + buildEventYaml(event) + '\n';
+  // Step 3: build new file content. Match the existing list indentation so the
+  // result is valid YAML (02-§10.6, 02-§102.8), then verify the whole document
+  // parses and contains the new event before any branch/PR is created (02-§102.5).
+  const indent = detectEventIndent(campContent);
+  const newContent = campContent.trimEnd() + '\n' + buildEventYaml(event, indent) + '\n';
+  assertEventYamlValid(newContent, [event.id]);
   const commitMsg  = `Add event to ${camp.name}: ${title} (${date})`;
 
   // Step 4: create ephemeral branch from current main HEAD
@@ -314,4 +360,4 @@ async function removeEventFromActiveCamp(eventId) {
   await enableAutoMerge(pr.node_id);
 }
 
-module.exports = { addEventToActiveCamp, updateEventInActiveCamp, removeEventFromActiveCamp, slugify, yamlScalar, buildEventYaml, githubRequest, env };
+module.exports = { addEventToActiveCamp, updateEventInActiveCamp, removeEventFromActiveCamp, slugify, yamlScalar, buildEventYaml, detectEventIndent, assertEventYamlValid, githubRequest, env };

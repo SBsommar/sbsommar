@@ -14,10 +14,16 @@ final class Validate
     private const MAX_LENGTHS = [
         'title'       => 80,
         'location'    => 200,
-        'responsible' => 200,
+        'responsible' => 60,
         'description' => 2000,
         'link'        => 500,
     ];
+
+    /** Single-line scalar fields scanned for control characters (02-§102.1). */
+    private const SINGLE_LINE_FIELDS = ['title', 'location', 'responsible', 'link', 'ownerName'];
+
+    /** Control characters allowed inside the multi-line description field (02-§102.3): tab, LF, CR. */
+    private const DESCRIPTION_ALLOWED_CONTROLS = [0x09, 0x0A, 0x0D];
 
     /** Fields rendered in public HTML — scanned for injection patterns (02-§49.1). */
     private const TEXT_FIELDS = ['title', 'location', 'responsible', 'description'];
@@ -263,7 +269,46 @@ final class Validate
             }
         }
 
+        // Control characters / line breaks (02-§102.1, 02-§102.2, 02-§102.3).
+        // Single-line fields are checked on their trimmed value, so a value whose
+        // only line break is leading/trailing whitespace is accepted (it is
+        // trimmed away before the event is written).
+        foreach (self::SINGLE_LINE_FIELDS as $field) {
+            $raw = $body[$field] ?? null;
+            if (is_string($raw) && self::hasControlChar(trim($raw))) {
+                return self::fail(sprintf(
+                    '%s får inte innehålla radbrytningar eller styrtecken',
+                    $field,
+                ));
+            }
+        }
+        if (is_string($body['description'] ?? null)
+            && self::hasControlChar(trim($body['description']), self::DESCRIPTION_ALLOWED_CONTROLS)
+        ) {
+            return self::fail('description får inte innehålla styrtecken');
+        }
+
         return ['ok' => true];
+    }
+
+    /**
+     * True if $str contains a C0 control character (0x00–0x1F) or DEL (0x7F)
+     * that is not in $allowed. Iterates bytes; UTF-8 multi-byte characters
+     * (å, ä, ö, …) are all ≥ 0x80 and never match, so they pass unaffected.
+     *
+     * @param int[] $allowed
+     */
+    private static function hasControlChar(string $str, array $allowed = []): bool
+    {
+        $len = strlen($str);
+        for ($i = 0; $i < $len; $i++) {
+            $code = ord($str[$i]);
+            if (($code <= 0x1F || $code === 0x7F) && !in_array($code, $allowed, true)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static function str(array $body, string $key): string

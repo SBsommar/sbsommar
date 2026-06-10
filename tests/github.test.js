@@ -3,7 +3,7 @@
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
 
-const { slugify, yamlScalar, buildEventYaml } = require('../source/api/github');
+const { slugify, yamlScalar, buildEventYaml, detectEventIndent, assertEventYamlValid } = require('../source/api/github');
 
 // ── slugify ───────────────────────────────────────────────────────────────────
 
@@ -292,5 +292,143 @@ describe('buildEventYaml', () => {
     assert.ok(ownerLine.startsWith('    owner:'), `Expected 4-space indent on owner, got: "${ownerLine}"`);
     const nameLine = block.split('\n').find((l) => l.trimStart().startsWith('name:'));
     assert.ok(nameLine.startsWith('      name:'), `Expected 6-space indent on name, got: "${nameLine}"`);
+  });
+
+  it('YSEC-15 (02-§102.4): normalises CRLF in description to LF', () => {
+    const block = buildEventYaml(baseEvent({ description: 'Rad ett.\r\nRad två.' }));
+    assert.ok(!block.includes('\r'), `Expected no carriage returns, got: ${JSON.stringify(block)}`);
+    assert.ok(block.includes('    Rad ett.'), `Got: ${block}`);
+    assert.ok(block.includes('    Rad två.'), `Got: ${block}`);
+  });
+
+  it('YSEC-16 (02-§102.4): normalises a lone CR in description to LF', () => {
+    const block = buildEventYaml(baseEvent({ description: 'Rad ett.\rRad två.' }));
+    assert.ok(!block.includes('\r'), `Expected no carriage returns, got: ${JSON.stringify(block)}`);
+    assert.ok(block.includes('    Rad ett.'), `Got: ${block}`);
+    assert.ok(block.includes('    Rad två.'), `Got: ${block}`);
+  });
+});
+
+// ── detectEventIndent (02-§10.6, 02-§102.8) ──────────────────────────────────
+// The appended event block must match the indentation of the existing events
+// list so the combined document stays valid YAML.
+
+describe('detectEventIndent', () => {
+  it('YSEC-17: returns 0 for an events list whose items sit at column 0', () => {
+    const yaml = [
+      'camp:',
+      '  id: c',
+      'events:',
+      '- id: lunch-2026-06-22-1200',
+      '  title: Lunch',
+    ].join('\n') + '\n';
+    assert.strictEqual(detectEventIndent(yaml), 0);
+  });
+
+  it('YSEC-18: returns 2 for an events list whose items are indented two spaces', () => {
+    const yaml = [
+      'camp:',
+      '  id: c',
+      'events:',
+      '  - id: lunch-2026-06-22-1200',
+      '    title: Lunch',
+    ].join('\n') + '\n';
+    assert.strictEqual(detectEventIndent(yaml), 2);
+  });
+
+  it('YSEC-19: falls back to 2 when the events list is empty', () => {
+    const yaml = [
+      'camp:',
+      '  id: c',
+      'events: []',
+    ].join('\n') + '\n';
+    assert.strictEqual(detectEventIndent(yaml), 2);
+  });
+});
+
+// ── assertEventYamlValid (02-§102.5) ─────────────────────────────────────────
+// Defence-in-depth backstop: the complete proposed document must parse and
+// contain every newly created event id before any branch/PR is created.
+
+describe('assertEventYamlValid', () => {
+  function campFile(eventBlocks = []) {
+    const header = [
+      'camp:',
+      '  id: test-camp',
+      '  name: Test',
+      '  location: Here',
+      "  start_date: '2026-06-22'",
+      "  end_date: '2026-06-28'",
+      'events:',
+    ];
+    return header.concat(eventBlocks).join('\n') + '\n';
+  }
+
+  function baseEvent(overrides = {}) {
+    return {
+      id: 'frukost-2026-06-22-0800',
+      title: 'Frukost', date: '2026-06-22', start: '08:00', end: '09:00',
+      location: 'Matsalen', responsible: 'Alla', description: null, link: null,
+      owner: { name: 'Anna', email: '' },
+      meta: { created_at: '2026-06-22 07:00', updated_at: '2026-06-22 07:00' },
+      ...overrides,
+    };
+  }
+
+  it('YSEC-20: does not throw for a document containing the expected id', () => {
+    const ev = baseEvent();
+    const content = campFile([buildEventYaml(ev)]);
+    assert.doesNotThrow(() => assertEventYamlValid(content, [ev.id]));
+  });
+
+  it('YSEC-21: throws when the document does not parse as YAML', () => {
+    const broken = 'camp:\n  id: t\nevents: [unclosed';
+    assert.throws(() => assertEventYamlValid(broken, ['x']));
+  });
+
+  it('YSEC-22: throws when an expected event id is absent', () => {
+    const ev = baseEvent();
+    const content = campFile([buildEventYaml(ev)]);
+    assert.throws(() => assertEventYamlValid(content, ['does-not-exist']));
+  });
+
+  it('YSEC-23: appending at the detected indent to a 2-space file yields valid YAML containing the new id', () => {
+    const yaml = require('js-yaml');
+    const existing = [
+      'camp:',
+      '  id: test-camp',
+      '  name: Test',
+      '  location: Here',
+      "  start_date: '2026-06-22'",
+      "  end_date: '2026-06-28'",
+      'events:',
+      '  - id: lunch-2026-06-22-1200',
+      '    title: Lunch',
+      "    date: '2026-06-22'",
+      "    start: '12:00'",
+      "    end: '13:00'",
+      '    location: Matsalen',
+      '    responsible: Alla',
+      '    description: null',
+      '    link: null',
+      '    owner:',
+      "      name: ''",
+      "      email: ''",
+      '    meta:',
+      '      created_at: 2026-06-21 07:00',
+      '      updated_at: 2026-06-21 07:00',
+    ].join('\n') + '\n';
+
+    const ev = baseEvent();
+    const indent = detectEventIndent(existing);
+    assert.strictEqual(indent, 2, 'expected 2-space indent to be detected');
+    const combined = existing.trimEnd() + '\n' + buildEventYaml(ev, indent) + '\n';
+
+    // Must parse and contain both events — this is the regression guard for the
+    // indent-0-append-into-2-space-file bug.
+    const parsed = yaml.load(combined);
+    assert.strictEqual(parsed.events.length, 2);
+    assert.ok(parsed.events.some((e) => e.id === ev.id));
+    assert.doesNotThrow(() => assertEventYamlValid(combined, [ev.id]));
   });
 });
