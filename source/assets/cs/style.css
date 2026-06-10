@@ -2858,7 +2858,9 @@ body.modal-open {
   color: var(--color-navy);
 }
 
-.admin-form input[type="text"] {
+.admin-form input[type="text"],
+.admin-form input[type="number"],
+.admin-form select {
   width: 100%;
   padding: var(--space-xs) var(--space-sm);
   font-family: var(--font-sans);
@@ -2867,9 +2869,23 @@ body.modal-open {
   border-radius: var(--radius-sm);
 }
 
-.admin-form input[type="text"]:focus-visible {
+.admin-form input[type="text"]:focus-visible,
+.admin-form input[type="number"]:focus-visible,
+.admin-form select:focus-visible {
   outline: 2px solid var(--color-terracotta);
   outline-offset: 2px;
+}
+
+.mint-result {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.mint-actions {
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
 }
 
 .admin-message {

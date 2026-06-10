@@ -34,6 +34,31 @@ ${nav}
       </form>
       <button type="button" id="admin-remove" class="btn btn--secondary admin-remove" hidden>Ta bort min token</button>
     </div>
+    <div id="mint-section" class="admin-form" hidden>
+      <h2>Skapa token-länk</h2>
+      <p class="admin-intro">Skapa en aktiveringslänk för en ny token och dela den med mottagaren. Superadmin kan inte skapas här.</p>
+      <p id="mint-message" class="admin-message" aria-live="polite" hidden></p>
+      <form id="mint-form">
+        <label for="mint-name">Namn på mottagaren</label>
+        <input type="text" id="mint-name" name="name" required autocomplete="off">
+        <label for="mint-role">Roll</label>
+        <select id="mint-role" name="role">
+          <option value="admin" data-days="60">Admin (max 60 dagar)</option>
+          <option value="early" data-days="90">Tidig åtkomst (max 90 dagar)</option>
+        </select>
+        <label for="mint-days">Giltighetstid (dagar)</label>
+        <input type="number" id="mint-days" name="days" min="1" max="60" value="60" required>
+        <button type="submit" class="btn btn--primary">Skapa länk</button>
+      </form>
+      <div id="mint-result" class="mint-result" hidden>
+        <label for="mint-link">Aktiveringslänk – dela privat med mottagaren</label>
+        <input type="text" id="mint-link" readonly>
+        <div class="mint-actions">
+          <button type="button" id="mint-copy" class="btn btn--secondary">Kopiera länken</button>
+          <button type="button" id="mint-share" class="btn btn--secondary" hidden>Dela …</button>
+        </div>
+      </div>
+    </div>
   </main>
 ${footer}
   <script src="admin.js"></script>

@@ -1,7 +1,7 @@
 'use strict';
 
 const readline = require('readline');
-const { signToken } = require('../api/admin');
+const { signToken, sanitizeTokenName } = require('../api/admin');
 
 // Validity per role, in days (02-§91.30, 02-§105.6).
 const ROLE_DAYS = { admin: 60, early: 90, superadmin: 180 };
@@ -44,8 +44,8 @@ async function main() {
 
   const rawName = await ask('Namn på mottagaren: ');
   // Hyphen-separated identifier, no underscores (underscore is the token
-  // field delimiter, so the name must never contain one).
-  const name = rawName.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-zåäö0-9-]/g, '');
+  // field delimiter). Same sanitiser as the /mint-token endpoint (02-§106.4).
+  const name = sanitizeTokenName(rawName);
   if (!name) {
     console.error('\nFel: namn krävs (a-ö, siffror, bindestreck).');
     rl.close();

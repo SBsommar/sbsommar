@@ -17,7 +17,7 @@ const {
 } = require('./source/api/session');
 const { isBeforeEditingPeriod, isAfterEditingPeriod }            = require('./source/api/time-gate');
 const { validateFeedbackRequest, createFeedbackIssue }           = require('./source/api/feedback');
-const { verifyToken, verifyAdminToken, verifyPreCampBypassToken } = require('./source/api/admin');
+const { verifyToken, verifyAdminToken, verifyPreCampBypassToken, mintRequest } = require('./source/api/admin');
 const { resolveActiveCamp }                                      = require('./source/scripts/resolve-active-camp');
 
 const app = express();
@@ -72,6 +72,7 @@ function makeLimiter({ limit, windowMs, includeSuccess = true }) {
 }
 
 const verifyAdminLimiter = makeLimiter({ limit: 5,  windowMs: HOUR_MS, includeSuccess: false });
+const mintTokenLimiter   = makeLimiter({ limit: 5,  windowMs: HOUR_MS });
 const addEventLimiter    = makeLimiter({ limit: 30, windowMs: HOUR_MS });
 const editEventLimiter   = makeLimiter({ limit: 30, windowMs: HOUR_MS });
 const deleteEventLimiter = makeLimiter({ limit: 30, windowMs: HOUR_MS });
@@ -111,6 +112,25 @@ app.post('/verify-admin', verifyAdminLimiter, (req, res) => {
     return res.json({ valid: true });
   }
   return res.status(403).json({ valid: false });
+});
+
+// ── Token minting (02-§106) ─────────────────────────────────────────────────
+
+app.post('/mint-token', mintTokenLimiter, (req, res) => {
+  const body = req.body || {};
+  // Privilege boundary: only a valid superadmin token may mint, and only
+  // admin/early can be minted — superadmin is CLI-only (02-§106.2, §106.3).
+  // With an unset secret nothing verifies, so the gate fails closed (§106.8).
+  const requester = verifyToken(body.token, adminTokenSecret);
+  if (!requester || requester.role !== 'superadmin') {
+    return res.status(403).json({ success: false, error: 'Endast superadmin kan skapa tokens.' });
+  }
+  const result = mintRequest(body, adminTokenSecret, Math.floor(Date.now() / 1000));
+  if (!result.ok) {
+    return res.status(400).json({ success: false, error: result.error });
+  }
+  // Stateless: the token is returned, never stored (02-§106.6).
+  res.json({ success: true, token: result.token });
 });
 
 app.post('/add-event', addEventLimiter, (req, res) => {

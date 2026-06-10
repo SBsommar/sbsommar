@@ -160,4 +160,65 @@ final class Admin
 
         return $token !== null && in_array($token['role'], self::PRE_CAMP_BYPASS_ROLES, true);
     }
+
+    /**
+     * Roles a superadmin may mint from the web, with their maximum (and
+     * default) validity in days (02-§106.3, §106.5). superadmin is CLI-only
+     * (02-§91.30).
+     *
+     * @var array<string,int>
+     */
+    private const MINTABLE_ROLE_DAYS = ['admin' => 60, 'early' => 90];
+
+    /**
+     * Hyphen-separated identifier: lowercase a–ö, digits, hyphens. Never an
+     * underscore — that is the token field delimiter (02-§106.4). Mirrors
+     * sanitizeTokenName in source/api/admin.js.
+     */
+    public static function sanitizeTokenName(mixed $raw): string
+    {
+        $name = mb_strtolower(trim((string) ($raw ?? '')), 'UTF-8');
+        $name = (string) preg_replace('/\s+/u', '-', $name);
+
+        return (string) preg_replace('/[^a-zåäö0-9-]/u', '', $name);
+    }
+
+    /**
+     * Validate a mint request and sign the token (02-§106.3–106.6). The
+     * caller is responsible for the superadmin gate (02-§106.2); this method
+     * only shapes the minted token. Mirrors mintRequest in
+     * source/api/admin.js.
+     *
+     * @param array<string,mixed> $body
+     * @return array{ok: bool, token?: string, error?: string}
+     */
+    public static function mintRequest(array $body, string $secret, ?int $nowSeconds = null): array
+    {
+        $now  = $nowSeconds ?? time();
+        $name = self::sanitizeTokenName($body['name'] ?? '');
+        if ($name === '') {
+            return ['ok' => false, 'error' => 'Namn krävs (a–ö, siffror, bindestreck).'];
+        }
+        $role = (string) ($body['role'] ?? '');
+        if (!array_key_exists($role, self::MINTABLE_ROLE_DAYS)) {
+            return ['ok' => false, 'error' => 'Ogiltig roll. Välj admin eller early.'];
+        }
+        $cap     = self::MINTABLE_ROLE_DAYS[$role];
+        $rawDays = $body['days'] ?? null;
+        if ($rawDays === null || $rawDays === '') {
+            $days = $cap;
+        } elseif (is_int($rawDays)) {
+            $days = $rawDays;
+        } elseif (is_numeric($rawDays) && (float) $rawDays === floor((float) $rawDays)) {
+            $days = (int) $rawDays;
+        } else {
+            $days = 0; // non-integer → rejected below
+        }
+        if ($days < 1 || $days > $cap) {
+            return ['ok' => false, 'error' => "Giltighetstiden måste vara 1–{$cap} dagar."];
+        }
+        $epoch = $now + $days * 86400;
+
+        return ['ok' => true, 'token' => self::signToken($name, $role, $epoch, $secret)];
+    }
 }

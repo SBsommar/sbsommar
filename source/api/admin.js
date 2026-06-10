@@ -108,11 +108,55 @@ function verifyPreCampBypassToken(candidate, secret) {
   return !!token && PRE_CAMP_BYPASS_ROLES.has(token.role);
 }
 
+// ── Minting (02-§106) ────────────────────────────────────────────────────────
+
+// Roles a superadmin may mint from the web, with their maximum (and default)
+// validity in days (02-§106.3, §106.5). superadmin is CLI-only (02-§91.30).
+const MINTABLE_ROLE_DAYS = { admin: 60, early: 90 };
+
+// Hyphen-separated identifier: lowercase a–ö, digits, hyphens. Never an
+// underscore — that is the token field delimiter (02-§106.4). Shared by the
+// CLI and the /mint-token endpoint so both produce identical names.
+function sanitizeTokenName(raw) {
+  return String(raw == null ? '' : raw)
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-zåäö0-9-]/g, '');
+}
+
+// Validate a mint request and sign the token (02-§106.3–106.6). The caller
+// is responsible for the superadmin gate (02-§106.2); this function only
+// shapes the minted token. Returns { ok: true, token } or
+// { ok: false, error } with a Swedish message.
+function mintRequest(body, secret, nowSeconds) {
+  const name = sanitizeTokenName(body && body.name);
+  if (!name) {
+    return { ok: false, error: 'Namn krävs (a–ö, siffror, bindestreck).' };
+  }
+  const role = String((body && body.role) || '');
+  if (!Object.prototype.hasOwnProperty.call(MINTABLE_ROLE_DAYS, role)) {
+    return { ok: false, error: 'Ogiltig roll. Välj admin eller early.' };
+  }
+  const cap = MINTABLE_ROLE_DAYS[role];
+  const rawDays = body.days;
+  const days = (rawDays === undefined || rawDays === null || rawDays === '')
+    ? cap
+    : Number(rawDays);
+  if (!Number.isInteger(days) || days < 1 || days > cap) {
+    return { ok: false, error: `Giltighetstiden måste vara 1–${cap} dagar.` };
+  }
+  const epoch = nowSeconds + days * 86400;
+  return { ok: true, token: signToken(name, role, epoch, secret) };
+}
+
 module.exports = {
   signToken,
   verifyToken,
   verifyAdminToken,
   verifyPreCampBypassToken,
+  mintRequest,
+  sanitizeTokenName,
   isTokenExpired,
   extractTokenExpiry,
   VALID_ROLES,

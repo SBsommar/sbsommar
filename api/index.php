@@ -50,6 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 const HOUR_SECONDS              = 3600;
 const RATE_LIMIT_MSG            = 'För många förfrågningar. Försök igen senare.';
 const RATE_LIMIT_VERIFY_ADMIN   = 5;
+const RATE_LIMIT_MINT_TOKEN     = 5;
 const RATE_LIMIT_ADD_EVENT      = 30;
 const RATE_LIMIT_EDIT_EVENT     = 30;
 const RATE_LIMIT_DELETE_EVENT   = 30;
@@ -177,6 +178,9 @@ try {
 
         $method === 'POST' && $route === '/verify-admin'
             => handleVerifyAdmin($adminTokenSecret),
+
+        $method === 'POST' && $route === '/mint-token'
+            => handleMintToken($adminTokenSecret),
 
         default
             => jsonResponse(['error' => 'Not found'], 404),
@@ -614,6 +618,38 @@ function handleVerifyAdmin(string $adminTokenSecret): void
     } else {
         jsonResponse(['valid' => false], 403);
     }
+}
+
+function handleMintToken(string $adminTokenSecret): void
+{
+    if (RateLimit::isLimited(clientIp(), 'mint-token', RATE_LIMIT_MINT_TOKEN, HOUR_SECONDS)) {
+        jsonResponse(['success' => false, 'error' => RATE_LIMIT_MSG], 429);
+
+        return;
+    }
+
+    $body = getJsonBody();
+
+    // Privilege boundary: only a valid superadmin token may mint, and only
+    // admin/early can be minted — superadmin is CLI-only (02-§106.2,
+    // §106.3). With an unset secret nothing verifies, so the gate fails
+    // closed (§106.8).
+    $requester = Admin::verifyToken((string) ($body['token'] ?? ''), $adminTokenSecret);
+    if ($requester === null || $requester['role'] !== 'superadmin') {
+        jsonResponse(['success' => false, 'error' => 'Endast superadmin kan skapa tokens.'], 403);
+
+        return;
+    }
+
+    $result = Admin::mintRequest($body, $adminTokenSecret);
+    if (!$result['ok']) {
+        jsonResponse(['success' => false, 'error' => $result['error']], 400);
+
+        return;
+    }
+
+    // Stateless: the token is returned, never stored (02-§106.6).
+    jsonResponse(['success' => true, 'token' => $result['token']]);
 }
 
 // ── Utilities ────────────────────────────────────────────────────────────
