@@ -189,7 +189,7 @@ Part of [the traceability index](./index.md).
 | (PHPUnit) | `api/tests/GitHubTest.php` | PHP mirror of `github.test.js`, run via `composer test` (02-§103.4) |
 | SEC-369-01..05 | `tests/security-hardening.test.js` | Event-data PR workflow: real validation, archived scope, script-injection-safe (02-§104.15, 02-§104.16, 02-§104.20) |
 | SEC-370-01..03 | `tests/security-hardening.test.js` | PHP time-gating fails closed; bundled camps.yaml (02-§104.13, 02-§104.14) |
-| SEC-371-01..02 | `tests/security-hardening.test.js` | PHP rate-limit trusted-proxy IP + `flock` counter (02-§104.10, 02-§104.11) |
+| SEC-371-01..03 | `tests/security-hardening.test.js` | PHP rate-limit trusted-proxy IP (right-most XFF) + `flock` counter (02-§104.10, 02-§104.11) |
 | SEC-383-01..05 | `tests/security-hardening.test.js` | Feedback metadata sanitisation (02-§104.1–104.3) |
 | SEC-384-01..03 | `tests/security-hardening.test.js` | HTTP security headers + CSP API-origin injection (02-§104.17–104.19) |
 | SEC-385-01..05 | `tests/security-hardening.test.js` | Link protocol validation in the render layer (02-§104.4, 02-§104.5) |

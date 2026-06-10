@@ -143,6 +143,13 @@ describe('#371 — PHP rate-limit hardening (structural)', () => {
     assert.match(src, /REMOTE_ADDR/);
   });
 
+  it('SEC-371-03: uses the right-most (proxy-appended) XFF entry, not the spoofable left-most', () => {
+    const src = read('api/index.php');
+    // Right-most via end(); must not key off the left-most [0] entry.
+    assert.match(src, /end\(\$parts\)/);
+    assert.doesNotMatch(src, /explode\(',', \$forwarded\)\[0\]/);
+  });
+
   it('SEC-371-02: RateLimit uses an exclusive lock for read-modify-write', () => {
     const src = read('api/src/RateLimit.php');
     assert.match(src, /flock\([^,]+,\s*LOCK_EX\)/);

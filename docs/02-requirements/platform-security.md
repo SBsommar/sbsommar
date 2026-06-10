@@ -767,12 +767,16 @@ reusable implementation per runtime.
   admin-token comparison path. <!-- 02-§93.5 -->
 - The client IP used as the rate-limit key is derived from `req.ip` in
   Node — that is, Express's trust-proxy-aware resolver (see §93.15). In
-  PHP it is `REMOTE_ADDR`, except that the left-most `HTTP_X_FORWARDED_FOR`
-  entry is used when `REMOTE_ADDR` is listed in the `TRUSTED_PROXIES`
-  environment variable and that entry is a syntactically valid IP. Because
-  `X-Forwarded-For` is attacker-controlled, it is never trusted from an
-  untrusted peer — otherwise a direct client could rotate the header to
-  mint a fresh rate-limit bucket per request and bypass throttling. When
+  PHP it is `REMOTE_ADDR`, except that the **right-most**
+  `HTTP_X_FORWARDED_FOR` entry — the address the trusted proxy appended — is
+  used when `REMOTE_ADDR` is listed in the `TRUSTED_PROXIES` environment
+  variable and that entry is a syntactically valid IP. The right-most entry is
+  chosen because a client can prepend spoofed entries but cannot control the
+  value the trusted proxy adds last; the left-most entry is attacker-controlled
+  whenever the proxy appends (the common behaviour) rather than replaces.
+  Because `X-Forwarded-For` is attacker-controlled, it is never trusted from an
+  untrusted peer — otherwise a direct client could rotate the header to mint a
+  fresh rate-limit bucket per request and bypass throttling. When
   `TRUSTED_PROXIES` is unset, the raw `REMOTE_ADDR` is always
   used. <!-- 02-§93.6 -->
 
@@ -1180,9 +1184,10 @@ The PHP rate-limiter keys on the client IP. `X-Forwarded-For` is
 attacker-controlled and the counter file must update atomically.
 
 - The PHP rate-limiter uses `REMOTE_ADDR` as the client key, honouring the
-  left-most `X-Forwarded-For` entry only when `REMOTE_ADDR` is listed in the
-  `TRUSTED_PROXIES` environment variable and that entry is a syntactically
-  valid IP (see §93.6). <!-- 02-§104.10 -->
+  right-most (proxy-appended) `X-Forwarded-For` entry only when `REMOTE_ADDR`
+  is listed in the `TRUSTED_PROXIES` environment variable and that entry is a
+  syntactically valid IP. The right-most entry is used because the left-most is
+  client-spoofable when the proxy appends (see §93.6). <!-- 02-§104.10 -->
 - The PHP rate-limit counter file is read and written under an exclusive lock
   (`flock`) for the whole read-modify-write, so concurrent requests cannot
   lose updates and a client cannot exceed a limit by racing. <!-- 02-§104.11 -->

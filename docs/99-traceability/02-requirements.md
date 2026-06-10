@@ -1559,7 +1559,7 @@ Doc ref: `03-architecture/platform-and-security.md §34`.
 | `02-§104.7` | covered | SEC-386-03: Node/PHP parity; source asserts no `length === length` short-circuit |
 | `02-§104.8` | covered | SEC-387-01: `.env.example` documents `SESSION_SECRET` with 32-byte minimum |
 | `02-§104.9` | covered | SEC-387-02: `app.js` + `api/index.php` warn on a secret shorter than 32 chars; unset disables ownership (fails closed) |
-| `02-§104.10` | covered | SEC-371-01: `clientIp()` trusts `X-Forwarded-For` only from `TRUSTED_PROXIES`, validates the IP; `api/index.php` (cross-ref 02-§93.6) |
+| `02-§104.10` | covered | SEC-371-01, SEC-371-03: `clientIp()` trusts `X-Forwarded-For` only from `TRUSTED_PROXIES`, validates the IP, and uses the right-most (proxy-appended) entry — not the spoofable left-most; `api/index.php` (cross-ref 02-§93.6) |
 | `02-§104.11` | covered | SEC-371-02 + PHPUnit `testRateLimitCountsAndTrips`/`testRateLimitSeparatesNamespaces`: `flock(LOCK_EX)` + `ftruncate` read-modify-write; `api/src/RateLimit.php` |
 | `02-§104.12` | covered | SEC-387-01: `TRUSTED_PROXIES` documented in `.env.example`; unset ⇒ XFF never trusted |
 | `02-§104.13` | covered | SEC-370-02: mutation handlers return HTTP 503 when `$activeCamp` is null; `api/index.php` |

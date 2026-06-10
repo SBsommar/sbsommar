@@ -72,10 +72,17 @@ function clientIp(): string
     if ($remote !== '' && in_array($remote, $trusted, true)) {
         $forwarded = (string) ($_SERVER['HTTP_X_FORWARDED_FOR'] ?? '');
         if ($forwarded !== '') {
-            // The left-most entry is the original client appended by the proxy.
-            $first = trim(explode(',', $forwarded)[0]);
-            if (filter_var($first, FILTER_VALIDATE_IP) !== false) {
-                return $first;
+            // Use the RIGHT-most entry — the address the trusted proxy appended
+            // (the peer it accepted the connection from). A client can prepend
+            // spoofed entries to X-Forwarded-For, but cannot control the value
+            // the trusted proxy adds last, so the right-most entry is the
+            // spoof-resistant rate-limit key. The left-most entry is
+            // attacker-controlled whenever the proxy appends (the common
+            // `$proxy_add_x_forwarded_for` behaviour) rather than replaces.
+            $parts     = array_map('trim', explode(',', $forwarded));
+            $candidate = end($parts);
+            if ($candidate !== false && filter_var($candidate, FILTER_VALIDATE_IP) !== false) {
+                return $candidate;
             }
         }
     }

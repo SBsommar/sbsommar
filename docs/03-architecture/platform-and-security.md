@@ -461,10 +461,14 @@ cookie ownership (fails closed), so no fatal error is raised.
 ### 34.5 Trusted-proxy rate-limit key and atomic counter (02-§104.10–104.12)
 
 `clientIp()` in `api/index.php` returns `REMOTE_ADDR` unless that peer is in
-the `TRUSTED_PROXIES` list, in which case the left-most `X-Forwarded-For`
-entry is used after `FILTER_VALIDATE_IP`. This prevents a direct client from
-rotating the header to mint fresh rate-limit buckets (the Node side already
-uses Express's trust-proxy-aware `req.ip`, §31.3). `RateLimit::isLimited()`
+the `TRUSTED_PROXIES` list, in which case the **right-most** `X-Forwarded-For`
+entry — the address the trusted proxy appended — is used after
+`FILTER_VALIDATE_IP`. Right-most, not left-most: a client can prepend spoofed
+entries but cannot control the value the proxy adds last, so the left-most
+entry would still be rotatable to bypass the limit under an appending proxy
+(`$proxy_add_x_forwarded_for`). This prevents a direct client from rotating the
+header to mint fresh rate-limit buckets (the Node side already uses Express's
+trust-proxy-aware `req.ip`, §31.3). `RateLimit::isLimited()`
 opens the counter file with `fopen(…, 'c+')`, holds `LOCK_EX` across the
 read-modify-write, and `ftruncate`s before rewriting, so concurrent requests
 cannot lose updates. A filesystem error fails open rather than blocking
