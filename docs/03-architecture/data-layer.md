@@ -107,7 +107,7 @@ The API server (`app.js`) handles each submission as follows:
 2. Responds immediately with a success confirmation — the form does not wait for the rest of the process.
 3. Reads `source/data/camps.yaml` from GitHub via the Contents API.
 4. Derives the active camp from dates and reads its YAML file from GitHub.
-5. Appends the new event and commits it to a temporary branch. The serialised YAML block is indented to match the existing `events:` list so the file remains valid YAML.
+5. Appends the new event, then parses the complete proposed document and confirms it contains the new event id before any branch is created (02-§102.5); on a parse failure nothing is written to git. The serialised YAML block is indented to match the existing `events:` list so the file remains valid YAML.
 6. Opens a pull request with auto-merge enabled.
 7. The event data PR check (see [`ci-and-deploy.md`](./ci-and-deploy.md) §11) runs — a no-op that satisfies branch protection.
 8. The PR merges automatically via auto-merge.

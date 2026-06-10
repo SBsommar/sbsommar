@@ -112,6 +112,33 @@ Checks:
   `<iframe`, `<object`, `<embed`, `data:text/html`.
 - **Fields scanned**: `title`, `location`, `responsible`, `description`.
 - **Link protocol**: non-empty `link` must start with `http://` or `https://`.
+- **Control characters / line breaks** (02-§102): the single-line scalar fields
+  `title`, `location`, `responsible`, `link`, and `ownerName` are rejected if
+  (after trimming) they contain any character in `U+0000`–`U+001F` or `U+007F`.
+  This prevents a value from breaking out of its line and altering the appended
+  YAML structure. `description` is the only multi-line field: it permits tab
+  (`U+0009`), line feed (`U+000A`), and carriage return (`U+000D`) and rejects
+  every other control character.
+
+#### Whole-document validation before a pull request (02-§102.5)
+
+The add-event and batch-add-event flows build the new file by appending a
+hand-built YAML block to the existing camp file (`buildEventYaml()` in
+`source/api/github.js` / `GitHub::buildEventYaml()` in PHP). After the new
+content is assembled and **before** any branch, commit, or pull request is
+created, the complete document is parsed (`yaml.load` / `Yaml::parse`) and
+checked to contain an `events` list including every newly created event id. If
+the parse fails or an id is missing, the operation throws and nothing is written
+to git. This is the defence-in-depth backstop behind the field-level control-char
+checks above.
+
+The edit and delete flows do not need this backstop: they rebuild the document
+with the YAML serializer (`yaml.dump` / `Yaml::dump`, see 02-§10.4), which
+cannot emit structurally invalid YAML even if a field somehow held a newline.
+
+Carriage returns in `description` are normalised to line feeds in
+`buildEventYaml()` before the literal block is emitted, so the stored value uses
+`\n` line endings regardless of the submitter's platform (02-§102.4).
 
 ### 11.7 Required repository settings
 

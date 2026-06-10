@@ -1516,3 +1516,15 @@ refactor of `render-lokaler.js` onto the shared module).
 | `02-§101.11` | covered | SES-10..13 and EEC-14..17: ownership entries are merged and deduplicated by event ID |
 | `02-§101.12` | covered | SES-05, SES-18, ADED-01b: legacy ID-only cookies may be displayed but never authorize |
 | `02-§101.13` | implemented | `redigera.js` debug panel labels legacy entries as old/unverifiable and explains they need to be re-added for editing; browser-only manual check |
+
+### §102 — YAML Structure Integrity for Event Submissions
+
+| ID | Status | Notes |
+| --- | --- | --- |
+| `02-§102.1` | gap | YSEC-01..06 (planned): line breaks / control chars (U+0000–U+001F, U+007F) rejected in `title`, `location`, `responsible`, `link`, `ownerName`; `source/api/validate.js` + `api/src/Validate.php` |
+| `02-§102.2` | gap | YSEC-01..06 (planned): rejection returns an error naming the offending field; nothing written to git |
+| `02-§102.3` | gap | YSEC-07..08 (planned): `description` permits `\t`/`\n`/`\r`, rejects all other control chars; `source/api/validate.js` + `api/src/Validate.php` |
+| `02-§102.4` | gap | YSEC-09 (planned): carriage returns in `description` normalised to `\n` in `buildEventYaml()`; `source/api/github.js` + `api/src/GitHub.php` |
+| `02-§102.5` | gap | YSEC-10..12 (planned): add/batch flows parse the full proposed document and confirm the new event id(s) before any branch/PR; `source/api/github.js` + `api/src/GitHub.php` |
+| `02-§102.6` | gap | Architectural: edit/delete rebuild via the YAML serializer (02-§10.4) and need no re-parse; `source/api/edit-event.js` + `GitHub::patchEventInYaml`/`removeEventFromYaml` |
+| `02-§102.7` | gap | PHP mirror has no test harness; parity verified by review (manual). `api/src/Validate.php` + `api/src/GitHub.php` mirror the Node implementation |
