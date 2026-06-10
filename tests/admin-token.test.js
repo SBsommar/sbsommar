@@ -193,6 +193,15 @@ describe('client token-expiry parsers read the role-format epoch (02-§91.2)', (
   }
 });
 
+// ── Secret-strength startup warning ─────────────────────────────────────────
+
+describe('startup secret-strength warning (02-§91.32)', () => {
+  it('TOK-22: both runtimes warn when ADMIN_TOKEN_SECRET is shorter than 32', () => {
+    assert.match(read('app.js'), /ADMIN_TOKEN_SECRET is shorter than 32/);
+    assert.match(read('api/index.php'), /ADMIN_TOKEN_SECRET is shorter than 32/);
+  });
+});
+
 // ── render-admin page ───────────────────────────────────────────────────────
 
 const { renderAdminPage } = require('../source/build/render-admin');
