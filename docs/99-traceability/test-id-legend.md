@@ -191,7 +191,8 @@ Part of [the traceability index](./index.md).
 | SEC-370-01..03 | `tests/security-hardening.test.js` | PHP time-gating fails closed; bundled camps.yaml (02-§104.13, 02-§104.14) |
 | SEC-371-01..02 | `tests/security-hardening.test.js` | PHP rate-limit trusted-proxy IP + `flock` counter (02-§104.10, 02-§104.11) |
 | SEC-383-01..05 | `tests/security-hardening.test.js` | Feedback metadata sanitisation (02-§104.1–104.3) |
-| SEC-385-01..03 | `tests/security-hardening.test.js` | Link protocol validation in the render layer (02-§104.4, 02-§104.5) |
+| SEC-384-01..03 | `tests/security-hardening.test.js` | HTTP security headers + CSP API-origin injection (02-§104.17–104.19) |
+| SEC-385-01..05 | `tests/security-hardening.test.js` | Link protocol validation in the render layer (02-§104.4, 02-§104.5) |
 | SEC-386-01..03 | `tests/security-hardening.test.js` | Constant-time admin-token comparison (02-§104.6, 02-§104.7) |
 | SEC-387-01..02 | `tests/security-hardening.test.js` | SESSION_SECRET / TRUSTED_PROXIES documented; weak-secret warning (02-§104.8, 02-§104.9) |
 | (PHPUnit) | `api/tests/SecurityHardeningTest.php` | PHP coverage of feedback sanitiser, constant-time token, rate-limit counter (02-§104) |

@@ -1221,3 +1221,28 @@ unsafe YAML and must run real validation.
   — including `event-delete/` branches and manually opened PRs — and checks
   out with enough git history for the diff against the base to resolve
   (CL-§9.5). <!-- 02-§104.16 -->
+
+### 104.9 HTTP security headers
+
+The site renders user-submitted content as HTML and relies on output encoding
+and a Markdown sanitiser; HTTP security headers add an independent defence
+layer. The static site and the API may be on different origins (in production
+the API is a separate `api.` host), so the policy must allow cross-origin API
+calls without weakening the rest.
+
+- The site `.htaccess` sets a `Content-Security-Policy` that restricts
+  `default-src` to `'self'`, forbids plugins (`object-src 'none'`), framing
+  (`frame-ancestors 'none'`), and base-tag hijacking (`base-uri 'self'`),
+  permits the GoatCounter script/connect/image origins, and allows inline
+  scripts and styles (`'unsafe-inline'`) as required by the build's per-page
+  inline data scripts on static hosting. <!-- 02-§104.17 -->
+- The CSP `connect-src` lists `'self'` and the API origin so the form,
+  feedback, edit/delete, and verify-admin `fetch()` calls are not blocked when
+  the API is a separate origin. The build injects the API origin (derived from
+  `API_URL`) into `connect-src` at build time; `'self'` covers a same-origin or
+  local API, and the built `.htaccess` contains no remaining placeholder
+  token. <!-- 02-§104.18 -->
+- The site `.htaccess` also sets `X-Content-Type-Options: nosniff`,
+  `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`,
+  a `Permissions-Policy` disabling geolocation/microphone/camera/interest-cohort,
+  and `Strict-Transport-Security` (`max-age` one year, `includeSubDomains`). <!-- 02-§104.19 -->

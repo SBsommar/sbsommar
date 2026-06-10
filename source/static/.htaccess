@@ -47,8 +47,10 @@
   # (window.__EVENTS__) and there is no per-request nonce on static Apache
   # hosting. The policy still blocks cross-origin script injection, framing,
   # plugins, and <base> hijacking. GoatCounter loads count.js from gc.zgo.at
-  # and beacons to *.goatcounter.com.
-  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://gc.zgo.at; connect-src 'self' https://*.goatcounter.com; img-src 'self' data: https://*.goatcounter.com; style-src 'self' 'unsafe-inline'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+  # and beacons to *.goatcounter.com. `__API_ORIGIN__` is replaced at build
+  # time with the API origin (empty when same-origin) so cross-origin form,
+  # feedback, edit/delete, and verify-admin fetch() calls are allowed (#384).
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://gc.zgo.at; connect-src 'self' __API_ORIGIN__https://*.goatcounter.com; img-src 'self' data: https://*.goatcounter.com; style-src 'self' 'unsafe-inline'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
   Header always set X-Content-Type-Options "nosniff"
   Header always set X-Frame-Options "DENY"
   Header always set Referrer-Policy "strict-origin-when-cross-origin"

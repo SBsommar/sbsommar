@@ -437,6 +437,20 @@ equal-length digests for every token with no early return, so neither the
 match nor the candidate length is observable through timing. Expiry is still
 checked first (the epoch is not secret).
 
+### 34.8 HTTP security headers (02-§104.17–104.19)
+
+`source/static/.htaccess` sets CSP, `X-Content-Type-Options`,
+`X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`, and HSTS via
+`mod_headers`. CSP uses `'unsafe-inline'` for script/style because the build
+emits per-page inline data scripts and static Apache has no per-request nonce;
+it still blocks cross-origin scripts, plugins, framing, and base hijacking.
+`connect-src` carries a `__API_ORIGIN__` placeholder that `injectHtaccessCsp()`
+(`source/build/utils.js`) replaces with `new URL(API_URL).origin` when the
+build copies the file — required because the production API is a separate
+origin (`fetch()` is governed by `connect-src`, and `'self'` alone would block
+it). QA/local APIs are same-origin so the placeholder resolves to empty. This
+is verified to leave no placeholder token in the built `.htaccess`.
+
 ### 34.4 Session secret configuration (02-§104.8–104.9)
 
 `SESSION_SECRET`, `TRUSTED_PROXIES`, and the existing variables are documented

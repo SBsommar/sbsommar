@@ -227,6 +227,22 @@ describe('#384 — site security headers', () => {
     assert.match(ht, /Permissions-Policy/);
     assert.match(ht, /Strict-Transport-Security/);
   });
+
+  it('SEC-384-03: build injects the API origin into connect-src (cross-origin), no placeholder left', () => {
+    const { injectHtaccessCsp } = require('../source/build/utils');
+    // Template carries the placeholder so the build can inject the origin.
+    assert.match(ht, /connect-src 'self' __API_ORIGIN__/);
+
+    // Cross-origin production API → origin appears in connect-src.
+    const prod = injectHtaccessCsp(ht, 'https://api.sommar.example.com/add-event');
+    assert.match(prod, /connect-src 'self' https:\/\/api\.sommar\.example\.com https:\/\/\*\.goatcounter\.com/);
+    assert.doesNotMatch(prod, /__API_ORIGIN__/);
+
+    // Same-origin/local (unset) → 'self' suffices, placeholder removed cleanly.
+    const local = injectHtaccessCsp(ht, '');
+    assert.match(local, /connect-src 'self' https:\/\/\*\.goatcounter\.com/);
+    assert.doesNotMatch(local, /__API_ORIGIN__/);
+  });
 });
 
 // ── #387 SESSION_SECRET documentation ────────────────────────────────────────

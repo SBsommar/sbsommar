@@ -23,7 +23,7 @@ const { resolveActiveCamp } = require('../scripts/resolve-active-camp');
 const { addOneDay } = require('../api/time-gate');
 const { setFeedbackUrl } = require('./layout');
 const { resolveVersionString } = require('./version');
-const { escapeHtml } = require('./utils');
+const { escapeHtml, injectHtaccessCsp } = require('./utils');
 const { getImageDimensions } = require('./image-dimensions');
 
 // ── Load .env if present (local dev) ─────────────────────────────────────────
@@ -429,8 +429,11 @@ async function main() {
   const STATIC_DIR = path.join(__dirname, '..', 'static');
   const htaccessSrc = path.join(STATIC_DIR, '.htaccess');
   if (fs.existsSync(htaccessSrc)) {
-    fs.copyFileSync(htaccessSrc, path.join(OUTPUT_DIR, '.htaccess'));
-    console.log('Copied: source/static/.htaccess → public/.htaccess');
+    // Inject the API origin into the CSP connect-src (#384) so cross-origin
+    // API fetch() calls are allowed in production.
+    const htaccess = injectHtaccessCsp(fs.readFileSync(htaccessSrc, 'utf8'), process.env.API_URL);
+    fs.writeFileSync(path.join(OUTPUT_DIR, '.htaccess'), htaccess);
+    console.log('Built: source/static/.htaccess → public/.htaccess (CSP connect-src injected)');
   }
 
   // ── Copy PWA files: manifest and service worker (02-§83.1, 02-§83.13) ──
