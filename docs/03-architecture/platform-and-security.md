@@ -223,7 +223,7 @@ client-side. An expired token behaves as if no token exists.
 
 ### Activation page
 
-`/admin.html` — a minimal page with a text input and submit button.
+`/token.html` — a minimal page with a text input and submit button.
 On submit, it calls `POST /verify-admin`. If valid, the token and
 timestamp are stored in `localStorage`. The page shares the site layout
 (header, navigation, footer) but is **not listed in the navigation**.
@@ -235,8 +235,8 @@ A small icon in the shared site footer shows admin status:
 | State | Display |
 | --- | --- |
 | No token in `localStorage` | Nothing shown |
-| Valid token (< 30 days) | Filled/locked icon with title "Admin aktiv" |
-| Expired token (> 30 days) | Open/unlocked icon with title "Admin utgången", links to `/admin.html` |
+| Valid token (< 30 days) | Filled/locked icon with title "Token aktiv" |
+| Expired token (> 30 days) | Open/unlocked icon with title "Token utgången", links to `/token.html` |
 
 The icon is rendered client-side by a script included in the footer
 layout, reading from `localStorage`.
@@ -245,7 +245,7 @@ layout, reading from `localStorage`.
 
 | File | Role |
 | --- | --- |
-| `source/build/render-admin.js` | Build-time render of `/admin.html` |
+| `source/build/render-admin.js` | Build-time render of `/token.html` |
 | `source/assets/js/client/admin.js` | Client-side: activation form + footer icon |
 | `source/build/layout.js` | Updated `pageFooter()` to include admin icon container |
 | `app.js` | New `POST /verify-admin` endpoint (Node.js) |

@@ -233,7 +233,7 @@ Rotating this secret invalidates every existing token at once.
    `superadmin`. The token is shown only once — save it immediately.
 2. Share the token privately with the admin (e.g. via SMS or in person).
    No environment edit and no redeploy are needed.
-3. The admin visits `/admin.html`, enters the token, and gains admin
+3. The admin visits `/token.html`, enters the token, and gains admin
    status until the token's embedded expiry.
 
 ### Revoking access

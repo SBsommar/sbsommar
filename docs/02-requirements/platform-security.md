@@ -623,7 +623,7 @@ reuses the format, signing, and activation flow described here.
 
 ### 91.4 Admin activation page (user requirements)
 
-- A page at `/admin.html` must allow an administrator to enter their
+- A page at `/token.html` must allow an administrator to enter their
   token. <!-- 02-§91.9 -->
 - The page must contain a single text input and a submit button. <!-- 02-§91.10 -->
 - On submit, the page must call `POST /verify-admin` with the entered
@@ -658,11 +658,11 @@ reuses the format, signing, and activation flow described here.
   indicating active admin status. <!-- 02-§91.21 -->
 - **Expired token (> 30 days)**: an open/unlocked icon is displayed,
   indicating the token needs renewal. Clicking the icon navigates to
-  `/admin.html`. <!-- 02-§91.22 -->
+  `/token.html`. <!-- 02-§91.22 -->
 - The icon must be small and unobtrusive — it is not intended for
   regular visitors. <!-- 02-§91.23 -->
 - The icon must have a `title` attribute explaining its meaning in
-  Swedish (e.g. "Admin aktiv" / "Admin utgången"). <!-- 02-§91.24 -->
+  Swedish (e.g. "Token aktiv" / "Token utgången"). <!-- 02-§91.24 -->
 
 ### 91.7 Constraints
 

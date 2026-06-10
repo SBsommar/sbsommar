@@ -79,7 +79,7 @@ async function main() {
   console.log('Inget behöver läggas till i miljövariabler — token valideras mot');
   console.log('ADMIN_TOKEN_SECRET. Ge bara tokenen till rätt person.');
   console.log('');
-  console.log(`Ge tokenen till ${rawName.trim()} — hen aktiverar den på /admin.html`);
+  console.log(`Ge tokenen till ${rawName.trim()} — hen aktiverar den på /token.html`);
   console.log('');
 }
 

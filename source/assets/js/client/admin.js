@@ -49,14 +49,14 @@
 
     if (isExpired(data)) {
       // Expired → open lock, link to /admin.html (02-§91.22)
-      container.innerHTML = '<a href="admin.html" class="admin-icon admin-icon--expired" title="Admin utgången — efterfråga ny token">' +
+      container.innerHTML = '<a href="token.html" class="admin-icon admin-icon--expired" title="Token utgången — efterfråga ny">' +
         '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">' +
         '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>' +
         '<path d="M7 11V7a5 5 0 0 1 9.9-1"/>' +
         '</svg></a>';
     } else {
       // Valid → filled lock, link to admin page (02-§91.21)
-      container.innerHTML = '<a href="admin.html" class="admin-icon admin-icon--active" title="Admin aktiv">' +
+      container.innerHTML = '<a href="token.html" class="admin-icon admin-icon--active" title="Token aktiv">' +
         '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">' +
         '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>' +
         '<path d="M7 11V7a5 5 0 0 1 10 0v4"/>' +
@@ -79,11 +79,14 @@
     if (existing && !isExpired(existing)) {
       var expiry = extractExpiry(existing.token);
       var expiryDate = expiry ? new Date(expiry * 1000).toLocaleDateString('sv-SE') : '';
-      message.textContent = 'Admin-token är aktiv' + (expiryDate ? ' till ' + expiryDate : '') + '. Du kan byta genom att ange en ny token nedan.';
+      var activatedAt = existing.activated ? new Date(existing.activated).toLocaleString('sv-SE') : '';
+      message.textContent = 'Din token är aktiv' + (expiryDate ? ' till ' + expiryDate : '')
+        + (activatedAt ? ' (aktiverad ' + activatedAt + ')' : '')
+        + '. Du kan byta genom att ange en ny token nedan.';
       message.hidden = false;
       message.classList.add('admin-message--success');
     } else if (existing && isExpired(existing)) {
-      message.textContent = 'Din admin-token har gått ut. Efterfråga en ny token och aktivera den här.';
+      message.textContent = 'Din token har gått ut. Efterfråga en ny token och aktivera den här.';
       message.hidden = false;
       message.classList.add('admin-message--error');
     }
@@ -130,8 +133,9 @@
           if (data.valid) {
             localStorage.setItem(STORAGE_KEY, JSON.stringify({
               token: token,
+              activated: Date.now(),
             }));
-            message.textContent = 'Admin-token aktiverad!';
+            message.textContent = 'Token aktiverad ' + new Date().toLocaleString('sv-SE') + '.';
             message.classList.add('admin-message--success');
             message.hidden = false;
             if (removeBtn) removeBtn.hidden = false;

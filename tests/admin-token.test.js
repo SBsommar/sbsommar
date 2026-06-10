@@ -173,6 +173,26 @@ describe('PHP token parity (structural) (02-§91.8)', () => {
   });
 });
 
+// ── Client parsers read the role-format epoch (regression for the browser-only
+//    bug where the epoch was read from the last segment = the signature) ──────
+
+describe('client token-expiry parsers read the role-format epoch (02-§91.2)', () => {
+  const clientFiles = [
+    'source/assets/js/client/admin.js',
+    'source/assets/js/client/session.js',
+    'source/assets/js/client/redigera.js',
+    'source/assets/js/client/lagg-till.js',
+  ];
+  for (const rel of clientFiles) {
+    it(`TOK-21: ${rel} reads epoch by segment, not the last underscore`, () => {
+      const src = read(rel);
+      assert.match(src, /split\('_'\)/, 'should split the token into fields');
+      assert.match(src, /parts\[2\]/, 'epoch is the third segment');
+      assert.doesNotMatch(src, /lastIndexOf\('_'\)/, 'last segment is the signature, not the epoch');
+    });
+  }
+});
+
 // ── render-admin page ───────────────────────────────────────────────────────
 
 const { renderAdminPage } = require('../source/build/render-admin');
@@ -214,7 +234,7 @@ describe('renderAdminPage (02-§91.9, §91.10, §91.14, §91.15)', () => {
     const html = renderAdminPage(CAMP, FOOTER_HTML);
     const navMatch = html.match(/<nav[^>]*>[\s\S]*?<\/nav>/);
     assert.ok(navMatch, 'Expected nav element');
-    assert.ok(!navMatch[0].includes('admin.html'), 'admin.html must not be in nav');
+    assert.ok(!navMatch[0].includes('token.html'), 'token.html must not be in nav');
   });
 
   it('ADM-16: user-facing text is in Swedish (§91.25)', () => {

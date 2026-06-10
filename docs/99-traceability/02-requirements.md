@@ -1262,7 +1262,7 @@ its requirement rows together with the test-legend rows that evidence them.
 | `02-§91.12` | implemented | manual: `admin.js` stores token in localStorage on success |
 | `02-§91.13` | implemented | manual: `admin.js` shows error message on failure |
 | `02-§91.14` | covered | ADM-14: page includes page-nav and site-footer |
-| `02-§91.15` | covered | ADM-15: admin.html not in nav links |
+| `02-§91.15` | covered | ADM-15: token.html not in nav links |
 | `02-§91.16` | covered | ADM-21, ADM-24: `isAdminExpired` returns true after 30 days |
 | `02-§91.17` | covered | ADM-19..23: expiry checked via `isAdminExpired` function |
 | `02-§91.18` | covered | ADM-22, ADM-23: undefined/zero treated as expired |
@@ -1271,7 +1271,7 @@ its requirement rows together with the test-legend rows that evidence them.
 | `02-§91.21` | implemented | manual: `admin.js` renders filled lock icon for valid token |
 | `02-§91.22` | implemented | manual: `admin.js` renders open lock icon with link for expired |
 | `02-§91.23` | implemented | CSS: 16×16 SVG icon, inline-block in footer |
-| `02-§91.24` | implemented | `admin.js` sets title="Admin aktiv" / "Admin utgången" |
+| `02-§91.24` | implemented | `admin.js` sets title="Token aktiv" / "Token utgången" |
 | `02-§91.25` | covered | ADM-16: `lang="sv"` on admin page |
 | `02-§91.26` | implemented | CSS uses --color-*, --space-*, --font-size-*, --radius-* tokens |
 | `02-§91.27` | implemented | Form has label, input, aria-live on message; icon has title attr |
