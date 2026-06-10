@@ -3,7 +3,7 @@ camp:
   name: QA Testläger (vår 2026)
   location: Sysslebäck
   start_date: '2026-04-24'
-  end_date: '2026-06-07'
+  end_date: '2026-06-16'
 events:
   - id: lunch-2026-04-25-1200
     title: Lunch
