@@ -499,14 +499,16 @@ previously restricted the check to `event/` and `event-edit/` branches is
 removed, so `event-delete/` branches and manual data PRs are all validated.
 Build and deploy remain post-merge (`event-data-deploy-post-merge.yml`).
 
-Script-injection hardening (02-§104.20): the changed-file list and the PR base
-SHA are passed to the shell through `env:` (`CHANGED_FILES`, `BASE_SHA`) and
-consumed as data — the file list via a quoted here-string (`done <<<
-"$CHANGED_FILES"`), filenames always quoted as `"$f"`. They are never
-interpolated as `${{ … }}` text into a `run:` block, which would let a filename
-like `source/data/x$(…).yaml` execute on the runner (an unquoted heredoc body
-performs command substitution). No `run:` script in the workflow contains a
-`${{ … }}` expression.
+Script-injection hardening (02-§104.20): the diff and validation happen in a
+single step, so no untrusted value crosses a step-output boundary. The PR base
+SHA arrives via `env: BASE_SHA` (a trusted commit ref) and the changed-file
+list is a local shell variable from `git diff`, read through a quoted
+here-string (`done <<< "$files"`) with each name quoted as `"$f"`. Nothing is
+interpolated as `${{ … }}` into a `run:` block — which would let a filename
+like `source/data/x$(…).yaml` execute on the runner (an unquoted heredoc body,
+or a literal `${{ }}`, performs command substitution). No `run:` script in the
+workflow contains a `${{ … }}` expression, and nothing untrusted is written to
+`GITHUB_OUTPUT`.
 
 ### 34.8 Files changed
 

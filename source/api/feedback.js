@@ -106,6 +106,10 @@ function sanitizeMetaField(value, maxLen) {
   return String(value == null ? '' : value)
     // eslint-disable-next-line no-control-regex
     .replace(/[\x00-\x1f\x7f]+/g, ' ')
+    // Escape the backslash FIRST, then the table delimiter — otherwise an input
+    // like `\|` becomes `\\|` (literal backslash + an unescaped pipe) and still
+    // breaks the Markdown table (CodeQL js/incomplete-sanitization, #383).
+    .replace(/\\/g, '\\\\')
     .replace(/\|/g, '\\|')
     .trim()
     .slice(0, maxLen);

@@ -55,6 +55,20 @@ describe('#383 — feedback metadata sanitisation', () => {
     const php = read('api/src/Feedback.php');
     assert.match(php, /sanitizeMetaField/);
     assert.match(php, /META_MAX_LENGTHS/);
+    // PHP escapes the backslash before the pipe too (CodeQL parity).
+    assert.match(php, /str_replace\('\\\\', '\\\\\\\\', \$s\)/);
+  });
+
+  it('SEC-383-06: backslashes are escaped before pipes so "\\|" cannot break the table', () => {
+    // Input "\|" must NOT become "\\|" (literal backslash + unescaped pipe).
+    // After stripping escaped backslashes then escaped pipes, no raw pipe may remain.
+    for (const input of ['a\\|b', 'x\\\\|y', '\\|\\|', 'plain']) {
+      const out = sanitizeMetaField(input, 100);
+      const stripped = out.replace(/\\\\/g, '').replace(/\\\|/g, '');
+      assert.ok(!stripped.includes('|'), `unescaped pipe survives for ${JSON.stringify(input)} → ${JSON.stringify(out)}`);
+    }
+    // A bare backslash is doubled (not left dangling).
+    assert.strictEqual(sanitizeMetaField('a\\b', 100), 'a\\\\b');
   });
 });
 
@@ -211,26 +225,25 @@ describe('#369 — event-data PR workflow validates', () => {
     // and the workflow derives the non-archived set from camps.yaml.
     assert.match(runText, /filter\(c=>!c\.archived\)/);
     assert.match(runText, /::warning::schema issues in archived/);
-    // The loop reads a quoted here-string from the env var, not a pipe.
-    assert.match(runText, /done <<< "\$CHANGED_FILES"/);
+    // The loop reads the local file list via a quoted here-string, not a pipe.
+    assert.match(runText, /done <<< "\$files"/);
   });
 
   it('SEC-369-05: no untrusted ${{ }} is interpolated into a run script (injection-safe)', () => {
-    // GitHub Actions script-injection hardening: untrusted values (changed
-    // filenames, base SHA) must arrive via env vars, never as literal text in
-    // a run: block — otherwise a filename like `x$(...).yaml` executes on the
-    // runner. No run script may contain a ${{ ... }} expression at all.
+    // GitHub Actions script-injection hardening: untrusted values must never be
+    // interpolated as ${{ }} into a run: block, and must not cross a step-output
+    // boundary. Everything happens in one step using local shell variables; the
+    // only ${{ }} is the trusted base SHA, passed via env (not into the script).
     for (const s of steps) {
       if (typeof s.run === 'string') {
         assert.ok(!s.run.includes('${{'), `run script interpolates an expression: ${s.name}`);
       }
     }
-    // The changed filenames reach the validator as an env var consumed as data.
-    const validate = steps.find((s) => typeof s.run === 'string' && s.run.includes('CHANGED_FILES'));
+    const validate = steps.find((s) => typeof s.run === 'string' && s.run.includes('git diff'));
     assert.ok(validate, 'validate step must exist');
-    assert.strictEqual(validate.env.CHANGED_FILES, '${{ steps.changed.outputs.files }}');
-    const changed = steps.find((s) => s.id === 'changed');
-    assert.strictEqual(changed.env.BASE_SHA, '${{ github.event.pull_request.base.sha }}');
+    assert.strictEqual(validate.env.BASE_SHA, '${{ github.event.pull_request.base.sha }}');
+    // No GITHUB_OUTPUT write of untrusted filenames (no step-output crossing).
+    assert.doesNotMatch(runText, /GITHUB_OUTPUT/);
   });
 });
 

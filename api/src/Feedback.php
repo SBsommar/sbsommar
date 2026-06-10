@@ -125,6 +125,10 @@ final class Feedback
         // (avoids an "Array to string conversion" warning and is safe).
         $s = is_scalar($value) ? (string) $value : '';
         $s = (string) preg_replace('/[\x00-\x1f\x7f]+/', ' ', $s);
+        // Escape the backslash FIRST, then the table delimiter — otherwise an
+        // input like `\|` becomes `\\|` (literal backslash + an unescaped pipe)
+        // and still breaks the Markdown table (mirrors feedback.js, #383).
+        $s = str_replace('\\', '\\\\', $s);
         $s = str_replace('|', '\\|', $s);
         $s = trim($s);
 

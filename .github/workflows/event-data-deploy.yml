@@ -38,39 +38,26 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # Untrusted values (the PR base SHA, changed filenames) are passed via
-      # env vars and never interpolated into the script text — a filename like
-      # `source/data/x$(…).yaml` must stay inert data, not become executable
-      # code (GitHub Actions script-injection hardening).
-      - name: Determine changed per-camp event files
-        id: changed
+      # Diff + validation in a single step so no untrusted value (changed
+      # filenames, base SHA) ever crosses a step-output boundary or is
+      # interpolated as ${{ }} into a run script. The base SHA arrives via env
+      # (and is a trusted commit ref); the file list is a local shell variable
+      # read through a quoted here-string with each filename quoted as "$f", so
+      # a crafted name like `source/data/x$(…).yaml` stays inert data.
+      - name: Validate changed event data
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: |
-          set -euo pipefail
+          set -uo pipefail
           # Per-camp event files only. camps.yaml / local.yaml are config, not
           # event data, and are validated by full CI (CL-§9.4).
           files=$(git diff --name-only "$BASE_SHA" HEAD -- 'source/data/*.yaml' \
             | grep -vE '(^|/)(camps|local)\.yaml$' || true)
-          {
-            echo "files<<__SBSOMMAR_EOF__"
-            echo "$files"
-            echo "__SBSOMMAR_EOF__"
-          } >> "$GITHUB_OUTPUT"
-          if [ -n "$files" ]; then echo "has_files=true" >> "$GITHUB_OUTPUT"; else echo "has_files=false" >> "$GITHUB_OUTPUT"; fi
+          if [ -z "$files" ]; then
+            echo "No per-camp event files changed; nothing to validate."
+            exit 0
+          fi
 
-      - name: Validate schema and security of changed event files
-        if: steps.changed.outputs.has_files == 'true'
-        env:
-          # Consumed as data via a quoted here-string below; never interpolated
-          # into the script, so a crafted filename cannot inject shell code.
-          CHANGED_FILES: ${{ steps.changed.outputs.files }}
-        run: |
-          set -uo pipefail
-          # Iterate via a quoted here-string from the env var (not a pipe and
-          # not an interpolated heredoc) so the loop runs in this shell, a
-          # validation failure reliably fails the job, and filenames stay inert.
-          #
           # Scope (legacy data, #369): the security scanner is a HARD block for
           # every changed per-camp file. The schema validator hard-blocks files
           # belonging to non-archived camps, but is advisory for archived camps
@@ -94,9 +81,5 @@ jobs:
               echo "::notice::$f belongs to an archived camp; schema check is advisory (security scan still enforced)"
               node source/scripts/lint-yaml.js "$f" || echo "::warning::schema issues in archived file $f (not blocking)"
             fi
-          done <<< "$CHANGED_FILES"
+          done <<< "$files"
           exit $status
-
-      - name: No event-data files changed
-        if: steps.changed.outputs.has_files != 'true'
-        run: echo "No per-camp event files changed; nothing to validate."

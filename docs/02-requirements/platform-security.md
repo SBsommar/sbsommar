@@ -1226,10 +1226,12 @@ unsafe YAML and must run real validation.
   — including `event-delete/` branches and manually opened PRs — and checks
   out with enough git history for the diff against the base to resolve
   (CL-§9.5). <!-- 02-§104.16 -->
-- Untrusted values consumed by the validation job — the changed filenames and
-  the PR base SHA — are passed to the shell via environment variables and never
-  interpolated as literal text into a `run:` script, so a crafted filename such
-  as `source/data/x$(…).yaml` is treated as inert data and cannot inject shell
+- The validation job performs its diff and validation in a single step so no
+  untrusted value crosses a step-output boundary, and no untrusted value is
+  interpolated as `${{ … }}` into a `run:` script: the PR base SHA arrives via
+  an environment variable and the changed filenames are a local shell variable
+  read as data (quoted here-string, each name quoted). A crafted filename such
+  as `source/data/x$(…).yaml` is therefore inert and cannot inject shell
   commands on the runner. <!-- 02-§104.20 -->
 
 ### 104.9 HTTP security headers

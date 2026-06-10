@@ -22,6 +22,18 @@ final class SecurityHardeningTest extends TestCase
         self::assertSame('a\\|b', Feedback::sanitizeMetaField('a|b', 100));
     }
 
+    public function testSanitizeEscapesBackslashBeforePipe(): void
+    {
+        // Bare backslash is doubled (CodeQL js/incomplete-sanitization parity).
+        self::assertSame('a\\\\b', Feedback::sanitizeMetaField('a\\b', 100));
+        // "\|" must not become "\\|" (literal backslash + unescaped pipe).
+        foreach (['a\\|b', 'x\\\\|y', '\\|\\|', 'plain'] as $input) {
+            $out      = Feedback::sanitizeMetaField($input, 100);
+            $stripped = str_replace('\\|', '', str_replace('\\\\', '', $out));
+            self::assertStringNotContainsString('|', $stripped, "unescaped pipe survives for {$input} → {$out}");
+        }
+    }
+
     public function testSanitizeCollapsesControlChars(): void
     {
         self::assertSame('a b c', Feedback::sanitizeMetaField("a\r\n\tb c", 100));
