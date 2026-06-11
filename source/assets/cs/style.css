@@ -2850,6 +2850,11 @@ body.modal-open {
   gap: var(--space-sm);
 }
 
+/* `.admin-form` sets display, which defeats the `hidden` attribute; restore
+   display:none so the superadmin-only mint section stays hidden until
+   `admin.js` reveals it (02-§106.9). */
+.admin-form[hidden] { display: none; }
+
 .admin-form label {
   display: block;
   margin-bottom: var(--space-xs);
@@ -2896,6 +2901,14 @@ body.modal-open {
 
 .admin-message--success { color: var(--color-sage-hover); }
 .admin-message--error { color: var(--color-error); }
+
+/* Role shown as a bold title on its own line above the status body
+   (02-§91.33). `display: block` puts the following body text underneath. */
+.admin-message-title {
+  display: block;
+  font-weight: 700;
+  margin-bottom: var(--space-xs);
+}
 
 .admin-remove {
   align-self: flex-start;

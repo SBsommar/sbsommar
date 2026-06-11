@@ -259,8 +259,15 @@ signing — so the Node and PHP routes stay thin and behave identically. The
 CLI reuses the same sanitiser.
 
 The mint UI is a section on `/token.html` (rendered hidden by
-`render-admin.js`, revealed by `admin.js` when the stored token's role is
-`superadmin`). It builds an activation link
+`render-admin.js`, revealed by `admin.js` only when the stored token's role
+is `superadmin`). The section carries the `.admin-form` class, which sets
+`display: flex`; because an author `display` rule overrides the user-agent
+`[hidden] { display: none }`, an explicit `.admin-form[hidden] { display:
+none }` rule in `style.css` keeps the `hidden` attribute authoritative, so
+the section stays invisible to every non-superadmin (02-§106.9). Visibility
+is cosmetic regardless — the server gates each mint — but without the
+override the form would render for all visitors. It builds an activation
+link
 `<site-origin>/token.html#token=<token>` with copy and `navigator.share`
 buttons. On load the same page redeems incoming links: it reads
 `location.hash`, posts the value to `/verify-admin`, stores it like a
@@ -294,6 +301,20 @@ client-side. An expired token behaves as if no token exists.
 On submit, it calls `POST /verify-admin`. If valid, the token and
 timestamp are stored in `localStorage`. The page shares the site layout
 (header, navigation, footer) but is **not listed in the navigation**.
+
+When a valid token is already stored, the status message leads with the
+role as a bold title (`Roll: <label>`, a `.admin-message-title` `<strong>`
+on its own line) — read client-side from the token's second
+underscore-segment — and states below it in Swedish what the role allows:
+`superadmin` may edit all activities, open the form before the camp opens,
+and mint token links; `admin` may edit all activities and open the form
+early; `early` may add and edit their own activities before the form opens
+(02-§91.33). A `roleDescription(role)` helper in `admin.js` maps the role to
+its Swedish rights sentence, and `setStatusWithRole()` builds the message
+with DOM nodes (no `innerHTML` on this token-bearing page); the body retains
+the token's expiry date, its activation time, and the note that a new token
+can be entered below to replace it. The recipient name in the token is not
+displayed.
 
 ### Footer status indicator
 
