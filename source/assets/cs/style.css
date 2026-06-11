@@ -2845,6 +2845,10 @@ body.modal-open {
 .admin-form {
   max-width: var(--container-narrow);
   margin-top: var(--space-md);
+
+  /* `.site-content` has no bottom padding, so without this the last control
+     (e.g. "Kopiera länken") sits flush against the footer. */
+  margin-bottom: var(--space-lg);
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
@@ -2881,10 +2885,24 @@ body.modal-open {
   outline-offset: 2px;
 }
 
+/* Submit buttons sit inside the form, so the `.admin-form` gap does not
+   reach them — give them air above the field they follow (02-§91.34). */
+.admin-form form button[type="submit"] {
+  margin-top: var(--space-sm);
+}
+
 .mint-result {
   display: flex;
   flex-direction: column;
   gap: var(--space-xs);
+}
+
+/* The generated link is read-only output, not a field to fill in (02-§106.20,
+   07-§6.124): a muted background and default cursor set it apart from the
+   editable inputs above it. */
+#mint-link {
+  background: var(--color-cream);
+  cursor: default;
 }
 
 .mint-actions {

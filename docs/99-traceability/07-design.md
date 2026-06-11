@@ -81,6 +81,7 @@ Part of [the traceability index](./index.md).
 | `07-§6.30` | Alternatively, a sage-green label appears above the heading at `12px` uppercase | 07-design/components.md §6 | — | `source/assets/cs/style.css` | implemented |
 | `07-§6.31` | Schedule event rows show a bold start time and a lighter end time | 07-design/components.md §6 | — | `source/build/render.js` – `renderEventRow()`; `source/assets/cs/style.css` | implemented |
 | `07-§6.32` | Location is shown as small text below the time in event rows | 07-design/components.md §6 | — | `source/build/render.js` – `renderEventRow()` | implemented |
+| `07-§6.124` | The read-only activation-link field reads as output, not input (muted background, default cursor) | 07-design/components.md §6 | MINT-17 (structural: `#mint-link` read-only style) | `source/assets/cs/style.css` – `#mint-link` muted background + `cursor: default` | covered |
 | `07-§7.2` | CSS is written for a component only once its HTML structure exists; no speculative CSS | 07-design/css-strategy.md §7 | — | Convention; assessed through code review | implemented |
 | `07-§7.3` | CSS is organized in one main file: reset → tokens → base → layout → components → utilities | 07-design/css-strategy.md §7 | — | `source/assets/cs/style.css` | implemented |
 | `07-§7.4` | No CSS preprocessor is used; CSS custom properties are sufficient | 07-design/css-strategy.md §7 | CSS-36 | `source/assets/cs/style.css` – plain CSS with custom properties | covered |

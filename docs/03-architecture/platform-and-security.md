@@ -268,8 +268,9 @@ the section stays invisible to every non-superadmin (02-§106.9). Visibility
 is cosmetic regardless — the server gates each mint — but without the
 override the form would render for all visitors. It builds an activation
 link
-`<site-origin>/token.html#token=<token>` with copy and `navigator.share`
-buttons. On load the same page redeems incoming links: it reads
+`<site-origin>/token.html#token=<token>` with a copy button (no native
+share button — `navigator.share` is a silent no-op on desktop). On load the
+same page redeems incoming links: it reads
 `location.hash`, posts the value to `/verify-admin`, stores it like a
 manual activation, and clears the fragment with `history.replaceState`.
 The token travels in the fragment — never a query parameter — so it stays
@@ -277,6 +278,14 @@ out of server logs and `Referer` headers. Because tokens are stateless, an
 individual token cannot be revoked without rotating `ADMIN_TOKEN_SECRET`
 (which invalidates all tokens at once); short embedded expiries bound the
 exposure of a leaked token.
+
+The mint form sets `novalidate` and validates client-side, reusing the
+add-activity form's per-field inline-error model (`setMintFieldError()`
+mirrors `lagg-till.js`'s `setFieldError()`): the recipient name is required
+and the day count must be an integer within the role's range, each reported
+as a Swedish `field-error` below its field rather than a native browser
+bubble (02-§106.19). The generated link field is read-only and styled as
+output, not input (02-§106.20).
 
 ### Token storage (client)
 
@@ -315,6 +324,13 @@ with DOM nodes (no `innerHTML` on this token-bearing page); the body retains
 the token's expiry date, its activation time, and the note that a new token
 can be entered below to replace it. The recipient name in the token is not
 displayed.
+
+"Ta bort min token" does not delete the stored token directly; it opens a
+confirmation alertdialog that reuses the site's `.submit-modal` pattern
+(markup in `render-admin.js`, open/close and focus-trap helpers in
+`admin.js`, mirroring the delete-activity dialog in `redigera.js`). The
+token is cleared from `localStorage` only when the user confirms with "Ja,
+ta bort"; "Avbryt" or Escape keeps it (02-§91.35).
 
 ### Footer status indicator
 

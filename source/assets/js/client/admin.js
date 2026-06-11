@@ -87,6 +87,26 @@
     }
   }
 
+  // Validate the mint form's fields (02-§106.19). Pure — returns Swedish
+  // messages keyed by field, or null when valid. The recipient name is
+  // required; the day count must be an integer within 1..max for the role.
+  // Mirrors the add-activity form's per-field model (02-§6.5).
+  function validateMintFields(fields) {
+    var f = fields || {};
+    var errors = { name: null, days: null };
+    var name = (f.name == null ? '' : String(f.name)).trim();
+    if (!name) errors.name = 'Namn är obligatoriskt.';
+    var max = Number(f.max);
+    var rawDays = f.days;
+    var days = Number(rawDays);
+    if (rawDays === '' || rawDays == null || !isFinite(days)) {
+      errors.days = 'Giltighetstid är obligatorisk.';
+    } else if (days % 1 !== 0 || days < 1 || (isFinite(max) && days > max)) {
+      errors.days = 'Giltighetstiden måste vara 1–' + (isFinite(max) ? max : '') + ' dagar.';
+    }
+    return errors;
+  }
+
   // Derive the API base URL from the page's API configuration.
   function apiBase() {
     var feedbackBtn = document.querySelector('.feedback-btn[data-api-url]');
@@ -104,6 +124,7 @@
         tokenRole: tokenRole,
         extractExpiry: extractExpiry,
         isExpired: isExpired,
+        validateMintFields: validateMintFields,
       };
     }
     return;
@@ -164,16 +185,67 @@
       removeBtn.hidden = false;
     }
 
+    // ── Remove-token confirmation (02-§91.35) ─────────────────────────────────
+    // "Ta bort min token" is destructive, so it opens a confirmation dialog
+    // (the site's .submit-modal alertdialog, like delete-activity) instead of
+    // removing the token on the first click. Focus moves to Avbryt on open and
+    // is trapped; Escape or Avbryt keeps the token, "Ja, ta bort" removes it.
+    var removeConfirm = document.getElementById('token-remove-confirm');
+    var removeYes = document.getElementById('token-remove-yes');
+    var removeNo = document.getElementById('token-remove-no');
+    var preRemoveFocus = null;
+
+    var closeRemoveConfirm = function () {
+      if (!removeConfirm) return;
+      removeConfirm.hidden = true;
+      document.body.classList.remove('modal-open');
+      removeConfirm.removeEventListener('keydown', trapRemoveFocus);
+      if (preRemoveFocus) preRemoveFocus.focus();
+    };
+
+    var trapRemoveFocus = function (e) {
+      if (e.key === 'Escape') { closeRemoveConfirm(); return; }
+      if (e.key !== 'Tab' || !removeConfirm) return;
+      var focusable = Array.prototype.slice.call(
+        removeConfirm.querySelectorAll('button:not([disabled])'));
+      if (!focusable.length) return;
+      var first = focusable[0];
+      var last = focusable[focusable.length - 1];
+      if (e.shiftKey) {
+        if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+      } else {
+        if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    };
+
+    var openRemoveConfirm = function () {
+      if (!removeConfirm) return;
+      preRemoveFocus = document.activeElement;
+      removeConfirm.hidden = false;
+      document.body.classList.add('modal-open');
+      removeConfirm.addEventListener('keydown', trapRemoveFocus);
+      if (removeNo) removeNo.focus();
+    };
+
+    var performRemove = function () {
+      localStorage.removeItem(STORAGE_KEY);
+      closeRemoveConfirm();
+      message.textContent = 'Token borttagen.';
+      message.className = 'admin-message admin-message--success';
+      message.hidden = false;
+      removeBtn.hidden = true;
+      renderFooterIcon();
+      // The remove button is now hidden, so closeRemoveConfirm()'s focus
+      // restore would land on a hidden element — move focus to the token
+      // input instead, the natural next step (enter a new token).
+      if (input) input.focus();
+    };
+
     if (removeBtn) {
-      removeBtn.addEventListener('click', function () {
-        localStorage.removeItem(STORAGE_KEY);
-        message.textContent = 'Token borttagen.';
-        message.className = 'admin-message admin-message--success';
-        message.hidden = false;
-        removeBtn.hidden = true;
-        renderFooterIcon();
-      });
+      removeBtn.addEventListener('click', openRemoveConfirm);
     }
+    if (removeYes) removeYes.addEventListener('click', performRemove);
+    if (removeNo) removeNo.addEventListener('click', closeRemoveConfirm);
 
     // Verify a token against the server and store it on success. Used by the
     // manual form and by activation links (02-§91.11–91.13, 02-§106.14).
@@ -251,12 +323,12 @@
 
     var mintForm = document.getElementById('mint-form');
     var mintMessage = document.getElementById('mint-message');
+    var mintName = document.getElementById('mint-name');
     var mintRoleSel = document.getElementById('mint-role');
     var mintDays = document.getElementById('mint-days');
     var mintResult = document.getElementById('mint-result');
     var mintLink = document.getElementById('mint-link');
     var mintCopy = document.getElementById('mint-copy');
-    var mintShare = document.getElementById('mint-share');
 
     var showMintMessage = function (text, ok) {
       mintMessage.textContent = text;
@@ -264,18 +336,58 @@
       mintMessage.hidden = false;
     };
 
+    // Per-field inline errors for the mint form, mirroring lagg-till.js's
+    // model (02-§106.19, §6.5): field name → its input + #mint-err-<field>
+    // span. The error clears as soon as the user edits the field.
+    var MINT_FIELDS = { name: mintName, days: mintDays };
+    var setMintFieldError = function (field, msg) {
+      var el = MINT_FIELDS[field];
+      var span = document.getElementById('mint-err-' + field);
+      if (!el || !span) return;
+      if (msg) {
+        el.setAttribute('aria-invalid', 'true');
+        span.textContent = msg;
+        span.hidden = false;
+      } else {
+        el.removeAttribute('aria-invalid');
+        span.textContent = '';
+        span.hidden = true;
+      }
+    };
+    Object.keys(MINT_FIELDS).forEach(function (field) {
+      if (!MINT_FIELDS[field]) return;
+      MINT_FIELDS[field].addEventListener('input', function () { setMintFieldError(field, null); });
+    });
+
     // Role change updates the day field's default and maximum (02-§106.10).
+    // Setting the value programmatically does not fire `input`, so clear any
+    // stale days error here — the reset value is always valid for the role.
     mintRoleSel.addEventListener('change', function () {
       var opt = mintRoleSel.options[mintRoleSel.selectedIndex];
       var days = (opt && opt.dataset.days) || '60';
       mintDays.max = days;
       mintDays.value = days;
+      setMintFieldError('days', null);
     });
 
     mintForm.addEventListener('submit', function (e) {
       e.preventDefault();
       mintMessage.hidden = true;
       mintResult.hidden = true;
+
+      // Client-side validation with Swedish inline errors (02-§106.19) —
+      // `novalidate` on the form suppresses the browser's native bubbles.
+      var errors = validateMintFields({
+        name: mintName.value,
+        days: mintDays.value,
+        max: Number(mintDays.max),
+      });
+      setMintFieldError('name', errors.name);
+      setMintFieldError('days', errors.days);
+      if (errors.name || errors.days) {
+        (errors.name ? mintName : mintDays).focus();
+        return;
+      }
 
       // Read the stored token fresh on every mint, in case it was replaced
       // since the section was revealed. The server is the real gate.
@@ -301,8 +413,7 @@
           // Activation link with the token in the fragment (02-§106.11, §106.16).
           mintLink.value = location.origin + '/token.html#token=' + encodeURIComponent(data.token);
           mintResult.hidden = false;
-          if (navigator.share) mintShare.hidden = false;
-          showMintMessage('Länk skapad. Dela den privat med mottagaren.', true);
+          showMintMessage('Länk skapad. Kopiera och dela den privat med mottagaren.', true);
         })
         .catch(function () {
           showMintMessage('Kunde inte skapa token. Kontrollera din anslutning.', false);
@@ -321,11 +432,6 @@
       } else {
         fallbackCopy();
       }
-    });
-
-    mintShare.addEventListener('click', function () {
-      navigator.share({ title: 'SB Sommar – aktivera din token', url: mintLink.value })
-        .catch(function () { /* user cancelled the share sheet */ });
     });
   }
 

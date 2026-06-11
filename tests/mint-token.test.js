@@ -29,6 +29,9 @@ const {
   sanitizeTokenName,
 } = require('../source/api/admin');
 
+// Pure client-side mint-form validation (admin.js exports it under Node).
+const { validateMintFields } = require('../source/assets/js/client/admin');
+
 const SECRET = 'mint-token-test-secret-32-bytes!';
 const NOW = 2000000000; // fixed, mirrored in api/tests/MintTokenTest.php
 const DAY = 86400;
@@ -154,7 +157,7 @@ describe('mint UI and redemption wiring (02-§106.9–106.16)', () => {
     assert.match(html, /id="mint-days"/);
     assert.match(html, /id="mint-link"/);
     assert.match(html, /id="mint-copy"/);
-    assert.match(html, /id="mint-share"[^>]*hidden/);
+    assert.doesNotMatch(html, /id="mint-share"/, 'the unreliable native share button is removed (02-§106.12)');
     assert.match(html, /Tidig åtkomst/);
   });
 
@@ -164,7 +167,7 @@ describe('mint UI and redemption wiring (02-§106.9–106.16)', () => {
     assert.match(src, /location\.hash/);
     assert.match(src, /history\.replaceState/);
     assert.match(src, /#token=/);
-    assert.match(src, /navigator\.share/);
+    assert.doesNotMatch(src, /navigator\.share/, 'the native share button is removed (02-§106.12)');
     assert.doesNotMatch(src, /\?token=/, 'redemption must use the fragment, not a query parameter');
   });
 
@@ -176,5 +179,44 @@ describe('mint UI and redemption wiring (02-§106.9–106.16)', () => {
     // section from non-superadmins. Without it the form renders for everyone.
     const css = read('source/assets/cs/style.css');
     assert.match(css, /\.admin-form\[hidden\]\s*\{\s*display:\s*none/);
+  });
+
+  it('MINT-17: token page uses site button styles and a read-only link field (02-§91.34, §106.20)', () => {
+    const { renderAdminPage } = require('../source/build/render-admin');
+    const html = renderAdminPage({ name: 'SB Sommar 2026' }, '<p>f</p>');
+    // Buttons use the site classes, not the orphaned (unstyled) BEM .btn--* ones.
+    assert.doesNotMatch(html, /btn--(primary|secondary)/);
+    assert.match(html, /class="btn-primary"/);
+    assert.match(html, /class="btn-secondary/);
+    // The generated link field is de-emphasised so it reads as output.
+    const css = read('source/assets/cs/style.css');
+    assert.match(css, /#mint-link\s*\{[^}]*cursor:\s*default/);
+    assert.match(css, /#mint-link\s*\{[^}]*background/);
+  });
+
+  it('MINT-18: validateMintFields enforces required name and in-range integer days (02-§106.19)', () => {
+    assert.deepStrictEqual(validateMintFields({ name: 'anna', days: 60, max: 60 }), { name: null, days: null });
+    assert.match(validateMintFields({ name: '', days: 60, max: 60 }).name, /obligatorisk/i);
+    assert.match(validateMintFields({ name: '   ', days: 60, max: 60 }).name, /obligatorisk/i);
+    assert.match(validateMintFields({ name: 'a', days: '', max: 60 }).days, /obligatorisk/i);
+    assert.match(validateMintFields({ name: 'a', days: 90, max: 60 }).days, /1–60 dagar/);
+    assert.match(validateMintFields({ name: 'a', days: 0, max: 60 }).days, /1–60/);
+    assert.match(validateMintFields({ name: 'a', days: 1.5, max: 60 }).days, /1–60/);
+    assert.strictEqual(validateMintFields({ name: 'a', days: 90, max: 90 }).days, null);
+  });
+
+  it('MINT-19: token removal goes through a confirmation dialog (02-§91.35)', () => {
+    const { renderAdminPage } = require('../source/build/render-admin');
+    const html = renderAdminPage({ name: 'SB Sommar 2026' }, '<p>f</p>');
+    // The confirmation alertdialog and its two buttons exist, hidden by default.
+    assert.match(html, /id="token-remove-confirm"[^>]*role="alertdialog"[^>]*hidden/);
+    assert.match(html, /id="token-remove-yes"/);
+    assert.match(html, /id="token-remove-no"/);
+
+    // admin.js opens the dialog from the remove button and clears the token
+    // only on confirmation — never directly on the remove button's click.
+    const src = read('source/assets/js/client/admin.js');
+    assert.match(src, /removeBtn\.addEventListener\('click', openRemoveConfirm\)/);
+    assert.match(src, /removeYes\.addEventListener\('click', performRemove\)/);
   });
 });
