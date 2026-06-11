@@ -235,6 +235,10 @@
       message.hidden = false;
       removeBtn.hidden = true;
       renderFooterIcon();
+      // The remove button is now hidden, so closeRemoveConfirm()'s focus
+      // restore would land on a hidden element — move focus to the token
+      // input instead, the natural next step (enter a new token).
+      if (input) input.focus();
     };
 
     if (removeBtn) {
@@ -356,11 +360,14 @@
     });
 
     // Role change updates the day field's default and maximum (02-§106.10).
+    // Setting the value programmatically does not fire `input`, so clear any
+    // stale days error here — the reset value is always valid for the role.
     mintRoleSel.addEventListener('change', function () {
       var opt = mintRoleSel.options[mintRoleSel.selectedIndex];
       var days = (opt && opt.dataset.days) || '60';
       mintDays.max = days;
       mintDays.value = days;
+      setMintFieldError('days', null);
     });
 
     mintForm.addEventListener('submit', function (e) {
