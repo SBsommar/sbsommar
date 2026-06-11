@@ -167,4 +167,14 @@ describe('mint UI and redemption wiring (02-§106.9–106.16)', () => {
     assert.match(src, /navigator\.share/);
     assert.doesNotMatch(src, /\?token=/, 'redemption must use the fragment, not a query parameter');
   });
+
+  it('MINT-16: style.css keeps [hidden] authoritative for .admin-form (02-§106.9)', () => {
+    // The mint section is `<div id="mint-section" class="admin-form" hidden>`.
+    // `.admin-form { display: flex }` would defeat the `hidden` attribute
+    // (an author display rule beats the UA `[hidden] { display: none }`),
+    // so an explicit override is required for the role gate to hide the
+    // section from non-superadmins. Without it the form renders for everyone.
+    const css = read('source/assets/cs/style.css');
+    assert.match(css, /\.admin-form\[hidden\]\s*\{\s*display:\s*none/);
+  });
 });
