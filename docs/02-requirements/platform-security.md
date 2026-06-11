@@ -664,6 +664,16 @@ reuses the format, signing, and activation flow described here.
   cancel button on open and returns to the trigger on close, and focus is
   trapped within the dialog. This guards against an accidental
   click. <!-- 02-§91.35 -->
+- On a successful activation — whether the token was typed in or arrived via
+  an activation link — the token input field is cleared. The token is stored
+  in `localStorage`, so leaving the full string visible in the field serves
+  no purpose; for the activation-link flow it would also leave the token on
+  screen after the URL fragment has already been removed
+  (02-§106.15). <!-- 02-§91.36 -->
+- The "Aktivera" button is disabled while the token input is empty — on page
+  load and after a successful activation clears the field — and becomes
+  enabled as soon as the field contains non-whitespace text. This prevents
+  submitting an empty activation. <!-- 02-§91.37 -->
 
 ### 91.5 Token expiry (site requirements)
 
