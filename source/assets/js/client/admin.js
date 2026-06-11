@@ -185,16 +185,63 @@
       removeBtn.hidden = false;
     }
 
+    // ── Remove-token confirmation (02-§91.35) ─────────────────────────────────
+    // "Ta bort min token" is destructive, so it opens a confirmation dialog
+    // (the site's .submit-modal alertdialog, like delete-activity) instead of
+    // removing the token on the first click. Focus moves to Avbryt on open and
+    // is trapped; Escape or Avbryt keeps the token, "Ja, ta bort" removes it.
+    var removeConfirm = document.getElementById('token-remove-confirm');
+    var removeYes = document.getElementById('token-remove-yes');
+    var removeNo = document.getElementById('token-remove-no');
+    var preRemoveFocus = null;
+
+    var closeRemoveConfirm = function () {
+      if (!removeConfirm) return;
+      removeConfirm.hidden = true;
+      document.body.classList.remove('modal-open');
+      removeConfirm.removeEventListener('keydown', trapRemoveFocus);
+      if (preRemoveFocus) preRemoveFocus.focus();
+    };
+
+    var trapRemoveFocus = function (e) {
+      if (e.key === 'Escape') { closeRemoveConfirm(); return; }
+      if (e.key !== 'Tab' || !removeConfirm) return;
+      var focusable = Array.prototype.slice.call(
+        removeConfirm.querySelectorAll('button:not([disabled])'));
+      if (!focusable.length) return;
+      var first = focusable[0];
+      var last = focusable[focusable.length - 1];
+      if (e.shiftKey) {
+        if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+      } else {
+        if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    };
+
+    var openRemoveConfirm = function () {
+      if (!removeConfirm) return;
+      preRemoveFocus = document.activeElement;
+      removeConfirm.hidden = false;
+      document.body.classList.add('modal-open');
+      removeConfirm.addEventListener('keydown', trapRemoveFocus);
+      if (removeNo) removeNo.focus();
+    };
+
+    var performRemove = function () {
+      localStorage.removeItem(STORAGE_KEY);
+      closeRemoveConfirm();
+      message.textContent = 'Token borttagen.';
+      message.className = 'admin-message admin-message--success';
+      message.hidden = false;
+      removeBtn.hidden = true;
+      renderFooterIcon();
+    };
+
     if (removeBtn) {
-      removeBtn.addEventListener('click', function () {
-        localStorage.removeItem(STORAGE_KEY);
-        message.textContent = 'Token borttagen.';
-        message.className = 'admin-message admin-message--success';
-        message.hidden = false;
-        removeBtn.hidden = true;
-        renderFooterIcon();
-      });
+      removeBtn.addEventListener('click', openRemoveConfirm);
     }
+    if (removeYes) removeYes.addEventListener('click', performRemove);
+    if (removeNo) removeNo.addEventListener('click', closeRemoveConfirm);
 
     // Verify a token against the server and store it on success. Used by the
     // manual form and by activation links (02-§91.11–91.13, 02-§106.14).

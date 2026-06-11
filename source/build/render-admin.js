@@ -61,6 +61,19 @@ ${nav}
         </div>
       </div>
     </div>
+    <div id="token-remove-confirm" class="submit-modal" role="alertdialog" aria-modal="true" aria-labelledby="token-remove-heading" hidden>
+      <div class="modal-backdrop"></div>
+      <div class="modal-box">
+        <h2 id="token-remove-heading" class="modal-heading" tabindex="-1">Ta bort token</h2>
+        <div class="modal-content">
+          <p>Är du säker på att du vill ta bort din token? Behörigheten försvinner direkt och du behöver aktivera en ny token för att få tillbaka den.</p>
+          <div class="delete-actions">
+            <button type="button" id="token-remove-yes" class="btn-destructive">Ja, ta bort</button>
+            <button type="button" id="token-remove-no" class="btn-secondary">Avbryt</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </main>
 ${footer}
   <script src="admin.js"></script>
