@@ -653,6 +653,9 @@ reuses the format, signing, and activation flow described here.
 - The page must use the same layout (header, navigation, footer) as
   other site pages. <!-- 02-§91.14 -->
 - The page must not be listed in the site navigation. <!-- 02-§91.15 -->
+- The buttons on `/token.html` use the site's standard button styles
+  (`.btn-primary` for primary actions, `.btn-secondary` for secondary
+  actions), so they match the buttons elsewhere on the site. <!-- 02-§91.34 -->
 
 ### 91.5 Token expiry (site requirements)
 
@@ -1430,6 +1433,19 @@ Agreed in #391.
   that is displayed only when the browser supports sharing. <!-- 02-§106.12 -->
 - Error responses are displayed in Swedish in the mint section's message
   area. <!-- 02-§106.13 -->
+- The mint form suppresses native browser validation (`novalidate`) and
+  validates client-side, so no browser-native (non-Swedish) validation
+  messages appear. It uses the same per-field inline-error model as the
+  add-activity form (02-§6.5): an invalid field is marked `aria-invalid`
+  and a Swedish `field-error` message appears beneath it, cleared as soon as
+  the user edits that field. On submit, the first invalid field receives
+  focus. The rules are: the recipient name is required (non-empty after
+  trimming); the validity in days is an integer between 1 and the selected
+  role's maximum. <!-- 02-§106.19 -->
+- The generated activation-link field is read-only and styled to read as
+  output rather than input: a muted background and default cursor
+  distinguish it from the editable form fields, so it is not mistaken for a
+  field to fill in. <!-- 02-§106.20 -->
 
 ### 106.4 Redemption via link (user requirements)
 
