@@ -420,6 +420,14 @@
   var adminToken = getAdminToken();
   var adminBypassActive = false;
 
+  // The role is the second segment of the token (namn_roll_epoch_sig). Any
+  // valid role may open the form before opens_for_editing (02-§105.8); the
+  // server re-verifies the role on submit.
+  function tokenRole(token) {
+    if (!token) return null;
+    return token.split('_')[1] || null;
+  }
+
   // ── Time-gating (02-§26.3–26.8, §26.14–§26.19) ────────────────────────────
 
   var opensDate = form.dataset.opens;
@@ -445,7 +453,9 @@
         var bypassBtn = document.createElement('button');
         bypassBtn.type = 'button';
         bypassBtn.className = 'form-gate-bypass';
-        bypassBtn.textContent = 'Öppna ändå (admin)';
+        bypassBtn.textContent = tokenRole(adminToken) === 'early'
+          ? 'Öppna ändå (tidig åtkomst)'
+          : 'Öppna ändå (admin)';
         bypassBtn.addEventListener('click', function () {
           adminBypassActive = true;
           fieldset.disabled = false;

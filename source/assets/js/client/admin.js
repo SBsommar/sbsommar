@@ -64,7 +64,19 @@
     }
   }
 
-  // ── Activation form (only on /admin.html) ──────────────────────────────────
+  // The role is the second segment of the token (namn_roll_epoch_sig).
+  function tokenRole(token) {
+    if (!token || typeof token !== 'string') return null;
+    return token.split('_')[1] || null;
+  }
+
+  // Derive the API base URL from the page's API configuration.
+  function apiBase() {
+    var feedbackBtn = document.querySelector('.feedback-btn[data-api-url]');
+    return feedbackBtn ? feedbackBtn.dataset.apiUrl.replace(/\/feedback$/, '') : '';
+  }
+
+  // ── Activation form (only on /token.html) ──────────────────────────────────
 
   var wrapper = document.getElementById('admin-form');
   var form = document.getElementById('admin-activate');
@@ -107,21 +119,14 @@
       });
     }
 
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-      var token = (input.value || '').trim();
-      if (!token) return;
-
+    // Verify a token against the server and store it on success. Used by the
+    // manual form and by activation links (02-§91.11–91.13, 02-§106.14).
+    var activateToken = function (token) {
       message.hidden = true;
       message.classList.remove('admin-message--success', 'admin-message--error');
 
-      // Derive API URL from the page's API configuration
-      var apiBase = '';
-      var feedbackBtn = document.querySelector('.feedback-btn[data-api-url]');
-      if (feedbackBtn) {
-        apiBase = feedbackBtn.dataset.apiUrl.replace(/\/feedback$/, '');
-      }
-      var verifyUrl = apiBase ? apiBase + '/verify-admin' : '/verify-admin';
+      var base = apiBase();
+      var verifyUrl = base ? base + '/verify-admin' : '/verify-admin';
 
       fetch(verifyUrl, {
         method: 'POST',
@@ -140,6 +145,7 @@
             message.hidden = false;
             if (removeBtn) removeBtn.hidden = false;
             renderFooterIcon();
+            initMintSection();
           } else {
             message.textContent = data.error || 'Ogiltig token. Försök igen.';
             message.classList.add('admin-message--error');
@@ -151,8 +157,121 @@
           message.classList.add('admin-message--error');
           message.hidden = false;
         });
+    };
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var token = (input.value || '').trim();
+      if (!token) return;
+      activateToken(token);
+    });
+
+    // ── Activation links (02-§106.14–106.16) ────────────────────────────────
+    // The token arrives in the #fragment — never a ?query — so it is not
+    // sent to the server or leaked via Referer. The fragment is cleared from
+    // the address bar whether or not activation succeeds.
+    var hashMatch = location.hash.match(/[#&]token=([^&]+)/);
+    if (hashMatch) {
+      var incoming = decodeURIComponent(hashMatch[1]);
+      history.replaceState(null, '', location.pathname + location.search);
+      input.value = incoming;
+      activateToken(incoming);
+    }
+  }
+
+  // ── Mint UI (only on /token.html, superadmin only — 02-§106.9–106.13) ──────
+  // The role check decides visibility only; the server authorises every mint.
+  // Runs at load and again after a successful activation, so a superadmin who
+  // just activated sees the section without reloading.
+
+  function initMintSection() {
+    var mintSection = document.getElementById('mint-section');
+    if (!mintSection || !mintSection.hidden) return;
+    var mintData = getAdminData();
+    if (!mintData || isExpired(mintData) || tokenRole(mintData.token) !== 'superadmin') return;
+    mintSection.hidden = false;
+
+    var mintForm = document.getElementById('mint-form');
+    var mintMessage = document.getElementById('mint-message');
+    var mintRoleSel = document.getElementById('mint-role');
+    var mintDays = document.getElementById('mint-days');
+    var mintResult = document.getElementById('mint-result');
+    var mintLink = document.getElementById('mint-link');
+    var mintCopy = document.getElementById('mint-copy');
+    var mintShare = document.getElementById('mint-share');
+
+    var showMintMessage = function (text, ok) {
+      mintMessage.textContent = text;
+      mintMessage.className = 'admin-message ' + (ok ? 'admin-message--success' : 'admin-message--error');
+      mintMessage.hidden = false;
+    };
+
+    // Role change updates the day field's default and maximum (02-§106.10).
+    mintRoleSel.addEventListener('change', function () {
+      var opt = mintRoleSel.options[mintRoleSel.selectedIndex];
+      var days = (opt && opt.dataset.days) || '60';
+      mintDays.max = days;
+      mintDays.value = days;
+    });
+
+    mintForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      mintMessage.hidden = true;
+      mintResult.hidden = true;
+
+      // Read the stored token fresh on every mint, in case it was replaced
+      // since the section was revealed. The server is the real gate.
+      var stored = getAdminData() || {};
+
+      var base = apiBase();
+      fetch(base ? base + '/mint-token' : '/mint-token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          token: stored.token,
+          name: document.getElementById('mint-name').value,
+          role: mintRoleSel.value,
+          days: parseInt(mintDays.value, 10),
+        }),
+      })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          if (!data.success || !data.token) {
+            showMintMessage(data.error || 'Kunde inte skapa token. Försök igen.', false);
+            return;
+          }
+          // Activation link with the token in the fragment (02-§106.11, §106.16).
+          mintLink.value = location.origin + '/token.html#token=' + encodeURIComponent(data.token);
+          mintResult.hidden = false;
+          if (navigator.share) mintShare.hidden = false;
+          showMintMessage('Länk skapad. Dela den privat med mottagaren.', true);
+        })
+        .catch(function () {
+          showMintMessage('Kunde inte skapa token. Kontrollera din anslutning.', false);
+        });
+    });
+
+    mintCopy.addEventListener('click', function () {
+      var fallbackCopy = function () {
+        mintLink.select();
+        try { document.execCommand('copy'); showMintMessage('Länken är kopierad.', true); } catch { /* ignore */ }
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(mintLink.value).then(function () {
+          showMintMessage('Länken är kopierad.', true);
+        }, fallbackCopy);
+      } else {
+        fallbackCopy();
+      }
+    });
+
+    mintShare.addEventListener('click', function () {
+      navigator.share({ title: 'SB Sommar – aktivera din token', url: mintLink.value })
+        .catch(function () { /* user cancelled the share sheet */ });
     });
   }
+
+  initMintSection();
 
   // Run footer icon on page load
   renderFooterIcon();

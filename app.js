@@ -17,7 +17,7 @@ const {
 } = require('./source/api/session');
 const { isBeforeEditingPeriod, isAfterEditingPeriod }            = require('./source/api/time-gate');
 const { validateFeedbackRequest, createFeedbackIssue }           = require('./source/api/feedback');
-const { verifyAdminToken }                                       = require('./source/api/admin');
+const { verifyToken, verifyAdminToken, verifyPreCampBypassToken, mintRequest } = require('./source/api/admin');
 const { resolveActiveCamp }                                      = require('./source/scripts/resolve-active-camp');
 
 const app = express();
@@ -72,6 +72,7 @@ function makeLimiter({ limit, windowMs, includeSuccess = true }) {
 }
 
 const verifyAdminLimiter = makeLimiter({ limit: 5,  windowMs: HOUR_MS, includeSuccess: false });
+const mintTokenLimiter   = makeLimiter({ limit: 5,  windowMs: HOUR_MS });
 const addEventLimiter    = makeLimiter({ limit: 30, windowMs: HOUR_MS });
 const editEventLimiter   = makeLimiter({ limit: 30, windowMs: HOUR_MS });
 const deleteEventLimiter = makeLimiter({ limit: 30, windowMs: HOUR_MS });
@@ -104,21 +105,44 @@ app.get('/api/health', (req, res) => {
 
 app.post('/verify-admin', verifyAdminLimiter, (req, res) => {
   const { token } = req.body || {};
-  if (verifyAdminToken(token, adminTokenSecret)) {
+  // Any recognised role validates here — including early — so every token
+  // kind activates through the same /token.html flow (02-§91.6, 02-§105.4).
+  // Each privileged action applies its own role check.
+  if (verifyToken(token, adminTokenSecret)) {
     return res.json({ valid: true });
   }
   return res.status(403).json({ valid: false });
 });
 
+// ── Token minting (02-§106) ─────────────────────────────────────────────────
+
+app.post('/mint-token', mintTokenLimiter, (req, res) => {
+  const body = req.body || {};
+  // Privilege boundary: only a valid superadmin token may mint, and only
+  // admin/early can be minted — superadmin is CLI-only (02-§106.2, §106.3).
+  // With an unset secret nothing verifies, so the gate fails closed (§106.8).
+  const requester = verifyToken(body.token, adminTokenSecret);
+  if (!requester || requester.role !== 'superadmin') {
+    return res.status(403).json({ success: false, error: 'Endast superadmin kan skapa tokens.' });
+  }
+  const result = mintRequest(body, adminTokenSecret, Math.floor(Date.now() / 1000));
+  if (!result.ok) {
+    return res.status(400).json({ success: false, error: result.error });
+  }
+  // Stateless: the token is returned, never stored (02-§106.6).
+  res.json({ success: true, token: result.token });
+});
+
 app.post('/add-event', addEventLimiter, (req, res) => {
-  // Time-gating with admin bypass (02-§26.17, 02-§26.18).
+  // Time-gating with pre-camp bypass for admin/early roles (02-§26.17,
+  // 02-§26.18, 02-§105.1, 02-§105.3).
   if (activeCamp) {
     const today = new Date().toISOString().slice(0, 10);
     if (isAfterEditingPeriod(today, activeCamp.end_date)) {
       return res.status(403).json({ success: false, error: 'Det går inte att lägga till aktiviteter just nu. Formuläret är inte öppet.' });
     }
     if (isBeforeEditingPeriod(today, activeCamp.opens_for_editing)
-        && !verifyAdminToken(req.body.adminToken, adminTokenSecret)) {
+        && !verifyPreCampBypassToken(req.body.adminToken, adminTokenSecret)) {
       return res.status(403).json({ success: false, error: 'Det går inte att lägga till aktiviteter just nu. Formuläret är inte öppet.' });
     }
   }
@@ -161,13 +185,15 @@ app.post('/add-event', addEventLimiter, (req, res) => {
 app.post('/edit-event', editEventLimiter, (req, res) => {
   const isAdmin = verifyAdminToken(req.body.adminToken, adminTokenSecret);
 
-  // Time-gating with admin bypass (02-§26.17, 02-§26.18).
+  // Time-gating with pre-camp bypass for admin/early roles (02-§26.17,
+  // 02-§26.18, 02-§105.1, 02-§105.3).
   if (activeCamp) {
     const today = new Date().toISOString().slice(0, 10);
     if (isAfterEditingPeriod(today, activeCamp.end_date)) {
       return res.status(403).json({ success: false, error: 'Det går inte att redigera aktiviteter just nu. Formuläret är inte öppet.' });
     }
-    if (isBeforeEditingPeriod(today, activeCamp.opens_for_editing) && !isAdmin) {
+    if (isBeforeEditingPeriod(today, activeCamp.opens_for_editing)
+        && !verifyPreCampBypassToken(req.body.adminToken, adminTokenSecret)) {
       return res.status(403).json({ success: false, error: 'Det går inte att redigera aktiviteter just nu. Formuläret är inte öppet.' });
     }
   }
@@ -179,8 +205,9 @@ app.post('/edit-event', editEventLimiter, (req, res) => {
 
   const eventId = String(req.body.id).trim();
 
-  // Verify ownership: event ID must have signed session ownership OR
-  // the request must carry a valid admin token (02-§7.3, §18.31).
+  // Verify ownership: event ID must have signed session ownership OR the
+  // request must carry an admin-role token — the early role does not bypass
+  // ownership (02-§7.3, §18.31, 02-§105.2).
   const ownedIds = parseVerifiedSessionIds(req.headers.cookie || '', sessionSecret);
   if (!ownedIds.includes(eventId) && !isAdmin) {
     return res.status(403).json({ success: false, error: 'Ej behörig att redigera denna aktivitet.' });
@@ -201,13 +228,15 @@ app.post('/edit-event', editEventLimiter, (req, res) => {
 app.post('/delete-event', deleteEventLimiter, (req, res) => {
   const isAdmin = verifyAdminToken(req.body.adminToken, adminTokenSecret);
 
-  // Time-gating with admin bypass (02-§26.17, 02-§26.18).
+  // Time-gating with pre-camp bypass for admin/early roles (02-§26.17,
+  // 02-§26.18, 02-§105.1, 02-§105.3).
   if (activeCamp) {
     const today = new Date().toISOString().slice(0, 10);
     if (isAfterEditingPeriod(today, activeCamp.end_date)) {
       return res.status(400).json({ success: false, error: 'Det går inte att radera aktiviteter just nu. Formuläret är inte öppet.' });
     }
-    if (isBeforeEditingPeriod(today, activeCamp.opens_for_editing) && !isAdmin) {
+    if (isBeforeEditingPeriod(today, activeCamp.opens_for_editing)
+        && !verifyPreCampBypassToken(req.body.adminToken, adminTokenSecret)) {
       return res.status(400).json({ success: false, error: 'Det går inte att radera aktiviteter just nu. Formuläret är inte öppet.' });
     }
   }
@@ -217,8 +246,9 @@ app.post('/delete-event', deleteEventLimiter, (req, res) => {
     return res.status(400).json({ success: false, error: 'Aktivitets-ID saknas.' });
   }
 
-  // Verify ownership: event ID must have signed session ownership OR
-  // the request must carry a valid admin token (02-§7.3, §89.13).
+  // Verify ownership: event ID must have signed session ownership OR the
+  // request must carry an admin-role token — the early role does not bypass
+  // ownership (02-§7.3, §89.13, 02-§105.2).
   const ownedIds = parseVerifiedSessionIds(req.headers.cookie || '', sessionSecret);
   if (!ownedIds.includes(eventId) && !isAdmin) {
     return res.status(403).json({ success: false, error: 'Ej behörig att radera denna aktivitet.' });

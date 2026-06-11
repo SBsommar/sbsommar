@@ -269,7 +269,17 @@
     }
   }
 
+  // The role is the second segment of the token (namn_roll_epoch_sig).
+  function tokenRole(token) {
+    if (!token) return null;
+    return token.split('_')[1] || null;
+  }
+
   var adminToken = getAdminToken();
+  // Only admin-equivalent roles skip the ownership check; an early-access
+  // token bypasses the pre-camp gate but never ownership (02-§105.9). The
+  // server re-verifies the role either way.
+  var hasAdminRole = tokenRole(adminToken) === 'admin' || tokenRole(adminToken) === 'superadmin';
 
   // ── Error display ────────────────────────────────────────────────────────────
 
@@ -333,12 +343,15 @@
         sectionEl.parentNode.insertBefore(gateMsg, sectionEl);
         gateBlocked = true;
 
-        // Admin bypass button — only before opens (02-§26.16)
+        // Pre-camp bypass button — only before opens, for any valid token
+        // role (02-§26.16, 02-§105.8)
         if (isBeforeOpens && adminToken) {
           var bypassBtn = document.createElement('button');
           bypassBtn.type = 'button';
           bypassBtn.className = 'form-gate-bypass';
-          bypassBtn.textContent = 'Öppna ändå (admin)';
+          bypassBtn.textContent = tokenRole(adminToken) === 'early'
+            ? 'Öppna ändå (tidig åtkomst)'
+            : 'Öppna ändå (admin)';
           bypassBtn.addEventListener('click', function () {
             gateMsg.hidden = true;
             bypassBtn.hidden = true;
@@ -428,8 +441,10 @@
     }
 
     // Specific event selected — existing edit behaviour (02-§48.17)
-    // Authorised if event ID is in session cookie OR user has admin token (02-§7.3).
-    if (ownedIds.indexOf(eventId) === -1 && !adminToken) {
+    // Authorised if event ID is in session cookie OR the stored token has an
+    // admin-equivalent role — early gives no ownership bypass (02-§7.3,
+    // 02-§105.9).
+    if (ownedIds.indexOf(eventId) === -1 && !hasAdminRole) {
       showError('Du har inte rättighet att redigera denna aktivitet.');
       fetch('/events.json')
         .then(function (r) { return r.json(); })

@@ -1,10 +1,10 @@
 'use strict';
 
 const readline = require('readline');
-const { signToken } = require('../api/admin');
+const { signToken, sanitizeTokenName } = require('../api/admin');
 
-// Validity per role, in days (02-§91.30).
-const ROLE_DAYS = { admin: 60, superadmin: 180 };
+// Validity per role, in days (02-§91.30, 02-§105.6).
+const ROLE_DAYS = { admin: 60, early: 90, superadmin: 180 };
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -21,8 +21,8 @@ async function main() {
   const secret = process.env.ADMIN_TOKEN_SECRET || '';
 
   console.log('');
-  console.log('Skapa admin-token');
-  console.log('─────────────────');
+  console.log('Skapa token (admin / tidig åtkomst / superadmin)');
+  console.log('────────────────────────────────────────────────');
   console.log('');
 
   if (!secret) {
@@ -42,22 +42,22 @@ async function main() {
     console.warn('');
   }
 
-  const rawName = await ask('Namn på admin: ');
+  const rawName = await ask('Namn på mottagaren: ');
   // Hyphen-separated identifier, no underscores (underscore is the token
-  // field delimiter, so the name must never contain one).
-  const name = rawName.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-zåäö0-9-]/g, '');
+  // field delimiter). Same sanitiser as the /mint-token endpoint (02-§106.4).
+  const name = sanitizeTokenName(rawName);
   if (!name) {
     console.error('\nFel: namn krävs (a-ö, siffror, bindestreck).');
     rl.close();
     process.exit(1);
   }
 
-  const rawRole = (await ask('Roll [admin/superadmin] (admin): ')).trim().toLowerCase();
+  const rawRole = (await ask('Roll [admin/early/superadmin] (admin): ')).trim().toLowerCase();
   rl.close();
   const role = rawRole || 'admin';
   if (!Object.prototype.hasOwnProperty.call(ROLE_DAYS, role)) {
-    console.error(`\nFel: okänd roll "${role}". Välj admin eller superadmin.`);
-    console.error('(Rollen "early" delas ut separat; superadmin skapas bara här, aldrig i webb-UI.)');
+    console.error(`\nFel: okänd roll "${role}". Välj admin, early eller superadmin.`);
+    console.error('(early = tidig åtkomst: egna inlägg före öppning; superadmin skapas bara här, aldrig i webb-UI.)');
     process.exit(1);
   }
 

@@ -102,7 +102,10 @@
 
   // ── Admin token helper ──────────────────────────────────────────────────────
 
-  // Check if a valid (non-expired) admin token exists in localStorage (02-§7.3).
+  // Check if a valid (non-expired) token with an admin-equivalent role exists
+  // in localStorage (02-§7.3). The role is the second segment of the token
+  // (namn_roll_epoch_sig). An early-access token must NOT light this up —
+  // its holder gets edit links only via cookie ownership (02-§105.7).
   function hasValidAdminToken() {
     try {
       var raw = localStorage.getItem('sb_admin');
@@ -113,6 +116,7 @@
       // (the base64url signature may contain underscores, so read by position).
       var parts = data.token.split('_');
       if (parts.length < 4) return false;
+      if (parts[1] !== 'admin' && parts[1] !== 'superadmin') return false;
       var epoch = Number(parts[2]);
       if (!isFinite(epoch) || epoch <= 0) return false;
       return Math.floor(Date.now() / 1000) <= epoch;

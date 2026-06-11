@@ -595,15 +595,15 @@ reuses the format, signing, and activation flow described here.
 - The roles `admin` and `superadmin` grant administrator privileges: they
   bypass per-event cookie ownership and pre-camp time-gating. `superadmin`
   additionally authorises minting new tokens. The role `early` is a
-  recognised role reserved for early-access contributors; its narrower
-  privileges are defined in their own requirement section. <!-- 02-§91.31 -->
+  recognised role for early-access contributors; its narrower privileges
+  are defined in §105. <!-- 02-§91.31 -->
 - `ADMIN_TOKEN_SECRET` is a high-entropy random value of at least 32 bytes.
   Both runtimes log a warning at startup when it is shorter. <!-- 02-§91.32 -->
 - The creation script `npm run admin:create` signs a token offline against
   `ADMIN_TOKEN_SECRET` for the chosen role — 60 days validity for `admin`,
-  180 days for `superadmin` — and prints the token to hand over. The
-  `superadmin` role is minted only by this script, never from the web
-  UI. <!-- 02-§91.30 -->
+  90 days for `early`, 180 days for `superadmin` — and prints the token to
+  hand over. The `superadmin` role is minted only by this script, never
+  from the web UI. <!-- 02-§91.30 -->
 - When `ADMIN_TOKEN_SECRET` is unset or empty, all admin functionality is
   disabled — no token validates and the site behaves as if no one is an
   administrator. <!-- 02-§91.3 -->
@@ -1283,3 +1283,158 @@ calls without weakening the rest.
   and `preload` are intentionally omitted until every `*.sbsommar.se` subdomain
   is confirmed HTTPS-only, because the directive is hard to reverse within the
   `max-age` window. <!-- 02-§104.19 -->
+
+---
+
+---
+
+## 105. Early Access Role (tidig åtkomst)
+
+### 105.1 Context
+
+Organisers want a skeleton schedule in place before the form opens for
+participants. The `admin` role can already do this, but it also grants the
+power to edit and delete every participant's activity — more than the need
+requires. The `early` role is a narrower credential: its holder works under
+the same rules as a regular participant, with one difference — the pre-camp
+time gate can be bypassed. The role reuses the token format, signing,
+activation page, and footer indicator defined in §91. Agreed in #380.
+
+### 105.2 Server authorisation (API requirements)
+
+- A request to add, edit, or delete an activity made before the active
+  camp's `opens_for_editing` date is admitted by the time gate when it
+  carries a valid token whose role is `admin`, `superadmin`, or
+  `early`. <!-- 02-§105.1 -->
+- Edit and delete authorisation for an `early` token holder is decided
+  solely by the session-cookie ownership model. The ownership bypass that
+  lets administrators act on any activity applies only to the roles
+  `admin` and `superadmin` — an `early` token holder edits and deletes
+  only activities owned by their browser's session cookie. <!-- 02-§105.2 -->
+- The post-camp lock applies to every role: when today is after
+  `end_date + 1 day` (§26), no token — `admin`, `superadmin`, or `early` —
+  admits add, edit, or delete requests. <!-- 02-§105.3 -->
+- `POST /verify-admin` answers `200 { "valid": true }` for a valid token of
+  any recognised role, including `early`, so an early-access token is
+  activated on `/token.html` exactly like an admin token. <!-- 02-§105.4 -->
+- Both runtimes (Node and PHP) expose two distinct role checks: the boolean
+  `verifyAdminToken` is true only for `admin` and `superadmin`, and a
+  separate pre-camp-bypass check is true for `admin`, `superadmin`, and
+  `early`. The time gate uses the pre-camp-bypass check; ownership uses
+  `verifyAdminToken`. <!-- 02-§105.5 -->
+
+### 105.3 Issuing (site requirements)
+
+- `npm run admin:create` mints `early` tokens with 90 days
+  validity. <!-- 02-§105.6 -->
+
+### 105.4 Client behaviour (user requirements)
+
+- Edit links on all schedule events are injected only when the stored
+  token's role is `admin` or `superadmin`. A stored `early` token injects
+  no all-event edit links; the holder's own activities receive edit links
+  through the session cookie, as for any participant. <!-- 02-§105.7 -->
+- Before `opens_for_editing`, the add form and the edit page show the
+  "open anyway" bypass button for a valid stored token of role `admin`,
+  `superadmin`, or `early`. The button label is "Öppna ändå (admin)" for
+  administrator roles and "Öppna ändå (tidig åtkomst)" for
+  `early`. <!-- 02-§105.8 -->
+- On the edit page, the client-side shortcut that skips the ownership
+  check applies only to the roles `admin` and `superadmin`. A visitor
+  whose stored token role is `early` passes the ownership check only for
+  activities in their session cookie. <!-- 02-§105.9 -->
+
+### 105.5 Constraints
+
+- All user-facing text is in Swedish. <!-- 02-§105.10 -->
+- The role is read from the token's second underscore-separated segment;
+  the client never needs to verify the signature — the server remains the
+  authority on every privileged action. <!-- 02-§105.11 -->
+
+---
+
+---
+
+## 106. Token Minting from the Web (superadmin)
+
+### 106.1 Context
+
+Issuing a token (§91, §105) is also possible without a terminal: a
+superadmin mints `admin` and `early` tokens directly from the web —
+mobile-friendly, no environment edit, no redeploy — and shares an
+activation link. The server signs the token on demand with
+`ADMIN_TOKEN_SECRET` and stores nothing, preserving the stateless model
+of §91. The `superadmin` role itself is minted only via the CLI
+(02-§91.30), so the web path can never escalate to a new superadmin.
+Agreed in #391.
+
+### 106.2 Mint endpoint (API requirements)
+
+- Both runtimes expose `POST /mint-token` (Node `app.js`, PHP
+  `api/index.php`). <!-- 02-§106.1 -->
+- The request body is `{ "token", "name", "role", "days" }`. The request
+  is authorised only when `token` is a valid token (§91) whose role is
+  `superadmin`; otherwise the response is
+  `403 { "success": false, "error" }`. <!-- 02-§106.2 -->
+- The mintable roles are exactly `admin` and `early`. Any other requested
+  role — including `superadmin` — is rejected with
+  `400 { "success": false, "error" }`. <!-- 02-§106.3 -->
+- The name is sanitised the same way as in the CLI: trimmed, lowercased,
+  whitespace replaced by hyphens, and restricted to `a–ö`, digits, and
+  hyphens — it never contains an underscore (the token field delimiter).
+  A name that is empty after sanitisation is rejected with
+  `400`. <!-- 02-§106.4 -->
+- `days` is an integer between 1 and the role's standard validity —
+  60 for `admin`, 90 for `early` (02-§91.30, 02-§105.6). A request
+  without `days` uses the role's standard validity; a value outside the
+  range is rejected with `400`. <!-- 02-§106.5 -->
+- On success the response is `200 { "success": true, "token" }` where the
+  token is signed for the sanitised name, the requested role, and an
+  expiry of now plus the validity. Nothing is stored
+  server-side. <!-- 02-§106.6 -->
+- The endpoint is rate-limited to 5 requests per hour per IP, the same
+  budget as `/verify-admin` (§93). <!-- 02-§106.7 -->
+- When `ADMIN_TOKEN_SECRET` is unset or empty, no requester token
+  validates and every mint request is rejected with `403`
+  (fail-closed, 02-§91.3). <!-- 02-§106.8 -->
+
+### 106.3 Mint UI (user requirements)
+
+- `/token.html` contains a mint section that is displayed only when the
+  stored token in `localStorage` is unexpired and its role (second
+  underscore-segment) is `superadmin`. The client-side role check decides
+  visibility only — the server authorises every mint request
+  (02-§105.11). <!-- 02-§106.9 -->
+- The mint form has three fields: name, role (`admin` /
+  `early`, labelled "Admin" and "Tidig åtkomst" with their validity), and
+  validity in days. Changing the role updates the day field's default and
+  maximum to the role's standard validity. <!-- 02-§106.10 -->
+- Submitting the form sends `POST /mint-token` with the stored superadmin
+  token. On success the UI shows an activation link of the form
+  `<site-origin>/token.html#token=<token>`. <!-- 02-§106.11 -->
+- The result row has a copy button, and a share button (`navigator.share`)
+  that is displayed only when the browser supports sharing. <!-- 02-§106.12 -->
+- Error responses are displayed in Swedish in the mint section's message
+  area. <!-- 02-§106.13 -->
+
+### 106.4 Redemption via link (user requirements)
+
+- On load, `/token.html` reads `location.hash`. When the fragment contains
+  `token=<value>`, the page calls `POST /verify-admin` with the value and,
+  on `valid: true`, stores it in `localStorage` exactly like a manual
+  activation (02-§91.12) and shows the activation success
+  message. <!-- 02-§106.14 -->
+- The fragment is removed from the address bar via
+  `history.replaceState` whether or not the activation succeeds, so the
+  token does not linger in the visible URL. <!-- 02-§106.15 -->
+- The link carries the token in the `#fragment` — never in a `?query`
+  parameter — because fragments are not sent to the server and do not
+  leak through `Referer` headers or server logs. <!-- 02-§106.16 -->
+
+### 106.5 Constraints
+
+- `ADMIN_TOKEN_SECRET` exists only server-side; the client never signs
+  or sees the secret (02-§91.1). <!-- 02-§106.17 -->
+- All user-facing text is in Swedish; styling uses the custom properties
+  from `docs/07-design/css-strategy.md §7` and the token page's existing
+  form components. <!-- 02-§106.18 -->

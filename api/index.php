@@ -50,6 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 const HOUR_SECONDS              = 3600;
 const RATE_LIMIT_MSG            = 'För många förfrågningar. Försök igen senare.';
 const RATE_LIMIT_VERIFY_ADMIN   = 5;
+const RATE_LIMIT_MINT_TOKEN     = 5;
 const RATE_LIMIT_ADD_EVENT      = 30;
 const RATE_LIMIT_EDIT_EVENT     = 30;
 const RATE_LIMIT_DELETE_EVENT   = 30;
@@ -178,6 +179,9 @@ try {
         $method === 'POST' && $route === '/verify-admin'
             => handleVerifyAdmin($adminTokenSecret),
 
+        $method === 'POST' && $route === '/mint-token'
+            => handleMintToken($adminTokenSecret),
+
         default
             => jsonResponse(['error' => 'Not found'], 404),
     };
@@ -232,14 +236,15 @@ function handleAddEvent(?array $activeCamp, string $adminTokenSecret, string $se
 
     $body = getJsonBody();
 
-    // Time-gating with admin bypass (02-§26.17, 02-§26.18)
+    // Time-gating with pre-camp bypass for admin/early roles (02-§26.17,
+    // 02-§26.18, 02-§105.1, 02-§105.3)
     if ($activeCamp !== null) {
         $today   = date('Y-m-d');
         $opens   = (string) ($activeCamp['opens_for_editing'] ?? '');
         $endDate = (string) ($activeCamp['end_date'] ?? '');
         if (TimeGate::isAfterEditingPeriod($today, $endDate)
             || (TimeGate::isBeforeEditingPeriod($today, $opens)
-                && !Admin::verifyAdminToken($body['adminToken'] ?? null, $adminTokenSecret))
+                && !Admin::verifyPreCampBypassToken($body['adminToken'] ?? null, $adminTokenSecret))
         ) {
             jsonResponse([
                 'success' => false,
@@ -319,14 +324,15 @@ function handleAddEvents(?array $activeCamp, string $adminTokenSecret, string $s
 
     $body = getJsonBody();
 
-    // Time-gating with admin bypass (02-§26.17, 02-§26.18)
+    // Time-gating with pre-camp bypass for admin/early roles (02-§26.17,
+    // 02-§26.18, 02-§105.1, 02-§105.3)
     if ($activeCamp !== null) {
         $today   = date('Y-m-d');
         $opens   = (string) ($activeCamp['opens_for_editing'] ?? '');
         $endDate = (string) ($activeCamp['end_date'] ?? '');
         if (TimeGate::isAfterEditingPeriod($today, $endDate)
             || (TimeGate::isBeforeEditingPeriod($today, $opens)
-                && !Admin::verifyAdminToken($body['adminToken'] ?? null, $adminTokenSecret))
+                && !Admin::verifyPreCampBypassToken($body['adminToken'] ?? null, $adminTokenSecret))
         ) {
             jsonResponse([
                 'success' => false,
@@ -403,13 +409,15 @@ function handleEditEvent(?array $activeCamp, string $adminTokenSecret, string $s
     $body    = getJsonBody();
     $isAdmin = Admin::verifyAdminToken($body['adminToken'] ?? null, $adminTokenSecret);
 
-    // Time-gating with admin bypass (02-§26.17, 02-§26.18)
+    // Time-gating with pre-camp bypass for admin/early roles (02-§26.17,
+    // 02-§26.18, 02-§105.1, 02-§105.3)
     if ($activeCamp !== null) {
         $today   = date('Y-m-d');
         $opens   = (string) ($activeCamp['opens_for_editing'] ?? '');
         $endDate = (string) ($activeCamp['end_date'] ?? '');
         if (TimeGate::isAfterEditingPeriod($today, $endDate)
-            || (TimeGate::isBeforeEditingPeriod($today, $opens) && !$isAdmin)
+            || (TimeGate::isBeforeEditingPeriod($today, $opens)
+                && !Admin::verifyPreCampBypassToken($body['adminToken'] ?? null, $adminTokenSecret))
         ) {
             jsonResponse([
                 'success' => false,
@@ -429,8 +437,8 @@ function handleEditEvent(?array $activeCamp, string $adminTokenSecret, string $s
 
     $eventId = trim((string) ($body['id'] ?? ''));
 
-    // Verify ownership: signed session ownership OR valid admin token
-    // (02-§7.3, §18.31).
+    // Verify ownership: signed session ownership OR an admin-role token —
+    // the early role does not bypass ownership (02-§7.3, §18.31, 02-§105.2).
     $ownedIds = Session::parseVerifiedSessionIds($_SERVER['HTTP_COOKIE'] ?? '', $sessionSecret);
     if (!in_array($eventId, $ownedIds, true) && !$isAdmin) {
         jsonResponse([
@@ -484,13 +492,15 @@ function handleDeleteEvent(?array $activeCamp, string $adminTokenSecret, string 
     $body    = getJsonBody();
     $isAdmin = Admin::verifyAdminToken($body['adminToken'] ?? null, $adminTokenSecret);
 
-    // Time-gating with admin bypass (02-§26.17, 02-§26.18)
+    // Time-gating with pre-camp bypass for admin/early roles (02-§26.17,
+    // 02-§26.18, 02-§105.1, 02-§105.3)
     if ($activeCamp !== null) {
         $today   = date('Y-m-d');
         $opens   = (string) ($activeCamp['opens_for_editing'] ?? '');
         $endDate = (string) ($activeCamp['end_date'] ?? '');
         if (TimeGate::isAfterEditingPeriod($today, $endDate)
-            || (TimeGate::isBeforeEditingPeriod($today, $opens) && !$isAdmin)
+            || (TimeGate::isBeforeEditingPeriod($today, $opens)
+                && !Admin::verifyPreCampBypassToken($body['adminToken'] ?? null, $adminTokenSecret))
         ) {
             jsonResponse([
                 'success' => false,
@@ -508,8 +518,8 @@ function handleDeleteEvent(?array $activeCamp, string $adminTokenSecret, string 
         return;
     }
 
-    // Verify ownership: signed session ownership OR valid admin token
-    // (02-§7.3, §89.13).
+    // Verify ownership: signed session ownership OR an admin-role token —
+    // the early role does not bypass ownership (02-§7.3, §89.13, 02-§105.2).
     $ownedIds = Session::parseVerifiedSessionIds($_SERVER['HTTP_COOKIE'] ?? '', $sessionSecret);
     if (!in_array($eventId, $ownedIds, true) && !$isAdmin) {
         jsonResponse([
@@ -600,11 +610,46 @@ function handleVerifyAdmin(string $adminTokenSecret): void
     $body  = getJsonBody();
     $token = trim((string) ($body['token'] ?? ''));
 
-    if (Admin::verifyAdminToken($token, $adminTokenSecret)) {
+    // Any recognised role validates here — including early — so every token
+    // kind activates through the same /token.html flow (02-§91.6, 02-§105.4).
+    // Each privileged action applies its own role check.
+    if (Admin::verifyToken($token, $adminTokenSecret) !== null) {
         jsonResponse(['valid' => true]);
     } else {
         jsonResponse(['valid' => false], 403);
     }
+}
+
+function handleMintToken(string $adminTokenSecret): void
+{
+    if (RateLimit::isLimited(clientIp(), 'mint-token', RATE_LIMIT_MINT_TOKEN, HOUR_SECONDS)) {
+        jsonResponse(['success' => false, 'error' => RATE_LIMIT_MSG], 429);
+
+        return;
+    }
+
+    $body = getJsonBody();
+
+    // Privilege boundary: only a valid superadmin token may mint, and only
+    // admin/early can be minted — superadmin is CLI-only (02-§106.2,
+    // §106.3). With an unset secret nothing verifies, so the gate fails
+    // closed (§106.8).
+    $requester = Admin::verifyToken((string) ($body['token'] ?? ''), $adminTokenSecret);
+    if ($requester === null || $requester['role'] !== 'superadmin') {
+        jsonResponse(['success' => false, 'error' => 'Endast superadmin kan skapa tokens.'], 403);
+
+        return;
+    }
+
+    $result = Admin::mintRequest($body, $adminTokenSecret);
+    if (!$result['ok']) {
+        jsonResponse(['success' => false, 'error' => $result['error']], 400);
+
+        return;
+    }
+
+    // Stateless: the token is returned, never stored (02-§106.6).
+    jsonResponse(['success' => true, 'token' => $result['token']]);
 }
 
 // ── Utilities ────────────────────────────────────────────────────────────
