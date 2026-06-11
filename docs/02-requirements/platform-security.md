@@ -656,6 +656,14 @@ reuses the format, signing, and activation flow described here.
 - The buttons on `/token.html` use the site's standard button styles
   (`.btn-primary` for primary actions, `.btn-secondary` for secondary
   actions), so they match the buttons elsewhere on the site. <!-- 02-§91.34 -->
+- "Ta bort min token" does not remove the stored token immediately. It opens
+  a confirmation dialog — the site's `.submit-modal` alertdialog pattern, the
+  same one used to delete an activity — that asks the user to confirm. The
+  token is removed only when the user confirms with "Ja, ta bort"; "Avbryt"
+  or the Escape key closes the dialog and keeps the token. Focus moves to the
+  cancel button on open and returns to the trigger on close, and focus is
+  trapped within the dialog. This guards against an accidental
+  click. <!-- 02-§91.35 -->
 
 ### 91.5 Token expiry (site requirements)
 
