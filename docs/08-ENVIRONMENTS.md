@@ -135,21 +135,109 @@ Same secret names as `qa` (including `ADMIN_TOKEN_SECRET`), but with production 
 
 ---
 
-## GitHub Environments setup guide
+## First-time Secret Setup
 
-After merging the environment management changes, set up GitHub Environments:
+Before setting up GitHub Environments or deploying to a new server, generate both signing secrets. Each secret must be:
+
+- A long random value (at least 32 bytes of entropy)
+- **Different** between QA and Production
+- Kept private and stored securely
+- **Never** committed to git
+
+### Generating the secrets
+
+On your local machine, run these commands in a terminal:
+
+```bash
+# Admin Token signing secret (for npm run admin:create and token validation)
+openssl rand -base64 48
+
+# Session ownership cookie secret (for activity edit/delete authorization)
+openssl rand -base64 48
+```
+
+Save both generated values — you'll need them in the steps below.
+
+### Local development (.env file)
+
+Local development requires only `ADMIN_TOKEN_SECRET` if you want to test admin token creation. `SESSION_SECRET` is not used locally (it's only for the PHP API on QA/Production servers).
+
+1. Create a `.env` file in the project root (copy from `.env.example` if it doesn't exist).
+2. Add the `ADMIN_TOKEN_SECRET` you generated above:
+
+```bash
+ADMIN_TOKEN_SECRET=<your-generated-secret-here>
+```
+
+3. Save the file. Do not commit it.
+4. Now you can run `npm run admin:create` to mint test tokens.
+
+`SESSION_SECRET` can be left unset locally — it will not affect local development.
+
+### QA environment (first-time setup on Loopia)
+
+1. **SSH into the QA server** with the credentials in your GitHub Environment `qa` settings (or ask a maintainer):
+
+```bash
+ssh -p $SERVER_SSH_PORT $SERVER_USER@$SERVER_HOST
+```
+
+2. **Navigate to the deploy directory** (outside the web root):
+
+```bash
+cd $DEPLOY_DIR
+```
+
+3. **Create or edit the `.env` file** at `$DEPLOY_DIR/.env` (not under `public_html/`):
+
+```bash
+nano .env
+```
+
+4. **Add the secrets** (and any other PHP API variables needed for this environment):
+
+```bash
+ADMIN_TOKEN_SECRET=<your-generated-qa-secret>
+SESSION_SECRET=<your-generated-qa-secret>
+ALLOWED_ORIGIN=https://qa.sbsommar.se
+COOKIE_DOMAIN=sbsommar.se
+# Add other variables here (GITHUB_*, etc.)
+```
+
+5. **Save and exit** (`Ctrl+O`, `Enter`, `Ctrl+X` in nano).
+6. **Verify the file exists and is readable** by the PHP API:
+
+```bash
+cat .env
+```
+
+Do not commit this file to git — it lives only on the server.
+
+### Production environment (first-time setup)
+
+Repeat the QA steps above, but:
+
+- Use the Production server credentials from the `production` GitHub Environment
+- Replace QA domain/secrets with Production values
+
+### GitHub Environments setup
+
+After both secrets are generated and the `.env` files are in place on your servers, configure GitHub:
 
 1. Go to the repository on GitHub.
 2. Open **Settings > Environments**.
 3. Click **New environment**, name it `qa`, and click **Configure environment**.
-4. Under **Environment secrets**, add each secret from the `qa` table above.
+4. Under **Environment secrets**, add each secret from the `qa` table (above):
+   - `ADMIN_TOKEN_SECRET`
+   - `SESSION_SECRET`
+   - `SERVER_HOST`, `SERVER_USER`, `SERVER_SSH_KEY`, `SERVER_SSH_PORT`, `DEPLOY_DIR`
+   - (and any other secrets listed in the `qa` table)
+
 5. Click **New environment** again, name it `production`, and click **Configure environment**.
-6. Under **Environment secrets**, add each secret from the `production` table above.
-7. Under **Environment protection rules** for `production`, add
-   **Required reviewers** and enter the GitHub username(s) who may approve
-   production deploys (see the approvers list below).
+6. Under **Environment secrets**, add each secret from the `production` table with production values.
+7. Under **Environment protection rules** for `production`, add **Required reviewers** and enter the GitHub username(s) who may approve production deploys.
 8. Optionally add a **Wait timer** (e.g. 5 minutes) for an extra safety window.
-9. Verify that `SITE_URL` also exists as a **repository-level** secret (Settings > Secrets and variables > Actions > Repository secrets). This is used by `ci.yml` for build validation.
+9. Verify that `SITE_URL` also exists as a **repository-level** secret (Settings > Secrets and variables > Actions > Repository secrets).
 
 ---
 
