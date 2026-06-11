@@ -1254,8 +1254,8 @@ its requirement rows together with the test-legend rows that evidence them.
 | `02-§91.33` | covered | TOK-23, TOK-24: `tokenRole()` + `roleDescription()` map superadmin/admin/early to Swedish rights text; `setStatusWithRole()` renders the bold `Roll: <label>` title; manual: open /token.html with each role and confirm the title and rights (recipient name not shown) |
 | `02-§91.34` | covered | MINT-17 (structural): render-admin.js buttons use `.btn-primary`/`.btn-secondary`, no `.btn--*`; `.admin-form form button[type="submit"]` has margin-top; manual: token page buttons match the rest of the site |
 | `02-§91.35` | covered | MINT-19 (structural): render-admin.js has the `#token-remove-confirm` alertdialog and `admin.js` opens it from the remove button (no direct `removeItem` on click); manual: click "Ta bort min token" → dialog; Avbryt/Escape keeps token, "Ja, ta bort" removes it |
-| `02-§91.36` | gap | TOK-25 (planned, structural): `admin.js` clears `input.value` in the valid-activation branch; manual: activate via link → field is empty afterwards |
-| `02-§91.37` | gap | TOK-26 (planned, structural): `admin.js` toggles `submitBtn.disabled` from `input.value.trim()` on `input` + at load; manual: empty field → Aktivera disabled, type → enabled, after activation → disabled |
+| `02-§91.36` | covered | TOK-25 (structural): `admin.js` clears `input.value` in the valid-activation branch; manual: activate via link → field is empty afterwards |
+| `02-§91.37` | covered | TOK-26 (structural): `admin.js` toggles `submitBtn.disabled` from `input.value.trim()` on `input` + at load; manual: empty field → Aktivera disabled, type → enabled, after activation → disabled |
 | `02-§91.4` | implemented | `app.js` POST /verify-admin; `api/index.php` handleVerifyAdmin() |
 | `02-§91.5` | implemented | Request body parsed in both Node.js and PHP handlers |
 | `02-§91.6` | covered | TOK-03, TOK-04, TOK-13: valid signature + recognised role + future epoch accepted |
