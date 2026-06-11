@@ -1253,6 +1253,7 @@ its requirement rows together with the test-legend rows that evidence them.
 | `02-§91.32` | covered | TOK-22: `app.js` / `api/index.php` warn when `ADMIN_TOKEN_SECRET` < 32 bytes (parallels SESSION_SECRET, §387) |
 | `02-§91.33` | covered | TOK-23, TOK-24: `tokenRole()` + `roleDescription()` map superadmin/admin/early to Swedish rights text; `setStatusWithRole()` renders the bold `Roll: <label>` title; manual: open /token.html with each role and confirm the title and rights (recipient name not shown) |
 | `02-§91.34` | gap | MINT-17 (planned, structural): render-admin.js buttons use `.btn-primary`/`.btn-secondary`, no `.btn--*`; manual: token page buttons match the rest of the site |
+| `02-§91.35` | gap | MINT-19 (planned, structural): render-admin.js has the `#token-remove-confirm` alertdialog and `admin.js` opens it from the remove button (no direct `removeItem` on click); manual: click "Ta bort min token" → dialog; Avbryt/Escape keeps token, "Ja, ta bort" removes it |
 | `02-§91.4` | implemented | `app.js` POST /verify-admin; `api/index.php` handleVerifyAdmin() |
 | `02-§91.5` | implemented | Request body parsed in both Node.js and PHP handlers |
 | `02-§91.6` | covered | TOK-03, TOK-04, TOK-13: valid signature + recognised role + future epoch accepted |

@@ -324,6 +324,13 @@ the token's expiry date, its activation time, and the note that a new token
 can be entered below to replace it. The recipient name in the token is not
 displayed.
 
+"Ta bort min token" does not delete the stored token directly; it opens a
+confirmation alertdialog that reuses the site's `.submit-modal` pattern
+(markup in `render-admin.js`, open/close and focus-trap helpers in
+`admin.js`, mirroring the delete-activity dialog in `redigera.js`). The
+token is cleared from `localStorage` only when the user confirms with "Ja,
+ta bort"; "Avbryt" or Escape keeps it (02-§91.35).
+
 ### Footer status indicator
 
 A small icon in the shared site footer shows admin status:
