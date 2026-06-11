@@ -636,6 +636,19 @@ reuses the format, signing, and activation flow described here.
 - If the server responds with `valid: false`: <!-- 02-§91.13 -->
   - Do not store anything.
   - Show an error message (in Swedish).
+- When a valid (unexpired) token is stored, the activation page's status
+  message names the token's recipient and role and states, in Swedish, what
+  that role allows. The recipient is the token's first underscore-segment and
+  the role is its second segment (`namn_roll_epoch_sig`), both read
+  client-side. The message also retains the token's expiry date, its
+  activation time, and the note that a new token can be entered below to
+  replace it. The rights phrasing per role is: <!-- 02-§91.33 -->
+  - `superadmin`: may edit all activities, open the form before the camp
+    opens, and create new token links.
+  - `admin`: may edit all activities and open the form before it opens for
+    everyone.
+  - `early`: may add and edit their own activities before the form opens for
+    everyone.
 - The page must use the same layout (header, navigation, footer) as
   other site pages. <!-- 02-§91.14 -->
 - The page must not be listed in the site navigation. <!-- 02-§91.15 -->
