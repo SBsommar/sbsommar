@@ -637,12 +637,13 @@ reuses the format, signing, and activation flow described here.
   - Do not store anything.
   - Show an error message (in Swedish).
 - When a valid (unexpired) token is stored, the activation page's status
-  message names the token's recipient and role and states, in Swedish, what
-  that role allows. The recipient is the token's first underscore-segment and
-  the role is its second segment (`namn_roll_epoch_sig`), both read
-  client-side. The message also retains the token's expiry date, its
-  activation time, and the note that a new token can be entered below to
-  replace it. The rights phrasing per role is: <!-- 02-§91.33 -->
+  message leads with the role as a bold title on its own line, formatted
+  `Roll: <label>` (`Superadmin`, `Admin`, or `Tidig åtkomst`), and states
+  below it, in Swedish, what that role allows. The role is the token's second
+  underscore-segment (`namn_roll_epoch_sig`), read client-side. The body
+  below the title retains the token's expiry date, its activation time, and
+  the note that a new token can be entered below to replace it. The recipient
+  name in the token is not shown. The rights phrasing per role is: <!-- 02-§91.33 -->
   - `superadmin`: may edit all activities, open the form before the camp
     opens, and create new token links.
   - `admin`: may edit all activities and open the form before it opens for

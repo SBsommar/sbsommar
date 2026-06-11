@@ -302,16 +302,19 @@ On submit, it calls `POST /verify-admin`. If valid, the token and
 timestamp are stored in `localStorage`. The page shares the site layout
 (header, navigation, footer) but is **not listed in the navigation**.
 
-When a valid token is already stored, the status message names the
-recipient and role — read client-side from the token's first two
-underscore-segments — and states in Swedish what the role allows:
+When a valid token is already stored, the status message leads with the
+role as a bold title (`Roll: <label>`, a `.admin-message-title` `<strong>`
+on its own line) — read client-side from the token's second
+underscore-segment — and states below it in Swedish what the role allows:
 `superadmin` may edit all activities, open the form before the camp opens,
 and mint token links; `admin` may edit all activities and open the form
 early; `early` may add and edit their own activities before the form opens
-(02-§91.33). A `roleDescription(role)` helper in `admin.js` maps the role
-to its Swedish rights sentence; the message retains the token's expiry
-date, its activation time, and the note that a new token can be entered
-below to replace it.
+(02-§91.33). A `roleDescription(role)` helper in `admin.js` maps the role to
+its Swedish rights sentence, and `setStatusWithRole()` builds the message
+with DOM nodes (no `innerHTML` on this token-bearing page); the body retains
+the token's expiry date, its activation time, and the note that a new token
+can be entered below to replace it. The recipient name in the token is not
+displayed.
 
 ### Footer status indicator
 

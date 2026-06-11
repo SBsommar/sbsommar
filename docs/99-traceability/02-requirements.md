@@ -1251,7 +1251,7 @@ its requirement rows together with the test-legend rows that evidence them.
 | `02-§91.30` | implemented | `npm run admin:create` signs offline for `admin`/`early`/`superadmin` (60/90/180 days); manual: minted token round-trips |
 | `02-§91.31` | covered | TOK-13, TOK-14: `admin`/`superadmin` admin-equivalent; `early` recognised but not admin |
 | `02-§91.32` | covered | TOK-22: `app.js` / `api/index.php` warn when `ADMIN_TOKEN_SECRET` < 32 bytes (parallels SESSION_SECRET, §387) |
-| `02-§91.33` | gap | TOK-23 (planned): `roleDescription()` maps superadmin/admin/early to Swedish rights text; manual: open /token.html with each role and confirm status names recipient, role, and rights |
+| `02-§91.33` | covered | TOK-23, TOK-24: `tokenRole()` + `roleDescription()` map superadmin/admin/early to Swedish rights text; `setStatusWithRole()` renders the bold `Roll: <label>` title; manual: open /token.html with each role and confirm the title and rights (recipient name not shown) |
 | `02-§91.4` | implemented | `app.js` POST /verify-admin; `api/index.php` handleVerifyAdmin() |
 | `02-§91.5` | implemented | Request body parsed in both Node.js and PHP handlers |
 | `02-§91.6` | covered | TOK-03, TOK-04, TOK-13: valid signature + recognised role + future epoch accepted |
@@ -1606,7 +1606,7 @@ Doc ref: `03-architecture/platform-and-security.md §30`.
 | `02-§106.6` | covered | MINT-02, MINT-08 + PHPUnit parity vector: token = `signToken(sanitised, role, now+days·86400)`; handlers return it without storing |
 | `02-§106.7` | covered | MINT-11, MINT-12: `mintTokenLimiter` (5/h) in `app.js`; `RateLimit::isLimited(.., 'mint-token', 5, 3600)` in PHP |
 | `02-§106.8` | covered | MINT-10: empty secret → no requester verifies → gate false (403) |
-| `02-§106.9` | implemented | MINT-15 (structural: role gate in `admin.js`); manual: open /token.html with superadmin vs admin token and confirm section visibility |
+| `02-§106.9` | covered | MINT-15 (structural: role gate in `admin.js`), MINT-16 (`.admin-form[hidden]` override keeps `hidden` authoritative since `.admin-form` sets display); manual: open /token.html with superadmin vs admin token and confirm section visibility |
 | `02-§106.10` | implemented | MINT-14 (markup: name/role/days with data-days); manual: switch role and confirm day default/max follows (60↔90) |
 | `02-§106.11` | implemented | MINT-15 (structural: `#token=` link build); manual: mint and confirm the link format |
 | `02-§106.12` | implemented | MINT-14 (markup: copy button, share hidden by default); manual: share button appears only when navigator.share exists |
