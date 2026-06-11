@@ -1437,8 +1437,11 @@ Agreed in #391.
 - Submitting the form sends `POST /mint-token` with the stored superadmin
   token. On success the UI shows an activation link of the form
   `<site-origin>/token.html#token=<token>`. <!-- 02-§106.11 -->
-- The result row has a copy button, and a share button (`navigator.share`)
-  that is displayed only when the browser supports sharing. <!-- 02-§106.12 -->
+- The result row has a copy button that copies the activation link to the
+  clipboard. There is no native share button: the Web Share API
+  (`navigator.share`) is unreliable on desktop — the share sheet often never
+  opens and the failure is silent — so copying the link is the single, clear
+  way to hand it over. <!-- 02-§106.12 -->
 - Error responses are displayed in Swedish in the mint section's message
   area. <!-- 02-§106.13 -->
 - The mint form suppresses native browser validation (`novalidate`) and
