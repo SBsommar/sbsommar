@@ -157,7 +157,7 @@ describe('mint UI and redemption wiring (02-§106.9–106.16)', () => {
     assert.match(html, /id="mint-days"/);
     assert.match(html, /id="mint-link"/);
     assert.match(html, /id="mint-copy"/);
-    assert.match(html, /id="mint-share"[^>]*hidden/);
+    assert.doesNotMatch(html, /id="mint-share"/, 'the unreliable native share button is removed (02-§106.12)');
     assert.match(html, /Tidig åtkomst/);
   });
 
@@ -167,7 +167,7 @@ describe('mint UI and redemption wiring (02-§106.9–106.16)', () => {
     assert.match(src, /location\.hash/);
     assert.match(src, /history\.replaceState/);
     assert.match(src, /#token=/);
-    assert.match(src, /navigator\.share/);
+    assert.doesNotMatch(src, /navigator\.share/, 'the native share button is removed (02-§106.12)');
     assert.doesNotMatch(src, /\?token=/, 'redemption must use the fragment, not a query parameter');
   });
 
