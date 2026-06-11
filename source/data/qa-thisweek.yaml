@@ -2956,3 +2956,19 @@ events:
     meta:
       created_at: '2026-04-24 10:00:00'
       updated_at: '2026-04-24 10:00:00'
+  - id: testar-github-2026-06-12-1200
+    title: Testar github
+    date: '2026-06-12'
+    start: '12:00'
+    end: '13:00'
+    location: AndreasTältet
+    responsible: Jag
+    description: |
+      Massa goa grejer
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-06-11 14:18
+      updated_at: 2026-06-11 14:18
