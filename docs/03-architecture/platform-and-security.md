@@ -278,6 +278,14 @@ individual token cannot be revoked without rotating `ADMIN_TOKEN_SECRET`
 (which invalidates all tokens at once); short embedded expiries bound the
 exposure of a leaked token.
 
+The mint form sets `novalidate` and validates client-side, reusing the
+add-activity form's per-field inline-error model (`setMintFieldError()`
+mirrors `lagg-till.js`'s `setFieldError()`): the recipient name is required
+and the day count must be an integer within the role's range, each reported
+as a Swedish `field-error` below its field rather than a native browser
+bubble (02-§106.19). The generated link field is read-only and styled as
+output, not input (02-§106.20).
+
 ### Token storage (client)
 
 The admin token is stored in `localStorage` under the key `sb_admin`:

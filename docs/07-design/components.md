@@ -135,6 +135,19 @@ Part of [the design index](./index.md). Section IDs (`07-§N.M`) are stable and 
   and font rules as secondary. Hover: background
   `var(--color-error, #b91c1c)`, text white. <!-- 07-§6.85 -->
 
+### Token page form (admin)
+
+The activation and mint forms on `/token.html` reuse the site's standard
+form components rather than bespoke styles: buttons follow Buttons
+(07-§6.15, 07-§6.16) — `.btn-primary` for Aktivera and Skapa länk,
+`.btn-secondary` for Ta bort min token, Kopiera länken and Dela — and the
+mint form's per-field validation uses the inline field-error component
+(07-§6.34) with Swedish messages, so no native browser bubble appears.
+
+- The generated activation-link field (`#mint-link`, read-only) reads as
+  output, not input: `background: var(--color-cream)` and `cursor: default`
+  set it apart from the editable fields above it. <!-- 07-§6.124 -->
+
 ### Cards (info blocks, testimonials)
 
 - Background: white `#FFFFFF`. <!-- 07-§6.19 -->
