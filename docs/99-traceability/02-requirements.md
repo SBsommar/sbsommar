@@ -1611,7 +1611,7 @@ Doc ref: `03-architecture/platform-and-security.md §30`.
 | `02-§106.9` | covered | MINT-15 (structural: role gate in `admin.js`), MINT-16 (`.admin-form[hidden]` override keeps `hidden` authoritative since `.admin-form` sets display); manual: open /token.html with superadmin vs admin token and confirm section visibility |
 | `02-§106.10` | implemented | MINT-14 (markup: name/role/days with data-days); manual: switch role and confirm day default/max follows (60↔90) |
 | `02-§106.11` | implemented | MINT-15 (structural: `#token=` link build); manual: mint and confirm the link format |
-| `02-§106.12` | implemented | MINT-14 (markup: copy button, share hidden by default); manual: share button appears only when navigator.share exists |
+| `02-§106.12` | covered | MINT-14 (markup: copy button present, no `#mint-share`), MINT-15 (`admin.js` has no `navigator.share`); manual: copy button copies the link |
 | `02-§106.13` | implemented | Swedish error strings in `admin.js`/server handlers; manual/visual check |
 | `02-§106.14` | implemented | MINT-15 (structural: hash parse + /verify-admin reuse via activateToken); manual: open an activation link and confirm activation |
 | `02-§106.15` | implemented | MINT-15 (structural: history.replaceState); manual: confirm the fragment leaves the address bar on success and failure |

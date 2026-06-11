@@ -268,8 +268,9 @@ the section stays invisible to every non-superadmin (02-§106.9). Visibility
 is cosmetic regardless — the server gates each mint — but without the
 override the form would render for all visitors. It builds an activation
 link
-`<site-origin>/token.html#token=<token>` with copy and `navigator.share`
-buttons. On load the same page redeems incoming links: it reads
+`<site-origin>/token.html#token=<token>` with a copy button (no native
+share button — `navigator.share` is a silent no-op on desktop). On load the
+same page redeems incoming links: it reads
 `location.hash`, posts the value to `/verify-admin`, stores it like a
 manual activation, and clears the fragment with `history.replaceState`.
 The token travels in the fragment — never a query parameter — so it stays
