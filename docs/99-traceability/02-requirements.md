@@ -1251,6 +1251,7 @@ its requirement rows together with the test-legend rows that evidence them.
 | `02-§91.30` | implemented | `npm run admin:create` signs offline for `admin`/`early`/`superadmin` (60/90/180 days); manual: minted token round-trips |
 | `02-§91.31` | covered | TOK-13, TOK-14: `admin`/`superadmin` admin-equivalent; `early` recognised but not admin |
 | `02-§91.32` | covered | TOK-22: `app.js` / `api/index.php` warn when `ADMIN_TOKEN_SECRET` < 32 bytes (parallels SESSION_SECRET, §387) |
+| `02-§91.33` | gap | TOK-23 (planned): `roleDescription()` maps superadmin/admin/early to Swedish rights text; manual: open /token.html with each role and confirm status names recipient, role, and rights |
 | `02-§91.4` | implemented | `app.js` POST /verify-admin; `api/index.php` handleVerifyAdmin() |
 | `02-§91.5` | implemented | Request body parsed in both Node.js and PHP handlers |
 | `02-§91.6` | covered | TOK-03, TOK-04, TOK-13: valid signature + recognised role + future epoch accepted |
