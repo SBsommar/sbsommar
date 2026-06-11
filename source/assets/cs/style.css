@@ -2902,6 +2902,14 @@ body.modal-open {
 .admin-message--success { color: var(--color-sage-hover); }
 .admin-message--error { color: var(--color-error); }
 
+/* Role shown as a bold title on its own line above the status body
+   (02-§91.33). `display: block` puts the following body text underneath. */
+.admin-message-title {
+  display: block;
+  font-weight: 700;
+  margin-bottom: var(--space-xs);
+}
+
 .admin-remove {
   align-self: flex-start;
 }

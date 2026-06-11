@@ -121,27 +121,36 @@
     // Pre-fill status if already activated
     var existing = getAdminData();
 
-    // Swedish label per role, paired with the rights sentence and appended to
-    // any "token is active" message so the holder sees which token they have
-    // and what it allows (02-§91.33). Role and recipient come from the token
-    // string (namn_roll_epoch_sig).
+    // Render the active-token status into the message element: a bold
+    // "Roll: <label>" title on top, then the body text below (02-§91.33).
+    // The label and rights come from the token's role (namn_roll_epoch_sig);
+    // an unrecognised role omits both the title and the rights sentence.
+    // Used on load and after a successful activation so both lead with the
+    // role. Built with DOM nodes, not innerHTML — no string is interpolated
+    // into markup on this token-bearing page.
     var ROLE_LABELS = { superadmin: 'Superadmin', admin: 'Admin', early: 'Tidig åtkomst' };
-    var rightsSuffix = function (token) {
+    var setStatusWithRole = function (token, body) {
       var label = ROLE_LABELS[tokenRole(token)] || '';
-      var rights = roleDescription(tokenRole(token));
-      return (label ? ' Roll: ' + label + '.' : '') + (rights ? ' ' + rights : '');
+      message.textContent = '';
+      if (label) {
+        var title = document.createElement('strong');
+        title.className = 'admin-message-title';
+        title.textContent = 'Roll: ' + label;
+        message.appendChild(title);
+      }
+      message.appendChild(document.createTextNode(body));
     };
 
     if (existing && !isExpired(existing)) {
       var expiry = extractExpiry(existing.token);
       var expiryDate = expiry ? new Date(expiry * 1000).toLocaleDateString('sv-SE') : '';
       var activatedAt = existing.activated ? new Date(existing.activated).toLocaleString('sv-SE') : '';
-      var recipient = (existing.token.split('_')[0]) || '';
-      message.textContent = 'Din token' + (recipient ? ' (' + recipient + ')' : '') + ' är aktiv'
+      var rights = roleDescription(tokenRole(existing.token));
+      setStatusWithRole(existing.token, 'Din token är aktiv'
         + (expiryDate ? ' till ' + expiryDate : '')
         + (activatedAt ? ' (aktiverad ' + activatedAt + ')' : '')
-        + '.' + rightsSuffix(existing.token)
-        + ' Du kan byta genom att ange en ny token nedan.';
+        + '.' + (rights ? ' ' + rights : '')
+        + ' Du kan byta genom att ange en ny token nedan.');
       message.hidden = false;
       message.classList.add('admin-message--success');
     } else if (existing && isExpired(existing)) {
@@ -187,7 +196,9 @@
               token: token,
               activated: Date.now(),
             }));
-            message.textContent = 'Token aktiverad ' + new Date().toLocaleString('sv-SE') + '.' + rightsSuffix(token);
+            var actRights = roleDescription(tokenRole(token));
+            setStatusWithRole(token, 'Token aktiverad ' + new Date().toLocaleString('sv-SE') + '.'
+              + (actRights ? ' ' + actRights : ''));
             message.classList.add('admin-message--success');
             message.hidden = false;
             if (removeBtn) removeBtn.hidden = false;
