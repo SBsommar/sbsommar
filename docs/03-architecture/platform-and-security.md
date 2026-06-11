@@ -311,6 +311,14 @@ On submit, it calls `POST /verify-admin`. If valid, the token and
 timestamp are stored in `localStorage`. The page shares the site layout
 (header, navigation, footer) but is **not listed in the navigation**.
 
+`activateToken()` clears the input on success (02-§91.36), so the token —
+typed in or carried by an activation link — does not linger on screen once
+it is stored (the link flow has already stripped it from the URL fragment).
+The "Aktivera" button is kept disabled whenever the input is empty: an
+`input` listener (and one call at load) sets `submitBtn.disabled =
+!input.value.trim()`, so an empty activation cannot be submitted and the
+cleared field leaves the button disabled (02-§91.37).
+
 When a valid token is already stored, the status message leads with the
 role as a bold title (`Roll: <label>`, a `.admin-message-title` `<strong>`
 on its own line) — read client-side from the token's second
