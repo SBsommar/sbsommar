@@ -138,6 +138,16 @@
     var input = document.getElementById('admin-token');
     var message = document.getElementById('admin-message');
     var removeBtn = document.getElementById('admin-remove');
+    var submitBtn = form.querySelector('button[type="submit"]');
+
+    // Keep "Aktivera" disabled while the field is empty (02-§91.37), so an
+    // empty activation can't be submitted and a cleared field leaves the
+    // button disabled. Re-synced as the user types.
+    var syncActivateBtn = function () {
+      if (submitBtn) submitBtn.disabled = !input.value.trim();
+    };
+    input.addEventListener('input', syncActivateBtn);
+    syncActivateBtn();
 
     // Pre-fill status if already activated
     var existing = getAdminData();
@@ -274,6 +284,11 @@
             message.classList.add('admin-message--success');
             message.hidden = false;
             if (removeBtn) removeBtn.hidden = false;
+            // Clear the field so the token does not linger on screen — it is
+            // stored now, and for the link flow the URL fragment is already
+            // gone (02-§91.36). The empty field re-disables "Aktivera".
+            input.value = '';
+            syncActivateBtn();
             renderFooterIcon();
             initMintSection();
           } else {
