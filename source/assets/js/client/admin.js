@@ -320,6 +320,9 @@
       var incoming = decodeURIComponent(hashMatch[1]);
       history.replaceState(null, '', location.pathname + location.search);
       input.value = incoming;
+      // Setting the value programmatically does not fire `input`; sync so the
+      // button reflects the field (and stays usable if this activation fails).
+      syncActivateBtn();
       activateToken(incoming);
     }
   }
