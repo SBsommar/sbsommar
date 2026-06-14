@@ -5,8 +5,13 @@ on:
   push:
     branches:
       - main
+    # Ignore only per-camp event files — those are deployed by
+    # event-data-deploy-post-merge.yml. Site-wide config files (camps.yaml,
+    # local.yaml) are NOT ignored, so a config change triggers a full QA
+    # deploy of pages the event-data pipeline never rebuilds (02-§108).
     paths-ignore:
-      - 'source/data/**.yaml'
+      - 'source/data/20[0-9][0-9]-*.yaml'
+      - 'source/data/qa-*.yaml'
 
 permissions:
   contents: read
