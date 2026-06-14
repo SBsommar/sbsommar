@@ -116,7 +116,7 @@ ID ranges.
 
 ---
 
-Audit date: 2026-02-24. Last updated: 2026-06-09 (signed session ownership delivered, 02-§101.1–101.13 covered/implemented).
+Audit date: 2026-02-24. Last updated: 2026-06-14 (location availability delivered, 02-§107.1–107.8 covered).
 
 ---
 
@@ -126,7 +126,7 @@ The matrix is split by ID family. Each file carries the rows for one family.
 
 | Family | Source | Rows | File |
 | --- | --- | --- | --- |
-| `02` | `docs/02-requirements/` | 1277 | [02-requirements](./02-requirements.md) |
+| `02` | `docs/02-requirements/` | 1285 | [02-requirements](./02-requirements.md) |
 | `03` | `docs/03-architecture/` | 0 | [03-architecture](./03-architecture.md) |
 | `05` | `docs/05-DATA_CONTRACT.md` | 18 | [05-data-contract](./05-data-contract.md) |
 | `07` | `docs/07-design/` | 91 | [07-design](./07-design.md) |
@@ -138,11 +138,18 @@ Test IDs referenced in the `Test(s)` column are defined in the
 ## Summary
 
 ```text
-Total requirements:            1349
-Covered (implemented + tested): 708
+Total requirements:            1357
+Covered (implemented + tested): 716
 Implemented, not tested:        641
 Gap (no implementation):          0
 Orphan tests (no requirement):    0
+
+Note: §107 (Location Availability) adds 8 requirements
+  (02-§107.1–107.8), all covered by LOCAVAIL-01..12
+  (tests/location-availability.test.js). An optional `active: false`
+  field on a local.yaml location removes it from the add/edit form
+  dropdowns, the Lokaler schedule grid, and the homepage location
+  accordions; the "Annat" fallback always remains in the forms.
 
 Note: §106 (Token Minting from the Web) adds 18 requirements
   (02-§106.1–106.18): 9 covered (MINT-01..15, tests/mint-token.test.js,

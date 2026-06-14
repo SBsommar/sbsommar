@@ -202,3 +202,4 @@ Part of [the traceability index](./index.md).
 | (PHPUnit) | `api/tests/AdminTokenTest.php` | PHP mirror of the token model incl. `verifyPreCampBypassToken` (02-§91, 02-§105) |
 | MINT-01..15 | `tests/mint-token.test.js` | Web token minting: sanitiser, mintRequest, superadmin gate, route/UI wiring (02-§106) |
 | (PHPUnit) | `api/tests/MintTokenTest.php` | PHP mirror of `mintRequest` with the same fixed inputs (02-§106) |
+| LOCAVAIL-01..12 | `tests/location-availability.test.js` | Location availability: `filterAvailableLocations()` + build wiring + renderer exclusion (02-§107) |

@@ -1629,11 +1629,11 @@ Doc ref: `03-architecture/pages-and-content.md §16.5`, `03-architecture/renderi
 
 | ID | Status | Notes |
 | --- | --- | --- |
-| `02-§107.1` | gap | Optional boolean `active` field on `local.yaml` location entries |
-| `02-§107.2` | gap | `active: true` or absent → location available |
-| `02-§107.3` | gap | `active: false` → location unavailable |
-| `02-§107.4` | gap | Unavailable location absent from add-activity form dropdown |
-| `02-§107.5` | gap | Unavailable location absent from edit-activity form dropdown |
-| `02-§107.6` | gap | Unavailable location absent from Lokaler schedule grid |
-| `02-§107.7` | gap | Unavailable location absent from homepage location accordions |
-| `02-§107.8` | gap | "Annat" fallback option always present in add/edit forms |
+| `02-§107.1` | covered | LOCAVAIL-02, LOCAVAIL-03: `filterAvailableLocations()` in `source/build/locations.js` reads the optional `active` field |
+| `02-§107.2` | covered | LOCAVAIL-01, LOCAVAIL-02: omitted or `true` → kept |
+| `02-§107.3` | covered | LOCAVAIL-03, LOCAVAIL-04: `active: false` → removed |
+| `02-§107.4` | covered | LOCAVAIL-06, LOCAVAIL-07 (build.js wiring), LOCAVAIL-08: `source/build/build.js` filters before `renderAddPage()` |
+| `02-§107.5` | covered | LOCAVAIL-10: filtered list reaches `renderEditPage()` |
+| `02-§107.6` | covered | LOCAVAIL-11: filtered list reaches `renderLokalerPage()` |
+| `02-§107.7` | covered | LOCAVAIL-12: filtered list reaches `renderLocationAccordions()` |
+| `02-§107.8` | covered | LOCAVAIL-09, LOCAVAIL-10: `render-add.js`/`render-edit.js` always append "Annat" |
