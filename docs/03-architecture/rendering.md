@@ -29,9 +29,12 @@ client-side grid code. Each locale defined in `source/data/local.yaml`
 becomes one row; events from the active camp's YAML are positioned as
 time-blocks inside that row according to their date and start/end
 times. Events whose `location` field does not match any locale name
-fall into the "Annat" row. The page is not a site-navigation entry; it
-is reached through a link from `/schema.html`. See 02-requirements/design-and-content.md
-§98 for the full requirements.
+fall into the "Annat" row. Locations marked unavailable (`active: false`)
+in `local.yaml` are filtered out in `build.js` before the locale list reaches
+this renderer, so they produce no row — see
+[pages-and-content.md §16.5](./pages-and-content.md) (02-§107). The page is not a
+site-navigation entry; it is reached through a link from `/schema.html`. See
+02-requirements/design-and-content.md §98 for the full requirements.
 
 ### 5.2 Shared conflict-detection module
 

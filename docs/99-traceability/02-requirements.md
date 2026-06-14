@@ -1622,3 +1622,18 @@ Doc ref: `03-architecture/platform-and-security.md §30`.
 | `02-§106.18` | implemented | Swedish text; reuses `.admin-form` components; new CSS uses only `--space-*`/`--color-*`/`--font-*`/`--radius-*` tokens; manual/visual |
 | `02-§106.19` | covered | MINT-18: `validateMintFields()` rejects empty name and out-of-range/non-integer days with Swedish messages; mint form has `novalidate` + `mint-err-*` field-error spans wired by `setMintFieldError()`; manual: submit empty → Swedish inline errors, no English bubble |
 | `02-§106.20` | covered | MINT-17 (structural): `#mint-link` read-only styling (`background` + `cursor: default`) present; manual: link field looks like output, not an input |
+
+### §107 — Location Availability
+
+Doc ref: `03-architecture/pages-and-content.md §16.5`, `03-architecture/rendering.md §5.1`.
+
+| ID | Status | Notes |
+| --- | --- | --- |
+| `02-§107.1` | gap | Optional boolean `active` field on `local.yaml` location entries |
+| `02-§107.2` | gap | `active: true` or absent → location available |
+| `02-§107.3` | gap | `active: false` → location unavailable |
+| `02-§107.4` | gap | Unavailable location absent from add-activity form dropdown |
+| `02-§107.5` | gap | Unavailable location absent from edit-activity form dropdown |
+| `02-§107.6` | gap | Unavailable location absent from Lokaler schedule grid |
+| `02-§107.7` | gap | Unavailable location absent from homepage location accordions |
+| `02-§107.8` | gap | "Annat" fallback option always present in add/edit forms |

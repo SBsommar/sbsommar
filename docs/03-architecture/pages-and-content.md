@@ -245,8 +245,10 @@ individual accordion, rendered at build time into `index.html`.
 
 ### 16.1 Data flow
 
-`build.js` already loads `local.yaml`. The full location objects (not just names)
-are passed to the index rendering pipeline. A new function
+`build.js` already loads `local.yaml`. Immediately after loading, it filters the
+list to available locations (see §16.5) and uses that filtered list everywhere:
+the full location objects (not just names) are passed to the index rendering
+pipeline, and the names alone are passed to the add and edit forms. A function
 `renderLocationAccordions(locations)` in `render-index.js` generates one
 `<details class="accordion">` per location entry.
 
@@ -276,6 +278,31 @@ mirrors the pattern used for camp listings in section `id: start`.
 | `source/content/sections.yaml` | Remove `collapsible: true` from lokaler |
 | `source/build/render-index.js` | Add `renderLocationAccordions()` function |
 | `source/build/build.js` | Pass full location data; inject into lokaler section |
+
+### 16.5 Location availability (02-§107)
+
+Each location entry in `local.yaml` may carry an optional boolean `active`
+field. A location is available when `active` is `true` or absent, and
+unavailable when `active` is `false`. This lets an administrator hide a
+location the camp has no access to in a given year (for example the school or
+the youth centre) by flipping one line, without deleting the entry.
+
+The filter is applied once, centrally, in `build.js` right after `local.yaml`
+is loaded:
+
+```js
+const allLocations = (localData.locations || []).filter((l) => l.active !== false);
+const locations = allLocations.map((l) => l.name);
+```
+
+Because every downstream consumer reads from this single filtered list, an
+unavailable location disappears from all four surfaces at once: the
+add-activity form dropdown, the edit-activity form dropdown, the Lokaler
+schedule grid (`render-lokaler.js`, see [rendering.md §5.1](./rendering.md)),
+and the homepage location accordions. The `"Annat"` fallback option is appended
+to the form dropdowns by `render-add.js` / `render-edit.js` independently of
+this list, so an activity can always be placed somewhere even if every named
+location is unavailable.
 
 ---
 
