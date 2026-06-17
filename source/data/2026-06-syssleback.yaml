@@ -413,3 +413,19 @@ events:
     meta:
       created_at: 2026-06-17 06:32
       updated_at: 2026-06-17 06:32
+  - id: smote-for-stationsvardar-2026-06-23-1300
+    title: SMöte för stationsvärdar
+    date: '2026-06-23'
+    start: '13:00'
+    end: '14:00'
+    location: Kaffetält
+    responsible: Birgitta
+    description: |
+      De som är stationsvärdar ses för en genongång inför Brain Games.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-06-17 14:29
+      updated_at: 2026-06-17 14:29
