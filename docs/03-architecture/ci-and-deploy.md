@@ -90,14 +90,21 @@ changes is the responsibility of the post-merge deploy workflow.
 | `ci.yml` | All branches + PRs | Lint, test, build for code changes; pass-through for data-only |
 | `event-data-deploy.yml` | PRs from `event/**`, `event-edit/**` | No-op branch protection gate |
 | `event-data-deploy-post-merge.yml` | Push to `main` (data YAMLs only) | setup-node + npm ci + build + deploy to QA, Production |
-| `deploy-qa.yml` | Push to `main` (ignores data YAMLs) | Full build + SCP/SSH swap (QA) |
+| `deploy-qa.yml` | Push to `main` (ignores per-camp event YAMLs) | Full build + SCP/SSH swap (QA) |
 | `deploy-prod.yml` | Manual `workflow_dispatch` | Full build + SCP/SSH swap (Production) |
 | `deploy-reusable.yml` | Called by `deploy-qa.yml` / `deploy-prod.yml` | Shared build-and-deploy logic |
 | `docker-build.yml` | Push to `main` (package.json or Dockerfile) | Build and push Docker image to GHCR (no longer used by event-data deploy) |
 
-`deploy-qa.yml` uses `paths-ignore` so that pushes to `main` containing only YAML data
-file changes do not trigger a full site deploy — the event-data pages are deployed by
-`event-data-deploy-post-merge.yml`.
+`deploy-qa.yml` uses `paths-ignore` so that pushes to `main` containing only per-camp
+event file changes do not trigger a full site deploy — those event-data pages are
+deployed by `event-data-deploy-post-merge.yml`. The ignore list targets only the
+per-camp event files (`source/data/20[0-9][0-9]-*.yaml` and `source/data/qa-*.yaml`),
+not the site-wide configuration files. A push that changes `camps.yaml` or
+`local.yaml` therefore *does* trigger the full QA deploy, because those files affect
+pages the event-data pipeline never rebuilds (the homepage, the add/edit forms, and
+the Lokaler page). This closes the gap where a config-only change (e.g. hiding a
+location via `local.yaml`) merged to `main` but never reached the QA server
+(02-§108). Production stays manual (`deploy-prod.yml` is `workflow_dispatch` only).
 
 ### 11.6 API-layer security validation
 

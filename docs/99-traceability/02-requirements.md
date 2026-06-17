@@ -1637,3 +1637,14 @@ Doc ref: `03-architecture/pages-and-content.md §16.5`, `03-architecture/renderi
 | `02-§107.6` | covered | LOCAVAIL-11: filtered list reaches `renderLokalerPage()` |
 | `02-§107.7` | covered | LOCAVAIL-12: filtered list reaches `renderLocationAccordions()` |
 | `02-§107.8` | covered | LOCAVAIL-09, LOCAVAIL-10: `render-add.js`/`render-edit.js` always append "Annat" |
+
+### §108 — Config-File QA Deploy Trigger
+
+Doc ref: `03-architecture/ci-and-deploy.md §11.5`.
+
+| ID | Status | Notes |
+| --- | --- | --- |
+| `02-§108.1` | covered | DQT-05: `deploy-qa.yml` push trigger on `main` + `workflow_dispatch` |
+| `02-§108.2` | covered | DQT-01, DQT-02, DQT-04: `paths-ignore` targets `20[0-9][0-9]-*.yaml` + `qa-*.yaml`, no catch-all |
+| `02-§108.3` | covered | DQT-03: neither `camps.yaml` nor `local.yaml` is ignored |
+| `02-§108.4` | covered | DQT-06: `deploy-prod.yml` is `workflow_dispatch` only, no push trigger |

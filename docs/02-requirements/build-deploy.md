@@ -140,7 +140,9 @@ via SCP, then swapped into the live web root with server-side `mv` operations.
 - The build step (checkout, node setup, npm ci, npm run build) must
   remain unchanged. <!-- 02-§40.13 -->
 - The workflow trigger (push to `main`, paths-ignore data files) must
-  remain unchanged. <!-- 02-§40.14 -->
+  remain unchanged. **Superseded by 02-§108.1–108.3**: the trigger ignores
+  only per-camp event files; `camps.yaml` and `local.yaml` changes trigger
+  the full QA deploy. <!-- 02-§40.14 -->
 
 ### 40.5 Error handling (site requirements)
 
@@ -912,3 +914,34 @@ Automated PHP tests that run in CI and locally close that gap.
 - The git pre-commit hook remains Node-only (`npm run lint`, `npm run lint:md`,
   `npm test`); it does not invoke PHP, so contributors without a PHP toolchain
   are not blocked. <!-- 02-§103.9 -->
+
+---
+
+---
+
+## 108. Config-File QA Deploy Trigger
+
+### 108.1 Context
+
+`deploy-qa.yml` runs the full-site QA deploy. Per-camp event files are deployed by
+the lightweight event-data pipeline (`event-data-deploy-post-merge.yml`), so the
+full deploy ignores them to avoid redundant rebuilds. But `camps.yaml` and
+`local.yaml` are site-wide configuration — the active camp, navigation, and the
+location list — that affect pages the event-data pipeline never rebuilds (the
+homepage, the add/edit forms, the Lokaler page). A change to one of those config
+files must therefore trigger the full QA deploy.
+
+### 108.2 Requirements
+
+- `deploy-qa.yml` triggers a full QA deploy on every push to `main` except those
+  whose only changed files are per-camp event files. <!-- 02-§108.1 -->
+- Per-camp event files are identified by the path patterns
+  `source/data/20[0-9][0-9]-*.yaml` and `source/data/qa-*.yaml`; a push limited to
+  those files does not trigger the full QA deploy, because the event-data pipeline
+  deploys them. <!-- 02-§108.2 -->
+- A push that changes `source/data/camps.yaml` or `source/data/local.yaml`
+  triggers the full QA deploy, because these files affect site-wide pages that the
+  event-data pipeline does not rebuild. <!-- 02-§108.3 -->
+- Production deploys remain manual (`deploy-prod.yml` runs only on
+  `workflow_dispatch`); config-file changes reach production through a manual
+  deploy, not automatically. <!-- 02-§108.4 -->

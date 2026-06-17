@@ -116,7 +116,7 @@ ID ranges.
 
 ---
 
-Audit date: 2026-02-24. Last updated: 2026-06-14 (location availability delivered, 02-§107.1–107.8 covered).
+Audit date: 2026-02-24. Last updated: 2026-06-14 (config-file QA deploy trigger delivered, 02-§108.1–108.4 covered; location availability 02-§107.1–107.8 covered).
 
 ---
 
@@ -126,7 +126,7 @@ The matrix is split by ID family. Each file carries the rows for one family.
 
 | Family | Source | Rows | File |
 | --- | --- | --- | --- |
-| `02` | `docs/02-requirements/` | 1285 | [02-requirements](./02-requirements.md) |
+| `02` | `docs/02-requirements/` | 1289 | [02-requirements](./02-requirements.md) |
 | `03` | `docs/03-architecture/` | 0 | [03-architecture](./03-architecture.md) |
 | `05` | `docs/05-DATA_CONTRACT.md` | 18 | [05-data-contract](./05-data-contract.md) |
 | `07` | `docs/07-design/` | 91 | [07-design](./07-design.md) |
@@ -138,11 +138,18 @@ Test IDs referenced in the `Test(s)` column are defined in the
 ## Summary
 
 ```text
-Total requirements:            1357
-Covered (implemented + tested): 716
+Total requirements:            1361
+Covered (implemented + tested): 720
 Implemented, not tested:        641
 Gap (no implementation):          0
 Orphan tests (no requirement):    0
+
+Note: §108 (Config-File QA Deploy Trigger) adds 4 requirements
+  (02-§108.1–108.4), all covered by DQT-01..06
+  (tests/deploy-qa-config-trigger.test.js). deploy-qa.yml ignores only
+  per-camp event files (20[0-9][0-9]-*.yaml, qa-*.yaml), so a change to
+  camps.yaml or local.yaml triggers a full QA deploy; production stays
+  manual. Refines 02-§40.14.
 
 Note: §107 (Location Availability) adds 8 requirements
   (02-§107.1–107.8), all covered by LOCAVAIL-01..12
