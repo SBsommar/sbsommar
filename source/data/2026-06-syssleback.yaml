@@ -309,3 +309,22 @@ events:
     meta:
       created_at: '2026-02-27 09:12:59'
       updated_at: '2026-02-27 09:12:59'
+  - id: brain-games-2026-06-24-1500
+    title: Brain Games
+    date: '2026-06-24'
+    start: '15:00'
+    end: '17:00'
+    location: GA Idrott
+    responsible: Birgitta
+    description: |
+      Årets Brain Game.
+      Lag på 4-5 personer.
+      2 klasser: alla under 13 samt blandade åldrar.
+      Lös klurigheter i olika stationer. Alla stationer har en maxtid på 7 minuter.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-06-17 06:30
+      updated_at: 2026-06-17 06:30
