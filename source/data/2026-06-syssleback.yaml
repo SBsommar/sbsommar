@@ -576,3 +576,23 @@ events:
     meta:
       created_at: 2026-06-18 07:21
       updated_at: 2026-06-18 07:21
+  - id: japansk-bakning-3-2026-06-26-1400
+    title: 'JAPANSK BAKNING #3'
+    date: '2026-06-26'
+    start: '14:00'
+    end: '17:00'
+    location: Servicehus
+    responsible: Lisa Lautrup
+    description: |
+      Vi bakar årets första recept CHOUX CREAM tillsammans baserat på Ai Venturas bakbok ”Japanska bakverk”.
+      
+      Anmälan öppnar 17/6 kl 14:00 och sker via separat bokningsapp.
+      
+      Se länk till Fb-inlägg för mer info!
+    link: 'https://www.facebook.com/share/p/1Cre9gFRC9/?'
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-06-18 07:23
+      updated_at: 2026-06-18 07:23
