@@ -644,3 +644,26 @@ events:
     meta:
       created_at: 2026-06-18 07:34
       updated_at: 2026-06-18 07:34
+  - id: musikproduktion-intro-2026-06-23-1300
+    title: Musikproduktion - intro
+    date: '2026-06-23'
+    start: '13:00'
+    end: '15:00'
+    location: Annat
+    responsible: Sara Varda St Vincent
+    description: |
+      Vad är musikproduktion?
+      Vad är audio/midi?
+      Vad är en DAW?
+      Starta en egen prodd!
+      
+      Ta med dator med lämpligt program, tex GarageBand, Logic, Ableton Live, Audacity eller Reason. Du behöver även någon typ av hörlurar! :-)
+      
+      Plats: Holevägen 7
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-06-18 08:55
+      updated_at: 2026-06-18 08:55
