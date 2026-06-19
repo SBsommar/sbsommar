@@ -629,3 +629,21 @@ events:
     meta:
       created_at: '2026-06-18 08:55'
       updated_at: '2026-06-18 08:55'
+  - id: pyssel-med-lufttorkande-lera-drop-in-2026-06-22-1300
+    title: Pyssel med lufttorkande lera - drop-in
+    date: '2026-06-22'
+    start: '13:00'
+    end: '14:30'
+    location: AndreasTältet
+    responsible: Kajsa Ögård
+    description: |
+      Drop-in pyssel med skumlera (soft clay) i många färger i tältet vid servicehuset. 
+      
+      Ta gärna med saker som du eller andra kan använda för att forma och dekorera leran – små skålar, sugrör, svampar, penslar, grillpinnar, gem, stekspadar etc. Extra knivar (vassa) och släta glasflaskor/burkar som kan användas som brödkavlar är också välkommet.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-06-19 09:17
+      updated_at: 2026-06-19 09:17
