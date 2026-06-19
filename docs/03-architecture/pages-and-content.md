@@ -332,9 +332,26 @@ VERSION:2.0
 PRODID:-//SB Sommar//Schema//SV
 X-WR-CALNAME:Schema – {camp name}
 METHOD:PUBLISH
+BEGIN:VTIMEZONE
+TZID:Europe/Stockholm
+BEGIN:DAYLIGHT
+TZOFFSETFROM:+0100
+TZOFFSETTO:+0200
+TZNAME:CEST
+DTSTART:19700329T020000
+RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU
+END:DAYLIGHT
+BEGIN:STANDARD
+TZOFFSETFROM:+0200
+TZOFFSETTO:+0100
+TZNAME:CET
+DTSTART:19701025T030000
+RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU
+END:STANDARD
+END:VTIMEZONE
 BEGIN:VEVENT
-DTSTART:20260630T163000
-DTEND:20260630T180000
+DTSTART;TZID=Europe/Stockholm:20260630T163000
+DTEND;TZID=Europe/Stockholm:20260630T180000
 DTSTAMP:20260228T120000Z
 SUMMARY:{title}
 LOCATION:{location}
@@ -346,8 +363,13 @@ END:VEVENT
 END:VCALENDAR
 ```
 
-Times use floating local format (`YYYYMMDDTHHMMSS`, no `Z`, no `TZID`)
-consistent with the no-timezone policy (05-§4.5).
+`DTSTART` and `DTEND` carry a `TZID=Europe/Stockholm` parameter, and the
+`VCALENDAR` embeds a matching `VTIMEZONE` component with the EU CET/CEST
+daylight-saving rules. The naive local times in the event data (05-§4.5)
+are thereby anchored to a concrete zone, so calendar apps (notably
+Apple/iOS, which otherwise treats unqualified times as UTC) display every
+activity at its correct wall-clock time. The renderer emits one shared
+`VTIMEZONE` per `.ics` file, placed before the first `VEVENT`.
 
 `DTSTAMP` is a UTC timestamp set to the build time. RFC 5545 §3.6.1
 requires it in every `VEVENT`.

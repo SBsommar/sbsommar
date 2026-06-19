@@ -226,9 +226,14 @@ Each per-event `.ics` file must include exactly one `VEVENT` with: <!-- 02-§45.
 - `URL` — absolute URL to the event detail page
 - `UID` — `{event-id}@{hostname}` (stable, unique)
 
-All times must use floating local format (`YYYYMMDDTHHMMSS` with no `Z`
-suffix and no `TZID`) — consistent with the no-timezone policy
-(05-§4.5). <!-- 02-§45.5 -->
+All event times are expressed in the `Europe/Stockholm` time zone.
+`DTSTART` and `DTEND` carry a `TZID=Europe/Stockholm` parameter
+(`DTSTART;TZID=Europe/Stockholm:YYYYMMDDTHHMMSS`), and the `VCALENDAR`
+includes a matching `VTIMEZONE` component that defines `Europe/Stockholm`
+with its CET/CEST daylight-saving rules. The naive local times stored in
+the event data (05-§4.5) are thereby anchored to a concrete zone, so
+calendar apps display every activity at its correct wall-clock time
+regardless of the device's own time zone. <!-- 02-§45.5 -->
 
 When `end` is null, `DTEND` must be omitted. <!-- 02-§45.6 -->
 

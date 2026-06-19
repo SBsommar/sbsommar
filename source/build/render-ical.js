@@ -18,13 +18,48 @@ function escapeIcal(str) {
 }
 
 /**
- * Formats a date string (YYYY-MM-DD) and time string (HH:MM) as iCalendar
- * floating local datetime: YYYYMMDDTHHMMSS (no Z suffix, no TZID).
+ * IANA time zone for all camp times. Event data stores naive local times
+ * (05-§4.5); the iCal export anchors them to this concrete zone so calendar
+ * apps render the correct wall-clock time regardless of the device zone.
+ */
+const TZID = 'Europe/Stockholm';
+
+/**
+ * Formats a date string (YYYY-MM-DD) and time string (HH:MM) as an
+ * iCalendar local datetime: YYYYMMDDTHHMMSS (no Z suffix). It is paired with
+ * a TZID=Europe/Stockholm parameter on the DTSTART/DTEND property.
  */
 function toIcalDatetime(dateStr, timeStr) {
   const d = toDateString(dateStr).replace(/-/g, '');
   const t = String(timeStr).replace(':', '') + '00';
   return `${d}T${t}`;
+}
+
+/**
+ * Returns the VTIMEZONE component (RFC 5545 §3.6.5) defining Europe/Stockholm
+ * with its EU CET/CEST daylight-saving rules. Embedded once per .ics file so
+ * the TZID referenced by every DTSTART/DTEND resolves unambiguously.
+ */
+function buildVtimezone() {
+  return [
+    'BEGIN:VTIMEZONE',
+    `TZID:${TZID}`,
+    'BEGIN:DAYLIGHT',
+    'TZOFFSETFROM:+0100',
+    'TZOFFSETTO:+0200',
+    'TZNAME:CEST',
+    'DTSTART:19700329T020000',
+    'RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU',
+    'END:DAYLIGHT',
+    'BEGIN:STANDARD',
+    'TZOFFSETFROM:+0200',
+    'TZOFFSETTO:+0100',
+    'TZNAME:CET',
+    'DTSTART:19701025T030000',
+    'RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU',
+    'END:STANDARD',
+    'END:VTIMEZONE',
+  ].join('\r\n');
 }
 
 /**
@@ -67,10 +102,10 @@ function renderVevent(event, siteUrl) {
   const hostname = extractHostname(siteUrl);
   const lines = [
     'BEGIN:VEVENT',
-    `DTSTART:${toIcalDatetime(event.date, event.start)}`,
+    `DTSTART;TZID=${TZID}:${toIcalDatetime(event.date, event.start)}`,
   ];
   if (event.end) {
-    lines.push(`DTEND:${toIcalDatetime(event.date, event.end)}`);
+    lines.push(`DTEND;TZID=${TZID}:${toIcalDatetime(event.date, event.end)}`);
   }
   lines.push(
     `DTSTAMP:${buildDtstamp()}`,
@@ -99,6 +134,7 @@ function renderEventIcal(event, camp, siteUrl) {
     'PRODID:-//SB Sommar//Schema//SV',
     `X-WR-CALNAME:${escapeIcal(camp.name)}`,
     'METHOD:PUBLISH',
+    buildVtimezone(),
     renderVevent(event, siteUrl),
     'END:VCALENDAR',
     '',
@@ -122,6 +158,7 @@ function renderIcalFeed(camp, events, siteUrl) {
     'PRODID:-//SB Sommar//Schema//SV',
     `X-WR-CALNAME:Schema – ${escapeIcal(camp.name)}`,
     'METHOD:PUBLISH',
+    buildVtimezone(),
   ];
   if (vevents) {
     lines.push(vevents);

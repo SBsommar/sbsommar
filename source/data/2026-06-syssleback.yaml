@@ -309,107 +309,355 @@ events:
     meta:
       created_at: '2026-02-27 09:12:59'
       updated_at: '2026-02-27 09:12:59'
-  - id: brain-games-2026-06-24-1500
-    title: Brain Games
+  -
+    id: brain-games-2026-06-24-1500
+    title: 'Brain Games'
     date: '2026-06-24'
     start: '15:00'
     end: '17:00'
-    location: GA Idrott
+    location: 'GA Idrott'
     responsible: Birgitta
-    description: |
-      Årets Brain Game.
-      Lag på 4-5 personer.
-      2 klasser: alla under 13 samt blandade åldrar.
-      Lös klurigheter i olika stationer. Alla stationer har en maxtid på 7 minuter.
-    link: null
+    description: "Årets Brain Game.\nLag på 4-5 personer.\n2 klasser: alla under 13 samt blandade åldrar.\nLös klurigheter i olika stationer. Alla stationer har en maxtid på 7 minuter.\n"
+    link: ~
     owner:
       name: ''
       email: ''
     meta:
-      created_at: 2026-06-17 06:30
-      updated_at: 2026-06-17 06:30
-  - id: bradspel-2026-06-22-1900
+      created_at: '2026-06-17 06:30'
+      updated_at: '2026-06-17 06:30'
+  -
+    id: bradspel-2026-06-22-1900
     title: Brädspel
     date: '2026-06-22'
     start: '19:00'
     end: '23:00'
     location: Kaffetält
     responsible: Birgitta
-    description: |
-      Vi ses och spelar brädspel tillsammans. Kunskapsspel. Ofta TP eller När då då.
-      Aktiviteten kommer att ställas in den kväll som det blir grillkväll.
-    link: null
+    description: "Vi ses och spelar brädspel tillsammans. Kunskapsspel. Ofta TP eller När då då.\nAktiviteten kommer att ställas in den kväll som det blir grillkväll.\n"
+    link: ~
     owner:
       name: ''
       email: ''
     meta:
-      created_at: 2026-06-17 06:32
-      updated_at: 2026-06-17 06:32
-  - id: bradspel-2026-06-23-1900
+      created_at: '2026-06-17 06:32'
+      updated_at: '2026-06-17 06:32'
+  -
+    id: bradspel-2026-06-23-1900
     title: Brädspel
     date: '2026-06-23'
     start: '19:00'
     end: '23:00'
     location: Kaffetält
     responsible: Birgitta
-    description: |
-      Vi ses och spelar brädspel tillsammans. Kunskapsspel. Ofta TP eller När då då.
-      Aktiviteten kommer att ställas in den kväll som det blir grillkväll.
-    link: null
+    description: "Vi ses och spelar brädspel tillsammans. Kunskapsspel. Ofta TP eller När då då.\nAktiviteten kommer att ställas in den kväll som det blir grillkväll.\n"
+    link: ~
     owner:
       name: ''
       email: ''
     meta:
-      created_at: 2026-06-17 06:32
-      updated_at: 2026-06-17 06:32
-  - id: bradspel-2026-06-24-1900
+      created_at: '2026-06-17 06:32'
+      updated_at: '2026-06-17 06:32'
+  -
+    id: bradspel-2026-06-24-1900
     title: Brädspel
     date: '2026-06-24'
-    start: '19:00'
+    start: '19:30'
     end: '23:00'
     location: Kaffetält
     responsible: Birgitta
-    description: |
-      Vi ses och spelar brädspel tillsammans. Kunskapsspel. Ofta TP eller När då då.
-      Aktiviteten kommer att ställas in den kväll som det blir grillkväll.
-    link: null
+    description: "Vi ses och spelar brädspel tillsammans. Kunskapsspel. Ofta TP eller När då då.\nAktiviteten kommer att ställas in den kväll som det blir grillkväll.\n"
+    link: ~
     owner:
       name: ''
       email: ''
     meta:
-      created_at: 2026-06-17 06:32
-      updated_at: 2026-06-17 06:32
-  - id: bradspel-2026-06-25-1900
+      created_at: '2026-06-17 06:32'
+      updated_at: '2026-06-19 14:45'
+  -
+    id: bradspel-2026-06-25-1900
     title: Brädspel
     date: '2026-06-25'
-    start: '19:00'
+    start: '20:00'
     end: '23:00'
     location: Kaffetält
     responsible: Birgitta
-    description: |
-      Vi ses och spelar brädspel tillsammans. Kunskapsspel. Ofta TP eller När då då.
-      Aktiviteten kommer att ställas in den kväll som det blir grillkväll.
-    link: null
+    description: "Vi ses och spelar brädspel tillsammans. Kunskapsspel. Ofta TP eller När då då.\nAktiviteten kommer att ställas in den kväll som det blir grillkväll.\n"
+    link: ~
     owner:
       name: ''
       email: ''
     meta:
-      created_at: 2026-06-17 06:32
-      updated_at: 2026-06-17 06:32
-  - id: bradspel-2026-06-26-1900
+      created_at: '2026-06-17 06:32'
+      updated_at: '2026-06-19 14:44'
+  -
+    id: bradspel-2026-06-26-1900
     title: Brädspel
     date: '2026-06-26'
     start: '19:00'
     end: '23:00'
     location: Kaffetält
     responsible: Birgitta
-    description: |
-      Vi ses och spelar brädspel tillsammans. Kunskapsspel. Ofta TP eller När då då.
-      Aktiviteten kommer att ställas in den kväll som det blir grillkväll.
-    link: null
+    description: "Vi ses och spelar brädspel tillsammans. Kunskapsspel. Ofta TP eller När då då.\nAktiviteten kommer att ställas in den kväll som det blir grillkväll.\n"
+    link: ~
     owner:
       name: ''
       email: ''
     meta:
-      created_at: 2026-06-17 06:32
-      updated_at: 2026-06-17 06:32
+      created_at: '2026-06-17 06:32'
+      updated_at: '2026-06-17 06:32'
+  -
+    id: smote-for-stationsvardar-2026-06-23-1300
+    title: 'Möte för stationsvärdar'
+    date: '2026-06-23'
+    start: '13:00'
+    end: '14:00'
+    location: Kaffetält
+    responsible: Birgitta
+    description: "De som är stationsvärdar ses för en genongång inför Brain Games.\n"
+    link: ~
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: '2026-06-17 14:29'
+      updated_at: '2026-06-19 14:43'
+  -
+    id: lar-kanna-varandra-och-lagret-ish-tipsrunda-2026-06-22-0915
+    title: 'Lär känna varandra och lägret - ish tipsrunda'
+    date: '2026-06-22'
+    start: '09:15'
+    end: '09:45'
+    location: Servicehus
+    responsible: 'Cecilia Löfgreen'
+    description: "Varmt välkomna på en rundtur i grupp där ni får lära känna varandra och lägret bättre.\n"
+    link: ~
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: '2026-06-17 18:31'
+      updated_at: '2026-06-17 18:31'
+  -
+    id: stockholm-malardalen-lokalforeningstraff-2026-06-23-1400
+    title: 'Stockholm/Mälardalen - lokalföreningsträff'
+    date: '2026-06-23'
+    start: '14:00'
+    end: '15:00'
+    location: AndreasTältet
+    responsible: 'Johan Nyh'
+    description: "Passa på att träffa andra på lägret från samma geografiska område 🎉\n\nHitta nya och gamla bekanta. Fundera på vilka aktiviteter som kan göras lokalt. Och bara ha trevligt!\n"
+    link: ~
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: '2026-06-17 18:37'
+      updated_at: '2026-06-17 18:37'
+  -
+    id: dalarna-gavleborg-lokalforeningstraff-2026-06-23-1400
+    title: 'Dalarna/Gävleborg - lokalföreningsträff'
+    date: '2026-06-23'
+    start: '14:00'
+    end: '15:00'
+    location: Kaffetält
+    responsible: 'Lisa Lautrup'
+    description: "Passa på att träffa andra på lägret från samma geografiska område 🎉\n\nHitta nya och gamla bekanta. Fundera på vilka aktiviteter som kan göras lokalt. Och bara ha trevligt!\n"
+    link: ~
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: '2026-06-17 18:39'
+      updated_at: '2026-06-17 18:39'
+  -
+    id: jamtland-harjedalen-2026-06-23-1400
+    title: Jämtland/Härjedalen
+    date: '2026-06-23'
+    start: '14:00'
+    end: '15:00'
+    location: 'GA Stilla hyllan'
+    responsible: 'Karin Back Swedin'
+    description: "Passa på att träffa andra på lägret från samma geografiska område 🎉\n\nHitta nya och gamla bekanta. Fundera på vilka aktiviteter som kan göras lokalt. Och bara ha trevligt!\n"
+    link: ~
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: '2026-06-17 18:42'
+      updated_at: '2026-06-17 18:42'
+  -
+    id: syd-skane-o-blekinge-2026-06-23-1400
+    title: 'Syd (Skåne o Blekinge)'
+    date: '2026-06-23'
+    start: '14:00'
+    end: '15:00'
+    location: Tält1
+    responsible: 'Emma Lindstrii'
+    description: "Passa på att träffa andra på lägret från samma geografiska område 🎉\n\nHitta nya och gamla bekanta. Fundera på vilka aktiviteter som kan göras lokalt. Och bara ha trevligt!\n"
+    link: ~
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: '2026-06-17 18:57'
+      updated_at: '2026-06-17 18:57'
+  -
+    id: besok-pa-finngarden-keski-i-kindsjon-2026-06-25-1230
+    title: 'Besök på Finngården Keski i Kindsjön'
+    date: '2026-06-25'
+    start: '15:00'
+    end: '19:00'
+    location: Annat
+    responsible: 'Mia Florell'
+    description: "Vi besöker Finngården Keski i Kindsjön.\nLars Nordström tar emot och visar gården, talar om kompostering och allt annat inom självhushåll.\n\nMer info på finnskogsgarden.se\n"
+    link: 'https://finnskogsgarden.se'
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: '2026-06-17 20:45'
+      updated_at: '2026-06-18 21:16'
+  -
+    id: japansk-bskning-1-2026-06-22-1400
+    title: 'JAPANSK BSKNING #1'
+    date: '2026-06-22'
+    start: '14:00'
+    end: '17:00'
+    location: Servicehus
+    responsible: 'Lisa Lautrup'
+    description: "Vi bakar årets första recept CHOUX CREAM tillsammans baserat på Ai Venturas bakbok ”Japanska bakverk”. \n\nAnmälan öppnar 17/6 kl 14:00 och sker via separat bokningsapp.\n\nSe länk till Fb-inlägg för mer info!\n"
+    link: 'https://www.facebook.com/share/p/1Cre9gFRC9/?'
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: '2026-06-18 07:19'
+      updated_at: '2026-06-18 07:19'
+  -
+    id: japansk-bakning-2-2026-06-24-1900
+    title: 'JAPANSK BAKNING #2'
+    date: '2026-06-24'
+    start: '19:00'
+    end: '22:00'
+    location: Servicehus
+    responsible: 'Lisa Lautrup'
+    description: "Vi bakar årets första recept CHOUX CREAM tillsammans baserat på Ai Venturas bakbok ”Japanska bakverk”. \n\nAnmälan öppnar 17/6 kl 14:00 och sker via separat bokningsapp.\n\nSe länk till Fb-inlägg för mer info!\n"
+    link: 'https://www.facebook.com/share/p/1Cre9gFRC9/?'
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: '2026-06-18 07:21'
+      updated_at: '2026-06-18 07:21'
+  -
+    id: japansk-bakning-3-2026-06-26-1400
+    title: 'JAPANSK BAKNING #3'
+    date: '2026-06-26'
+    start: '14:00'
+    end: '17:00'
+    location: Servicehus
+    responsible: 'Lisa Lautrup'
+    description: "Vi bakar årets första recept CHOUX CREAM tillsammans baserat på Ai Venturas bakbok ”Japanska bakverk”.\n\nAnmälan öppnar 17/6 kl 14:00 och sker via separat bokningsapp.\n\nSe länk till Fb-inlägg för mer info!\n"
+    link: 'https://www.facebook.com/share/p/1Cre9gFRC9/?'
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: '2026-06-18 07:23'
+      updated_at: '2026-06-18 07:23'
+  -
+    id: introduktionsmote-trans-2026-06-22-1115
+    title: 'Introduktionsmöte Trans'
+    date: '2026-06-22'
+    start: '11:15'
+    end: '11:45'
+    location: 'GA Stilla hyllan'
+    responsible: 'Lisa Lautrup'
+    description: "Barn, unga och vuxna som har koppling till trans är välkomna på ett första introduktionsmöte. Syftet är att knyta kontakter tidigt i veckan så att vi hinner lära känna varandra.\n"
+    link: ~
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: '2026-06-18 07:27'
+      updated_at: '2026-06-18 07:27'
+  -
+    id: qal-infotraff-2026-06-23-1000
+    title: 'QAL - Infoträff'
+    date: '2026-06-23'
+    start: '10:00'
+    end: '11:30'
+    location: Tält1
+    responsible: 'Lisa Lautrup'
+    description: "Vi träffas och går igenom upplägget för QAL-projektet. För den som vill testa att virka African flower-mönstret finns det möjlighet att få råd och stöd. Alla åldrar och nivåer är varmt välkomna!\n"
+    link: ~
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: '2026-06-18 07:32'
+      updated_at: '2026-06-18 07:32'
+  -
+    id: prova-pa-naltovning-2026-06-25-1000
+    title: 'PROVA PÅ NÅLTOVNING'
+    date: '2026-06-25'
+    start: '10:00'
+    end: '11:30'
+    location: 'GA Stilla hyllan'
+    responsible: 'Lisa Lautrup'
+    description: "Vi testar nåltovning tills baserat på steg-för-steg instruktioner från Japan :)\n"
+    link: 'https://www.facebook.com/share/p/196Fs9yPsk/?'
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: '2026-06-18 07:34'
+      updated_at: '2026-06-18 07:34'
+  -
+    id: musikproduktion-intro-2026-06-23-1300
+    title: 'Musikproduktion - intro'
+    date: '2026-06-23'
+    start: '13:00'
+    end: '15:00'
+    location: Annat
+    responsible: 'Sara Varda St Vincent'
+    description: "Vad är musikproduktion?\nVad är audio/midi?\nVad är en DAW?\nStarta en egen prodd!\n\nTa med dator med lämpligt program, tex GarageBand, Logic, Ableton Live, Audacity eller Reason. Du behöver även någon typ av hörlurar! :-)\n\nPlats: Holevägen 7\n"
+    link: ~
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: '2026-06-18 08:55'
+      updated_at: '2026-06-18 08:55'
+  -
+    id: pyssel-med-lufttorkande-lera-drop-in-2026-06-22-1300
+    title: 'Pyssel med lufttorkande lera - drop-in'
+    date: '2026-06-22'
+    start: '13:00'
+    end: '14:30'
+    location: AndreasTältet
+    responsible: 'Kajsa Ögård'
+    description: "Drop-in pyssel med skumlera (soft clay) i många färger i tältet vid servicehuset. \n\nTa gärna med saker som du eller andra kan använda för att forma och dekorera leran – små skålar, sugrör, svampar, penslar, grillpinnar, gem, stekspadar etc. Extra knivar (vassa) och släta glasflaskor/burkar som kan användas som brödkavlar är också välkommet.\n"
+    link: ~
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: '2026-06-19 09:17'
+      updated_at: '2026-06-19 09:17'
+  -
+    id: gor-din-egen-slime-drop-in-2026-06-23-1500
+    title: 'Gör din egen slime - drop-in'
+    date: '2026-06-23'
+    start: '15:00'
+    end: '16:30'
+    location: AndreasTältet
+    responsible: 'Kajsa Ögård'
+    description: "Kom och gör fluffig eller genomskinlig slime i olika färger. Vi har tillbehören och visar hur. Mindre barn bör ha med en vuxen som hjälper till. Vuxna är varmt välkomna att själva göra slime i mån om plats. Drop-in i tältet vid servicehuset - man behöver inte vara med från start.\n"
+    link: ~
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: '2026-06-19 12:58'
+      updated_at: '2026-06-19 12:58'

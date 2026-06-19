@@ -601,7 +601,7 @@ Part of [the traceability index](./index.md).
 | `02-§45.2` | Per-event `.ics` file at `/schema/{event-id}/event.ics` | 03-architecture/pages-and-content.md §22 | ICAL-06, ICAL-07 | `source/build/render-ical.js` – `renderEventIcal()`, `source/build/build.js` | covered |
 | `02-§45.3` | Per-event `.ics` is valid iCalendar (RFC 5545) | 03-architecture/pages-and-content.md §22 | ICAL-06 | `source/build/render-ical.js` – `renderEventIcal()` | covered |
 | `02-§45.4` | VEVENT includes DTSTART, DTEND, SUMMARY, LOCATION, DESCRIPTION, URL, UID | 03-architecture/pages-and-content.md §22 | ICAL-08..15 | `source/build/render-ical.js` – `renderVevent()` | covered |
-| `02-§45.5` | Times use floating local format (no Z, no TZID) | 03-architecture/pages-and-content.md §22 | ICAL-16 | `source/build/render-ical.js` – `toIcalDatetime()` | covered |
+| `02-§45.5` | Times anchored to Europe/Stockholm via TZID + VTIMEZONE | 03-architecture/pages-and-content.md §22 | ICAL-16, ICAL-34, ICAL-35 | `source/build/render-ical.js` – `toIcalDatetime()`, `buildVtimezone()` | covered |
 | `02-§45.6` | DTEND omitted when end is null | 03-architecture/pages-and-content.md §22 | ICAL-17, ICAL-18 | `source/build/render-ical.js` – `renderVevent()` | covered |
 | `02-§45.7` | iCal renderer has no external library dependency | 03-architecture/pages-and-content.md §22 | ICAL-28 | `source/build/render-ical.js` (source inspection) | covered |
 | `02-§45.8` | Event detail page includes iCal download link | 03-architecture/pages-and-content.md §22 | EVT-21 | `source/build/render-event.js` | covered |

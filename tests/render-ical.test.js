@@ -96,14 +96,14 @@ describe('renderEventIcal – per-event .ics (02-§45.2–45.6)', () => {
     assert.strictEqual(count, 1, 'should have exactly one VEVENT');
   });
 
-  it('ICAL-08 (02-§45.4): VEVENT includes DTSTART', () => {
+  it('ICAL-08 (02-§45.4): VEVENT includes DTSTART with Stockholm TZID', () => {
     const ics = renderEventIcal(fullEvent, camp, siteUrl);
-    assert.ok(ics.includes('DTSTART:20260629T100000'), 'should have DTSTART in floating local format');
+    assert.ok(ics.includes('DTSTART;TZID=Europe/Stockholm:20260629T100000'), 'should have DTSTART anchored to Europe/Stockholm');
   });
 
   it('ICAL-09 (02-§45.4): VEVENT includes DTEND when end is set', () => {
     const ics = renderEventIcal(fullEvent, camp, siteUrl);
-    assert.ok(ics.includes('DTEND:20260629T120000'), 'should have DTEND in floating local format');
+    assert.ok(ics.includes('DTEND;TZID=Europe/Stockholm:20260629T120000'), 'should have DTEND anchored to Europe/Stockholm');
   });
 
   it('ICAL-10 (02-§45.4): VEVENT includes SUMMARY', () => {
@@ -138,12 +138,13 @@ describe('renderEventIcal – per-event .ics (02-§45.2–45.6)', () => {
     assert.ok(ics.includes('UID:fotboll-2026-06-29-1000@sommar.digitalasynctransparency.com'), 'should have UID with hostname');
   });
 
-  it('ICAL-16 (02-§45.5): times use floating local format (no Z, no TZID)', () => {
+  it('ICAL-16 (02-§45.5): times are anchored to Europe/Stockholm (TZID, no Z)', () => {
     const ics = renderEventIcal(fullEvent, camp, siteUrl);
-    // Should NOT have Z suffix
-    assert.ok(!ics.includes('DTSTART:20260629T100000Z'), 'should not have Z suffix');
-    // Should NOT have TZID
-    assert.ok(!ics.includes('TZID'), 'should not have TZID');
+    // DTSTART/DTEND must NOT use a UTC Z suffix — they are zoned local times
+    assert.ok(!/DTSTART[^\r\n]*Z\r?\n/.test(ics), 'DTSTART should not have Z suffix');
+    assert.ok(!/DTEND[^\r\n]*Z\r?\n/.test(ics), 'DTEND should not have Z suffix');
+    // They must carry the Europe/Stockholm TZID parameter
+    assert.ok(ics.includes('DTSTART;TZID=Europe/Stockholm:'), 'DTSTART should carry TZID=Europe/Stockholm');
   });
 
   it('ICAL-17 (02-§45.6): DTEND omitted when end is null', () => {
@@ -153,7 +154,7 @@ describe('renderEventIcal – per-event .ics (02-§45.2–45.6)', () => {
 
   it('ICAL-18 (02-§45.6): DTSTART present even when end is null', () => {
     const ics = renderEventIcal(minimalEvent, camp, siteUrl);
-    assert.ok(ics.includes('DTSTART:20260629T080000'), 'should have DTSTART');
+    assert.ok(ics.includes('DTSTART;TZID=Europe/Stockholm:20260629T080000'), 'should have DTSTART');
   });
 
   it('ICAL-19: DESCRIPTION for event without description only shows responsible', () => {
@@ -244,6 +245,30 @@ describe('DTSTAMP in VEVENT (02-§46.14–46.15)', () => {
     const veventCount = (ics.match(/BEGIN:VEVENT/g) || []).length;
     const dtstampCount = (ics.match(/DTSTAMP:/g) || []).length;
     assert.strictEqual(dtstampCount, veventCount, 'every VEVENT should have DTSTAMP');
+  });
+});
+
+// ── VTIMEZONE / Europe/Stockholm anchoring (02-§45.5) ───────────────────────
+
+describe('VTIMEZONE anchoring (02-§45.5)', () => {
+  it('ICAL-34 (02-§45.5): per-event .ics embeds a Europe/Stockholm VTIMEZONE with DST rules', () => {
+    const ics = renderEventIcal(fullEvent, camp, siteUrl);
+    assert.ok(ics.includes('BEGIN:VTIMEZONE'), 'should open VTIMEZONE');
+    assert.ok(ics.includes('TZID:Europe/Stockholm'), 'should declare TZID:Europe/Stockholm');
+    assert.ok(ics.includes('BEGIN:DAYLIGHT'), 'should define the DAYLIGHT (CEST) sub-component');
+    assert.ok(ics.includes('BEGIN:STANDARD'), 'should define the STANDARD (CET) sub-component');
+    assert.ok(ics.includes('END:VTIMEZONE'), 'should close VTIMEZONE');
+  });
+
+  it('ICAL-35 (02-§45.5): VTIMEZONE appears before the first VEVENT', () => {
+    const ics = renderEventIcal(fullEvent, camp, siteUrl);
+    assert.ok(ics.indexOf('BEGIN:VTIMEZONE') < ics.indexOf('BEGIN:VEVENT'), 'VTIMEZONE should precede VEVENT');
+  });
+
+  it('ICAL-36 (02-§45.5): full-camp feed includes exactly one shared VTIMEZONE', () => {
+    const ics = renderIcalFeed(camp, events, siteUrl);
+    const count = (ics.match(/BEGIN:VTIMEZONE/g) || []).length;
+    assert.strictEqual(count, 1, 'should embed one shared VTIMEZONE regardless of event count');
   });
 });
 
