@@ -677,162 +677,147 @@ events:
     meta:
       created_at: '2026-06-20 10:44'
       updated_at: '2026-06-20 11:09'
-  - id: testar-2026-06-28-1408
-    title: testar
-    date: '2026-06-28'
-    start: '14:08'
-    end: '15:00'
-    location: AndreasTältet
-    responsible: jag
-    description: testar
-    link: null
-    owner:
-      name: ''
-      email: ''
-    meta:
-      created_at: 2026-06-20 14:19
-      updated_at: 2026-06-20 14:19
-  - id: rollspel-ellens-kampanj-2026-06-23-1530
-    title: Rollspel Ellens kampanj
+  -
+    id: rollspel-ellens-kampanj-2026-06-23-1530
+    title: 'Rollspel Ellens kampanj'
     date: '2026-06-23'
     start: '15:30'
     end: '18:30'
     location: Rollspelstält1
-    responsible: Elin Sommerfeld
-    description: |
-      Rollspel Ellens kampanj
+    responsible: 'Elin Sommerfeld'
+    description: "Rollspel Ellens kampanj\n"
     link: 'https://www.facebook.com/share/p/1C3XR35MzC/?'
     owner:
       name: ''
       email: ''
     meta:
-      created_at: 2026-06-20 14:46
-      updated_at: 2026-06-20 14:46
-  - id: rollspel-ellens-kampanj-2026-06-24-1530
-    title: Rollspel Ellens kampanj
+      created_at: '2026-06-20 14:46'
+      updated_at: '2026-06-20 14:46'
+  -
+    id: rollspel-ellens-kampanj-2026-06-24-1530
+    title: 'Rollspel Ellens kampanj'
     date: '2026-06-24'
     start: '15:30'
     end: '18:30'
     location: Rollspelstält1
-    responsible: Elin Sommerfeld
-    description: |
-      Rollspel Ellens kampanj
+    responsible: 'Elin Sommerfeld'
+    description: "Rollspel Ellens kampanj\n"
     link: 'https://www.facebook.com/share/p/1C3XR35MzC/?'
     owner:
       name: ''
       email: ''
     meta:
-      created_at: 2026-06-20 14:46
-      updated_at: 2026-06-20 14:46
-  - id: rollspel-ellens-kampanj-2026-06-25-1530
-    title: Rollspel Ellens kampanj
+      created_at: '2026-06-20 14:46'
+      updated_at: '2026-06-20 14:46'
+  -
+    id: rollspel-ellens-kampanj-2026-06-25-1530
+    title: 'Rollspel Ellens kampanj'
     date: '2026-06-25'
     start: '15:30'
     end: '18:30'
     location: Rollspelstält1
-    responsible: Elin Sommerfeld
-    description: |
-      Rollspel Ellens kampanj
+    responsible: 'Elin Sommerfeld'
+    description: "Rollspel Ellens kampanj\n"
     link: 'https://www.facebook.com/share/p/1C3XR35MzC/?'
     owner:
       name: ''
       email: ''
     meta:
-      created_at: 2026-06-20 14:46
-      updated_at: 2026-06-20 14:46
-  - id: rollspel-xanders-kampanj-2026-06-23-1230
-    title: Rollspel Xanders kampanj
+      created_at: '2026-06-20 14:46'
+      updated_at: '2026-06-20 14:46'
+  -
+    id: rollspel-xanders-kampanj-2026-06-23-1230
+    title: 'Rollspel Xanders kampanj'
     date: '2026-06-23'
     start: '12:30'
     end: '15:30'
     location: Rollspelstält2
-    responsible: Elin Sommerfeld
-    description: |
-      Rollspel Xanders kampanj
+    responsible: 'Elin Sommerfeld'
+    description: "Rollspel Xanders kampanj\n"
     link: 'https://www.facebook.com/share/p/1C3XR35MzC/?'
     owner:
       name: ''
       email: ''
     meta:
-      created_at: 2026-06-20 14:48
-      updated_at: 2026-06-20 14:48
-  - id: rollspel-xanders-kampanj-2026-06-24-1230
-    title: Rollspel Xanders kampanj
+      created_at: '2026-06-20 14:48'
+      updated_at: '2026-06-20 14:48'
+  -
+    id: rollspel-xanders-kampanj-2026-06-24-1230
+    title: 'Rollspel Xanders kampanj'
     date: '2026-06-24'
     start: '12:30'
     end: '15:30'
     location: Rollspelstält2
-    responsible: Elin Sommerfeld
-    description: |
-      Rollspel Xanders kampanj
+    responsible: 'Elin Sommerfeld'
+    description: "Rollspel Xanders kampanj\n"
     link: 'https://www.facebook.com/share/p/1C3XR35MzC/?'
     owner:
       name: ''
       email: ''
     meta:
-      created_at: 2026-06-20 14:48
-      updated_at: 2026-06-20 14:48
-  - id: rollspel-xanders-kampanj-2026-06-25-1230
-    title: Rollspel Xanders kampanj
+      created_at: '2026-06-20 14:48'
+      updated_at: '2026-06-20 14:48'
+  -
+    id: rollspel-xanders-kampanj-2026-06-25-1230
+    title: 'Rollspel Xanders kampanj'
     date: '2026-06-25'
     start: '12:30'
     end: '15:30'
     location: Rollspelstält2
-    responsible: Elin Sommerfeld
-    description: |
-      Rollspel Xanders kampanj
+    responsible: 'Elin Sommerfeld'
+    description: "Rollspel Xanders kampanj\n"
     link: 'https://www.facebook.com/share/p/1C3XR35MzC/?'
     owner:
       name: ''
       email: ''
     meta:
-      created_at: 2026-06-20 14:48
-      updated_at: 2026-06-20 14:48
-  - id: gora-karaktarer-xanders-kampanj-2026-06-22-1300
-    title: Göra karaktärer Xanders kampanj
+      created_at: '2026-06-20 14:48'
+      updated_at: '2026-06-20 14:48'
+  -
+    id: gora-karaktarer-xanders-kampanj-2026-06-22-1300
+    title: 'Göra karaktärer Xanders kampanj'
     date: '2026-06-22'
     start: '13:00'
     end: '15:00'
     location: Rollspelstält2
-    responsible: Elin Sommerfeld
-    description: |
-      Göra karaktärer Xanders kampanj
+    responsible: 'Elin Sommerfeld'
+    description: "Göra karaktärer Xanders kampanj\n"
     link: 'https://www.facebook.com/share/p/1C3XR35MzC/?'
     owner:
       name: ''
       email: ''
     meta:
-      created_at: 2026-06-20 14:53
-      updated_at: 2026-06-20 14:53
-  - id: gora-karaktarer-johans-kampanj-2026-06-22-1500
-    title: Göra karaktärer Johans kampanj
+      created_at: '2026-06-20 14:53'
+      updated_at: '2026-06-20 14:53'
+  -
+    id: gora-karaktarer-johans-kampanj-2026-06-22-1500
+    title: 'Göra karaktärer Johans kampanj'
     date: '2026-06-22'
     start: '15:00'
     end: '17:00'
     location: Rollspelstält2
-    responsible: Elin Sommerfeld
-    description: |
-      Göra karaktärer Johans kampanj
+    responsible: 'Elin Sommerfeld'
+    description: "Göra karaktärer Johans kampanj\n"
     link: 'https://www.facebook.com/share/p/1C3XR35MzC/?'
     owner:
       name: ''
       email: ''
     meta:
-      created_at: 2026-06-20 14:56
-      updated_at: 2026-06-20 14:56
-  - id: gora-karaktarer-tovas-kampanj-2026-06-22-1300
-    title: Göra karaktärer Tovas kampanj
+      created_at: '2026-06-20 14:56'
+      updated_at: '2026-06-20 14:56'
+  -
+    id: gora-karaktarer-tovas-kampanj-2026-06-22-1300
+    title: 'Göra karaktärer Tovas kampanj'
     date: '2026-06-22'
     start: '13:00'
     end: '15:00'
     location: Rollspelstält1
-    responsible: Elin Sommerfeld
-    description: |
-      Göra karaktärer Tovas kampanj
+    responsible: 'Elin Sommerfeld'
+    description: "Göra karaktärer Tovas kampanj\n"
     link: 'https://www.facebook.com/share/p/1C3XR35MzC/?'
     owner:
       name: ''
       email: ''
     meta:
-      created_at: 2026-06-20 14:59
-      updated_at: 2026-06-20 14:59
+      created_at: '2026-06-20 14:59'
+      updated_at: '2026-06-20 14:59'
