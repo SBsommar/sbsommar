@@ -1108,3 +1108,18 @@ events:
     meta:
       created_at: 2026-06-20 14:57
       updated_at: 2026-06-20 14:57
+  - id: prel-fortsattning-rollspel-one-shot-2026-06-25-1000
+    title: Prel. fortsättning rollspel One shot.
+    date: '2026-06-25'
+    start: '10:00'
+    end: '12:00'
+    location: Rollspelstält2
+    responsible: Johan Eellend
+    description: null
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-06-20 18:37
+      updated_at: 2026-06-20 18:37
