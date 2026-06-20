@@ -821,305 +821,291 @@ events:
     meta:
       created_at: '2026-06-20 14:59'
       updated_at: '2026-06-20 14:59'
-  - id: parkour-intro-2026-06-24-1400
-    title: Parkour intro
+  -
+    id: parkour-intro-2026-06-24-1400
+    title: 'Parkour intro'
     date: '2026-06-24'
     start: '14:00'
     end: '15:00'
-    location: GA Idrott
-    responsible: Joel Tegnander
-    description: |
-      Alla välkomna. Behövs bra kläder samt inneskor om man vill.
-    link: null
+    location: 'GA Idrott'
+    responsible: 'Joel Tegnander'
+    description: "Alla välkomna. Behövs bra kläder samt inneskor om man vill.\n"
+    link: ~
     owner:
       name: ''
       email: ''
     meta:
-      created_at: 2026-06-20 18:21
-      updated_at: 2026-06-20 18:21
-  - id: rollspel-skuggor-under-sanden-johans-kampanj-2026-06-22-1900
-    title: Rollspel Skuggor under sanden (Johans kampanj)
+      created_at: '2026-06-20 18:21'
+      updated_at: '2026-06-20 18:21'
+  -
+    id: rollspel-skuggor-under-sanden-johans-kampanj-2026-06-22-1900
+    title: 'Rollspel Skuggor under sanden (Johans kampanj)'
     date: '2026-06-22'
     start: '19:00'
     end: '22:00'
     location: Rollspelstält2
-    responsible: Johan Eellend
-    description: null
+    responsible: 'Johan Eellend'
+    description: ~
     link: 'https://www.facebook.com/share/p/18tP3mngAw/?'
     owner:
       name: ''
       email: ''
     meta:
-      created_at: 2026-06-20 18:27
-      updated_at: 2026-06-20 18:27
-  - id: rollspel-skuggor-under-sanden-johans-kampanj-2026-06-23-1900
-    title: Rollspel Skuggor under sanden (Johans kampanj)
+      created_at: '2026-06-20 18:27'
+      updated_at: '2026-06-20 18:27'
+  -
+    id: rollspel-skuggor-under-sanden-johans-kampanj-2026-06-23-1900
+    title: 'Rollspel Skuggor under sanden (Johans kampanj)'
     date: '2026-06-23'
     start: '19:00'
     end: '22:00'
     location: Rollspelstält2
-    responsible: Johan Eellend
-    description: null
+    responsible: 'Johan Eellend'
+    description: ~
     link: 'https://www.facebook.com/share/p/18tP3mngAw/?'
     owner:
       name: ''
       email: ''
     meta:
-      created_at: 2026-06-20 18:27
-      updated_at: 2026-06-20 18:27
-  - id: rollspel-skuggor-under-sanden-johans-kampanj-2026-06-24-1900
-    title: Rollspel Skuggor under sanden (Johans kampanj)
+      created_at: '2026-06-20 18:27'
+      updated_at: '2026-06-20 18:27'
+  -
+    id: rollspel-skuggor-under-sanden-johans-kampanj-2026-06-24-1900
+    title: 'Rollspel Skuggor under sanden (Johans kampanj)'
     date: '2026-06-24'
     start: '19:00'
     end: '22:00'
     location: Rollspelstält2
-    responsible: Johan Eellend
-    description: null
+    responsible: 'Johan Eellend'
+    description: ~
     link: 'https://www.facebook.com/share/p/18tP3mngAw/?'
     owner:
       name: ''
       email: ''
     meta:
-      created_at: 2026-06-20 18:27
-      updated_at: 2026-06-20 18:27
-  - id: rollspel-skuggor-under-sanden-johans-kampanj-2026-06-25-1900
-    title: Rollspel Skuggor under sanden (Johans kampanj)
+      created_at: '2026-06-20 18:27'
+      updated_at: '2026-06-20 18:27'
+  -
+    id: rollspel-skuggor-under-sanden-johans-kampanj-2026-06-25-1900
+    title: 'Rollspel Skuggor under sanden (Johans kampanj)'
     date: '2026-06-25'
     start: '19:00'
     end: '22:00'
     location: Rollspelstält2
-    responsible: Johan Eellend
-    description: null
+    responsible: 'Johan Eellend'
+    description: ~
     link: 'https://www.facebook.com/share/p/18tP3mngAw/?'
     owner:
       name: ''
       email: ''
     meta:
-      created_at: 2026-06-20 18:27
-      updated_at: 2026-06-20 18:27
-  - id: rollspel-skuggor-under-sanden-johans-kampanj-2026-06-26-1900
-    title: Rollspel Skuggor under sanden (Johans kampanj)
+      created_at: '2026-06-20 18:27'
+      updated_at: '2026-06-20 18:27'
+  -
+    id: rollspel-skuggor-under-sanden-johans-kampanj-2026-06-26-1900
+    title: 'Rollspel Skuggor under sanden (Johans kampanj)'
     date: '2026-06-26'
     start: '19:00'
     end: '22:00'
     location: Rollspelstält2
-    responsible: Johan Eellend
-    description: null
+    responsible: 'Johan Eellend'
+    description: ~
     link: 'https://www.facebook.com/share/p/18tP3mngAw/?'
     owner:
       name: ''
       email: ''
     meta:
-      created_at: 2026-06-20 18:27
-      updated_at: 2026-06-20 18:27
-  - id: rollspel-one-shot-for-nyborjare-och-erfarna-2026-06-24-1000
-    title: Rollspel One shot. För nybörjare och erfarna
+      created_at: '2026-06-20 18:27'
+      updated_at: '2026-06-20 18:27'
+  -
+    id: rollspel-one-shot-for-nyborjare-och-erfarna-2026-06-24-1000
+    title: 'Rollspel One shot. För nybörjare och erfarna'
     date: '2026-06-24'
     start: '10:00'
     end: '12:00'
     location: Rollspelstält2
-    responsible: Johan Eellend
-    description: |
-      Ett kort äventyr till Drakar och demoner. Passar både nybörjare och de som spelat tidigare.
-    link: null
+    responsible: 'Johan Eellend'
+    description: "Ett kort äventyr till Drakar och demoner. Passar både nybörjare och de som spelat tidigare.\n"
+    link: ~
     owner:
       name: ''
       email: ''
     meta:
-      created_at: 2026-06-20 18:36
-      updated_at: 2026-06-20 18:36
-  - id: prova-pa-sprayfarg-grafitti-2026-06-23-1300
-    title: Prova på sprayfärg/grafitti
+      created_at: '2026-06-20 18:36'
+      updated_at: '2026-06-20 18:36'
+  -
+    id: prova-pa-sprayfarg-grafitti-2026-06-23-1300
+    title: 'Prova på sprayfärg/grafitti'
     date: '2026-06-23'
     start: '13:00'
     end: '15:00'
     location: Fotbollsplan
-    responsible: Eila och Jonas Colling
-    description: |
-      Testa att måla med sprayfärg eller skapa ditt livs grafittikonstverk. Vi har färger, kartongskivor och skyddsutrustning för mun och ögon, du har oömma kläder och vill prova hur det funkar att jobba nära eller lite längre ifrån ytan. Man kan vända kläder ut och in för att dölja fläckar eller klippa till en sopsäck att ha som förekläde. Vi ger lite tips och tricks men inte så mycket konstnärlig handledning som möjlighet prova på mediet och uttrycka sig fritt. 
-      
-      Platsen är beroende av vind och väder, vid regn eller stark vind ställer vi in och kör ett nytt tillfälle senare. Antagligen är vi mellan rollspelstälten och fotbollsplanen, annars sätter vi en skylt vid ingången till hallen där det står var vi är. Om ni har något särskilt ni vill måla på, t ex ett par crocs, en pannå eller vepa är det bara att ta med det.
-    link: null
+    responsible: 'Eila och Jonas Colling'
+    description: "Testa att måla med sprayfärg eller skapa ditt livs grafittikonstverk. Vi har färger, kartongskivor och skyddsutrustning för mun och ögon, du har oömma kläder och vill prova hur det funkar att jobba nära eller lite längre ifrån ytan. Man kan vända kläder ut och in för att dölja fläckar eller klippa till en sopsäck att ha som förekläde. Vi ger lite tips och tricks men inte så mycket konstnärlig handledning som möjlighet prova på mediet och uttrycka sig fritt. \n\nPlatsen är beroende av vind och väder, vid regn eller stark vind ställer vi in och kör ett nytt tillfälle senare. Antagligen är vi mellan rollspelstälten och fotbollsplanen, annars sätter vi en skylt vid ingången till hallen där det står var vi är. Om ni har något särskilt ni vill måla på, t ex ett par crocs, en pannå eller vepa är det bara att ta med det.\n"
+    link: ~
     owner:
       name: ''
       email: ''
     meta:
-      created_at: 2026-06-20 19:39
-      updated_at: 2026-06-20 19:39
-  - id: prova-pa-sprayfarg-grafitti-2026-06-25-1300
-    title: Prova på sprayfärg/grafitti
+      created_at: '2026-06-20 19:39'
+      updated_at: '2026-06-20 19:39'
+  -
+    id: prova-pa-sprayfarg-grafitti-2026-06-25-1300
+    title: 'Prova på sprayfärg/grafitti'
     date: '2026-06-25'
     start: '13:00'
     end: '15:00'
     location: Fotbollsplan
-    responsible: Eila och Jonas Colling
-    description: |
-      Testa att måla med sprayfärg eller skapa ditt livs grafittikonstverk. Vi har färger, kartongskivor och skyddsutrustning för mun och ögon, du har oömma kläder och vill prova hur det funkar att jobba nära eller lite längre ifrån ytan. Man kan vända kläder ut och in för att dölja fläckar eller klippa till en sopsäck att ha som förekläde. Vi ger lite tips och tricks men inte så mycket konstnärlig handledning som möjlighet prova på mediet och uttrycka sig fritt. 
-      
-      Platsen är beroende av vind och väder, vid regn eller stark vind ställer vi in och kör ett nytt tillfälle senare. Antagligen är vi mellan rollspelstälten och fotbollsplanen, annars sätter vi en skylt vid ingången till hallen där det står var vi är. Om ni har något särskilt ni vill måla på, t ex ett par crocs, en pannå eller vepa är det bara att ta med det.
-    link: null
+    responsible: 'Eila och Jonas Colling'
+    description: "Testa att måla med sprayfärg eller skapa ditt livs grafittikonstverk. Vi har färger, kartongskivor och skyddsutrustning för mun och ögon, du har oömma kläder och vill prova hur det funkar att jobba nära eller lite längre ifrån ytan. Man kan vända kläder ut och in för att dölja fläckar eller klippa till en sopsäck att ha som förekläde. Vi ger lite tips och tricks men inte så mycket konstnärlig handledning som möjlighet prova på mediet och uttrycka sig fritt. \n\nPlatsen är beroende av vind och väder, vid regn eller stark vind ställer vi in och kör ett nytt tillfälle senare. Antagligen är vi mellan rollspelstälten och fotbollsplanen, annars sätter vi en skylt vid ingången till hallen där det står var vi är. Om ni har något särskilt ni vill måla på, t ex ett par crocs, en pannå eller vepa är det bara att ta med det.\n"
+    link: ~
     owner:
       name: ''
       email: ''
     meta:
-      created_at: 2026-06-20 19:39
-      updated_at: 2026-06-20 19:39
-  - id: gora-karaktarer-ellens-kampanj-2026-06-22-1500
-    title: Göra karaktärer Ellens kampanj
+      created_at: '2026-06-20 19:39'
+      updated_at: '2026-06-20 19:39'
+  -
+    id: gora-karaktarer-ellens-kampanj-2026-06-22-1500
+    title: 'Göra karaktärer Ellens kampanj'
     date: '2026-06-22'
     start: '15:00'
     end: '17:00'
     location: Rollspelstält1
-    responsible: Elin Sommerfeld
-    description: |
-      Göra karaktärer Ellens kampanj
+    responsible: 'Elin Sommerfeld'
+    description: "Göra karaktärer Ellens kampanj\n"
     link: 'https://www.facebook.com/share/p/1C3XR35MzC/?'
     owner:
       name: ''
       email: ''
     meta:
-      created_at: 2026-06-20 15:33
-      updated_at: 2026-06-20 15:33
-  - id: rollspel-johans-kampanj-2026-06-22-1900
-    title: Rollspel Johans kampanj
-    date: '2026-06-22'
-    start: '19:00'
-    end: '22:00'
-    location: Tält2
-    responsible: Elin Sommerfeld
-    description: |
-      Rollspel Johans kampanj
-    link: 'https://www.facebook.com/share/p/1C3XR35MzC/?'
-    owner:
-      name: ''
-      email: ''
-    meta:
-      created_at: 2026-06-20 14:54
-      updated_at: 2026-06-20 14:54
-  - id: rollspel-johans-kampanj-2026-06-23-1900
-    title: Rollspel Johans kampanj
+      created_at: '2026-06-20 15:33'
+      updated_at: '2026-06-20 15:33'
+  -
+    id: rollspel-johans-kampanj-2026-06-23-1900
+    title: 'Rollspel Johans kampanj'
     date: '2026-06-23'
     start: '19:00'
     end: '22:00'
     location: Tält2
-    responsible: Elin Sommerfeld
-    description: |
-      Rollspel Johans kampanj
+    responsible: 'Elin Sommerfeld'
+    description: "Rollspel Johans kampanj\n"
     link: 'https://www.facebook.com/share/p/1C3XR35MzC/?'
     owner:
       name: ''
       email: ''
     meta:
-      created_at: 2026-06-20 14:54
-      updated_at: 2026-06-20 14:54
-  - id: rollspel-johans-kampanj-2026-06-24-1900
-    title: Rollspel Johans kampanj
+      created_at: '2026-06-20 14:54'
+      updated_at: '2026-06-20 14:54'
+  -
+    id: rollspel-johans-kampanj-2026-06-24-1900
+    title: 'Rollspel Johans kampanj'
     date: '2026-06-24'
     start: '19:00'
     end: '22:00'
     location: Tält2
-    responsible: Elin Sommerfeld
-    description: |
-      Rollspel Johans kampanj
+    responsible: 'Elin Sommerfeld'
+    description: "Rollspel Johans kampanj\n"
     link: 'https://www.facebook.com/share/p/1C3XR35MzC/?'
     owner:
       name: ''
       email: ''
     meta:
-      created_at: 2026-06-20 14:54
-      updated_at: 2026-06-20 14:54
-  - id: rollspel-johans-kampanj-2026-06-25-1900
-    title: Rollspel Johans kampanj
+      created_at: '2026-06-20 14:54'
+      updated_at: '2026-06-20 14:54'
+  -
+    id: rollspel-johans-kampanj-2026-06-25-1900
+    title: 'Rollspel Johans kampanj'
     date: '2026-06-25'
     start: '19:00'
     end: '22:00'
     location: Tält2
-    responsible: Elin Sommerfeld
-    description: |
-      Rollspel Johans kampanj
+    responsible: 'Elin Sommerfeld'
+    description: "Rollspel Johans kampanj\n"
     link: 'https://www.facebook.com/share/p/1C3XR35MzC/?'
     owner:
       name: ''
       email: ''
     meta:
-      created_at: 2026-06-20 14:54
-      updated_at: 2026-06-20 14:54
-  - id: rollspel-johans-kampanj-2026-06-26-1900
-    title: Rollspel Johans kampanj
+      created_at: '2026-06-20 14:54'
+      updated_at: '2026-06-20 14:54'
+  -
+    id: rollspel-johans-kampanj-2026-06-26-1900
+    title: 'Rollspel Johans kampanj'
     date: '2026-06-26'
     start: '19:00'
     end: '22:00'
     location: Tält2
-    responsible: Elin Sommerfeld
-    description: |
-      Rollspel Johans kampanj
+    responsible: 'Elin Sommerfeld'
+    description: "Rollspel Johans kampanj\n"
     link: 'https://www.facebook.com/share/p/1C3XR35MzC/?'
     owner:
       name: ''
       email: ''
     meta:
-      created_at: 2026-06-20 14:54
-      updated_at: 2026-06-20 14:54
-  - id: rollspel-tovas-kampanj-2026-06-23-1230
-    title: Rollspel Tovas kampanj
+      created_at: '2026-06-20 14:54'
+      updated_at: '2026-06-20 14:54'
+  -
+    id: rollspel-tovas-kampanj-2026-06-23-1230
+    title: 'Rollspel Tovas kampanj'
     date: '2026-06-23'
     start: '12:30'
     end: '15:30'
     location: Rollspelstält1
-    responsible: Elin Sommerfeld
-    description: |
-      Rollspel Johan kampanj
+    responsible: 'Elin Sommerfeld'
+    description: "Rollspel Johan kampanj\n"
     link: 'https://www.facebook.com/share/p/1C3XR35MzC/?'
     owner:
       name: ''
       email: ''
     meta:
-      created_at: 2026-06-20 14:57
-      updated_at: 2026-06-20 14:57
-  - id: rollspel-tovas-kampanj-2026-06-24-1230
-    title: Rollspel Tovas kampanj
+      created_at: '2026-06-20 14:57'
+      updated_at: '2026-06-20 14:57'
+  -
+    id: rollspel-tovas-kampanj-2026-06-24-1230
+    title: 'Rollspel Tovas kampanj'
     date: '2026-06-24'
     start: '12:30'
     end: '15:30'
     location: Rollspelstält1
-    responsible: Elin Sommerfeld
-    description: |
-      Rollspel Johan kampanj
+    responsible: 'Elin Sommerfeld'
+    description: "Rollspel Johan kampanj\n"
     link: 'https://www.facebook.com/share/p/1C3XR35MzC/?'
     owner:
       name: ''
       email: ''
     meta:
-      created_at: 2026-06-20 14:57
-      updated_at: 2026-06-20 14:57
-  - id: rollspel-tovas-kampanj-2026-06-25-1230
-    title: Rollspel Tovas kampanj
+      created_at: '2026-06-20 14:57'
+      updated_at: '2026-06-20 14:57'
+  -
+    id: rollspel-tovas-kampanj-2026-06-25-1230
+    title: 'Rollspel Tovas kampanj'
     date: '2026-06-25'
     start: '12:30'
     end: '15:30'
     location: Rollspelstält1
-    responsible: Elin Sommerfeld
-    description: |
-      Rollspel Johan kampanj
+    responsible: 'Elin Sommerfeld'
+    description: "Rollspel Johan kampanj\n"
     link: 'https://www.facebook.com/share/p/1C3XR35MzC/?'
     owner:
       name: ''
       email: ''
     meta:
-      created_at: 2026-06-20 14:57
-      updated_at: 2026-06-20 14:57
-  - id: prel-fortsattning-rollspel-one-shot-2026-06-25-1000
-    title: Prel. fortsättning rollspel One shot.
+      created_at: '2026-06-20 14:57'
+      updated_at: '2026-06-20 14:57'
+  -
+    id: prel-fortsattning-rollspel-one-shot-2026-06-25-1000
+    title: 'Prel. fortsättning rollspel One shot.'
     date: '2026-06-25'
     start: '10:00'
     end: '12:00'
     location: Rollspelstält2
-    responsible: Johan Eellend
-    description: null
-    link: null
+    responsible: 'Johan Eellend'
+    description: ~
+    link: ~
     owner:
       name: ''
       email: ''
     meta:
-      created_at: 2026-06-20 18:37
-      updated_at: 2026-06-20 18:37
+      created_at: '2026-06-20 18:37'
+      updated_at: '2026-06-20 18:37'
