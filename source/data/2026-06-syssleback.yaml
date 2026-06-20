@@ -567,10 +567,10 @@ events:
       updated_at: '2026-06-18 07:23'
   -
     id: introduktionsmote-trans-2026-06-22-1115
-    title: 'Introduktionsmöte Trans'
+    title: 'Trans introträff'
     date: '2026-06-22'
-    start: '11:30'
-    end: '12:00'
+    start: '11:15'
+    end: '11:45'
     location: 'GA Stilla hyllan'
     responsible: 'Lisa Lautrup'
     description: "Barn, unga och vuxna som har koppling till trans är välkomna på ett första introduktionsmöte. Syftet är att knyta kontakter tidigt i veckan så att vi hinner lära känna varandra.\n"
@@ -580,7 +580,7 @@ events:
       email: ''
     meta:
       created_at: '2026-06-18 07:27'
-      updated_at: '2026-06-20 18:09'
+      updated_at: '2026-06-20 18:11'
   -
     id: qal-infotraff-2026-06-23-1000
     title: 'QAL - Infoträff'
