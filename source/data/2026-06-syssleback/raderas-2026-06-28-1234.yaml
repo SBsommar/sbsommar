@@ -1,0 +1,16 @@
+event:
+  id: raderas-2026-06-28-1234
+  title: raderas
+  date: '2026-06-28'
+  start: '12:34'
+  end: '13:45'
+  location: Tonårsstugan
+  responsible: Jag
+  description: null
+  link: null
+  owner:
+    name: ''
+    email: ''
+  meta:
+    created_at: 2026-06-20 22:23
+    updated_at: 2026-06-20 22:23
