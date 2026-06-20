@@ -912,3 +912,19 @@ events:
     meta:
       created_at: 2026-06-20 18:27
       updated_at: 2026-06-20 18:27
+  - id: rollspel-one-shot-for-nyborjare-och-erfarna-2026-06-24-1000
+    title: Rollspel One shot. För nybörjare och erfarna
+    date: '2026-06-24'
+    start: '10:00'
+    end: '12:00'
+    location: Rollspelstält2
+    responsible: Johan Eellend
+    description: |
+      Ett kort äventyr till Drakar och demoner. Passar både nybörjare och de som spelat tidigare.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-06-20 18:36
+      updated_at: 2026-06-20 18:36
