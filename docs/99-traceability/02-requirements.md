@@ -1396,7 +1396,7 @@ its requirement rows together with the test-legend rows that evidence them.
 
 | ID | Status | Notes |
 | --- | --- | --- |
-| `02-§97.1` | implemented | Pages enabled; `gh api repos/moggleif/sbsommar/pages` returns status `built` with `html_url=https://moggleif.github.io/sbsommar/` |
+| `02-§97.1` | implemented | Pages enabled; `gh api repos/SBsommar/sbsommar/pages` returns status `built` with `html_url=https://sbsommar.github.io/sbsommar/` |
 | `02-§97.2` | implemented | Same API response shows `source.branch=main`, `source.path=/docs` |
 | `02-§97.3` | implemented | Pages' built-in automatic deploy runs on every push to `main` that touches `docs/`; verified after the initial enablement |
 | `02-§97.4` | implemented | `docs/` contains only project documentation; no secrets, env values, or non-docs files — manual content review during this PR |
@@ -1408,7 +1408,7 @@ its requirement rows together with the test-legend rows that evidence them.
 | `02-§97.10` | implemented | `deploy-qa.yml`, `deploy-prod.yml`, `deploy-reusable.yml`, `event-data-deploy.yml`, and `event-data-deploy-post-merge.yml` are untouched in this PR |
 | `02-§97.11` | implemented | No `docs/CNAME` file; default `*.github.io` URL in use |
 | `02-§97.12` | implemented | `docs/index.md` lists every other docs file with a one-line description and an `.md` link; `jekyll-relative-links` resolves the links to rendered pages — manual browser verification |
-| `02-§97.13` | covered | README-DOCS-01, README-DOCS-02: `README.md` links to `https://moggleif.github.io/sbsommar/` and the link sits above the `## For Developers` section |
+| `02-§97.13` | covered | README-DOCS-01, README-DOCS-02: `README.md` links to `https://sbsommar.github.io/sbsommar/` and the link sits above the `## For Developers` section |
 | `02-§97.14` | covered | README-DOCS-03, README-DOCS-04: `README.md` doc table includes all 10 `docs/*.md` files; drift test keeps the expected list in sync with `docs/` contents |
 | `02-§97.15` | covered | DOCS-IDX-01..03: `docs/index.md` carries the reverse-discoverability banner with absolute github.com links to repo, README, and issues |
 | `02-§97.16` | covered | DOCS-IDX-04: `docs/index.md` no longer contains any `https://sbsommar.se` link |

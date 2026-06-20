@@ -798,7 +798,7 @@ existing deployment workflow.
   (above the documentation index) that links back to the source
   repository on GitHub, the rendered `README.md` on GitHub, and the
   GitHub issue tracker. The links target absolute
-  `https://github.com/moggleif/sbsommar` URLs so they resolve
+  `https://github.com/SBsommar/sbsommar` URLs so they resolve
   identically whether the page is viewed on the published Pages site
   or on GitHub's file viewer. <!-- 02-§97.15 -->
 - The landing page does not link to `https://sbsommar.se` (the
@@ -818,7 +818,7 @@ existing deployment workflow.
   discoverable only by direct link and must not appear in search
   engine results. This policy mirrors §1a for the camp site
   (`sbsommar.se`) but applies to the documentation site
-  (`https://moggleif.github.io/sbsommar/`). <!-- 02-§97.18 -->
+  (`https://sbsommar.github.io/sbsommar/`). <!-- 02-§97.18 -->
 - A `docs/robots.txt` file at the documentation site root disallows
   every user agent from every path (`User-agent: *` /
   `Disallow: /`). <!-- 02-§97.19 -->

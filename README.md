@@ -4,7 +4,7 @@ SB Sommar is a family camp in Sysslebäck for particularly gifted children, youn
 
 This is the camp's official website — the single place where families find everything they need to understand, trust, and decide to attend.
 
-> **📖 Project documentation:** <https://moggleif.github.io/sbsommar/>
+> **📖 Project documentation:** <https://sbsommar.github.io/sbsommar/>
 > — rendered from [`docs/`](docs/) and republished automatically on
 > every push to `main`. Browse the documentation in your browser
 > instead of clicking through `.md` files here.
@@ -98,7 +98,7 @@ Start by reading [docs/01-CONTRIBUTORS.md](docs/01-CONTRIBUTORS.md). It covers s
 ### Documentation
 
 Read the full documentation in your browser at
-<https://moggleif.github.io/sbsommar/>, or click any file below to
+<https://sbsommar.github.io/sbsommar/>, or click any file below to
 read it directly on GitHub.
 
 | #  | Doc | What it covers |

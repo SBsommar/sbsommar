@@ -5,12 +5,12 @@ title: Project Documentation
 # Project Documentation
 
 > **📦 Source:**
-> [moggleif/sbsommar](https://github.com/moggleif/sbsommar)
-> · [README](https://github.com/moggleif/sbsommar#readme)
-> · [Issues](https://github.com/moggleif/sbsommar/issues)
+> [SBsommar/sbsommar](https://github.com/SBsommar/sbsommar)
+> · [README](https://github.com/SBsommar/sbsommar#readme)
+> · [Issues](https://github.com/SBsommar/sbsommar/issues)
 
 This is the developer-facing documentation for a static-site project.
-Start with the [README](https://github.com/moggleif/sbsommar#readme)
+Start with the [README](https://github.com/SBsommar/sbsommar#readme)
 on GitHub for project context, then use the index below to dive into
 contribution rules, architecture, data contracts, design tokens,
 environments, releasing, and the full requirements traceability matrix.

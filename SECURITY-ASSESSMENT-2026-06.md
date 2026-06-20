@@ -41,19 +41,19 @@ legacy camp YAML; maintainers reading auto-created GitHub issues.
 
 | # | Finding | Severity | Issue |
 |---|---------|----------|-------|
-| N1 | Feedback metadata (`url`, `viewport`, `userAgent`, `timestamp`) embedded in GitHub-issue Markdown without sanitisation or length limit | Medium | [#383](https://github.com/moggleif/sbsommar/issues/383) |
-| N2 | No HTTP security headers (CSP, nosniff, frame-ancestors, Referrer-Policy, Permissions-Policy, HSTS) | Medium | [#384](https://github.com/moggleif/sbsommar/issues/384) |
-| N3 | Event `link` field rendered without URL-protocol validation (build + client) | Low | [#385](https://github.com/moggleif/sbsommar/issues/385) |
-| N4 | Admin-token comparison short-circuits on length, not fully constant-time (vs §91.8) | Low | [#386](https://github.com/moggleif/sbsommar/issues/386) |
-| N5 | `SESSION_SECRET` undocumented in `.env.example`; no strength guidance (weak value → ownership-HMAC forgery) | Low | [#387](https://github.com/moggleif/sbsommar/issues/387) |
+| N1 | Feedback metadata (`url`, `viewport`, `userAgent`, `timestamp`) embedded in GitHub-issue Markdown without sanitisation or length limit | Medium | [#383](https://github.com/SBsommar/sbsommar/issues/383) |
+| N2 | No HTTP security headers (CSP, nosniff, frame-ancestors, Referrer-Policy, Permissions-Policy, HSTS) | Medium | [#384](https://github.com/SBsommar/sbsommar/issues/384) |
+| N3 | Event `link` field rendered without URL-protocol validation (build + client) | Low | [#385](https://github.com/SBsommar/sbsommar/issues/385) |
+| N4 | Admin-token comparison short-circuits on length, not fully constant-time (vs §91.8) | Low | [#386](https://github.com/SBsommar/sbsommar/issues/386) |
+| N5 | `SESSION_SECRET` undocumented in `.env.example`; no strength guidance (weak value → ownership-HMAC forgery) | Low | [#387](https://github.com/SBsommar/sbsommar/issues/387) |
 
 Already tracked (not re-filed):
 
 | # | Finding | Issue |
 |---|---------|-------|
-| T1 | PHP rate limiting trusts spoofable `X-Forwarded-For`; state file written without locking | [#371](https://github.com/moggleif/sbsommar/issues/371) |
-| T2 | PHP time-gating fails *open* when camp metadata is unavailable | [#370](https://github.com/moggleif/sbsommar/issues/370) |
-| T3 | Event-data PR workflow runs no real validation; misses `event-delete/` prefix | [#369](https://github.com/moggleif/sbsommar/issues/369) |
+| T1 | PHP rate limiting trusts spoofable `X-Forwarded-For`; state file written without locking | [#371](https://github.com/SBsommar/sbsommar/issues/371) |
+| T2 | PHP time-gating fails *open* when camp metadata is unavailable | [#370](https://github.com/SBsommar/sbsommar/issues/370) |
+| T3 | Event-data PR workflow runs no real validation; misses `event-delete/` prefix | [#369](https://github.com/SBsommar/sbsommar/issues/369) |
 
 ---
 
@@ -68,7 +68,7 @@ fields are not run through the injection-pattern scan that `title`/`description`
 `name` get (contradicting §73.12), and none of them is length-limited. A client
 can therefore inject `|`, newlines, or arbitrary Markdown to break the table or
 smuggle misleading content into an issue a maintainer reads, or send a very
-large payload (within the 5/hour limit). See [#383](https://github.com/moggleif/sbsommar/issues/383).
+large payload (within the 5/hour limit). See [#383](https://github.com/SBsommar/sbsommar/issues/383).
 
 ### N2 — Missing HTTP security headers — Medium
 
@@ -77,7 +77,7 @@ large payload (within the 5/hour limit). See [#383](https://github.com/moggleif/
 `frame-ancestors`, `Referrer-Policy`, `Permissions-Policy`, or HSTS anywhere in
 the repo. The site renders user-submitted content as HTML and relies on a
 blocklist + Markdown sanitiser as its only XSS defence; a CSP would be an
-independent second layer. See [#384](https://github.com/moggleif/sbsommar/issues/384).
+independent second layer. See [#384](https://github.com/SBsommar/sbsommar/issues/384).
 
 ### N3 — `link` field rendered without protocol validation — Low
 
@@ -88,14 +88,14 @@ checked only at API submission and in the CI scanner — but per #369 the
 event-data PR validation is effectively a no-op, and manually edited / legacy
 YAML never passes the API. The Markdown sanitiser already guards `description`
 links via `isUnsafeUri()`; the standalone `link` field should get the same
-treatment. See [#385](https://github.com/moggleif/sbsommar/issues/385).
+treatment. See [#385](https://github.com/SBsommar/sbsommar/issues/385).
 
 ### N4 — Admin-token comparison not fully constant-time — Low
 
 `verifyAdminToken` guards with `strlen($candidate) === strlen($valid)` before
 `hash_equals`, leaking length via timing. §91.8 explicitly promises constant-time
 comparison. Real-world exploitability is negligible (UUID-bearing tokens), but
-the code deviates from its own requirement. See [#386](https://github.com/moggleif/sbsommar/issues/386).
+the code deviates from its own requirement. See [#386](https://github.com/SBsommar/sbsommar/issues/386).
 
 ### N5 — `SESSION_SECRET` undocumented, no strength requirement — Low
 
@@ -103,7 +103,7 @@ Activity ownership (edit/delete authorisation) rests on an HMAC-SHA256 signature
 keyed by `SESSION_SECRET`. The variable is absent from `.env.example` and has no
 documented strength requirement. An empty value fails closed (good), but a weak
 *set* value would let an attacker forge ownership cookies and edit/delete other
-people's activities. See [#387](https://github.com/moggleif/sbsommar/issues/387).
+people's activities. See [#387](https://github.com/SBsommar/sbsommar/issues/387).
 
 ---
 
