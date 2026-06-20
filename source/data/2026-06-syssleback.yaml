@@ -804,3 +804,19 @@ events:
     meta:
       created_at: 2026-06-20 14:53
       updated_at: 2026-06-20 14:53
+  - id: gora-karaktarer-johans-kampanj-2026-06-22-1500
+    title: Göra karaktärer Johans kampanj
+    date: '2026-06-22'
+    start: '15:00'
+    end: '17:00'
+    location: Rollspelstält2
+    responsible: Elin Sommerfeld
+    description: |
+      Göra karaktärer Johans kampanj
+    link: 'https://www.facebook.com/share/p/1C3XR35MzC/?'
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-06-20 14:56
+      updated_at: 2026-06-20 14:56
