@@ -219,3 +219,36 @@ describe('scanYaml – length limits (02-§23.8)', () => {
     assert.strictEqual(r.ok, true);
   });
 });
+
+// ── Fragment files: single top-level event: mapping (02-§109.21) ──────────────
+
+describe('scanYaml – fragment files (FRAG-80..82)', () => {
+  function fragment(fields = {}) {
+    const e = Object.assign({
+      id: 'x-2026-07-02-1000', title: 'Lek', date: '2026-07-02', start: '10:00',
+      end: '11:00', location: 'Salen', responsible: 'Alla',
+    }, fields);
+    const lines = ['event:'];
+    for (const [k, v] of Object.entries(e)) {
+      if (['date', 'start', 'end'].includes(k)) lines.push(`  ${k}: '${v}'`);
+      else lines.push(`  ${k}: ${JSON.stringify(v)}`);
+    }
+    return lines.join('\n') + '\n';
+  }
+
+  it('FRAG-80: accepts a clean fragment', () => {
+    assert.strictEqual(scanYaml(fragment()).ok, true);
+  });
+
+  it('FRAG-81: flags an injection pattern inside a fragment field', () => {
+    const r = scanYaml(fragment({ title: '<script>alert(1)</script>' }));
+    assert.strictEqual(r.ok, false);
+    assert.ok(r.findings.some((f) => /script/i.test(f)));
+  });
+
+  it('FRAG-82: flags a non-http link inside a fragment', () => {
+    const r = scanYaml(fragment({ link: 'javascript:alert(1)' }));
+    assert.strictEqual(r.ok, false);
+    assert.ok(r.findings.some((f) => /link|javascript/i.test(f)));
+  });
+});

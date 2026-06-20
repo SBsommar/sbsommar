@@ -68,29 +68,20 @@ final class GitHub
         ];
 
         // 1. Resolve active camp
-        $camp         = $this->resolveActiveCamp();
-        $campFilePath = 'source/data/' . $camp['file'];
+        $camp = $this->resolveActiveCamp();
 
-        // 2. Fetch camp file
-        [$campContent, $fileSha] = $this->getFile($campFilePath);
-
-        // 3. Build new content. Match the existing list indentation so the result
-        // is valid YAML (02-§10.6, 02-§102.8), then verify the whole document
-        // parses and contains the new event before any branch/PR is created (02-§102.5).
-        $indent     = self::detectEventIndent($campContent);
-        $newContent = rtrim($campContent) . "\n" . self::buildEventYaml($event, $indent) . "\n";
-        self::assertEventYamlValid($newContent, [$event['id']]);
+        // 2. Build the fragment file and verify it parses with the expected id
+        // before any branch/PR is created (02-§102.5, §109.5, §109.17).
+        $fragPath   = self::fragmentPath($camp['file'], $event['id']);
+        $content    = self::buildFragmentYaml($event) . "\n";
+        self::assertFragmentYamlValid($content, $event['id']);
         $commitMsg  = "Add event to {$camp['name']}: {$title} ({$date})";
 
-        // 4. Ephemeral branch
+        // 3. Ephemeral branch → create the new fragment file (no sha) → PR → auto-merge.
         $mainSha    = $this->getMainSha();
         $branchName = 'event/' . $date . '-' . self::slugify($title) . '-' . time();
         $this->createBranch($branchName, $mainSha);
-
-        // 5. Commit
-        $this->putFile($campFilePath, $newContent, $fileSha, $commitMsg, $branchName);
-
-        // 6. PR + auto-merge
+        $this->putFile($fragPath, $content, null, $commitMsg, $branchName);
         $pr = $this->createPullRequest($commitMsg, $branchName, 'Automatically created by the SB Sommar add-event API.');
         $this->enableAutoMerge($pr['node_id']);
     }
@@ -142,33 +133,27 @@ final class GitHub
         }
 
         // 1. Resolve active camp
-        $camp         = $this->resolveActiveCamp();
-        $campFilePath = 'source/data/' . $camp['file'];
+        $camp = $this->resolveActiveCamp();
 
-        // 2. Fetch camp file
-        [$campContent, $fileSha] = $this->getFile($campFilePath);
-
-        // 3. Build new content — all events in one commit, matching the existing
-        // list indentation (02-§10.6, 02-§102.8), then verify the whole document
-        // parses and contains every new event before any branch/PR (02-§102.5).
-        $indent     = self::detectEventIndent($campContent);
-        $yamlBlocks = array_map(
-            static fn (array $event): string => self::buildEventYaml($event, $indent),
-            $events,
-        );
-        $newContent = rtrim($campContent) . "\n" . implode("\n", $yamlBlocks) . "\n";
-        self::assertEventYamlValid($newContent, $eventIds);
+        // 2. Build one fragment file per date and verify each parses with its
+        // expected id before any branch/PR (02-§102.5, §109.6, §109.17). The file
+        // names are distinct (one per date), so even the batch's own files never
+        // collide and the PR cannot conflict with another submission (02-§109.7).
+        $fragments = [];
+        foreach ($events as $event) {
+            $content = self::buildFragmentYaml($event) . "\n";
+            self::assertFragmentYamlValid($content, $event['id']);
+            $fragments[] = [self::fragmentPath($camp['file'], $event['id']), $content];
+        }
         $commitMsg  = "Add " . count($dates) . " recurring events to {$camp['name']}: {$title}";
 
-        // 4. Ephemeral branch
+        // 3. Ephemeral branch → create every fragment file on it → PR → auto-merge.
         $mainSha    = $this->getMainSha();
         $branchName = 'event/batch-' . self::slugify($title) . '-' . time();
         $this->createBranch($branchName, $mainSha);
-
-        // 5. Commit
-        $this->putFile($campFilePath, $newContent, $fileSha, $commitMsg, $branchName);
-
-        // 6. PR + auto-merge
+        foreach ($fragments as [$fragPath, $content]) {
+            $this->putFile($fragPath, $content, null, $commitMsg, $branchName);
+        }
         $pr = $this->createPullRequest($commitMsg, $branchName, 'Automatically created by the SB Sommar add-events API (batch).');
         $this->enableAutoMerge($pr['node_id']);
 
@@ -182,24 +167,38 @@ final class GitHub
      */
     public function updateEventInActiveCamp(string $eventId, array $updates): void
     {
-        // 1. Resolve active camp
-        $camp         = $this->resolveActiveCamp();
+        $camp       = $this->resolveActiveCamp();
+        $now        = (new \DateTimeImmutable('now', new \DateTimeZone('UTC')))->format('Y-m-d H:i');
+        $commitMsg  = "Edit event in {$camp['name']}: {$eventId}";
+        $mainSha    = $this->getMainSha();
+        $branchName = "event-edit/{$eventId}-" . time();
+
+        // Fragment first (02-§109.9): rewrite the fragment file in place.
+        $fragPath = self::fragmentPath($camp['file'], $eventId);
+        $frag     = $this->getFileMaybe($fragPath);
+        if ($frag !== null) {
+            [$fragContent, $fragSha] = $frag;
+            $doc = Yaml::parse($fragContent);
+            if (!is_array($doc) || !is_array($doc['event'] ?? null)) {
+                throw new \RuntimeException("Event not found: {$eventId}");
+            }
+            $patched = self::patchEventObject($doc['event'], $updates, $now);
+            $content = self::buildFragmentYaml($patched) . "\n";
+            self::assertFragmentYamlValid($content, $eventId);
+            $this->createBranch($branchName, $mainSha);
+            $this->putFile($fragPath, $content, $fragSha, $commitMsg, $branchName);
+            $pr = $this->createPullRequest($commitMsg, $branchName, 'Automatically created by the SB Sommar edit-event API.');
+            $this->enableAutoMerge($pr['node_id']);
+            return;
+        }
+
+        // Fallback (02-§109.12): patch the camp YAML file in place.
         $campFilePath = 'source/data/' . $camp['file'];
-
-        // 2. Fetch camp file
         [$campContent, $fileSha] = $this->getFile($campFilePath);
-
-        // 3. Patch
         $newContent = self::patchEventInYaml($campContent, $eventId, $updates);
         if ($newContent === null) {
             throw new \RuntimeException("Event not found: {$eventId}");
         }
-
-        $commitMsg = "Edit event in {$camp['name']}: {$eventId}";
-
-        // 4. Ephemeral branch → commit → PR → auto-merge
-        $mainSha    = $this->getMainSha();
-        $branchName = "event-edit/{$eventId}-" . time();
         $this->createBranch($branchName, $mainSha);
         $this->putFile($campFilePath, $newContent, $fileSha, $commitMsg, $branchName);
         $pr = $this->createPullRequest($commitMsg, $branchName, 'Automatically created by the SB Sommar edit-event API.');
@@ -212,24 +211,30 @@ final class GitHub
      */
     public function removeEventFromActiveCamp(string $eventId): void
     {
-        // 1. Resolve active camp
-        $camp         = $this->resolveActiveCamp();
+        $camp       = $this->resolveActiveCamp();
+        $commitMsg  = "Delete event in {$camp['name']}: {$eventId}";
+        $mainSha    = $this->getMainSha();
+        $branchName = "event-delete/{$eventId}-" . time();
+
+        // Fragment first (02-§109.11): delete the fragment file.
+        $fragPath = self::fragmentPath($camp['file'], $eventId);
+        $frag     = $this->getFileMaybe($fragPath);
+        if ($frag !== null) {
+            [, $fragSha] = $frag;
+            $this->createBranch($branchName, $mainSha);
+            $this->deleteFile($fragPath, $fragSha, $commitMsg, $branchName);
+            $pr = $this->createPullRequest($commitMsg, $branchName, 'Automatically created by the SB Sommar delete-event API.');
+            $this->enableAutoMerge($pr['node_id']);
+            return;
+        }
+
+        // Fallback (02-§109.12): remove from the camp YAML file.
         $campFilePath = 'source/data/' . $camp['file'];
-
-        // 2. Fetch camp file
         [$campContent, $fileSha] = $this->getFile($campFilePath);
-
-        // 3. Remove event
         $newContent = self::removeEventFromYaml($campContent, $eventId);
         if ($newContent === null) {
             throw new \RuntimeException("Event not found: {$eventId}");
         }
-
-        $commitMsg = "Delete event in {$camp['name']}: {$eventId}";
-
-        // 4. Ephemeral branch → commit → PR → auto-merge
-        $mainSha    = $this->getMainSha();
-        $branchName = "event-delete/{$eventId}-" . time();
         $this->createBranch($branchName, $mainSha);
         $this->putFile($campFilePath, $newContent, $fileSha, $commitMsg, $branchName);
         $pr = $this->createPullRequest($commitMsg, $branchName, 'Automatically created by the SB Sommar delete-event API.');
@@ -282,16 +287,15 @@ final class GitHub
     }
 
     /**
-     * Serialise a single event as a YAML block ready to append.
+     * Serialise an event's field lines (everything after the id line), using
+     * $fp as the field-line prefix and $dp as the description/sub-key prefix.
+     * Shared by buildEventYaml (camp-file list item) and buildFragmentYaml.
+     *
+     * @return string[]
      */
-    public static function buildEventYaml(array $event, int $indent = 0): string
+    private static function eventBodyLines(array $event, string $fp, string $dp): array
     {
-        $p  = str_repeat(' ', $indent);       // prefix for "- id:" line
-        $fp = str_repeat(' ', $indent + 2);   // prefix for field lines
-        $dp = str_repeat(' ', $indent + 4);   // prefix for description body
-
         $lines = [
-            "{$p}- id: {$event['id']}",
             "{$fp}title: " . self::yamlScalar($event['title']),
             "{$fp}date: '{$event['date']}'",
             "{$fp}start: '{$event['start']}'",
@@ -300,7 +304,7 @@ final class GitHub
             "{$fp}responsible: " . self::yamlScalar($event['responsible']),
         ];
 
-        if ($event['description'] !== null) {
+        if (($event['description'] ?? null) !== null) {
             $lines[] = "{$fp}description: |";
             // Normalise CRLF / lone CR to LF so the literal block has no stray
             // carriage returns regardless of the submitter's platform (02-§102.4).
@@ -312,7 +316,7 @@ final class GitHub
             $lines[] = "{$fp}description: null";
         }
 
-        $lines[] = "{$fp}link: " . ($event['link'] !== null ? self::yamlScalar($event['link']) : 'null');
+        $lines[] = "{$fp}link: " . (($event['link'] ?? null) !== null ? self::yamlScalar($event['link']) : 'null');
         $lines[] = "{$fp}owner:";
         $lines[] = "{$dp}name: '" . str_replace("'", "''", $event['owner']['name'] ?? '') . "'";
         $lines[] = "{$dp}email: ''";
@@ -320,7 +324,93 @@ final class GitHub
         $lines[] = "{$dp}created_at: {$event['meta']['created_at']}";
         $lines[] = "{$dp}updated_at: {$event['meta']['updated_at']}";
 
-        return implode("\n", $lines);
+        return $lines;
+    }
+
+    /**
+     * Serialise a single event as a YAML block ready to append.
+     */
+    public static function buildEventYaml(array $event, int $indent = 0): string
+    {
+        $p  = str_repeat(' ', $indent);       // prefix for "- id:" line
+        $fp = str_repeat(' ', $indent + 2);   // prefix for field lines
+        $dp = str_repeat(' ', $indent + 4);   // prefix for description body
+
+        return implode("\n", array_merge(
+            ["{$p}- id: {$event['id']}"],
+            self::eventBodyLines($event, $fp, $dp),
+        ));
+    }
+
+    /**
+     * Serialise a single event as a standalone fragment file: one top-level
+     * `event:` mapping with fields indented two spaces (02-§109.2).
+     */
+    public static function buildFragmentYaml(array $event): string
+    {
+        return implode("\n", array_merge(
+            ['event:', "  id: {$event['id']}"],
+            self::eventBodyLines($event, '  ', '    '),
+        ));
+    }
+
+    /** Per-camp fragment directory (02-§109.1). */
+    public static function fragmentDir(string $campFile): string
+    {
+        return 'source/data/' . preg_replace('/\.ya?ml$/', '', $campFile);
+    }
+
+    /** Fragment file path for an event id (02-§109.3). */
+    public static function fragmentPath(string $campFile, string $eventId): string
+    {
+        return self::fragmentDir($campFile) . "/{$eventId}.yaml";
+    }
+
+    /**
+     * Backstop before any branch/PR (02-§109.17): the proposed fragment must
+     * parse to a single `event:` mapping whose id matches the expected one.
+     */
+    public static function assertFragmentYamlValid(string $content, string $expectedId): void
+    {
+        try {
+            $doc = Yaml::parse($content);
+        } catch (\Throwable $e) {
+            throw new \RuntimeException('Proposed fragment YAML failed to parse: ' . $e->getMessage(), 0, $e);
+        }
+        if (!is_array($doc) || !is_array($doc['event'] ?? null)) {
+            throw new \RuntimeException('Proposed fragment YAML is missing the event mapping');
+        }
+        if (($doc['event']['id'] ?? null) !== $expectedId) {
+            throw new \RuntimeException('Proposed fragment YAML has wrong event id: ' . $expectedId);
+        }
+    }
+
+    /**
+     * Apply $updates to a single event array, mirroring patchEventInYaml's
+     * mutable-field rules. Used for fragment edits (02-§109.10).
+     *
+     * @param array<string,mixed> $event
+     * @param array<string,mixed> $updates
+     * @return array<string,mixed>
+     */
+    public static function patchEventObject(array $event, array $updates, string $now): array
+    {
+        return [
+            'id'          => $event['id'],
+            'title'       => array_key_exists('title', $updates) ? ($updates['title'] ?: $event['title']) : $event['title'],
+            'date'        => array_key_exists('date', $updates) ? ($updates['date'] ?: $event['date']) : $event['date'],
+            'start'       => array_key_exists('start', $updates) ? ($updates['start'] ?: $event['start']) : $event['start'],
+            'end'         => array_key_exists('end', $updates) ? ($updates['end'] ?: null) : ($event['end'] ?? null),
+            'location'    => array_key_exists('location', $updates) ? ($updates['location'] ?: $event['location']) : $event['location'],
+            'responsible' => array_key_exists('responsible', $updates) ? ($updates['responsible'] ?: $event['responsible']) : $event['responsible'],
+            'description' => array_key_exists('description', $updates) ? ($updates['description'] ?: null) : ($event['description'] ?? null),
+            'link'        => array_key_exists('link', $updates) ? ($updates['link'] ?: null) : ($event['link'] ?? null),
+            'owner'       => $event['owner'] ?? ['name' => '', 'email' => ''],
+            'meta'        => [
+                'created_at' => $event['meta']['created_at'] ?? null,
+                'updated_at' => $now,
+            ],
+        ];
     }
 
     /**
@@ -500,12 +590,49 @@ final class GitHub
         return [$content, $data['sha']];
     }
 
-    private function putFile(string $filePath, string $content, string $sha, string $message, string $branch): void
+    /**
+     * Like getFile, but returns null when the file does not exist (HTTP 404)
+     * instead of throwing — used to decide whether an event lives in a fragment
+     * file (02-§109.9).
+     *
+     * @return array{string,string}|null [content, sha] or null
+     */
+    private function getFileMaybe(string $filePath): ?array
+    {
+        try {
+            return $this->getFile($filePath);
+        } catch (\RuntimeException $e) {
+            if (str_starts_with($e->getMessage(), 'GitHub API 404')) {
+                return null;
+            }
+            throw $e;
+        }
+    }
+
+    /**
+     * Commit a file to a branch. Pass $sha = null to create a new file; pass the
+     * current blob sha to update an existing one.
+     */
+    private function putFile(string $filePath, string $content, ?string $sha, string $message, string $branch): void
     {
         $apiPath = "/repos/{$this->owner}/{$this->repo}/contents/{$filePath}";
-        $this->githubRequest('PUT', $apiPath, [
+        $payload = [
             'message' => $message,
             'content' => base64_encode($content),
+            'branch'  => $branch,
+        ];
+        if ($sha !== null) {
+            $payload['sha'] = $sha;
+        }
+        $this->githubRequest('PUT', $apiPath, $payload);
+    }
+
+    /** Delete a file on a branch (02-§109.11). */
+    private function deleteFile(string $filePath, string $sha, string $message, string $branch): void
+    {
+        $apiPath = "/repos/{$this->owner}/{$this->repo}/contents/{$filePath}";
+        $this->githubRequest('DELETE', $apiPath, [
+            'message' => $message,
             'sha'     => $sha,
             'branch'  => $branch,
         ]);

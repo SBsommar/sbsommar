@@ -2,7 +2,7 @@
 
 const https = require('https');
 const yaml  = require('js-yaml');
-const { patchEventInYaml, removeEventFromYaml } = require('./edit-event');
+const { patchEventInYaml, patchEventObject, removeEventFromYaml } = require('./edit-event');
 const { resolveActiveCamp } = require('../scripts/resolve-active-camp');
 
 const CAMPS_PATH = 'source/data/camps.yaml';
@@ -30,17 +30,11 @@ function yamlScalar(val) {
   return s;
 }
 
-// Serialise a single event as a YAML block ready to append.
-// `indent` is the number of leading spaces for the list marker (`- id:`).
-// Field lines are indented by `indent + 2`.  Default 0 matches the camp
-// YAML format where list items sit at column 0 under the `events:` key.
-function buildEventYaml(event, indent = 0) {
-  const p  = ' '.repeat(indent);      // prefix for "- id:" line
-  const fp = ' '.repeat(indent + 2);  // prefix for field lines
-  const dp = ' '.repeat(indent + 4);  // prefix for description body / sub-keys
-
+// Serialise an event's field lines (everything after the id line), using `fp` as
+// the field-line prefix and `dp` as the description body / sub-key prefix. Shared
+// by buildEventYaml (camp-file list item) and buildFragmentYaml (fragment file).
+function eventBodyLines(event, fp, dp) {
   const lines = [
-    `${p}- id: ${event.id}`,
     `${fp}title: ${yamlScalar(event.title)}`,
     `${fp}date: '${event.date}'`,
     `${fp}start: '${event.start}'`,
@@ -60,13 +54,59 @@ function buildEventYaml(event, indent = 0) {
 
   lines.push(`${fp}link: ${event.link ? yamlScalar(event.link) : 'null'}`);
   lines.push(`${fp}owner:`);
-  lines.push(`${dp}name: '${(event.owner.name || '').replace(/'/g, "''")}'`);
+  lines.push(`${dp}name: '${((event.owner && event.owner.name) || '').replace(/'/g, "''")}'`);
   lines.push(`${dp}email: ''`);
   lines.push(`${fp}meta:`);
   lines.push(`${dp}created_at: ${event.meta.created_at}`);
   lines.push(`${dp}updated_at: ${event.meta.updated_at}`);
 
-  return lines.join('\n');
+  return lines;
+}
+
+// Serialise a single event as a YAML block ready to append.
+// `indent` is the number of leading spaces for the list marker (`- id:`).
+// Field lines are indented by `indent + 2`.  Default 0 matches the camp
+// YAML format where list items sit at column 0 under the `events:` key.
+function buildEventYaml(event, indent = 0) {
+  const p  = ' '.repeat(indent);      // prefix for "- id:" line
+  const fp = ' '.repeat(indent + 2);  // prefix for field lines
+  const dp = ' '.repeat(indent + 4);  // prefix for description body / sub-keys
+
+  return [`${p}- id: ${event.id}`, ...eventBodyLines(event, fp, dp)].join('\n');
+}
+
+// Serialise a single event as a standalone fragment file: one top-level `event:`
+// mapping with fields indented two spaces (02-§109.2). Written to its own file so
+// concurrent submissions never touch the same file (02-§109.5, §109.7).
+function buildFragmentYaml(event) {
+  return ['event:', `  id: ${event.id}`, ...eventBodyLines(event, '  ', '    ')].join('\n');
+}
+
+// Per-camp fragment directory and file path (02-§109.1, §109.3).
+//   fragmentPath('2026-06-syssleback.yaml', 'x-2026-06-22-0800')
+//     → 'source/data/2026-06-syssleback/x-2026-06-22-0800.yaml'
+function fragmentDir(campFile) {
+  return `source/data/${campFile.replace(/\.ya?ml$/, '')}`;
+}
+function fragmentPath(campFile, eventId) {
+  return `${fragmentDir(campFile)}/${eventId}.yaml`;
+}
+
+// Backstop before any branch/PR (02-§109.17): the proposed fragment must parse to
+// a single `event:` mapping whose id matches the one we intend to write.
+function assertFragmentYamlValid(content, expectedId) {
+  let doc;
+  try {
+    doc = yaml.load(content);
+  } catch (e) {
+    throw new Error(`Proposed fragment YAML failed to parse: ${e.message}`, { cause: e });
+  }
+  if (!doc || typeof doc.event !== 'object' || doc.event === null || Array.isArray(doc.event)) {
+    throw new Error('Proposed fragment YAML is missing the event mapping');
+  }
+  if (doc.event.id !== expectedId) {
+    throw new Error(`Proposed fragment YAML has wrong event id: expected ${expectedId}, got ${doc.event.id}`);
+  }
 }
 
 // Determine the indentation (number of leading spaces) of the existing
@@ -174,19 +214,43 @@ async function getFile(filePath) {
   return { content, sha: data.sha };
 }
 
-// Commit an updated file to a specific branch.
+// Like getFile, but returns null when the file does not exist (HTTP 404) instead
+// of throwing — used to decide whether an event lives in a fragment file
+// (02-§109.9).
+async function getFileMaybe(filePath) {
+  try {
+    return await getFile(filePath);
+  } catch (e) {
+    if (e.status === 404) return null;
+    throw e;
+  }
+}
+
+// Commit a file to a specific branch. Omit `sha` (null/undefined) to create a new
+// file; pass the current blob sha to update an existing one.
 async function putFile(filePath, content, sha, message, branch) {
   const owner = env('GITHUB_OWNER');
   const repo  = env('GITHUB_REPO');
   const token = env('GITHUB_TOKEN');
 
   const apiPath = `/repos/${owner}/${repo}/contents/${filePath}`;
-  await githubRequest('PUT', apiPath, {
+  const payload = {
     message,
     content: Buffer.from(content).toString('base64'),
-    sha,
     branch,
-  }, token);
+  };
+  if (sha) payload.sha = sha;
+  await githubRequest('PUT', apiPath, payload, token);
+}
+
+// Delete a file on a specific branch (02-§109.11).
+async function deleteFile(filePath, sha, message, branch) {
+  const owner = env('GITHUB_OWNER');
+  const repo  = env('GITHUB_REPO');
+  const token = env('GITHUB_TOKEN');
+
+  const apiPath = `/repos/${owner}/${repo}/contents/${filePath}`;
+  await githubRequest('DELETE', apiPath, { message, sha, branch }, token);
 }
 
 // Return the latest commit SHA on the configured main branch.
@@ -255,8 +319,17 @@ async function enableAutoMerge(nodeId) {
 
 // ── Public API ───────────────────────────────────────────────────────────────
 
-// Appends a new event to the active camp's per-camp YAML file.
-// Creates an ephemeral branch, commits to it, opens a PR, and enables auto-merge.
+// Resolve the active camp from camps.yaml on main (shared by all mutations).
+async function resolveActiveCampFromGitHub() {
+  const { content: campsYaml } = await getFile(CAMPS_PATH);
+  const campsData = yaml.load(campsYaml);
+  const buildEnv = process.env.BUILD_ENV || undefined;
+  return resolveActiveCamp(campsData.camps || [], undefined, buildEnv);
+}
+
+// Writes a new event as its own fragment file in the active camp's directory
+// (02-§109.5). Because the file is brand-new and named after the event id, the
+// resulting PR can never conflict with another in-flight submission (02-§109.7).
 async function addEventToActiveCamp(body) {
   const title       = body.title.trim();
   const date        = body.date.trim();
@@ -276,88 +349,87 @@ async function addEventToActiveCamp(body) {
     meta:        { created_at: now, updated_at: now },
   };
 
-  // Step 1: resolve active camp from main
-  const { content: campsYaml } = await getFile(CAMPS_PATH);
-  const campsData = yaml.load(campsYaml);
-  const buildEnv = process.env.BUILD_ENV || undefined;
-  const camp = resolveActiveCamp(campsData.camps || [], undefined, buildEnv);
-  const campFilePath = `source/data/${camp.file}`;
+  const camp = await resolveActiveCampFromGitHub();
 
-  // Step 2: fetch camp file + SHA (reads from main via GITHUB_BRANCH)
-  const { content: campContent, sha: fileSha } = await getFile(campFilePath);
-
-  // Step 3: build new file content. Match the existing list indentation so the
-  // result is valid YAML (02-§10.6, 02-§102.8), then verify the whole document
-  // parses and contains the new event before any branch/PR is created (02-§102.5).
-  const indent = detectEventIndent(campContent);
-  const newContent = campContent.trimEnd() + '\n' + buildEventYaml(event, indent) + '\n';
-  assertEventYamlValid(newContent, [event.id]);
+  // Build the fragment and verify it parses with the expected id before any
+  // branch/PR is created (02-§102.5, §109.17).
+  const fragPath   = fragmentPath(camp.file, event.id);
+  const content    = buildFragmentYaml(event) + '\n';
+  assertFragmentYamlValid(content, event.id);
   const commitMsg  = `Add event to ${camp.name}: ${title} (${date})`;
 
-  // Step 4: create ephemeral branch from current main HEAD
+  // Ephemeral branch → create the new fragment file (no sha) → PR → auto-merge.
   const mainSha    = await getMainSha();
   const branchName = `event/${date}-${slugify(title)}-${Date.now()}`;
   await createBranch(branchName, mainSha);
-
-  // Step 5: commit to ephemeral branch (SHA conflict impossible on a fresh branch)
-  await putFile(campFilePath, newContent, fileSha, commitMsg, branchName);
-
-  // Step 6: open PR and enable auto-merge
+  await putFile(fragPath, content, null, commitMsg, branchName);
   const pr = await createPullRequest(commitMsg, branchName, 'Automatically created by the SB Sommar add-event API.');
   await enableAutoMerge(pr.node_id);
 }
 
-// Finds an event by ID in the active camp's YAML file and replaces its
-// mutable fields.  Uses the same ephemeral-branch + PR + auto-merge
-// pipeline as addEventToActiveCamp.
+// Edits an event by ID. Looks for the event's fragment file first; if present it
+// rewrites that file in place (02-§109.10). Otherwise it falls back to patching
+// the camp YAML file, exactly as before (02-§109.12).
 async function updateEventInActiveCamp(eventId, updates) {
-  // Step 1: resolve active camp
-  const { content: campsYaml } = await getFile(CAMPS_PATH);
-  const campsData = yaml.load(campsYaml);
-  const buildEnv = process.env.BUILD_ENV || undefined;
-  const camp = resolveActiveCamp(campsData.camps || [], undefined, buildEnv);
-  const campFilePath = `source/data/${camp.file}`;
-
-  // Step 2: fetch camp file
-  const { content: campContent, sha: fileSha } = await getFile(campFilePath);
-
-  // Step 3: patch the event in the YAML string
-  const newContent = patchEventInYaml(campContent, eventId, updates);
-  if (newContent === null) throw new Error(`Event not found: ${eventId}`);
-
+  const camp       = await resolveActiveCampFromGitHub();
+  const now        = new Date().toISOString().replace('T', ' ').slice(0, 16);
   const commitMsg  = `Edit event in ${camp.name}: ${eventId}`;
-
-  // Step 4: ephemeral branch → commit → PR → auto-merge
   const mainSha    = await getMainSha();
   const branchName = `event-edit/${eventId}-${Date.now()}`;
+
+  // Fragment path first (02-§109.9).
+  const fragPath = fragmentPath(camp.file, eventId);
+  const frag     = await getFileMaybe(fragPath);
+  if (frag) {
+    const doc = yaml.load(frag.content) || {};
+    if (!doc.event) throw new Error(`Event not found: ${eventId}`);
+    const patched = patchEventObject(doc.event, updates, now);
+    const content = buildFragmentYaml(patched) + '\n';
+    assertFragmentYamlValid(content, eventId);
+    await createBranch(branchName, mainSha);
+    await putFile(fragPath, content, frag.sha, commitMsg, branchName);
+    const pr = await createPullRequest(commitMsg, branchName, 'Automatically created by the SB Sommar edit-event API.');
+    await enableAutoMerge(pr.node_id);
+    return;
+  }
+
+  // Fallback: patch the camp YAML file in place.
+  const campFilePath = `source/data/${camp.file}`;
+  const { content: campContent, sha: fileSha } = await getFile(campFilePath);
+  const newContent = patchEventInYaml(campContent, eventId, updates);
+  if (newContent === null) throw new Error(`Event not found: ${eventId}`);
   await createBranch(branchName, mainSha);
   await putFile(campFilePath, newContent, fileSha, commitMsg, branchName);
   const pr = await createPullRequest(commitMsg, branchName, 'Automatically created by the SB Sommar edit-event API.');
   await enableAutoMerge(pr.node_id);
 }
 
-// Removes an event by ID from the active camp's YAML file.
-// Uses the same ephemeral-branch + PR + auto-merge pipeline.
+// Deletes an event by ID. Removes the event's fragment file if it exists
+// (02-§109.11); otherwise removes it from the camp YAML file (02-§109.12).
 async function removeEventFromActiveCamp(eventId) {
-  const { content: campsYaml } = await getFile(CAMPS_PATH);
-  const campsData = yaml.load(campsYaml);
-  const buildEnv = process.env.BUILD_ENV || undefined;
-  const camp = resolveActiveCamp(campsData.camps || [], undefined, buildEnv);
-  const campFilePath = `source/data/${camp.file}`;
-
-  const { content: campContent, sha: fileSha } = await getFile(campFilePath);
-
-  const newContent = removeEventFromYaml(campContent, eventId);
-  if (newContent === null) throw new Error(`Event not found: ${eventId}`);
-
+  const camp       = await resolveActiveCampFromGitHub();
   const commitMsg  = `Delete event in ${camp.name}: ${eventId}`;
-
   const mainSha    = await getMainSha();
   const branchName = `event-delete/${eventId}-${Date.now()}`;
+
+  const fragPath = fragmentPath(camp.file, eventId);
+  const frag     = await getFileMaybe(fragPath);
+  if (frag) {
+    await createBranch(branchName, mainSha);
+    await deleteFile(fragPath, frag.sha, commitMsg, branchName);
+    const pr = await createPullRequest(commitMsg, branchName, 'Automatically created by the SB Sommar delete-event API.');
+    await enableAutoMerge(pr.node_id);
+    return;
+  }
+
+  const campFilePath = `source/data/${camp.file}`;
+  const { content: campContent, sha: fileSha } = await getFile(campFilePath);
+  const newContent = removeEventFromYaml(campContent, eventId);
+  if (newContent === null) throw new Error(`Event not found: ${eventId}`);
   await createBranch(branchName, mainSha);
   await putFile(campFilePath, newContent, fileSha, commitMsg, branchName);
   const pr = await createPullRequest(commitMsg, branchName, 'Automatically created by the SB Sommar delete-event API.');
   await enableAutoMerge(pr.node_id);
 }
 
-module.exports = { addEventToActiveCamp, updateEventInActiveCamp, removeEventFromActiveCamp, slugify, yamlScalar, buildEventYaml, detectEventIndent, assertEventYamlValid, githubRequest, env };
+module.exports = { addEventToActiveCamp, updateEventInActiveCamp, removeEventFromActiveCamp, slugify, yamlScalar, buildEventYaml, buildFragmentYaml, fragmentDir, fragmentPath, assertFragmentYamlValid, detectEventIndent, assertEventYamlValid, githubRequest, env };

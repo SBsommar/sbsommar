@@ -67,10 +67,16 @@ Each job performs its own inline detection as a first step:
 Each deploy job:
 
 1. Checks out the repository with `fetch-depth: 2`.
-2. Detects the changed per-camp YAML file by comparing `HEAD~1..HEAD`.
-   If no event data file changed, the remaining steps are skipped.
-3. (Production only) Determines whether the changed file belongs to a QA
-   camp. If so, the remaining steps are skipped.
+2. Detects the changed event-data file by comparing `HEAD~1..HEAD` (any `*.yaml`
+   under `source/data/` except `camps.yaml` / `local.yaml`, including fragment
+   files nested one level deep). If no event data file changed, the remaining
+   steps are skipped.
+3. (Production only) Attributes the changed file to a camp and skips the
+   remaining steps when that camp has `qa: true`. A nested fragment path
+   `source/data/<stem>/<file>.yaml` is attributed to the camp whose `file` is
+   `<stem>.yaml`; a top-level path `source/data/<file>.yaml` is attributed to the
+   camp whose `file` is `<file>.yaml` (02-§109.22, 02-§109.23). This widens the
+   earlier basename-only lookup so QA-camp fragments never deploy to production.
 4. Runs `node source/build/build.js`.
 5. Stages only event-data-derived files: `schema.html`, `idag.html`,
    `live.html`, `events.json`, `schema.rss`, `schema.ics`,
@@ -82,6 +88,13 @@ Each deploy job:
 `ci.yml` detects data-only changes (`has_code == false`) and skips `npm ci` and
 `npm run build` entirely. The job passes after the detect step. Building event-data
 changes is the responsibility of the post-merge deploy workflow.
+
+Fragment files (§ data-layer.md §1.1) count as data-only: their paths begin with
+`source/data/` and are not `camps.yaml` / `local.yaml`, so a commit that changes
+only fragments matches the existing `has_code` rule unchanged and skips the full
+CI build (02-§109.24). Both event-data workflows trigger on fragment paths because
+their `source/data/**.yaml` path filter matches files nested one level under
+`source/data/` (02-§109.25).
 
 ### 11.5 Relationship to existing workflows
 
@@ -127,21 +140,39 @@ Checks:
   (`U+0009`), line feed (`U+000A`), and carriage return (`U+000D`) and rejects
   every other control character.
 
-#### Whole-document validation before a pull request (02-§102.5)
+#### Fragment validation before a pull request (02-§102.5, 02-§109.17)
 
-The add-event and batch-add-event flows build the new file by appending a
-hand-built YAML block to the existing camp file (`buildEventYaml()` in
-`source/api/github.js` / `GitHub::buildEventYaml()` in PHP). After the new
-content is assembled and **before** any branch, commit, or pull request is
-created, the complete document is parsed (`yaml.load` / `Yaml::parse`) and
-checked to contain an `events` list including every newly created event id. If
-the parse fails or an id is missing, the operation throws and nothing is written
-to git. This is the defence-in-depth backstop behind the field-level control-char
-checks above.
+The add-event and batch-add-event flows build each new fragment file by emitting a
+hand-built YAML block wrapped in a top-level `event:` key (`buildEventYaml()` in
+`source/api/github.js` / `GitHub::buildEventYaml()` in PHP). After a fragment is
+assembled and **before** any branch, commit, or pull request is created, it is
+parsed (`yaml.load` / `Yaml::parse`) and checked to contain a single `event`
+mapping whose `id` matches the expected event id. If the parse fails or the id is
+missing, the operation throws and nothing is written to git. This is the
+defence-in-depth backstop behind the field-level control-char checks above.
 
-The edit and delete flows do not need this backstop: they rebuild the document
-with the YAML serializer (`yaml.dump` / `Yaml::dump`, see 02-§10.4), which
-cannot emit structurally invalid YAML even if a field somehow held a newline.
+The edit and delete flows do not need this backstop: a fragment edit rewrites the
+file with the same serializer used to build it, and the camp-file fallback paths
+rebuild the document with the YAML serializer (`yaml.dump` / `Yaml::dump`, see
+02-§10.4), which cannot emit structurally invalid YAML even if a field somehow
+held a newline.
+
+#### Build-time fragment integrity (02-§109.19, 02-§109.20)
+
+The shared loader `loadCampEvents()` (data-layer.md §1.1) is the build-time gate
+for fragment integrity: it requires each fragment's `event.id` to equal its
+filename stem, failing the build (and therefore the post-merge deploy) on a
+mismatch (02-§109.19). When an id appears in both the camp file and a fragment it
+de-duplicates by keeping the fragment and logging a warning (02-§109.15), so the
+rendered set always has unique ids. Strict cross-source id uniqueness
+(02-§109.20) is enforced at the source: the add API rejects a duplicate create
+with HTTP 422 (§3.4). Submitted content destined for a fragment passes the same
+API-layer field validation and security scan (`validate.js` / `Validate.php`,
+above) as content destined for the camp file. The PR-check workflow
+(`event-data-deploy.yml`) runs `check-yaml-security.js` (hard block) and
+`lint-yaml.js` on every changed file — both auto-detect a fragment (top-level
+`event:`) versus a camp file, and the schema check hard-blocks fragments
+belonging to a non-archived camp (02-§109.18, 02-§109.21).
 
 Carriage returns in `description` are normalised to line feeds in
 `buildEventYaml()` before the literal block is emitted, so the stored value uses

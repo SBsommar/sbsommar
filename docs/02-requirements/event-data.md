@@ -628,3 +628,133 @@ without deleting it from the data (it returns next year by flipping one setting)
 - The "Annat" fallback option remains available in the add-activity and
   edit-activity forms regardless of location availability, so an activity can
   always be placed somewhere. <!-- 02-§107.8 -->
+
+---
+
+---
+
+## 109. Concurrent Event Submission via Fragment Files
+
+### 109.1 Context
+
+Activities are submitted through the add-activity form in bursts — many families
+add their events within the same few minutes during an active camp. Each
+submission becomes its own pull request that auto-merges into `main` through the
+merge queue.
+
+When every submission writes to the *same* region of the *same* file (appending
+to the end of the active camp's `events:` list), pull requests cut from the same
+`main` produce overlapping "append at end" diffs. The first merges; the rest
+become textually conflicting against the new `main`. The merge queue cannot
+resolve text conflicts, so the conflicting pull requests stay open with green CI
+and auto-merge enabled but can never complete, and the submitted activities never
+reach the site until someone rebuilds each branch by hand.
+
+Storing each submitted event as its own file removes the shared region entirely:
+two submissions never touch the same file, so their pull requests can never
+conflict and the merge queue merges them in any order. The camp's YAML file
+remains the long-term store; the per-camp fragment directory holds events
+submitted during the live window. A separate maintenance step that periodically
+folds fragments back into the camp file (compaction) is tracked as its own
+follow-up and is not part of this section — until it runs, fragments simply
+accumulate and the build reads them alongside the camp file.
+
+### 109.2 Fragment storage layout (data requirements)
+
+- A camp's events are sourced from two places that the build treats as one set:
+  the camp's YAML file (`source/data/<file>`) and an optional fragment directory
+  `source/data/<stem>/`, where `<stem>` is the camp's `file` value without its
+  `.yaml` extension (e.g. file `2026-06-syssleback.yaml` → directory
+  `source/data/2026-06-syssleback/`). <!-- 02-§109.1 -->
+- Each fragment file is named `<event-id>.yaml` and contains a single top-level
+  `event:` mapping whose fields match one entry of the camp file's `events:` list
+  (`id`, `title`, `date`, `start`, `end`, `location`, `responsible`,
+  `description`, `link`, `owner`, `meta`). <!-- 02-§109.2 -->
+- A fragment file's `event.id` equals its filename without the `.yaml`
+  extension. <!-- 02-§109.3 -->
+- The fragment directory is optional. A camp with no fragment directory behaves
+  exactly as a camp whose events live entirely in its YAML
+  file. <!-- 02-§109.4 -->
+
+### 109.3 Submission writes (site requirements)
+
+- A single event submitted via `POST /add-event` is written as one new fragment
+  file `source/data/<stem>/<event-id>.yaml` on its ephemeral branch — never by
+  appending to the camp YAML file. <!-- 02-§109.5 -->
+- A batch submission (a `dates` array — the same activity on several dates) writes
+  one new fragment file per date, all on a single ephemeral branch and pull
+  request. <!-- 02-§109.6 -->
+- Because each submission creates only new files with submission-specific names,
+  two submissions in flight at the same time never modify the same file; their
+  pull requests therefore never textually conflict and the merge queue can merge
+  them in any order without manual intervention. <!-- 02-§109.7 -->
+- If a fragment file with the target id already exists (a genuine duplicate of the
+  same activity at the same date and start time), the submission fails with a
+  clear Swedish error rather than silently overwriting the existing
+  event. <!-- 02-§109.8 -->
+
+### 109.4 Edit and delete (site requirements)
+
+- Edit and delete first look for a fragment file matching the event id; only when
+  none exists do they fall back to the camp YAML file. <!-- 02-§109.9 -->
+- `POST /edit-event` for an event stored as a fragment rewrites that fragment file
+  (`source/data/<stem>/<event-id>.yaml`) in place on its ephemeral branch,
+  preserving the event's `id` and `meta.created_at` and updating
+  `meta.updated_at`. <!-- 02-§109.10 -->
+- `POST /delete-event` for an event stored as a fragment removes that fragment
+  file on its ephemeral branch. <!-- 02-§109.11 -->
+- When the target event is not stored as a fragment, edit and delete operate on
+  the camp YAML file (in-place patch or removal), exactly as they do for events
+  that have never been fragments. <!-- 02-§109.12 -->
+
+### 109.5 Build-time merge (site requirements)
+
+- Wherever the build loads a camp's events — the active camp and every camp shown
+  in the archive — it loads them by merging the camp YAML file's `events:` list
+  with every `event:` mapping found in that camp's fragment
+  directory. <!-- 02-§109.13 -->
+- The merged event set is sorted by the site's existing deterministic order (date,
+  then start time), so a fragment event appears in its correct chronological
+  position alongside camp-file events. <!-- 02-§109.14 -->
+- If the same event id appears both in the camp YAML file and in a fragment, the
+  build keeps a single event for that id (the fragment taking precedence) and logs
+  a warning. <!-- 02-§109.15 -->
+- Every downstream output (weekly schedule, today view, live/display view,
+  per-event pages, `events.json`, RSS feed, iCal feed, archive) is produced from
+  the merged event set, so a fragment event is indistinguishable from a camp-file
+  event in every view. <!-- 02-§109.16 -->
+
+### 109.6 Validation (site requirements)
+
+- Every fragment file must be valid YAML containing exactly one `event:`
+  mapping. <!-- 02-§109.17 -->
+- A fragment event is subject to the same field validation as a camp-file event:
+  required fields present, a valid `YYYY-MM-DD` date, and end time after start time
+  (CL-§5.6–5.8). <!-- 02-§109.18 -->
+- A fragment file's `event.id` must equal its filename stem; a mismatch is a
+  validation error. <!-- 02-§109.19 -->
+- Event ids must be unique across a camp's YAML file and all of its fragment
+  files. <!-- 02-§109.20 -->
+- Fragment files are covered by the repository's YAML security and lint checks
+  (`check-yaml-security.js`, `lint-yaml.js`) exactly as other files under
+  `source/data/` are. <!-- 02-§109.21 -->
+
+### 109.7 Deploy and CI detection (site requirements)
+
+- The post-merge event-data deploy workflow attributes a changed file to a camp so
+  it can build and (for production) apply QA gating: a changed path
+  `source/data/<stem>/<file>.yaml` is attributed to the camp whose `file` is
+  `<stem>.yaml`, and a changed top-level path `source/data/<file>.yaml` is
+  attributed to the camp whose `file` is `<file>.yaml`. This refines the inline
+  detection of §51.5. <!-- 02-§109.22 -->
+- The production deploy job's QA gating uses this camp attribution: when the
+  changed fragment (or camp file) belongs to a camp with `qa: true`, the
+  production deploy is skipped, exactly as for a changed camp YAML file. This
+  refines the QA gating of §51.7. <!-- 02-§109.23 -->
+- A commit that changes only fragment files under `source/data/` (no `camps.yaml`,
+  no `local.yaml`, and no non-data code) is a data-only change: `ci.yml` skips
+  `npm ci`, build, lint, and tests for it, and the post-merge deploy workflow
+  builds and deploys it (CL-§9.4, §50.6). <!-- 02-§109.24 -->
+- The post-merge deploy workflow and the event-data PR-check workflow trigger on
+  fragment paths, because their `source/data/**.yaml` path filter matches files
+  nested one level under `source/data/`. <!-- 02-§109.25 -->

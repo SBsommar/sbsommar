@@ -5,7 +5,7 @@ const assert = require('node:assert/strict');
 
 // The script exports { validateYaml } when required as a module.
 // The CLI entry point is guarded by require.main === module.
-const { validateYaml } = require('../source/scripts/lint-yaml');
+const { validateYaml, validateFragment } = require('../source/scripts/lint-yaml');
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -265,3 +265,63 @@ describe('validateYaml – unique (title+date+start) combo (05-§5.1)', () => {
 
 // LNT-22..23 removed: active+archived conflict check no longer exists
 // (active field removed — see 02-§34.6, 02-§34.8).
+
+// ── validateFragment — single-event fragment files (02-§109.17, §109.18) ──────
+
+describe('validateFragment – event fragment files (FRAG-60..66)', () => {
+  function fragment(event = {}) {
+    const e = Object.assign({
+      id: 'frukost-2026-07-02-0800',
+      title: 'Frukost',
+      date: '2026-07-02',
+      start: '08:00',
+      end: '09:00',
+      location: 'Matsalen',
+      responsible: 'Alla',
+    }, event);
+    const lines = ['event:'];
+    for (const [k, v] of Object.entries(e)) {
+      if (v === null) lines.push(`  ${k}: null`);
+      else if (['date', 'start', 'end'].includes(k)) lines.push(`  ${k}: '${v}'`);
+      else lines.push(`  ${k}: ${v}`);
+    }
+    return lines.join('\n') + '\n';
+  }
+
+  it('FRAG-60: accepts a well-formed fragment (02-§109.17)', () => {
+    assert.deepStrictEqual(validateFragment(fragment()), { ok: true });
+  });
+
+  it('FRAG-61: rejects a missing required field (02-§109.18)', () => {
+    const res = validateFragment(fragment({ location: null }));
+    assert.strictEqual(res.ok, false);
+    assert.ok(res.errors.some((e) => /location/.test(e)));
+  });
+
+  it('FRAG-62: rejects an invalid date (02-§109.18)', () => {
+    const res = validateFragment(fragment({ date: '2026/07/02' }));
+    assert.strictEqual(res.ok, false);
+    assert.ok(res.errors.some((e) => /date/i.test(e)));
+  });
+
+  it('FRAG-63: rejects end not after start (02-§109.18)', () => {
+    const res = validateFragment(fragment({ start: '10:00', end: '09:00' }));
+    assert.strictEqual(res.ok, false);
+    assert.ok(res.errors.some((e) => /end/i.test(e)));
+  });
+
+  it('FRAG-64: rejects a document with no top-level event mapping', () => {
+    const res = validateFragment('events:\n  - id: x\n');
+    assert.strictEqual(res.ok, false);
+    assert.ok(res.errors.some((e) => /event/i.test(e)));
+  });
+
+  it('FRAG-65: rejects a YAML parse failure', () => {
+    const res = validateFragment('event:\n  id: [oops');
+    assert.strictEqual(res.ok, false);
+  });
+
+  it('FRAG-66: allows a midnight-crossing end within the 17h cap (05-§4.3)', () => {
+    assert.deepStrictEqual(validateFragment(fragment({ start: '22:00', end: '01:00' })), { ok: true });
+  });
+});

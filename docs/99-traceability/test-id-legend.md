@@ -204,3 +204,11 @@ Part of [the traceability index](./index.md).
 | (PHPUnit) | `api/tests/MintTokenTest.php` | PHP mirror of `mintRequest` with the same fixed inputs (02-§106) |
 | LOCAVAIL-01..12 | `tests/location-availability.test.js` | Location availability: `filterAvailableLocations()` + build wiring + renderer exclusion (02-§107) |
 | DQT-01..06 | `tests/deploy-qa-config-trigger.test.js` | deploy-qa.yml path-ignore targets per-camp event files; config files trigger full QA deploy (02-§108) |
+| FRAG-01..09 | `tests/load-events.test.js` | `loadCampEvents` merges camp file + fragments, de-dups, id/filename integrity, chronological sort (02-§109.1–109.16) |
+| FRAG-30..43 | `tests/github.test.js` | `buildFragmentYaml` / `fragmentPath` / `assertFragmentYamlValid` fragment helpers (02-§109.2–109.8, 109.17) |
+| FRAG-50..58 | `tests/changed-camp-file.test.js` | `campFileForPath` maps fragment/camp paths to a camp file (02-§109.22) |
+| FRAG-60..66 | `tests/lint-yaml.test.js` | `validateFragment` single-event fragment validation (02-§109.18) |
+| FRAG-70..73 | `tests/ci-data-only-fragment.test.js` | fragment-only commits are data-only in ci.yml (02-§109.24) |
+| FRAG-80..82 | `tests/check-yaml-security.test.js` | `scanYaml` scans a fragment's single `event:` mapping (02-§109.21) |
+| EDW-29..32 | `tests/event-deploy-workflow.test.js` | Fragment-aware production QA gating + workflow triggers (02-§109.22, 109.23, 109.25) |
+| (PHPUnit) | `api/tests/GitHubTest.php` | PHP mirror of the fragment helpers: `buildFragmentYaml`, `fragmentPath`, `assertFragmentYamlValid` (02-§109) |

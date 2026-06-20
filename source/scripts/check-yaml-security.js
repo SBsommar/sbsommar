@@ -52,7 +52,14 @@ function scanYaml(content) {
     return { ok: false, findings: [`YAML parse error: ${e.message}`] };
   }
 
-  const events = (data && Array.isArray(data.events)) ? data.events : [];
+  // A camp file holds an `events:` list; a fragment file holds a single
+  // top-level `event:` mapping (02-§109.21). Scan whichever is present.
+  let events = [];
+  if (data && Array.isArray(data.events)) {
+    events = data.events;
+  } else if (data && data.event && typeof data.event === 'object' && !Array.isArray(data.event)) {
+    events = [data.event];
+  }
 
   for (const event of events) {
     const ref = `event id="${event.id || 'MISSING'}"`;
@@ -123,6 +130,8 @@ if (require.main === module) {
   }
 
   const data = yaml.load(content);
-  const count = Array.isArray(data && data.events) ? data.events.length : 0;
+  const count = Array.isArray(data && data.events)
+    ? data.events.length
+    : (data && data.event ? 1 : 0);
   console.log(`OK: ${count} events passed security scan in ${filePath}`);
 }

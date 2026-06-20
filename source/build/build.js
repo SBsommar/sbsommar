@@ -20,6 +20,7 @@ const { renderKalenderPage } = require('./render-kalender');
 const { renderAdminPage } = require('./render-admin');
 const { renderOfflinePage } = require('./render-offline');
 const { resolveActiveCamp } = require('../scripts/resolve-active-camp');
+const { loadCampEvents } = require('./load-events');
 const { addOneDay } = require('../api/time-gate');
 const { setFeedbackUrl } = require('./layout');
 const { resolveVersionString } = require('./version');
@@ -88,7 +89,8 @@ const camp = campData.camp;
 // Merge opens_for_editing from the registry (camps.yaml) into the camp object.
 // The per-camp YAML file does not include this field.
 camp.opens_for_editing = activeCamp.opens_for_editing;
-const events = campData.events || [];
+// Events come from the camp file merged with any fragment files (02-§109.13).
+const events = loadCampEvents(DATA_DIR, activeCamp.file);
 
 // ── Load locations from local.yaml ───────────────────────────────────────────
 
@@ -232,8 +234,8 @@ async function main() {
   for (const c of camps.filter((x) => x.archived === true)) {
     const evFile = path.join(DATA_DIR, c.file);
     if (fs.existsSync(evFile)) {
-      const evData = yaml.load(fs.readFileSync(evFile, 'utf8')) || {};
-      campEventsMap[c.id] = evData.events || [];
+      // Merge the camp file with any fragment files (02-§109.13).
+      campEventsMap[c.id] = loadCampEvents(DATA_DIR, c.file);
     }
   }
 

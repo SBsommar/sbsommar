@@ -75,7 +75,12 @@ jobs:
             fi
             echo "Validating $f"
             node source/scripts/check-yaml-security.js "$f" || status=1
-            if printf '%s\n' "$active" | grep -qxF "$f"; then
+            # A changed file may be a camp file or a fragment under
+            # source/data/<stem>/; map it back to its camp file so the active-camp
+            # decision covers fragments too (02-§109.22). lint-yaml.js auto-detects
+            # a fragment (top-level event:) versus a full camp file (02-§109.18).
+            campfile="source/data/$(node source/scripts/changed-camp-file.js "$f")"
+            if printf '%s\n' "$active" | grep -qxF "$campfile"; then
               node source/scripts/lint-yaml.js "$f" || status=1
             else
               echo "::notice::$f belongs to an archived camp; schema check is advisory (security scan still enforced)"

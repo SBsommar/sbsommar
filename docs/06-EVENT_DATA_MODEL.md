@@ -26,6 +26,29 @@ Examples:
 
 Each file is self-contained and independent.
 
+### 1.1 Why events can also live in fragment files
+
+The camp file is the long-term home for a camp's events, but it is a poor target
+for *concurrent* writes. Participants submit activities in bursts, and every
+submission used to append to the end of the same file. Two submissions branched
+from the same `main` then produced overlapping "append at end" diffs: the first
+merged, the rest became textually conflicting, and — because the merge queue
+cannot resolve text conflicts — they stuck open forever (the failure described in
+issue #461).
+
+The fix is to give each submitted event its own file. A submission writes a new
+fragment `source/data/<stem>/<event-id>.yaml` instead of editing the shared file,
+so two submissions never touch the same bytes and their pull requests can never
+conflict. This is a deliberate trade: the camp file stops being the *single*
+physical file for a camp's events, but it remains the single *logical* source —
+the build merges the camp file and its fragments into one event set, and a
+periodic compaction step folds fragments back into the camp file so the file
+strategy above stays true over the long term.
+
+The authoritative layout and rules are in
+[05-DATA_CONTRACT.md §2.1](05-DATA_CONTRACT.md) and
+[03-architecture/data-layer.md §1.1](03-architecture/data-layer.md).
+
 ---
 
 ## 2. Camp Structure

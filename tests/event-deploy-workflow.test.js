@@ -242,3 +242,60 @@ describe('02-§52.5–52.6 — setup-node conditionality (EDW-26..28)', () => {
     );
   });
 });
+
+// ── 02-§109.22 / §109.23  Fragment-aware production QA gating ────────────────
+// Fragment files live under source/data/<stem>/, so the production gate must map
+// a changed path back to its camp file before the camps.yaml QA lookup. The
+// mapping is performed by source/scripts/changed-camp-file.js.
+
+describe('02-§109.22 — Production gate attributes fragment paths to a camp (EDW-29..30)', () => {
+  it('EDW-29: deploy-prod gate uses the changed-camp-file helper', () => {
+    const prod = workflow.jobs['deploy-prod'];
+    assert.ok(prod, 'deploy-prod job must exist');
+    const gate = (prod.steps || []).find((s) => s.id === 'gate');
+    assert.ok(gate, 'deploy-prod must have a gate step');
+    assert.ok(
+      gate.run.includes('changed-camp-file'),
+      'deploy-prod gate must resolve the camp file via source/scripts/changed-camp-file.js'
+    );
+  });
+
+  it('EDW-30: deploy-prod gate still consults camps.yaml for the qa field', () => {
+    const prod = workflow.jobs['deploy-prod'];
+    const gate = (prod.steps || []).find((s) => s.id === 'gate');
+    assert.ok(gate.run.includes('camps.yaml') && gate.run.includes('qa'),
+      'production gate must look up the resolved camp file in camps.yaml');
+  });
+});
+
+// ── 02-§109.25  Triggers match fragment paths nested under source/data ───────
+
+describe('02-§109.25 — Event-data workflows trigger on fragment paths (EDW-31..32)', () => {
+  const fs = require('fs');
+  const path = require('path');
+  const yaml = require('js-yaml');
+
+  function triggers(wf) {
+    // js-yaml parses the YAML key `on:` as the boolean true, not the string "on".
+    return wf.on || wf[true] || {};
+  }
+
+  it('EDW-31: post-merge deploy triggers on source/data/**.yaml (matches nested fragments)', () => {
+    const paths = triggers(workflow).push?.paths || [];
+    assert.ok(
+      paths.includes('source/data/**.yaml'),
+      `post-merge push paths must include source/data/**.yaml, got: ${JSON.stringify(paths)}`
+    );
+  });
+
+  it('EDW-32: PR-check workflow triggers on source/data/**.yaml', () => {
+    const prCheck = yaml.load(
+      fs.readFileSync(path.resolve(__dirname, '../.github/workflows/event-data-deploy.yml'), 'utf8')
+    );
+    const paths = triggers(prCheck).pull_request?.paths || [];
+    assert.ok(
+      paths.includes('source/data/**.yaml'),
+      `PR-check pull_request paths must include source/data/**.yaml, got: ${JSON.stringify(paths)}`
+    );
+  });
+});

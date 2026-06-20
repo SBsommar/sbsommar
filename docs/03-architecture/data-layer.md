@@ -29,6 +29,56 @@ Events are unique on the combination of `(title + date + start)`.
 
 This is the single source of truth for all camp content.
 
+### 1.1 Per-camp event fragments
+
+So that participants can submit activities concurrently without their pull
+requests conflicting, each camp's events come from two places that the build
+treats as a single set (02-§109.1):
+
+- the camp's YAML file (`source/data/<file>`), and
+- an optional per-camp fragment directory `source/data/<stem>/`, where `<stem>`
+  is the camp's `file` without its `.yaml` extension. For
+  `2026-06-syssleback.yaml` the directory is `source/data/2026-06-syssleback/`.
+
+```text
+source/data/2026-06-syssleback.yaml          ← camp file (camp header + events:)
+source/data/2026-06-syssleback/              ← fragment directory (optional)
+  schack-2026-06-29-1400.yaml                ← one event each, top-level `event:`
+  fika-2026-06-29-1500.yaml
+```
+
+Each fragment file is named `<event-id>.yaml` and holds a single top-level
+`event:` mapping with exactly the fields of one entry in the camp file's
+`events:` list (02-§109.2). The file name without `.yaml` equals `event.id`
+(02-§109.3).
+
+Because every submission writes a brand-new file whose name is derived from the
+event id, two submissions in flight never modify the same file. Their pull
+requests cannot textually conflict, so the merge queue merges them in any order
+without manual intervention — this is the root-cause fix for the burst-conflict
+problem (02-§109.7).
+
+A shared loader, `loadCampEvents(dataDir, campFile)` in
+`source/build/load-events.js`, returns the merged, de-duplicated event list for
+any camp: the camp file's `events:` plus every `event:` mapping in the camp's
+fragment directory. It enforces structural integrity (02-§109.15, 02-§109.19,
+02-§109.20):
+
+- a fragment's `event.id` must equal its filename stem;
+- ids must be unique across the camp file and all fragments;
+- if an id appears in both the file and a fragment, the fragment wins and a
+  warning is logged.
+
+Both `build.js` (active camp) and `render-arkiv.js` (archived camps) load events
+through this helper, so every view — schedule, today, live, per-event pages,
+`events.json`, RSS, iCal, and archive — is built from the same merged set
+(02-§109.13, 02-§109.16).
+
+The fragment directory is optional; a camp with none behaves exactly as before
+(02-§109.4). A periodic compaction step that folds fragments back into the camp
+file is tracked as a separate follow-up; until it runs, fragments simply
+accumulate and the loader reads them alongside the file.
+
 ---
 
 ## 2. Metadata Layer
@@ -107,9 +157,9 @@ The API server (`app.js`) handles each submission as follows:
 1. Validates the incoming event data, including security scanning for injection patterns and link protocol validation (see [`ci-and-deploy.md`](./ci-and-deploy.md) §11.6).
 2. Responds immediately with a success confirmation — the form does not wait for the rest of the process.
 3. Reads `source/data/camps.yaml` from GitHub via the Contents API.
-4. Derives the active camp from dates and reads its YAML file from GitHub.
-5. Appends the new event, then parses the complete proposed document and confirms it contains the new event id before any branch is created (02-§102.5); on a parse failure nothing is written to git. The serialised YAML block is indented to match the existing `events:` list so the file remains valid YAML.
-6. Opens a pull request with auto-merge enabled.
+4. Derives the active camp from dates.
+5. Writes the new event as a **new fragment file** `source/data/<stem>/<event-id>.yaml` (a single top-level `event:` mapping) — never by appending to the camp YAML file (02-§109.5). Before any branch is created, the serialised fragment is parsed and confirmed to contain the new event id (02-§102.5); on a parse failure nothing is written to git.
+6. Opens a pull request with auto-merge enabled. Because the file is brand-new and its name is unique to the submission, the pull request cannot conflict with any other in-flight submission (02-§109.7).
 7. The event data PR check (see [`ci-and-deploy.md`](./ci-and-deploy.md) §11) runs — a no-op that satisfies branch protection.
 8. The PR merges automatically via auto-merge.
 9. The post-merge event data deploy workflow (see [`ci-and-deploy.md`](./ci-and-deploy.md) §11) installs production dependencies via `setup-node` + `npm ci --omit=dev`, builds the site, and uploads event-data pages to QA and Production.
@@ -123,8 +173,8 @@ flowchart TD
     A[Participant submits form] --> B["POST /add-event (API server)"]
     B --> C[Validate · respond immediately]
     C --> D[GitHub API: read camps.yaml]
-    D --> E[Read active camp YAML]
-    E --> F[Append event · create ephemeral branch]
+    D --> E[Derive active camp]
+    E --> F[Write event as new fragment file · create ephemeral branch]
     F --> G[Open PR · enable auto-merge]
     G --> H["No-op PR check (§11)\n— branch protection gate"]
     H --> I[Auto-merge to main]
@@ -146,8 +196,11 @@ The flow is identical to the single-event flow above, with two differences:
 1. **Validation**: every date in the array is validated against camp range,
    past-date rules, and uniqueness `(title + date + start)` before any write.
    If any date fails, the entire batch is rejected. <!-- 03-§3.1a -->
-2. **Commit**: all events are appended to the camp YAML file and committed in a
-   single branch and PR — not one PR per event. <!-- 03-§3.1b -->
+2. **Commit**: each date becomes its own new fragment file
+   `source/data/<stem>/<event-id>.yaml`; all of the batch's fragment files are
+   committed on a single branch and PR — not one PR per event. The file names are
+   distinct (one per date), so even the batch's own files never collide
+   (02-§109.6). <!-- 03-§3.1b -->
 
 The session cookie is updated with all new event IDs (when consent is given).
 
@@ -184,6 +237,34 @@ The classification is implemented in a single helper method so all three
 mutation endpoints share the same logic. Error messages never expose tokens,
 file paths, or stack traces. <!-- 03-§3.3a -->
 
+### 3.4 Fragment writes, edits, and deletes
+
+Every add and batch-add writes new fragment files rather than appending to the
+camp YAML file (§1.1). The mutation endpoints behave as follows: <!-- 03-§3.4 -->
+
+- **Add** — one new file `source/data/<stem>/<event-id>.yaml` containing the
+  event as a single `event:` mapping, on one ephemeral branch and PR
+  (02-§109.5).
+- **Batch add** — one new fragment file per date, all on a single branch and PR
+  (02-§109.6).
+- If a fragment with the target id already exists (a genuine duplicate of the
+  same activity at the same date and start time), the create call returns
+  HTTP 422 and the API surfaces the "En skrivkonflikt uppstod" message (§3.3)
+  rather than overwriting the existing event (02-§109.8). <!-- 03-§3.4a -->
+
+Edit and delete resolve the storage location by id (02-§109.9): <!-- 03-§3.4b -->
+
+1. If `source/data/<stem>/<event-id>.yaml` exists, the operation targets that
+   fragment — **edit** rewrites it in place (preserving `id` and
+   `meta.created_at`, bumping `meta.updated_at`); **delete** removes the file
+   (02-§109.10, 02-§109.11).
+2. Otherwise the operation falls back to patching the camp YAML file in place,
+   exactly as before (02-§109.12).
+
+Because newly submitted events (the only ones edited during the live window) live
+in their own fragment files, concurrent edits and deletes of different events
+also never touch the same file.
+
 ---
 
 ## 4. Archive Layer
@@ -205,15 +286,17 @@ At build time, `source/build/render-arkiv.js` produces `public/arkiv.html`.
 Data sources:
 
 - `camps.yaml` — camp metadata (name, dates, location, information, link).
-- Per-camp event YAML files (referenced via the `file:` field in `camps.yaml`) —
-  event data for the event list inside each accordion panel.
+- Per-camp events, loaded via the shared `loadCampEvents()` helper (§1.1) — the
+  camp file's `events:` merged with any fragment files — for the event list
+  inside each accordion panel (02-§109.13).
 
 Steps:
 
 1. Filter `camps` to those with `archived: true`.
 2. Sort descending by `start_date` (newest first).
-3. For each archived camp, load its event YAML file (via the `file:` field in
-   `camps.yaml`) and pass the events array to the template.
+3. For each archived camp, load its events with `loadCampEvents()` (camp file
+   `events:` merged with any fragments — §1.1) and pass the events array to the
+   template.
 4. Render a vertical timeline: each camp is one `<li>` in an `<ol class="timeline">`.
 5. Each timeline item contains:
    - A `<button>` accordion header showing the camp name, with date range and

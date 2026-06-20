@@ -199,4 +199,68 @@ final class GitHubTest extends TestCase
         GitHub::assertEventYamlValid($combined, [$ev['id']]);
         $this->addToAssertionCount(1);
     }
+
+    // ── Fragment helpers (02-§109) ───────────────────────────────────────────
+    // Mirrors the Node fragment-helper tests in tests/github.test.js.
+
+    public function testBuildFragmentYamlWrapsEventUnderTopLevelKey(): void
+    {
+        $out = GitHub::buildFragmentYaml(self::baseEvent());
+        $this->assertMatchesRegularExpression('/^event:\s*\n/', $out);
+    }
+
+    public function testBuildFragmentYamlParsesToOneEventWithFields(): void
+    {
+        $doc = \Symfony\Component\Yaml\Yaml::parse(GitHub::buildFragmentYaml(self::baseEvent()));
+        $this->assertIsArray($doc['event']);
+        $this->assertSame('frukost-2026-06-22-0800', $doc['event']['id']);
+        $this->assertSame('Frukost', $doc['event']['title']);
+        $this->assertSame('2026-06-22', $doc['event']['date']);
+        $this->assertSame('08:00', $doc['event']['start']);
+        $this->assertSame('Matsalen', $doc['event']['location']);
+        $this->assertSame('Alla', $doc['event']['responsible']);
+    }
+
+    public function testBuildFragmentYamlKeepsMultilineDescription(): void
+    {
+        $doc = \Symfony\Component\Yaml\Yaml::parse(
+            GitHub::buildFragmentYaml(self::baseEvent(['description' => "Rad ett.\nRad tva."]))
+        );
+        $this->assertSame("Rad ett.\nRad tva.", trim((string) $doc['event']['description']));
+    }
+
+    public function testFragmentPathBuildsPerCampDirectoryPath(): void
+    {
+        $this->assertSame(
+            'source/data/2026-06-syssleback/frukost-2026-06-22-0800.yaml',
+            GitHub::fragmentPath('2026-06-syssleback.yaml', 'frukost-2026-06-22-0800')
+        );
+    }
+
+    public function testFragmentPathDistinctIdsDistinctFiles(): void
+    {
+        $a = GitHub::fragmentPath('2026-06-syssleback.yaml', 'a-2026-06-22-0800');
+        $b = GitHub::fragmentPath('2026-06-syssleback.yaml', 'b-2026-06-22-0900');
+        $this->assertNotSame($a, $b);
+    }
+
+    public function testAssertFragmentYamlValidAcceptsWellFormedFragment(): void
+    {
+        $content = GitHub::buildFragmentYaml(self::baseEvent());
+        GitHub::assertFragmentYamlValid($content, 'frukost-2026-06-22-0800');
+        $this->addToAssertionCount(1);
+    }
+
+    public function testAssertFragmentYamlValidThrowsWhenEventMissing(): void
+    {
+        $this->expectException(\RuntimeException::class);
+        GitHub::assertFragmentYamlValid("events:\n  - id: x\n", 'x');
+    }
+
+    public function testAssertFragmentYamlValidThrowsOnIdMismatch(): void
+    {
+        $content = GitHub::buildFragmentYaml(self::baseEvent(['id' => 'other-2026-06-22-0800']));
+        $this->expectException(\RuntimeException::class);
+        GitHub::assertFragmentYamlValid($content, 'frukost-2026-06-22-0800');
+    }
 }

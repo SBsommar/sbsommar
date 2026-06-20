@@ -3,7 +3,7 @@
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
 
-const { slugify, yamlScalar, buildEventYaml, detectEventIndent, assertEventYamlValid } = require('../source/api/github');
+const { slugify, yamlScalar, buildEventYaml, detectEventIndent, assertEventYamlValid, buildFragmentYaml, fragmentPath, assertFragmentYamlValid } = require('../source/api/github');
 
 // ── slugify ───────────────────────────────────────────────────────────────────
 
@@ -430,5 +430,108 @@ describe('assertEventYamlValid', () => {
     assert.strictEqual(parsed.events.length, 2);
     assert.ok(parsed.events.some((e) => e.id === ev.id));
     assert.doesNotThrow(() => assertEventYamlValid(combined, [ev.id]));
+  });
+});
+
+// ── buildFragmentYaml / fragmentPath / assertFragmentYamlValid (02-§109) ───────
+// Fragment files store a single event as a top-level `event:` mapping, written to
+// a per-camp directory so concurrent submissions never touch the same file.
+
+describe('fragment helpers (FRAG-30..45)', () => {
+  const jsyaml = require('js-yaml');
+
+  function baseEvent(overrides = {}) {
+    return {
+      id: 'frukost-2026-06-22-0800',
+      title: 'Frukost',
+      date: '2026-06-22',
+      start: '08:00',
+      end: '09:00',
+      location: 'Matsalen',
+      responsible: 'Alla',
+      description: null,
+      link: null,
+      owner: { name: 'Anna Andersson', email: '' },
+      meta: { created_at: '2026-06-22 07:00', updated_at: '2026-06-22 07:00' },
+      ...overrides,
+    };
+  }
+
+  // buildFragmentYaml — single top-level `event:` mapping (02-§109.2)
+  it('FRAG-30: wraps the event under a top-level `event:` key', () => {
+    const out = buildFragmentYaml(baseEvent());
+    assert.ok(/^event:\s*\n/.test(out), `Got: ${out}`);
+  });
+
+  it('FRAG-31: parses to one event mapping with the expected fields (02-§109.2)', () => {
+    const doc = jsyaml.load(buildFragmentYaml(baseEvent()));
+    assert.ok(doc.event && typeof doc.event === 'object');
+    assert.strictEqual(doc.event.id, 'frukost-2026-06-22-0800');
+    assert.strictEqual(doc.event.title, 'Frukost');
+    assert.strictEqual(doc.event.date, '2026-06-22');
+    assert.strictEqual(doc.event.start, '08:00');
+    assert.strictEqual(doc.event.location, 'Matsalen');
+    assert.strictEqual(doc.event.responsible, 'Alla');
+  });
+
+  it('FRAG-32: preserves a multi-line description as a literal block', () => {
+    const doc = jsyaml.load(buildFragmentYaml(baseEvent({ description: 'Rad ett.\nRad två.' })));
+    assert.strictEqual(doc.event.description.trim(), 'Rad ett.\nRad två.');
+  });
+
+  it('FRAG-33: emits null for an absent description and link', () => {
+    const doc = jsyaml.load(buildFragmentYaml(baseEvent({ description: null, link: null })));
+    assert.strictEqual(doc.event.description, null);
+    assert.strictEqual(doc.event.link, null);
+  });
+
+  it('FRAG-34: keeps owner and meta sub-mappings', () => {
+    const doc = jsyaml.load(buildFragmentYaml(baseEvent()));
+    assert.strictEqual(doc.event.owner.name, 'Anna Andersson');
+    assert.strictEqual(doc.event.meta.created_at, '2026-06-22 07:00');
+  });
+
+  // fragmentPath — per-camp directory, file named after the event id (02-§109.3, §109.5)
+  it('FRAG-35: builds source/data/<stem>/<id>.yaml for a camp file (02-§109.5)', () => {
+    assert.strictEqual(
+      fragmentPath('2026-06-syssleback.yaml', 'frukost-2026-06-22-0800'),
+      'source/data/2026-06-syssleback/frukost-2026-06-22-0800.yaml',
+    );
+  });
+
+  it('FRAG-36: file name stem equals the event id (02-§109.3)', () => {
+    const p = fragmentPath('2026-06-syssleback.yaml', 'bad-2026-06-23-1000');
+    assert.ok(p.endsWith('/bad-2026-06-23-1000.yaml'));
+  });
+
+  it('FRAG-37: two distinct event ids map to two distinct files (02-§109.7)', () => {
+    const a = fragmentPath('2026-06-syssleback.yaml', 'a-2026-06-22-0800');
+    const b = fragmentPath('2026-06-syssleback.yaml', 'b-2026-06-22-0900');
+    assert.notStrictEqual(a, b);
+  });
+
+  it('FRAG-38: the same event id maps to the same file (duplicate detection target, 02-§109.8)', () => {
+    const a = fragmentPath('2026-06-syssleback.yaml', 'a-2026-06-22-0800');
+    const b = fragmentPath('2026-06-syssleback.yaml', 'a-2026-06-22-0800');
+    assert.strictEqual(a, b);
+  });
+
+  // assertFragmentYamlValid — backstop before any branch/PR (02-§109.17)
+  it('FRAG-40: accepts a well-formed fragment with the expected id', () => {
+    const content = buildFragmentYaml(baseEvent());
+    assert.doesNotThrow(() => assertFragmentYamlValid(content, 'frukost-2026-06-22-0800'));
+  });
+
+  it('FRAG-41: throws when the fragment fails to parse', () => {
+    assert.throws(() => assertFragmentYamlValid('event:\n  id: [unterminated', 'x'), /parse/i);
+  });
+
+  it('FRAG-42: throws when the top-level event mapping is missing', () => {
+    assert.throws(() => assertFragmentYamlValid('events:\n  - id: x\n', 'x'), /event/i);
+  });
+
+  it('FRAG-43: throws when the event id does not match the expected id', () => {
+    const content = buildFragmentYaml(baseEvent({ id: 'other-2026-06-22-0800' }));
+    assert.throws(() => assertFragmentYamlValid(content, 'frukost-2026-06-22-0800'), /frukost-2026-06-22-0800/);
   });
 });

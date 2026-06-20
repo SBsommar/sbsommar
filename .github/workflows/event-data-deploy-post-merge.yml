@@ -123,20 +123,22 @@ jobs:
             echo "No event YAML file changed"
             echo "skip=true" >> $GITHUB_OUTPUT
           else
-            BASENAME=$(basename "$CHANGED")
-            IS_QA=$(node -e "
+            # A change may be a camp file or a fragment under source/data/<stem>/;
+            # map it back to the camp file so QA gating works for both (02-§109.22).
+            CAMPFILE=$(node source/scripts/changed-camp-file.js "$CHANGED")
+            IS_QA=$(CAMPFILE="$CAMPFILE" node -e "
               const fs = require('fs');
               const yaml = require('js-yaml');
               const camps = yaml.load(fs.readFileSync('source/data/camps.yaml','utf8'));
-              const match = camps.camps.find(c => c.file === '$BASENAME');
+              const match = camps.camps.find(c => c.file === process.env.CAMPFILE);
               console.log(match && match.qa === true ? 'true' : 'false');
             ")
             if [ "$IS_QA" = "true" ]; then
-              echo "File $BASENAME belongs to QA camp — skipping production deploy"
+              echo "File $CAMPFILE belongs to QA camp — skipping production deploy"
               echo "skip=true" >> $GITHUB_OUTPUT
             else
               echo "skip=false" >> $GITHUB_OUTPUT
-              echo "Detected changed file: $CHANGED (not QA)"
+              echo "Detected changed file: $CHANGED (camp $CAMPFILE, not QA)"
             fi
           fi
 

@@ -51,6 +51,31 @@ function patchEventInYaml(yamlContent, eventId, updates) {
   return yaml.dump(data, { lineWidth: -1, noRefs: true });
 }
 
+// ── patchEventObject ─────────────────────────────────────────────────────────
+
+// Apply `updates` to a single event object, returning a new object with the same
+// mutable-field rules as patchEventInYaml. Used for fragment edits (02-§109.10),
+// where the event lives in its own file rather than the camp file's events list.
+// Immutable: id, owner. Auto-updated: meta.updated_at (created_at preserved).
+function patchEventObject(event, updates, now) {
+  return {
+    id:          event.id,
+    title:       'title'       in updates ? (updates.title       || event.title)       : event.title,
+    date:        'date'        in updates ? (updates.date        || event.date)        : event.date,
+    start:       'start'       in updates ? (updates.start       || event.start)       : event.start,
+    end:         'end'         in updates ? (updates.end   || null)                    : event.end,
+    location:    'location'    in updates ? (updates.location    || event.location)    : event.location,
+    responsible: 'responsible' in updates ? (updates.responsible || event.responsible) : event.responsible,
+    description: 'description' in updates ? (updates.description || null)              : (event.description ?? null),
+    link:        'link'        in updates ? (updates.link        || null)              : (event.link ?? null),
+    owner:       event.owner || { name: '', email: '' },
+    meta: {
+      created_at: event.meta ? event.meta.created_at : null,
+      updated_at: now,
+    },
+  };
+}
+
 // ── removeEventFromYaml ──────────────────────────────────────────────────────
 
 // Find the event with eventId inside a full camp YAML string and remove it
@@ -68,4 +93,4 @@ function removeEventFromYaml(yamlContent, eventId) {
   return yaml.dump(data, { lineWidth: -1, noRefs: true });
 }
 
-module.exports = { isEventPast, patchEventInYaml, removeEventFromYaml };
+module.exports = { isEventPast, patchEventInYaml, patchEventObject, removeEventFromYaml };

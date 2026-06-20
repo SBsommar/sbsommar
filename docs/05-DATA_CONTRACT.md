@@ -99,6 +99,50 @@ See §7 for a complete worked example.
 
 ---
 
+## 2.1 Event Fragment Files
+
+A camp's events may also be stored as individual **fragment files** in a per-camp
+directory, in addition to the `events:` list inside the camp file. This lets many
+activities be submitted concurrently without their pull requests conflicting
+(see `02-requirements/event-data.md §109` and `03-architecture/data-layer.md §1.1`).
+
+- The fragment directory is `source/data/<stem>/`, where `<stem>` is the camp's
+  `file` value without its `.yaml` extension. For `2026-06-syssleback.yaml` the
+  directory is `source/data/2026-06-syssleback/`.
+- Each fragment file is named `<event-id>.yaml` and contains a single top-level
+  `event:` mapping with exactly the fields of one entry in the camp file's
+  `events:` list:
+
+```yaml
+event:
+  id: string
+  title: string
+  date: YYYY-MM-DD
+  start: "HH:MM"
+  end: "HH:MM" | null
+  location: string
+  responsible: string
+  description: string (markdown) | null
+  link: string | null
+  owner:
+    name: string
+    email: string
+  meta:
+    created_at: ISO-8601 | null
+    updated_at: ISO-8601 | null
+```
+
+- The file name without `.yaml` must equal `event.id`.
+- A fragment event obeys every rule in §3–§6 exactly as an event in the camp
+  file does.
+- The build merges the camp file's `events:` with all of the camp's fragments
+  into one event set before rendering; a fragment event is indistinguishable from
+  a camp-file event in every view.
+- The fragment directory is optional. A camp with no fragment directory is read
+  exactly as before.
+
+---
+
 ## 3. Required Fields
 
 ### Required in the camp file (under `camp:`) <!-- 05-§3.2 -->
@@ -152,13 +196,16 @@ The combination of:
 
 must be unique within a camp file. <!-- 05-§5.1 -->
 
-Duplicate events are not allowed.
+Duplicate events are not allowed. Uniqueness is evaluated across the camp file
+**and** the camp's fragment files (§2.1) together — a fragment may not duplicate
+the `(title + date + start)` of any other event in the same camp. <!-- 05-§5.2 -->
 
 ---
 
 ## 6. Event ID Rules
 
-- Must be unique within the file. <!-- 05-§6.1 -->
+- Must be unique within the file — and, when fragment files are used (§2.1),
+  unique across the camp file and all of its fragments. <!-- 05-§6.1 -->
 - Must be stable — do not change after creation. <!-- 05-§6.2 -->
 - Recommended format:
 
