@@ -157,6 +157,14 @@ Concurrent form submissions therefore all reach `main` automatically: no PR is
 left stranded `behind` the branch it was forked from, and no manual
 "Update branch" step is needed.
 
+The required `Lint, Test & Build` check reaches a queue branch because `ci.yml`
+triggers on `push` to `**`, which matches `gh-readonly-queue/main/*`. No workflow
+declares a `merge_group:` trigger, so narrowing that `push` filter stops the check
+from reporting on the queue branch: queued PRs then wait out the 60-minute
+status-check timeout, are treated as failed, and drop from the queue without
+merging. Add an explicit `merge_group:` trigger to the check-providing workflows
+before narrowing the `push` trigger.
+
 ### Environment Variables
 
 | Variable         | Default | Description                                              |
