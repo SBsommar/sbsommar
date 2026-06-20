@@ -1657,28 +1657,28 @@ Doc ref: `03-architecture/data-layer.md §1.1`, `§3`, `§3.1`, `§3.4`, `§4a`;
 
 | ID | Status | Notes |
 | --- | --- | --- |
-| `02-§109.1` | gap | Fragment dir `source/data/<stem>/` alongside camp file; `source/build/load-events.js` `loadCampEvents()` |
-| `02-§109.2` | gap | Fragment file is a single top-level `event:` mapping; `buildFragmentYaml()` in `github.js` / `GitHub.php` |
-| `02-§109.3` | gap | Fragment filename stem equals `event.id` |
-| `02-§109.4` | gap | Missing fragment dir → camp behaves as file-only; `loadCampEvents()` returns file events unchanged |
-| `02-§109.5` | gap | `addEventToActiveCamp()` writes new fragment file, no append; `github.js` / `GitHub.php` |
-| `02-§109.6` | gap | `addEventsToActiveCamp()` writes one fragment per date on one branch/PR |
-| `02-§109.7` | gap | Invariant: two adds → two distinct new files (no shared file touched); test asserts distinct `putFile` paths |
-| `02-§109.8` | gap | Existing-id fragment create → 422 → "En skrivkonflikt uppstod" (§3.3) |
-| `02-§109.9` | gap | Edit/delete look up fragment by id first, then camp-file fallback |
-| `02-§109.10` | gap | `updateEventInActiveCamp()` rewrites fragment file in place; preserves id/created_at, bumps updated_at |
-| `02-§109.11` | gap | `removeEventFromActiveCamp()` deletes fragment file (Contents API DELETE) |
-| `02-§109.12` | gap | No fragment for id → patch/remove camp YAML in place (existing path) |
-| `02-§109.13` | gap | `build.js` (active) + `render-arkiv.js` (archive) load via `loadCampEvents()` |
-| `02-§109.14` | gap | Merged set runs through existing deterministic sort (date, start) |
-| `02-§109.15` | gap | `loadCampEvents()` de-dups by id, fragment wins, logs warning |
-| `02-§109.16` | gap | All views built from merged set (schedule/today/live/event pages/events.json/RSS/iCal/archive) |
-| `02-§109.17` | gap | Fragment parse backstop: one `event:` mapping with expected id, before any branch (extends `assertEventYamlValid`) |
-| `02-§109.18` | gap | Fragment event obeys field/date/end-after-start rules; API `validateFields`, `lint-yaml.js` fragment mode |
-| `02-§109.19` | gap | `loadCampEvents()` asserts `event.id` === filename stem (build fails on mismatch) |
-| `02-§109.20` | gap | `loadCampEvents()` asserts id uniqueness across camp file + fragments |
-| `02-§109.21` | gap | `check-yaml-security.js` / `lint-yaml.js` accept a fragment path; API scans submitted content |
-| `02-§109.22` | gap | `event-data-deploy-post-merge.yml` maps changed fragment/file path → camp file (`<stem>.yaml` / `<file>.yaml`) |
-| `02-§109.23` | gap | Production QA gating uses camp attribution; QA-camp fragment → skip prod deploy |
-| `02-§109.24` | gap | Fragment-only commit is data-only in `ci.yml` `has_code` rule (already matched; regression test) |
-| `02-§109.25` | gap | `source/data/**.yaml` triggers match nested fragment paths (both event-data workflows) |
+| `02-§109.1` | covered | FRAG-01, FRAG-02: `loadCampEvents()` in `source/build/load-events.js` reads camp file + `source/data/<stem>/` |
+| `02-§109.2` | covered | FRAG-30, FRAG-31 (+ PHP): `buildFragmentYaml()` in `source/api/github.js` / `GitHub.php` emits a single `event:` mapping |
+| `02-§109.3` | covered | FRAG-36, FRAG-04: `fragmentPath()` names the file after the id; `loadCampEvents()` checks stem == id |
+| `02-§109.4` | covered | FRAG-01, FRAG-06: `loadCampEvents()` returns camp-file events when no fragment dir / empty dir |
+| `02-§109.5` | implemented | `addEventToActiveCamp()` writes a fragment via `fragmentPath`+`buildFragmentYaml` (FRAG-35 path); network write is the e2e/manual checkpoint |
+| `02-§109.6` | implemented | `GitHub::addEventsToActiveCamp()` writes one fragment per date on one branch/PR; network write manual |
+| `02-§109.7` | covered | FRAG-37, FRAG-38: distinct ids → distinct files (no shared file); same id → same path |
+| `02-§109.8` | implemented | New-file create on an existing id → GitHub 422 → `classifyGitHubError` "En skrivkonflikt uppstod" (§3.3, FRAG-38); live 422 manual |
+| `02-§109.9` | implemented | `update/removeEventInActiveCamp()` call `getFileMaybe(fragmentPath)` first, then camp-file fallback; network manual |
+| `02-§109.10` | implemented | Fragment edit rewrites the file via `patchEventObject`+`buildFragmentYaml` (preserves id/created_at, bumps updated_at); manual |
+| `02-§109.11` | implemented | Fragment delete via `deleteFile()` (Contents API DELETE); manual |
+| `02-§109.12` | implemented | No fragment for id → `patchEventInYaml`/`removeEventFromYaml` on the camp file (existing path); manual |
+| `02-§109.13` | covered | FRAG-02: `build.js` loads the active camp and the archive loop via `loadCampEvents()` |
+| `02-§109.14` | covered | FRAG-09: merged set sorted by `groupAndSortEvents()` (date, start) |
+| `02-§109.15` | covered | FRAG-05: `loadCampEvents()` de-dups by id (fragment wins) and logs a warning |
+| `02-§109.16` | covered | FRAG-02 + build e2e: every view consumes the merged `events` array (verified in `events.json` + `schema.html`) |
+| `02-§109.17` | covered | FRAG-40..43 (+ PHP): `assertFragmentYamlValid()` parses one `event:` with the expected id before any branch |
+| `02-§109.18` | covered | FRAG-60..66: `validateFragment()` in `lint-yaml.js` checks fields, date, end-after-start |
+| `02-§109.19` | covered | FRAG-04: `loadCampEvents()` throws when `event.id` ≠ filename stem; `lint-yaml.js` CLI repeats the check |
+| `02-§109.20` | implemented | Add API rejects a duplicate id with 422 (02-§109.8); `loadCampEvents()` dedup (FRAG-05) keeps the rendered set unique |
+| `02-§109.21` | covered | FRAG-80..82 (`check-yaml-security.js` scans a fragment), FRAG-60..66 (`lint-yaml.js` fragment mode) |
+| `02-§109.22` | covered | FRAG-50..58: `campFileForPath()` in `source/scripts/changed-camp-file.js`; EDW-29 wires it into the deploy gate |
+| `02-§109.23` | covered | EDW-29, EDW-30, FRAG-52: prod gate maps fragment → camp file, then the camps.yaml `qa` lookup |
+| `02-§109.24` | covered | FRAG-70..73: fragment-only diff is data-only under `ci.yml`'s `^source/data/` + camps/local rule |
+| `02-§109.25` | covered | EDW-31, EDW-32: both event-data workflows trigger on `source/data/**.yaml` (matches nested fragments) |

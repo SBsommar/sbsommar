@@ -116,7 +116,7 @@ ID ranges.
 
 ---
 
-Audit date: 2026-02-24. Last updated: 2026-06-14 (config-file QA deploy trigger delivered, 02-§108.1–108.4 covered; location availability 02-§107.1–107.8 covered).
+Audit date: 2026-02-24. Last updated: 2026-06-21 (event fragment files delivered, 02-§109.1–109.25: 17 covered, 8 implemented; config-file QA deploy trigger 02-§108.1–108.4 covered; location availability 02-§107.1–107.8 covered).
 
 ---
 
@@ -126,9 +126,9 @@ The matrix is split by ID family. Each file carries the rows for one family.
 
 | Family | Source | Rows | File |
 | --- | --- | --- | --- |
-| `02` | `docs/02-requirements/` | 1289 | [02-requirements](./02-requirements.md) |
+| `02` | `docs/02-requirements/` | 1314 | [02-requirements](./02-requirements.md) |
 | `03` | `docs/03-architecture/` | 0 | [03-architecture](./03-architecture.md) |
-| `05` | `docs/05-DATA_CONTRACT.md` | 18 | [05-data-contract](./05-data-contract.md) |
+| `05` | `docs/05-DATA_CONTRACT.md` | 19 | [05-data-contract](./05-data-contract.md) |
 | `07` | `docs/07-design/` | 91 | [07-design](./07-design.md) |
 | `CL` | `CLAUDE.md` | 66 | [claude](./claude.md) |
 
@@ -138,11 +138,26 @@ Test IDs referenced in the `Test(s)` column are defined in the
 ## Summary
 
 ```text
-Total requirements:            1361
-Covered (implemented + tested): 720
-Implemented, not tested:        641
+Total requirements:            1387
+Covered (implemented + tested): 737
+Implemented, not tested:        650
 Gap (no implementation):          0
 Orphan tests (no requirement):    0
+
+Note: §109 (Concurrent Event Submission via Fragment Files) adds 25
+  requirements (02-§109.1–109.25): 17 covered, 8 implemented. Each submitted
+  event is written as its own file under source/data/<stem>/<id>.yaml instead
+  of being appended to the shared camp YAML, so concurrent submissions never
+  touch the same file and their PRs cannot conflict in the merge queue (fixes
+  #461). loadCampEvents() (FRAG-01..09) merges the camp file with its fragments
+  for every view; buildFragmentYaml/fragmentPath/assertFragmentYamlValid
+  (FRAG-30..43, PHP parity) write fragments; validateFragment + check-yaml-
+  security fragment scan (FRAG-60..66, FRAG-80..82) validate them; campFileForPath
+  (FRAG-50..58, EDW-29..32) maps fragment paths back to a camp for deploy QA
+  gating and PR-check validation. The 8 implemented rows are the network
+  write/edit/delete orchestration (manual/e2e checkpoints, same as the existing
+  add/edit/delete endpoints). Compaction of fragments back into the camp file is
+  a separate follow-up.
 
 Note: §108 (Config-File QA Deploy Trigger) adds 4 requirements
   (02-§108.1–108.4), all covered by DQT-01..06
