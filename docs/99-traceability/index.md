@@ -116,7 +116,7 @@ ID ranges.
 
 ---
 
-Audit date: 2026-02-24. Last updated: 2026-06-21 (duplicate submission hardening delivered, #480: 02-§111.1–111.9: 7 covered, 2 implemented; split-on-open delivered, #470: 02-§110.1–110.8 covered; fragment-only edit/delete delivered, #467: 02-§109.1–109.26: 22 covered, 4 implemented; config-file QA deploy trigger 02-§108.1–108.4 covered; location availability 02-§107.1–107.8 covered).
+Audit date: 2026-02-24. Last updated: 2026-06-21 (duplicate submission hardening delivered, #480: 02-§111.1–111.9: 7 covered, 2 implemented; split-on-open delivered, #470: 02-§110.1–110.8 covered; fragment-only edit/delete delivered, #467: 02-§109.1–109.26: 22 covered, 4 implemented; config-file QA deploy trigger 02-§108.1–108.4 covered; location availability 02-§107.1–107.8 covered; countdown hidden during ongoing camp delivered, #521: 02-§30.26 covered).
 
 ---
 
@@ -126,7 +126,7 @@ The matrix is split by ID family. Each file carries the rows for one family.
 
 | Family | Source | Rows | File |
 | --- | --- | --- | --- |
-| `02` | `docs/02-requirements/` | 1324 | [02-requirements](./02-requirements.md) |
+| `02` | `docs/02-requirements/` | 1325 | [02-requirements](./02-requirements.md) |
 | `03` | `docs/03-architecture/` | 0 | [03-architecture](./03-architecture.md) |
 | `05` | `docs/05-DATA_CONTRACT.md` | 19 | [05-data-contract](./05-data-contract.md) |
 | `07` | `docs/07-design/` | 91 | [07-design](./07-design.md) |
@@ -138,8 +138,8 @@ Test IDs referenced in the `Test(s)` column are defined in the
 ## Summary
 
 ```text
-Total requirements:            1417
-Covered (implemented + tested): 761
+Total requirements:            1418
+Covered (implemented + tested): 762
 Implemented, not tested:        656
 Gap (no implementation):          0
 Orphan tests (no requirement):    0

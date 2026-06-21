@@ -333,10 +333,10 @@ Part of [the traceability index](./index.md).
 | `02-§30.11` | Facebook icon links to Facebook group | 03-architecture/pages-and-content.md §15.4 | HERO-08 | `source/build/render-index.js` – `<a href="${facebookUrl}">` | covered |
 | `02-§30.12` | Icons displayed at ~64px, vertically centered | 07-design/components.md §6 | — (manual: visual check) | `style.css` – `.hero-social-link img { width: 64px; height: 64px }` | implemented |
 | `02-§30.13` | Countdown shows days remaining until next camp | 03-architecture/pages-and-content.md §15.3 | HERO-10 | `source/build/render-index.js` – countdown inline script | covered |
-| `02-§30.14` | Countdown target derived from camps.yaml (nearest future camp) | 03-architecture/pages-and-content.md §15.2 | HERO-10 | `source/build/build.js` – `futureCamps` filter and sort | covered |
+| `02-§30.14` | Countdown target is the nearest upcoming camp's start_date | 03-architecture/pages-and-content.md §15.2 | CDOWN-01, CDOWN-02 | `source/build/utils.js` – `resolveCountdownTarget` | covered |
 | `02-§30.15` | Countdown shows large number + "Dagar kvar" label | 07-design/components.md §6 | HERO-11, HERO-13 | `source/build/render-index.js` – `.hero-countdown-number` + `.hero-countdown-label` | covered |
 | `02-§30.16` | Countdown target embedded as data-target; JS computes on load | 03-architecture/pages-and-content.md §15.3 | HERO-10 | `source/build/render-index.js` – `data-target="${countdownTarget}"` | covered |
-| `02-§30.17` | Countdown hidden if no future camp | 03-architecture/pages-and-content.md §15.3 | HERO-12 | `source/build/render-index.js` – no countdown HTML when `countdownTarget` is null | covered |
+| `02-§30.17` | Countdown hidden if no upcoming camp | 03-architecture/pages-and-content.md §15.3 | HERO-12, CDOWN-08 | `source/build/utils.js` – `resolveCountdownTarget` returns null | covered |
 | `02-§30.18` | Countdown has subtle cream/sand background | 07-design/components.md §6 | — (manual: visual check) | `style.css` – `.hero-countdown { background: var(--color-cream-light) }` | implemented |
 | `02-§30.19` | All hero styling uses CSS custom properties | 07-design/css-strategy.md §7 | — (manual: CSS review) | `style.css` – all hero rules use `var(--…)` tokens | implemented |
 | `02-§30.20` | Countdown JS is minimal, no framework | 03-architecture/pages-and-content.md §15.3 | — (manual: code review) | `source/build/render-index.js` – ~8-line inline `<script>` | implemented |
@@ -345,6 +345,7 @@ Part of [the traceability index](./index.md).
 | `02-§30.23` | Countdown background color is `#FAF7EF` (solid, not semi-transparent) | 07-design/components.md §6 | — (manual: visual check) | `style.css` – `.hero-countdown { background: var(--color-cream-light) }` | implemented |
 | `02-§30.24` | Discord icon uses `discord-ikon.webp` | 03-architecture/pages-and-content.md §15.4 | HERO-16 | `render-index.js` – `discord-ikon.webp` in Discord link `<img>` | covered |
 | `02-§30.25` | Sidebar vertically centered alongside hero image | 07-design/components.md §6 | — (manual: visual check) | `style.css` – `.hero { align-items: center }` | implemented |
+| `02-§30.26` | Countdown not displayed while a camp is ongoing (today within start..end) | 03-architecture/pages-and-content.md §15.2 | CDOWN-03..07 | `source/build/utils.js` – `resolveCountdownTarget` returns null when ongoing | covered |
 
 ### 31. Inline Camp Listing and Link Styling
 
