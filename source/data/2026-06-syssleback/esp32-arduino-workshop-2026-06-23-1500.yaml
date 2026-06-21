@@ -1,0 +1,18 @@
+event:
+  id: esp32-arduino-workshop-2026-06-23-1500
+  title: ESP32/Arduino workshop
+  date: '2026-06-23'
+  start: '15:00'
+  end: '17:00'
+  location: GA Datorsal
+  responsible: Fridian Fransila
+  description: |
+    ESP32/Arduino programmering på valfri nivå. Jag tillhandahåller enheter och breadboards(kopplings plattor). Kom gärna både som nybörjare och erfaren då det är en workshop och det är tänkt att vi lär av varandra. 
+    Ta gärna med en laptop och USB-c sladd.
+  link: null
+  owner:
+    name: ''
+    email: ''
+  meta:
+    created_at: 2026-06-21 08:27
+    updated_at: 2026-06-21 08:27
