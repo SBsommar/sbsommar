@@ -621,7 +621,9 @@
       ' en ny aktivitet och välj <em>Ja, det är okej</em> när vi frågar.</p>';
     modalContent.innerHTML =
       '<p class="intro"><strong>' + escHtml(title) + '</strong>' +
-      ' syns i schemat om ungefär en minut.</p>' +
+      ' syns i schemat inom någon minut, men ibland kan det ta upp till 15 minuter.</p>' +
+      '<p class="result-note">Dyker den inte upp? Ladda om sidan –' +
+      ' webbläsaren kan visa en sparad version.</p>' +
       noEditNote +
       '<div class="success-actions">' +
         '<a href="schema.html" class="btn-primary">Gå till schemat →</a>' +
@@ -647,7 +649,10 @@
       ' redigeras från den här webbläsaren.</p>';
     modalContent.innerHTML =
       '<p class="intro"><strong>' + escHtml(title) + '</strong>' +
-      ' på ' + count + ' dagar – syns i schemat om ungefär en minut.</p>' +
+      ' på ' + count + ' dagar – syns i schemat inom någon minut,' +
+      ' men ibland kan det ta upp till 15 minuter.</p>' +
+      '<p class="result-note">Dyker de inte upp? Ladda om sidan –' +
+      ' webbläsaren kan visa en sparad version.</p>' +
       noEditNote +
       '<div class="success-actions">' +
         '<a href="schema.html" class="btn-primary">Gå till schemat →</a>' +

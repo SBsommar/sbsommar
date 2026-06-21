@@ -306,7 +306,7 @@ element inside `.modal-box`. Tab and Shift+Tab wrap within the modal.
 | State | Heading | Content |
 | --- | --- | --- |
 | Loading | "Skickar…" | Spinner + "Skickar till GitHub…" |
-| Success | "Aktiviteten är tillagd!" | Title, "Den syns i schemat om ungefär en minut.", optional no-edit note, two action buttons |
+| Success | "Aktiviteten är tillagd!" | Title, "Den syns i schemat inom någon minut, men ibland kan det ta upp till 15 minuter.", cache-reload tip note, optional no-edit note, two action buttons |
 | Error | "Något gick fel" | Error message + "Försök igen" button |
 
 ### "Försök igen" and "Lägg till en till"
@@ -362,7 +362,7 @@ trapping, and `body.modal-open { overflow: hidden }`.
 | State | Heading | Content |
 | --- | --- | --- |
 | Loading | "Sparar…" | Spinner + "Sparar till GitHub…" |
-| Success | "Aktiviteten är uppdaterad!" | Title, "Den syns i schemat om ungefär en minut.", "Gå till schemat →" link |
+| Success | "Aktiviteten är uppdaterad!" | Title, "Den syns i schemat inom någon minut, men ibland kan det ta upp till 15 minuter.", cache-reload tip note, "Gå till schemat →" link |
 | Error | "Något gick fel" | Error message + "Försök igen" button |
 
 ### Edit "Försök igen"

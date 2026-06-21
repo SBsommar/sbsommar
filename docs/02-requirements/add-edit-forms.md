@@ -207,9 +207,11 @@ progress modal → result.
 ### 19.4 Success state
 
 - On a successful response, the modal content changes to show: the submitted
-  activity title, the text "Aktiviteten är tillagd! Den syns i schemat om ungefär
-  en minut.", a primary link "Gå till schemat →" to `schema.html`, and a secondary
-  button "Lägg till en till". <!-- 02-§19.10 -->
+  activity title, the text "Aktiviteten är tillagd! Den syns i schemat inom någon
+  minut, men ibland kan det ta upp till 15 minuter.", a tip note "Dyker den inte
+  upp? Ladda om sidan – webbläsaren kan visa en sparad version.", a primary link
+  "Gå till schemat →" to `schema.html`, and a secondary button "Lägg till en till".
+  <!-- 02-§19.10 -->
 - If the user declined cookie consent, the success state also shows a Swedish note
   explaining they cannot edit the activity from this browser, and that they can
   resubmit with consent next time. <!-- 02-§19.11 -->
@@ -265,8 +267,10 @@ and actions appropriate for an edit rather than a new submission.
 ### 20.3 Success state
 
 - On a successful response, the modal shows: the edited activity title, the text
-  "Aktiviteten är uppdaterad! Den syns i schemat om ungefär en minut.", and a
-  primary link "Gå till schemat →" to `schema.html`. <!-- 02-§20.8 -->
+  "Aktiviteten är uppdaterad! Den syns i schemat inom någon minut, men ibland kan
+  det ta upp till 15 minuter.", a tip note "Dyker den inte upp? Ladda om sidan –
+  webbläsaren kan visa en sparad version.", and a primary link "Gå till schemat →"
+  to `schema.html`. <!-- 02-§20.8 -->
 
 ### 20.4 Error state
 

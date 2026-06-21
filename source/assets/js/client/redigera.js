@@ -157,7 +157,9 @@
     modalHeading.textContent = 'Aktiviteten är uppdaterad!';
     modalContent.innerHTML =
       '<p class="intro"><strong>' + escHtml(title) + '</strong>' +
-      ' syns i schemat om ungefär en minut.</p>' +
+      ' syns i schemat inom någon minut, men ibland kan det ta upp till 15 minuter.</p>' +
+      '<p class="result-note">Dyker den inte upp? Ladda om sidan –' +
+      ' webbläsaren kan visa en sparad version.</p>' +
       '<div class="success-actions">' +
         '<a href="schema.html" class="btn-primary">Gå till schemat →</a>' +
       '</div>';
