@@ -138,11 +138,26 @@ Test IDs referenced in the `Test(s)` column are defined in the
 ## Summary
 
 ```text
-Total requirements:            1408
-Covered (implemented + tested): 754
-Implemented, not tested:        654
+Total requirements:            1417
+Covered (implemented + tested): 761
+Implemented, not tested:        656
 Gap (no implementation):          0
 Orphan tests (no requirement):    0
+
+Note: §113 (Proactive Merge-Queue Enqueue) adds 9 requirements
+  (02-§113.1–113.9): 7 covered (ENQ-01..10 in tests/github.test.js plus the
+  buildEnqueueMutation parity tests in api/tests/GitHubTest.php) and 2
+  implemented (the enqueue call after auto-merge, and keeping auto-merge as a
+  complement, both code-review/ENQ-M01 manual). After the form API creates an
+  event PR and enables squash auto-merge, it places the PR in the merge queue
+  immediately via GraphQL enqueuePullRequest so a submitted activity merges in
+  ~50 s instead of waiting for the reactive recovery sweep (~15 min worst case).
+  The call is best-effort: when the PR is not yet mergeable (checks still
+  running) the failure is logged and the PR falls back to auto-merge plus the
+  §112 reactive recovery. ENQ-M01 is the live checkpoint — enqueue cannot be
+  exercised without a real token and a real PR, so whether it succeeds at
+  submission time (and thus whether the latency goal is actually met) must be
+  confirmed against production (#481).
 
 Note: §112 (Stranded Auto-Merge Recovery) adds 11 requirements
   (02-§112.1–112.11): 5 covered (STRAND-01..13,
