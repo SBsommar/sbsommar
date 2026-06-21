@@ -2,18 +2,19 @@ event:
   id: ost-ostergotland-smaland-och-oland-lokalforening-2026-06-23-1500
   title: 'Öst (Östergötland, Småland och Öland)  - lokalföreningsträff'
   date: '2026-06-23'
-  start: '15:00'
-  end: '16:00'
+  start: '14:00'
+  end: '15:00'
   location: Tält2
   responsible: Helena Ilke
   description: |
     Passa på att träffa andra på lägret från samma geografiska område 🎉
     
     Hitta nya och gamla bekanta. Fundera på vilka aktiviteter som kan göras lokalt. Och bara ha trevligt!
+    
   link: null
   owner:
     name: ''
     email: ''
   meta:
     created_at: 2026-06-21 14:35
-    updated_at: 2026-06-21 14:35
+    updated_at: 2026-06-21 14:40
