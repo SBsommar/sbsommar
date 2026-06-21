@@ -1665,10 +1665,10 @@ Doc ref: `03-architecture/data-layer.md §1.1`, `§3`, `§3.1`, `§3.4`, `§4a`;
 | `02-§109.6` | implemented | `GitHub::addEventsToActiveCamp()` writes one fragment per date on one branch/PR; network write manual |
 | `02-§109.7` | covered | FRAG-37, FRAG-38: distinct ids → distinct files (no shared file); same id → same path |
 | `02-§109.8` | implemented | New-file create on an existing id → GitHub 422 → `classifyGitHubError` "En skrivkonflikt uppstod" (§3.3, FRAG-38); live 422 manual |
-| `02-§109.9` | gap | Edit/delete must act only on the fragment (no camp-YAML read/write); current `update/removeEventInActiveCamp()` still falls back to the camp file — fragment-only behaviour pending (#467) |
-| `02-§109.10` | implemented | Fragment edit rewrites the file via `patchEventObject`+`buildFragmentYaml` (preserves id/created_at, bumps updated_at); manual |
-| `02-§109.11` | implemented | Fragment delete via `deleteFile()` (Contents API DELETE); manual |
-| `02-§109.12` | gap | Edit/delete for an id with no fragment must make no change and return an error (no camp-YAML write); current code still patches/removes from the camp file — pending (#467) |
+| `02-§109.9` | covered | FRAGONLY-01..04, -10, -11: Node+PHP edit/delete bodies act on `fragmentPath` only and never reference `campFilePath` |
+| `02-§109.10` | covered | EDIT-05..15, EEC-01..04: `patchEventObject` preserves id/created_at and bumps updated_at; edit rewrites the fragment via `buildFragmentYaml` |
+| `02-§109.11` | covered | FRAGONLY-04, -11: fragment delete via `deleteFile()`, no `putFile` in the delete path |
+| `02-§109.12` | covered | FRAGONLY-02, -04, -10, -11: no fragment → `throw`, no camp-YAML write (PHP returns a Swedish error, Node logs) |
 | `02-§109.13` | covered | FRAG-02: `build.js` loads the active camp and the archive loop via `loadCampEvents()` |
 | `02-§109.14` | covered | FRAG-09: merged set sorted by `groupAndSortEvents()` (date, start) |
 | `02-§109.15` | covered | FRAG-05: `loadCampEvents()` de-dups by id (fragment wins) and logs a warning |
@@ -1682,4 +1682,4 @@ Doc ref: `03-architecture/data-layer.md §1.1`, `§3`, `§3.1`, `§3.4`, `§4a`;
 | `02-§109.23` | covered | EDW-29, EDW-30, FRAG-52: prod gate maps fragment → camp file, then the camps.yaml `qa` lookup |
 | `02-§109.24` | covered | FRAG-70..73: fragment-only diff is data-only under `ci.yml`'s `^source/data/` + camps/local rule |
 | `02-§109.25` | covered | EDW-31, EDW-32: both event-data workflows trigger on `source/data/**.yaml` (matches nested fragments) |
-| `02-§109.26` | gap | API never writes the camp YAML; `events:` maintained only by out-of-band split/compaction — pending (#467); split-at-open and compaction tracked separately |
+| `02-§109.26` | covered | FRAGONLY-05, -12: monolith patch/remove helpers removed (Node+PHP); mutation bodies never reference `campFilePath`. Split-at-open and compaction tracked separately |
