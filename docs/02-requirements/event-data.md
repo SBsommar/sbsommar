@@ -777,5 +777,58 @@ camp's live events.
 
 - No add, edit, or delete request writes a camp's YAML file. A camp's `events:`
   list is maintained only by out-of-band steps outside the live submission flow:
-  the split that moves an open camp's events into fragments, and the compaction
-  that folds fragments back after the camp is archived. <!-- 02-§109.26 -->
+  the split that moves an open camp's events into fragments (§110), and the
+  compaction that folds fragments back after the camp is archived. <!-- 02-§109.26 -->
+
+---
+
+## 110. Split a Camp's Seeded Events into Fragments at Opening
+
+### 110.1 Context
+
+A camp is seeded as a monolith before it opens: organizers handwrite the
+activities directly in the camp's YAML `events:` list, so a camp file such as
+`2026-07-syssleback.yaml` already holds events before the camp opens for
+editing.
+
+Fragment-only mutation (§109.26) means add, edit, and delete never write the
+camp YAML file — they only act on fragment files under `source/data/<stem>/`.
+A seeded event that still lives in the camp YAML file therefore has no fragment,
+so once the camp opens a participant who tries to edit or delete it gets a "not
+found" failure. Splitting the seeded events into fragments at opening is the
+inverse of compaction (§109.1); together they form the camp lifecycle: split at
+open → fragments while the camp is live → compaction at archive.
+
+### 110.2 The split step (site requirements)
+
+- A maintenance script `source/scripts/split-camp-events.js` takes a single camp
+  argument — the camp's `file` value or its `id` — and writes every event in that
+  camp's YAML `events:` list into the camp's fragment directory, one fragment file
+  per event. <!-- 02-§110.1 -->
+- Each fragment is written to `source/data/<stem>/<event-id>.yaml`, where `<stem>`
+  is the camp `file` value without its `.yaml` extension, with the same layout as
+  a submitted fragment: one top-level `event:` mapping (§109.2) whose filename
+  stem equals `event.id` (§109.3). <!-- 02-§110.2 -->
+- After the split, the camp YAML file retains its `camp:` header and its `events:`
+  key holds an empty list. <!-- 02-§110.3 -->
+- The split writes the fragments and empties the camp file's `events:` list in a
+  single commit, so at no committed state does an event exist both in the camp
+  file and as a fragment. <!-- 02-§110.4 -->
+
+### 110.3 Validity and safety (site requirements)
+
+- Each fragment the split produces passes the same checks as any fragment file:
+  `assertFragmentYamlValid`, `lint-yaml.js` (`validateFragment`), and
+  `check-yaml-security.js` (§109.17–§109.21). <!-- 02-§110.5 -->
+- The split is idempotent: run on a camp whose YAML `events:` list is already
+  empty, it makes no change (no-op). <!-- 02-§110.6 -->
+- If a fragment file already exists for a seeded event's id, the split makes no
+  change to any file and fails with a clear error, so an existing fragment is
+  never overwritten. <!-- 02-§110.7 -->
+
+### 110.4 Lifecycle placement (operational requirement)
+
+- `docs/04-OPERATIONS.md` documents the split as a manual step an organizer runs
+  when a camp opens for editing (at or shortly before its `opens_for_editing`
+  date), placed in the camp lifecycle as: split at open → fragments while the camp
+  is live → compaction at archive. <!-- 02-§110.8 -->
