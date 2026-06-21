@@ -667,7 +667,7 @@ pull requests removed and drop events they added (issue #467). The desired state
 is therefore that add, edit, and delete all act only on fragment files and never
 write the camp YAML file. This requires an open camp's events to be stored as
 fragments in the first place: when a camp opens, its seeded events are split into
-fragments (split-at-open, tracked separately), and compaction folds them back
+fragments (split-at-open, §110), and compaction folds them back
 into the camp YAML file after the camp is archived. Between those two maintenance
 steps the camp YAML file's `events:` list is empty and the fragments are the
 camp's live events.
