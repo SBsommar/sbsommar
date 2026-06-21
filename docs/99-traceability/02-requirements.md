@@ -1706,12 +1706,12 @@ Doc ref: `02-requirements/event-data.md §111`;
 
 | ID | Status | Notes |
 | --- | --- | --- |
-| `02-§111.1` | gap | Pre-check via `getFileMaybe(fragmentPath)` against `main` before any branch — to add to `addEventToActiveCamp`/`addEventsToActiveCamp` (Node + PHP) |
-| `02-§111.2` | gap | Duplicate → HTTP 409 + Swedish "finns redan i schemat"; refines 02-§109.8 (replaces the 422 "skrivkonflikt" path); no branch/PR created |
-| `02-§111.3` | gap | Pre-check runs synchronously before the response in both runtimes; in `app.js` it must be awaited before `res.json`, not inside the fire-and-forget write |
-| `02-§111.4` | gap | Pre-check applies to single `POST /add-event` and batch `POST /add-events` |
-| `02-§111.5` | gap | Batch rejected atomically when any target fragment exists; no batch fragment created |
-| `02-§111.6` | gap | Concurrent window: both pre-checks pass; after the first merge the second PR's net diff vs `main` is empty |
-| `02-§111.7` | gap | Auto-close: an `event/*` PR with empty net diff vs `main` is closed and its branch deleted, no maintainer action |
-| `02-§111.8` | gap | Cleanup runs after each event-data merge to `main` (push, `source/data/**`), re-evaluating open event PRs |
-| `02-§111.9` | gap | Same-id/different-body collision (non-empty diff) is logged for manual attention, not closed silently |
+| `02-§111.1` | covered | DEDUP-01 (Node), DEDUP-05 (PHP): `getFileMaybe(fragPath)` runs before `createBranch` in `addEventToActiveCamp`/`addEventsToActiveCamp`; DEDUP-03: `isDuplicateEvent` exported |
+| `02-§111.2` | covered | DEDUP-02, DEDUP-08: duplicate → `duplicateEventError`/`DuplicateEventException` → 409 + "Den här aktiviteten finns redan i schemat."; refines 02-§109.8, replaces the 422 path; live 409 is DEDUP-M01 |
+| `02-§111.3` | covered | DEDUP-04: `app.js` awaits `isDuplicateEvent` and answers 409 before `res.json(success)`; PHP add is already synchronous (SYNC-03) |
+| `02-§111.4` | covered | DEDUP-05/-06/-09: single `addEventToActiveCamp` and batch `addEventsToActiveCamp` both pre-check (PHP); Node has only `/add-event` |
+| `02-§111.5` | covered | DEDUP-06, DEDUP-09: batch checks every target before `createBranch` and `handleAddEvents` maps the throw to 409 — atomic, no partial create |
+| `02-§111.6` | covered | DEDUPCLEAN-01, -02: `classifyEventPr` treats an empty net diff as redundant → close; the live empty-diff-after-merge premise is DEDUP-M02 |
+| `02-§111.7` | implemented | DEDUPCLEAN-01/-02 decide `close`; `main()` runs `gh pr close --delete-branch` on an `event/*` PR — the GitHub close + branch delete is the DEDUP-M02 manual checkpoint |
+| `02-§111.8` | implemented | `close-redundant-event-prs` job in `event-data-deploy-post-merge.yml` runs the script on push to `main` (`source/data/**`); CI/manual checkpoint (DEDUP-M02) |
+| `02-§111.9` | covered | DEDUPCLEAN-04: a modified (same-id/different-body) fragment → `log-manual`, not closed |

@@ -116,7 +116,7 @@ ID ranges.
 
 ---
 
-Audit date: 2026-02-24. Last updated: 2026-06-21 (duplicate submission hardening in progress, #480: 02-§111.1–111.9 gap; fragment-only edit/delete delivered, #467: 02-§109.1–109.26: 22 covered, 4 implemented; config-file QA deploy trigger 02-§108.1–108.4 covered; location availability 02-§107.1–107.8 covered).
+Audit date: 2026-02-24. Last updated: 2026-06-21 (duplicate submission hardening delivered, #480: 02-§111.1–111.9: 7 covered, 2 implemented; split-on-open delivered, #470: 02-§110.1–110.8 covered; fragment-only edit/delete delivered, #467: 02-§109.1–109.26: 22 covered, 4 implemented; config-file QA deploy trigger 02-§108.1–108.4 covered; location availability 02-§107.1–107.8 covered).
 
 ---
 
@@ -139,20 +139,24 @@ Test IDs referenced in the `Test(s)` column are defined in the
 
 ```text
 Total requirements:            1397
-Covered (implemented + tested): 742
-Implemented, not tested:        646
-Gap (no implementation):          9
+Covered (implemented + tested): 749
+Implemented, not tested:        648
+Gap (no implementation):          0
 Orphan tests (no requirement):    0
 
 Note: §111 (Duplicate Submission Hardening) adds 9 requirements
-  (02-§111.1–111.9), in progress (status gap pending implementation, #480). A
-  duplicate add (same title+date+start → same fragment path) is rejected by a
-  synchronous pre-check against main (HTTP 409, Swedish "finns redan i
-  schemat") before any branch is created, refining 02-§109.8 and replacing the
-  422 "skrivkonflikt" path. The pre-check covers single and batch add and runs
-  before the response in both runtimes. A concurrent duplicate that slips past
-  the pre-check is auto-closed after the first merges, when its net diff against
-  main is empty; a same-id/different-body collision is logged instead of closed.
+  (02-§111.1–111.9): 7 covered (DEDUP-01..09, DEDUPCLEAN-01..09,
+  tests/dedup-submission.test.js + tests/dedup-cleanup.test.js, plus PHPUnit
+  parity) and 2 implemented (the gh-CLI PR close + the workflow job, DEDUP-M02
+  manual). A duplicate add (same title+date+start → same fragment path) is
+  rejected by a synchronous pre-check against main (HTTP 409, Swedish "Den här
+  aktiviteten finns redan i schemat.") before any branch is created, refining
+  02-§109.8 and replacing the 422 "skrivkonflikt" path. The pre-check covers
+  single and batch add and runs before the response in both runtimes. A
+  concurrent duplicate that slips past the pre-check is auto-closed by
+  close-redundant-event-prs after the first merges, when its net diff against
+  main is empty; a same-id/different-body collision is logged instead of closed
+  (#480).
 
 Note: §109 (Concurrent Event Submission via Fragment Files) adds 26
   requirements (02-§109.1–109.26): 22 covered, 4 implemented. Each submitted

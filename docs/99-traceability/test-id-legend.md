@@ -214,3 +214,6 @@ Part of [the traceability index](./index.md).
 | EDW-29..32 | `tests/event-deploy-workflow.test.js` | Fragment-aware production QA gating + workflow triggers (02-§109.22, 109.23, 109.25) |
 | (PHPUnit) | `api/tests/GitHubTest.php` | PHP mirror of the fragment helpers: `buildFragmentYaml`, `fragmentPath`, `assertFragmentYamlValid` (02-§109) |
 | SPLIT-01..10 | `tests/split-camp-events.test.js` | `splitCampEvents` / `resolveCampFile` / `emptyEventsList` split-at-open (02-§110) |
+| DEDUP-01..09 | `tests/dedup-submission.test.js` | Duplicate pre-check (Node + PHP): `getFileMaybe` before any branch, 409 + Swedish message, awaited before `app.js`'s response, atomic batch reject (02-§111.1–111.5) |
+| DEDUP-M01..M02 | (manual) | Live 409 on a duplicate submission; a concurrent duplicate's redundant PR is auto-closed (02-§111.2, 111.6–111.9) |
+| DEDUPCLEAN-01..09 | `tests/dedup-cleanup.test.js` | `classifyEventPr` decision table: empty diff → close, fresh add → keep, same-id/different-body → log-manual, out-of-scope → ignore (02-§111.6–111.9) |
