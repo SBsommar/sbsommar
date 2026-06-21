@@ -216,11 +216,6 @@ jobs:
   recover-stranded-event-prs:
     name: Recover event PRs stranded in the merge queue
     runs-on: ubuntu-latest
-    # Needs write access to disable→enable auto-merge; the default workflow token
-    # is read-only here (02-§112.7).
-    permissions:
-      contents: read
-      pull-requests: write
 
     steps:
       - uses: actions/checkout@v6
@@ -231,10 +226,13 @@ jobs:
 
       # This merge just advanced main, which is exactly the base move that can
       # strand a sibling event PR's auto-merge. Re-enqueue any stranded event PR
-      # by toggling auto-merge off then on (02-§112.7). Uses the pre-installed gh
-      # CLI; no dependency install needed.
+      # by toggling auto-merge off then on (02-§112.7). The default GITHUB_TOKEN
+      # cannot run the auto-merge GraphQL mutations ("Resource not accessible by
+      # integration"), so this uses EVENT_AUTOMERGE_TOKEN — a repo-level secret
+      # with pull-request + contents write access (02-§112.12, 112.14). Uses the
+      # pre-installed gh CLI; no dependency install needed.
       - name: Recover stranded event PRs
         run: node source/scripts/recover-stranded-event-prs.js
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.EVENT_AUTOMERGE_TOKEN }}
           GH_REPO: ${{ github.repository }}

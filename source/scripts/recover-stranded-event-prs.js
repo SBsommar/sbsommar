@@ -122,6 +122,50 @@ function recoverPr(nodeId) {
   ]));
 }
 
+/**
+ * Process one event pull request: read its state, classify it, and recover it if
+ * stranded. Side effects (network reads, auto-merge toggles) are injected via
+ * `fetchState`/`recover` so the outcome logic is unit-testable.
+ *
+ *   pr.number, pr.headRefName – the open pull request to consider
+ *   fetchState(number)        – returns { nodeId, autoMergeEnabled, mergeStateStatus, inMergeQueue }
+ *   recover(nodeId)           – toggles auto-merge off then on
+ *
+ * Per-PR errors are caught here so one bad fetch or mutation does not abort the
+ * sweep (02-§112.6). Returns one of: 'recovered', 'skipped', 'ignored', 'failed'.
+ */
+function processPr(pr, { fetchState, recover, log = console.log }) {
+  try {
+    const state = fetchState(pr.number);
+    const verdict = classifyStrandedPr({ branch: pr.headRefName, ...state });
+
+    if (verdict === 'recover') {
+      log(`Recovering stranded PR #${pr.number} (${pr.headRefName}) — auto-merge on, CLEAN, no queue entry; toggling auto-merge`);
+      recover(state.nodeId);
+      return 'recovered';
+    }
+    log(`Skipping PR #${pr.number} (${pr.headRefName}) — ${verdict} (mergeStateStatus=${state.mergeStateStatus}, inQueue=${state.inMergeQueue}, autoMerge=${state.autoMergeEnabled})`);
+    return verdict === 'ignore' ? 'ignored' : 'skipped';
+  } catch (err) {
+    log(`::warning::Could not process event PR #${pr.number} (${pr.headRefName}): ${err.message}`);
+    return 'failed';
+  }
+}
+
+/**
+ * Run `processPr` over every event pull request and return how many failed. Pure
+ * with respect to the injected deps, so the fail-loud count is unit-testable. The
+ * loop never short-circuits: a failure is counted and the remaining pull requests
+ * are still attempted (02-§112.6).
+ */
+function runSweep(eventPrs, deps) {
+  let failures = 0;
+  for (const pr of eventPrs) {
+    if (processPr(pr, deps) === 'failed') failures += 1;
+  }
+  return failures;
+}
+
 function main() {
   const repoSlug = process.env.GH_REPO || process.env.GITHUB_REPOSITORY || '';
   const [owner, repo] = repoSlug.split('/');
@@ -141,22 +185,15 @@ function main() {
     return;
   }
 
-  for (const pr of eventPrs) {
-    // Isolate per-PR failures so one bad fetch/mutation does not abort the sweep
-    // (02-§112.6).
-    try {
-      const state = fetchPrState(owner, repo, pr.number);
-      const verdict = classifyStrandedPr({ branch: pr.headRefName, ...state });
+  const failures = runSweep(eventPrs, {
+    fetchState: (number) => fetchPrState(owner, repo, number),
+    recover: recoverPr,
+  });
 
-      if (verdict === 'recover') {
-        console.log(`Recovering stranded PR #${pr.number} (${pr.headRefName}) — auto-merge on, CLEAN, no queue entry; toggling auto-merge`);
-        recoverPr(state.nodeId);
-      } else {
-        console.log(`Skipping PR #${pr.number} (${pr.headRefName}) — ${verdict} (mergeStateStatus=${state.mergeStateStatus}, inQueue=${state.inMergeQueue}, autoMerge=${state.autoMergeEnabled})`);
-      }
-    } catch (err) {
-      console.log(`::warning::Could not process event PR #${pr.number} (${pr.headRefName}): ${err.message}`);
-    }
+  // Fail the job loudly when any stranded PR could not be recovered, rather than
+  // passing as a green run with only a warning (02-§112.13).
+  if (failures > 0) {
+    throw new Error(`${failures} event pull request(s) could not be recovered`);
   }
 }
 
@@ -169,4 +206,4 @@ if (require.main === module) {
   }
 }
 
-module.exports = { classifyStrandedPr, withRetry };
+module.exports = { classifyStrandedPr, withRetry, processPr, runSweep };
