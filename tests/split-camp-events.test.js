@@ -228,6 +228,17 @@ describe('split-camp-events (02-§110)', () => {
     assert.match(String(doc.event.meta.created_at), /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/);
   });
 
+  it('SPLIT-11: produced fragments carry no line-trailing whitespace (02-§110.5)', () => {
+    // A multi-paragraph description: the blank line would otherwise become a line
+    // of pure indentation, and the first line ends in a stray space.
+    writeCampFile(dir, [ev({ id: 'fika-2026-06-23-1000', description: 'Rad ett. \n\nRad två.' })]);
+    splitCampEvents({ dataDir: dir, campFile: CAMP_FILE });
+
+    const content = fs.readFileSync(path.join(dir, STEM, 'fika-2026-06-23-1000.yaml'), 'utf8');
+    assert.ok(!/[ \t]+$/m.test(content), `Expected no line-trailing whitespace, got: ${JSON.stringify(content)}`);
+    assert.equal(validateFragment(content).ok, true);
+  });
+
   describe('resolveCampFile', () => {
     beforeEach(() => {
       fs.writeFileSync(

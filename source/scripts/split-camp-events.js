@@ -106,7 +106,11 @@ function splitCampEvents({ dataDir = DEFAULT_DATA_DIR, campFile }) {
       throw new Error(`Fragment already exists for "${id}" (${fragPath}); aborting without changes`);
     }
 
-    const fragContent = buildFragmentYaml(event) + '\n';
+    // buildFragmentYaml indents every description line, so a blank line in a
+    // multi-paragraph description becomes a line of pure indentation, and a
+    // seeded line may end in a stray space. Strip line-trailing whitespace so
+    // the fragment file carries none (cleaner than the live API serialiser).
+    const fragContent = buildFragmentYaml(event).replace(/[ \t]+$/gm, '') + '\n';
     assertFragmentYamlValid(fragContent, id);
     const lint = validateFragment(fragContent);
     if (!lint.ok) {
