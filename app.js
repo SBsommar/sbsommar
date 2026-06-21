@@ -6,7 +6,7 @@ const fs        = require('fs');
 const path      = require('path');
 const yaml      = require('js-yaml');
 
-const { addEventToActiveCamp, updateEventInActiveCamp, removeEventFromActiveCamp, slugify } = require('./source/api/github');
+const { addEventToActiveCamp, updateEventInActiveCamp, removeEventFromActiveCamp, isDuplicateEvent, DUPLICATE_EVENT_MESSAGE, slugify } = require('./source/api/github');
 const { validateEventRequest, validateEditRequest }              = require('./source/api/validate');
 const { isEventPast }                                            = require('./source/api/edit-event');
 const {
@@ -133,7 +133,7 @@ app.post('/mint-token', mintTokenLimiter, (req, res) => {
   res.json({ success: true, token: result.token });
 });
 
-app.post('/add-event', addEventLimiter, (req, res) => {
+app.post('/add-event', addEventLimiter, async (req, res) => {
   // Time-gating with pre-camp bypass for admin/early roles (02-§26.17,
   // 02-§26.18, 02-§105.1, 02-§105.3).
   if (activeCamp) {
@@ -158,6 +158,19 @@ app.post('/add-event', addEventLimiter, (req, res) => {
       success: false,
       error: 'Sessionen kunde inte sparas. Kontakta arrangören.',
     });
+  }
+
+  // Duplicate pre-check — runs synchronously so the user sees the rejection even
+  // though the GitHub write below is fire-and-forget (02-§110.2, §110.3). PHP is
+  // synchronous and gets this for free; here it must come before res.json.
+  try {
+    if (await isDuplicateEvent(req.body)) {
+      return res.status(409).json({ success: false, error: DUPLICATE_EVENT_MESSAGE });
+    }
+  } catch (err) {
+    // Pre-check unavailable (e.g. network) — fall through; the background write's
+    // own duplicate guard (github.js) still applies.
+    console.error('POST /add-event duplicate pre-check failed:', err.message);
   }
 
   // Build the event ID the same way github.js does, so we can include it

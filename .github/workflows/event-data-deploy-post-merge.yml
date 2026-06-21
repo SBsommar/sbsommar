@@ -9,6 +9,8 @@ name: Event Data Deploy (Post-Merge)
 # Jobs:
 #   1. deploy-qa      – detect inline + build + rsync to QA
 #   2. deploy-prod    – detect inline + QA check + build + SCP to Production
+#   3. close-redundant-event-prs – close duplicate event PRs made redundant by
+#                                  this merge (02-§110.6–110.9)
 
 permissions:
   contents: read
@@ -182,3 +184,29 @@ jobs:
           source: staging/*
           target: ${{ secrets.DEPLOY_DIR }}/public_html
           strip_components: 1
+
+  close-redundant-event-prs:
+    name: Close redundant duplicate event PRs
+    runs-on: ubuntu-latest
+    # Needs write access to close a pull request and delete its branch; the
+    # default workflow token is read-only here (02-§110.7).
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+
+      # When a duplicate's first identical submission merged in this push, the
+      # second pull request now has an empty net diff against main. Close it and
+      # delete its branch so no maintainer has to (02-§110.6–110.9). Uses the
+      # pre-installed gh CLI; no dependency install needed.
+      - name: Close event PRs made redundant by this merge
+        run: node source/scripts/close-redundant-event-prs.js
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}

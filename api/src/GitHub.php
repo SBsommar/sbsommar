@@ -77,6 +77,13 @@ final class GitHub
         self::assertFragmentYamlValid($content, $event['id']);
         $commitMsg  = "Add event to {$camp['name']}: {$title} ({$date})";
 
+        // Reject a duplicate before any branch/PR is created, so an already-merged
+        // identical activity fails cleanly (409) instead of a dangling branch and a
+        // generic write-conflict error (02-§110.1, §110.2).
+        if ($this->getFileMaybe($fragPath) !== null) {
+            throw new DuplicateEventException("Event already exists: {$event['id']}");
+        }
+
         // 3. Ephemeral branch → create the new fragment file (no sha) → PR → auto-merge.
         $mainSha    = $this->getMainSha();
         $branchName = 'event/' . $date . '-' . self::slugify($title) . '-' . time();
@@ -143,9 +150,18 @@ final class GitHub
         foreach ($events as $event) {
             $content = self::buildFragmentYaml($event) . "\n";
             self::assertFragmentYamlValid($content, $event['id']);
-            $fragments[] = [self::fragmentPath($camp['file'], $event['id']), $content];
+            $fragments[] = [self::fragmentPath($camp['file'], $event['id']), $content, $event['id']];
         }
         $commitMsg  = "Add " . count($dates) . " recurring events to {$camp['name']}: {$title}";
+
+        // Reject the whole batch before any branch/PR if any date's fragment already
+        // exists on main — atomic, so a partial overlap never creates some files
+        // (02-§110.4, §110.5).
+        foreach ($fragments as [$fragPath, , $eventId]) {
+            if ($this->getFileMaybe($fragPath) !== null) {
+                throw new DuplicateEventException("Event already exists: {$eventId}");
+            }
+        }
 
         // 3. Ephemeral branch → create every fragment file on it → PR → auto-merge.
         $mainSha    = $this->getMainSha();

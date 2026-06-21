@@ -327,6 +327,33 @@ async function resolveActiveCampFromGitHub() {
   return resolveActiveCamp(campsData.camps || [], undefined, buildEnv);
 }
 
+// Swedish message shown when a submission duplicates an activity already in the
+// schedule (02-§110.2).
+const DUPLICATE_EVENT_MESSAGE = 'Den här aktiviteten finns redan i schemat.';
+
+// Build the error thrown when a fragment with the target id already exists. The
+// `status` lets the HTTP layer answer 409 instead of a generic 500 (02-§110.2).
+function duplicateEventError(eventId) {
+  const err = new Error(`Event already exists: ${eventId}`);
+  err.status = 409;
+  err.code = 'DUPLICATE_EVENT';
+  err.userMessage = DUPLICATE_EVENT_MESSAGE;
+  return err;
+}
+
+// Resolve the event id the add flow would write for this body and report whether
+// its fragment already exists on main (02-§110.1). Used by the Node entrypoint to
+// reject a duplicate synchronously, before the fire-and-forget write (02-§110.3).
+async function isDuplicateEvent(body) {
+  const title = String(body.title).trim();
+  const date  = String(body.date).trim();
+  const start = String(body.start).trim();
+  const eventId  = `${slugify(title)}-${date}-${start.replace(':', '')}`;
+  const camp     = await resolveActiveCampFromGitHub();
+  const fragPath = fragmentPath(camp.file, eventId);
+  return (await getFileMaybe(fragPath)) !== null;
+}
+
 // Writes a new event as its own fragment file in the active camp's directory
 // (02-§109.5). Because the file is brand-new and named after the event id, the
 // resulting PR can never conflict with another in-flight submission (02-§109.7).
@@ -357,6 +384,11 @@ async function addEventToActiveCamp(body) {
   const content    = buildFragmentYaml(event) + '\n';
   assertFragmentYamlValid(content, event.id);
   const commitMsg  = `Add event to ${camp.name}: ${title} (${date})`;
+
+  // Reject a duplicate before any branch/PR is created, so an already-merged
+  // identical activity fails cleanly (409) instead of a dangling branch and a
+  // generic write-conflict error (02-§110.1, §110.2).
+  if (await getFileMaybe(fragPath)) throw duplicateEventError(event.id);
 
   // Ephemeral branch → create the new fragment file (no sha) → PR → auto-merge.
   const mainSha    = await getMainSha();
@@ -412,4 +444,4 @@ async function removeEventFromActiveCamp(eventId) {
   await enableAutoMerge(pr.node_id);
 }
 
-module.exports = { addEventToActiveCamp, updateEventInActiveCamp, removeEventFromActiveCamp, slugify, yamlScalar, buildEventYaml, buildFragmentYaml, fragmentDir, fragmentPath, assertFragmentYamlValid, detectEventIndent, assertEventYamlValid, githubRequest, env };
+module.exports = { addEventToActiveCamp, updateEventInActiveCamp, removeEventFromActiveCamp, isDuplicateEvent, DUPLICATE_EVENT_MESSAGE, slugify, yamlScalar, buildEventYaml, buildFragmentYaml, fragmentDir, fragmentPath, assertFragmentYamlValid, detectEventIndent, assertEventYamlValid, githubRequest, env };

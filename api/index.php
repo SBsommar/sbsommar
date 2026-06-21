@@ -8,6 +8,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 use SBSommar\ActiveCamp;
 use SBSommar\Admin;
+use SBSommar\DuplicateEventException;
 use SBSommar\Feedback;
 use SBSommar\GitHub;
 use SBSommar\RateLimit;
@@ -282,6 +283,11 @@ function handleAddEvent(?array $activeCamp, string $adminTokenSecret, string $se
     try {
         $gh = new GitHub();
         $gh->addEventToActiveCamp($body);
+    } catch (DuplicateEventException $e) {
+        // Same activity already in the schedule — reject cleanly (02-§110.2).
+        jsonResponse(['success' => false, 'error' => 'Den här aktiviteten finns redan i schemat.'], 409);
+
+        return;
     } catch (\Throwable $e) {
         error_log('POST /add-event error: ' . $e->getMessage());
         jsonResponse(['success' => false, 'error' => GitHub::classifyGitHubError($e)], 500);
@@ -364,6 +370,12 @@ function handleAddEvents(?array $activeCamp, string $adminTokenSecret, string $s
     try {
         $gh = new GitHub();
         $eventIds = $gh->addEventsToActiveCamp($body);
+    } catch (DuplicateEventException $e) {
+        // One or more of the chosen dates already have this activity — reject the
+        // whole batch cleanly (02-§110.5).
+        jsonResponse(['success' => false, 'error' => 'Aktiviteten finns redan i schemat för ett eller flera av de valda datumen.'], 409);
+
+        return;
     } catch (\Throwable $e) {
         error_log('POST /add-events error: ' . $e->getMessage());
         jsonResponse(['success' => false, 'error' => GitHub::classifyGitHubError($e)], 500);
