@@ -244,6 +244,13 @@ GitHub already considers auto-merge enabled, re-enabling it is a no-op; only
 disabling and re-enabling auto-merge registers a fresh queue entry against the
 current `main` (02-§112.2).
 
+The form API also enqueues each event pull request proactively at submission
+(`enqueuePullRequest`, 02-§113, see `forms-and-api.md §30`), which puts most pull
+requests in the queue without waiting for any sweep. That enqueue is best-effort:
+when it fails — typically because the required checks are still running — the pull
+request falls back to auto-merge, and this recovery sweep remains the safety net for
+any pull request that ends up stranded.
+
 **Recovery sweep (02-§112.1–112.6).** `source/scripts/recover-stranded-event-prs.js`
 is a sibling to `close-redundant-event-prs.js`. It lists the open pull requests on
 `event/*`, `event-edit/*`, and `event-delete/*` branches and, for each, reads three

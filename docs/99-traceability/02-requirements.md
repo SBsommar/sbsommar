@@ -1735,3 +1735,21 @@ Doc ref: `02-requirements/event-data.md §112`;
 | `02-§112.9` | implemented | `main()` filters to open event PRs and returns early with "nothing to recover" when none exist; live behaviour is STRAND-M01 |
 | `02-§112.10` | covered | STRAND-10: `classifyStrandedPr` is pure and returns `skip` for any non-stranded PR, so repeated sweeps are no-ops |
 | `02-§112.11` | covered | STRAND-11/-12/-13: `recoverPr()` wraps the re-enable in `withRetry` (exponential backoff); disable is a single attempt; live toggle is STRAND-M01 |
+
+### §113 — Proactive Merge-Queue Enqueue
+
+Doc ref: `02-requirements/event-data.md §113`;
+`03-architecture/forms-and-api.md §30` (Proactive Merge-Queue Enqueue);
+`03-architecture/ci-and-deploy.md §11.8` (cross-reference).
+
+| ID | Status | Notes |
+| --- | --- | --- |
+| `02-§113.1` | gap | |
+| `02-§113.2` | gap | |
+| `02-§113.3` | gap | |
+| `02-§113.4` | gap | |
+| `02-§113.5` | gap | |
+| `02-§113.6` | gap | |
+| `02-§113.7` | gap | |
+| `02-§113.8` | gap | |
+| `02-§113.9` | gap | |

@@ -530,3 +530,74 @@ browser tab, closing the tab also clears the data — no expiry logic is needed.
 | `source/assets/js/client/lagg-till.js` | Add save/restore/clear logic for `sb_form_draft` |
 
 ---
+
+## 30. Proactive Merge-Queue Enqueue (02-§113)
+
+Every event mutation in the form API — add, edit, delete, and the recurring-batch
+add — finishes the same way: it opens a pull request, enables squash auto-merge on
+it, and then places it in the merge queue immediately. The enqueue step is the
+latency optimisation from 02-§113; the auto-merge step is retained as a complement,
+and the reactive stranded-recovery sweep (02-§112, documented in
+`ci-and-deploy.md §11.8`) remains the safety net.
+
+### Why enqueue proactively
+
+All pull requests to `main` merge through a required merge queue. Enabling
+auto-merge is not the same as being in the queue: GitHub only adds a pull request
+to the queue once its required checks pass, and during a burst of submissions a
+pull request can hang with auto-merge enabled but no queue entry (02-§112). The
+reactive recovery repairs that, but only on its next sweep — in the worst case
+~15 minutes. Calling `enqueuePullRequest` at submission time puts the pull request
+in the queue right away, so a submitted activity merges in roughly the queue's
+normal cycle (~50 s) instead of waiting for a sweep (02-§113.1).
+
+### The enqueue call
+
+Both API implementations (`source/api/github.js`, `api/src/GitHub.php`) expose a
+pure helper that builds the GraphQL mutation, and a thin network wrapper that runs
+it:
+
+```graphql
+mutation($id: ID!) {
+  enqueuePullRequest(input: { pullRequestId: $id }) {
+    mergeQueueEntry { id }
+  }
+}
+```
+
+The mutation takes only the pull request's node id. Unlike
+`enablePullRequestAutoMerge`, it does **not** take a merge method — an enqueued
+pull request uses the merge queue's configured method (02-§113.3). The node id is
+the same `node_id` already returned by `createPullRequest` and used for
+`enableAutoMerge`.
+
+### Best-effort contract
+
+The enqueue call is best-effort and must never fail the user's submission
+(02-§113.4–113.7). The pull request has already been created with auto-merge
+enabled before enqueue is attempted, so the order is always:
+
+```text
+createPullRequest → enableAutoMerge → enqueue (best-effort)
+```
+
+The network wrapper is invoked inside a `try`/`catch` (PHP) /
+`.catch`-equivalent (Node) at each call site. A throw from enqueue — most commonly
+because the pull request's required checks are still running, so the queue declines
+to enqueue an unmergeable pull request — is caught and logged as a warning, and the
+mutation method returns normally. No GitHub issue is created and the submission
+response is identical to the success case (02-§113.6). This is why a burst
+submission whose checks have not yet finished is not an error: it simply falls back
+to auto-merge plus reactive recovery, exactly as before proactive enqueue existed.
+
+Because GraphQL reports errors as an HTTP 200 body with an `errors` array, the
+network wrapper checks that array and throws on it (mirroring `enableAutoMerge`);
+the best-effort containment lives at the call site, so the wrapper itself stays a
+plain "run this mutation or throw" primitive.
+
+### Files changed
+
+| File | Change |
+| --- | --- |
+| `source/api/github.js` | Add `buildEnqueueMutation()` (pure) and `enqueuePullRequest()` (network); call it best-effort after `enableAutoMerge` in add/edit/delete |
+| `api/src/GitHub.php` | Mirror: `buildEnqueueMutation()`, `enqueuePullRequest()`, best-effort call in add/edit/delete/batch |
