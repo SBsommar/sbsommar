@@ -9,7 +9,7 @@ event:
   description: |
     Popcorn.  två olika lag ett lag är popcorn och hoppar jämnfota när deras musikdel spelas.
     Andra laget är zombies och går långsamt när deras musikdel spelas. zombiernas mål är att ta alla popcorn blir man tagen blir man också en zombie.
-    
+
   link: null
   owner:
     name: ''

@@ -4,7 +4,7 @@ const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
 
 // Module under test — will be created in Phase 4
-const { renderDescriptionHtml, stripMarkdown } = require('../source/build/markdown');
+const { renderDescriptionHtml, stripMarkdown, stripTrailingWhitespace } = require('../source/build/markdown');
 
 // ── renderDescriptionHtml (02-§56.1, 02-§56.2, 02-§56.6, 02-§56.7, 02-§56.10) ──
 
@@ -120,6 +120,31 @@ describe('renderDescriptionHtml (02-§56.1, 02-§56.2, 02-§56.6, 02-§56.7)', (
 
   it('MKD-D15 (02-§56.10): function is exported from markdown.js', () => {
     assert.strictEqual(typeof renderDescriptionHtml, 'function');
+  });
+
+  it('MKD-D31 (CL-§5.1): a soft-wrapped line ending in a space leaves no trailing whitespace (the esp32 case)', () => {
+    // A `|` block whose first line ends with a space renders as `<p>line1. \nline2</p>`
+    // — html-validate flags the trailing space before the newline (CI failure on #482).
+    const html = renderDescriptionHtml('Kom som du är. \nTa med en laptop.');
+    assert.ok(!/[ \t]+$/m.test(html), `Expected no line-trailing whitespace, got: ${JSON.stringify(html)}`);
+    assert.ok(html.includes('Ta med en laptop.'), `Expected both lines present, got: ${html}`);
+  });
+
+  it('MKD-D32 (CL-§5.1): blank lines between paragraphs leave no trailing whitespace', () => {
+    const html = renderDescriptionHtml('Första stycket.\n\nAndra stycket.');
+    assert.ok(!/[ \t]+$/m.test(html), `Expected no line to end with whitespace, got: ${JSON.stringify(html)}`);
+  });
+});
+
+// ── stripTrailingWhitespace (CL-§5.1) ──────────────────────────────────────
+
+describe('stripTrailingWhitespace (CL-§5.1)', () => {
+  it('MKD-D33: removes trailing spaces and tabs from every line', () => {
+    assert.strictEqual(stripTrailingWhitespace('a  \nb\t\nc'), 'a\nb\nc');
+  });
+
+  it('MKD-D34: leaves content without trailing whitespace unchanged', () => {
+    assert.strictEqual(stripTrailingWhitespace('<p>hej</p>\n<ul>\n<li>x</li>\n</ul>'), '<p>hej</p>\n<ul>\n<li>x</li>\n</ul>');
   });
 });
 

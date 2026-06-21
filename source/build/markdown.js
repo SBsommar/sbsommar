@@ -16,6 +16,21 @@ function fixTelHyphens(html) {
 }
 
 /**
+ * Removes trailing whitespace from every line of an HTML string.
+ *
+ * Event descriptions are free text: a participant can type a trailing space at
+ * the end of a line, and a multi-paragraph description carries blank lines.
+ * Marked preserves both, so the rendered HTML would contain trailing whitespace
+ * that fails html-validate's `no-trailing-whitespace` rule (CL-§5.1). Stripping
+ * it here — the single point every schedule, today, display, archive and
+ * per-event page renders a description through — keeps every HTML output valid
+ * regardless of what is stored in the event data.
+ */
+function stripTrailingWhitespace(html) {
+  return html.replace(/[ \t]+$/gm, '');
+}
+
+/**
  * Converts a Markdown description string to sanitized HTML.
  *
  * Sanitization is performed by the marked renderer overrides defined in
@@ -29,7 +44,7 @@ function fixTelHyphens(html) {
 function renderDescriptionHtml(text) {
   if (!text || !text.trim()) return '';
   const md = new Marked({ renderer: renderers });
-  const html = md.parse(text).trim();
+  const html = stripTrailingWhitespace(md.parse(text).trim());
   return fixTelHyphens(html);
 }
 
@@ -70,4 +85,4 @@ function stripMarkdown(text) {
     .trim();
 }
 
-module.exports = { renderDescriptionHtml, stripMarkdown };
+module.exports = { renderDescriptionHtml, stripMarkdown, stripTrailingWhitespace };

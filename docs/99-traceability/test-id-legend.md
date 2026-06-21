@@ -167,6 +167,7 @@ Part of [the traceability index](./index.md).
 | MDP-01..06 | `tests/coverage-css.test.js` | `02-§55.1–55.5 — Modal design polish` |
 | MKD-D01..15, MKD-D25..30 | `tests/markdown.test.js` | `renderDescriptionHtml (02-§56.1, 02-§56.6, 02-§56.7)` (incl. nested-attack, whitespace, tel-hyphens, case-insensitive scheme, raw-HTML drop, image-src neutralization) |
 | MKD-D16..24 | `tests/markdown.test.js` | `stripMarkdown (02-§56.4, 02-§56.5)` |
+| MKD-D31..34 | `tests/markdown.test.js` | `renderDescriptionHtml` / `stripTrailingWhitespace` strip line-trailing whitespace from rendered HTML (CL-§5.1) |
 | EVT-23..25 | `tests/render-event.test.js` | `renderEventPage – markdown description (02-§56.1, 02-§56.6, 02-§56.7)` |
 | RSS-16 | `tests/render-rss.test.js` | `renderRssFeed – markdown stripped (02-§56.4)` |
 | ICAL-32..33 | `tests/render-ical.test.js` | `iCal DESCRIPTION markdown stripped (02-§56.5)` |
