@@ -1,0 +1,16 @@
+event:
+  id: farga-t-shirt-pass-5-6-2026-06-22-1800
+  title: Färga t-shirt pass 5-6
+  date: '2026-06-22'
+  start: '18:00'
+  end: '19:00'
+  location: Tält1
+  responsible: Martina Sjöström
+  description: null
+  link: null
+  owner:
+    name: ''
+    email: ''
+  meta:
+    created_at: 2026-06-21 02:57
+    updated_at: 2026-06-21 02:57
