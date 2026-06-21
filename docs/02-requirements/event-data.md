@@ -901,3 +901,71 @@ error.
   (so its net diff against `main` is not empty) is outside this automatic cleanup;
   it is logged for manual attention rather than closed silently, so the residual
   edge stays visible. <!-- 02-§111.9 -->
+
+## 112. Stranded Auto-Merge Recovery
+
+### 112.1 Context
+
+Event pull requests opened by the form API (add, edit, delete) have auto-merge
+enabled at creation (§109, §110, §111). All pull requests to `main` merge through
+a merge queue required by the `main` branch ruleset: when a pull request's required
+checks pass and auto-merge is enabled, GitHub places it in the queue, which re-tests
+each entry on a temporary `gh-readonly-queue/main/*` branch and merges entries one at
+a time.
+
+Event submissions arrive in bursts (§109.1), so several event pull requests often
+compete for the queue at once. When one pull request merges, `main` advances. A
+sibling pull request whose auto-merge was enabled against the previous `main` tip
+can then be left **stranded**: it has auto-merge enabled, all required checks green,
+and a clean mergeable state, yet it never reaches the queue and never merges. GitHub
+treats auto-merge as already enabled, so a second enable request changes nothing; the
+pull request only re-enters the queue when auto-merge is disabled and then enabled
+again, which registers a fresh queue entry against the current `main`.
+
+The observable signature of a stranded pull request is precise: auto-merge enabled,
+required checks passing, mergeable state clean, and **no merge-queue entry**. A
+pull request that is genuinely progressing through the queue has a merge-queue entry
+and is not stranded. (Issue #495; observed as #486, an edit pull request that was
+stranded when #482 merged ahead of it on 2026-06-21.)
+
+This failure mode is independent of the duplicate-submission handling in §111: a
+stranded pull request has a valid, non-empty diff and should merge — it is simply
+stuck in the queue handoff.
+
+### 112.2 Stranded pull request recovery (site requirements)
+
+- A stranded event pull request is one that is open, whose head branch is named
+  `event/*`, `event-edit/*`, or `event-delete/*`, that has auto-merge enabled, whose
+  required status checks all pass, whose mergeable state is clean, and that has no
+  merge-queue entry. <!-- 02-§112.1 -->
+- A stranded event pull request is recovered by disabling and then re-enabling
+  auto-merge, which registers a fresh merge-queue entry against the current `main`
+  so the pull request merges. Re-enabling auto-merge without first disabling it is a
+  no-op and does not recover the pull request. <!-- 02-§112.2 -->
+- Recovery re-enables auto-merge with the squash merge method, matching how the form
+  API enables auto-merge at submission. <!-- 02-§112.3 -->
+- An event pull request that already has a merge-queue entry is left untouched: it is
+  progressing through the queue normally and disabling its auto-merge would remove it
+  from the queue. <!-- 02-§112.4 -->
+- An event pull request whose required checks are still pending, or have failed, is
+  left untouched: it is not yet eligible to merge, so there is nothing to
+  recover. <!-- 02-§112.5 -->
+- Each event pull request is evaluated in isolation, so a failure to read or recover
+  one pull request does not abort the recovery of the others. <!-- 02-§112.6 -->
+
+### 112.3 When recovery runs (site requirements)
+
+- Recovery runs after each merge of event data to `main`, in the same post-merge
+  pipeline as the concurrent-duplicate cleanup (§111.8). That merge is what advances
+  the base and can strand a sibling pull request, so recovery happens immediately
+  when stranding is most likely. <!-- 02-§112.7 -->
+- Recovery also runs on a fixed schedule, every 15 minutes, as a safety net. A
+  pull request can be stranded by a merge that is not itself an event-data merge, or
+  by a stranding that no subsequent event merge follows to trigger the post-merge
+  pass; the scheduled pass bounds how long such a pull request waits before it is
+  recovered. <!-- 02-§112.8 -->
+- The scheduled safety-net pass is inexpensive when there are no open event pull
+  requests: it lists the open event pull requests and exits without further work when
+  none are stranded. <!-- 02-§112.9 -->
+- Recovery is idempotent. A pull request that is not stranded is left unchanged on
+  every pass, so running recovery repeatedly is safe. <!-- 02-§112.10 -->
