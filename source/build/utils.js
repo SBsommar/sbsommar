@@ -6,6 +6,24 @@ function toDateString(val) {
   return String(val);
 }
 
+// Determines the homepage countdown target date (YYYY-MM-DD), or null when the
+// countdown should be hidden. The countdown is hidden while any camp is ongoing
+// (today on or between its start_date and end_date, inclusive) so it never
+// counts toward a later camp mid-camp, and when no upcoming camp exists.
+// Otherwise it returns the start_date of the nearest upcoming camp.
+function resolveCountdownTarget(camps, todayStr) {
+  const ongoing = camps.some(
+    (c) => toDateString(c.start_date) <= todayStr && todayStr <= toDateString(c.end_date),
+  );
+  if (ongoing) return null;
+
+  const upcoming = camps
+    .filter((c) => toDateString(c.start_date) > todayStr)
+    .sort((a, b) => toDateString(a.start_date).localeCompare(toDateString(b.start_date)));
+
+  return upcoming.length > 0 ? toDateString(upcoming[0].start_date) : null;
+}
+
 function escapeHtml(str) {
   if (str == null) return '';
   return String(str)
@@ -92,4 +110,4 @@ function injectHtaccessCsp(template, apiUrl) {
   return template.replace(/__API_ORIGIN__ ?/g, origin ? origin + ' ' : '');
 }
 
-module.exports = { toDateString, escapeHtml, formatDate, campDayButtons, safeLinkHref, injectHtaccessCsp };
+module.exports = { toDateString, resolveCountdownTarget, escapeHtml, formatDate, campDayButtons, safeLinkHref, injectHtaccessCsp };
