@@ -1,0 +1,17 @@
+event:
+  id: vik-stora-pappersflygplan-2026-06-26-1100
+  title: Vik stora pappersflygplan
+  date: '2026-06-26'
+  start: '11:00'
+  end: '12:00'
+  location: AndreasTältet
+  responsible: Caspian och Lancelot
+  description: |
+    Vi viker stora pappersflygplan av hoplimmade papper. Kanske avslutar vi med en tävling för den som vill.
+  link: null
+  owner:
+    name: ''
+    email: ''
+  meta:
+    created_at: 2026-06-21 21:29
+    updated_at: 2026-06-21 21:29
