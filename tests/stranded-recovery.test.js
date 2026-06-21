@@ -8,7 +8,15 @@
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
 
-const { classifyStrandedPr, withRetry } = require('../source/scripts/recover-stranded-event-prs');
+const {
+  classifyStrandedPr,
+  withRetry,
+  processPr,
+  runSweep,
+} = require('../source/scripts/recover-stranded-event-prs');
+
+// A silent logger so the test output stays clean.
+const quiet = () => {};
 
 // A pull request that GitHub considers fully mergeable but that never reached the
 // queue: auto-merge on, checks green (CLEAN), and no queue entry.
@@ -105,5 +113,95 @@ describe('withRetry — enable-step resilience (02-§112.11)', () => {
       /fail-3/,
     );
     assert.equal(calls, 3);
+  });
+});
+
+describe('processPr — per-PR outcome (02-§112.2, 112.6, 112.13)', () => {
+  const strandedState = { nodeId: 'PR_1', ...STRANDED };
+
+  it('STRAND-14: stranded PR is recovered and reported as recovered', () => {
+    let recovered = null;
+    const outcome = processPr(
+      { number: 1, headRefName: 'event-edit/x-2026-06-22-1115-1' },
+      { fetchState: () => strandedState, recover: (id) => { recovered = id; }, log: quiet },
+    );
+    assert.equal(outcome, 'recovered');
+    assert.equal(recovered, 'PR_1');
+  });
+
+  it('STRAND-15: non-stranded event PR is skipped without toggling auto-merge', () => {
+    let recoverCalled = false;
+    const outcome = processPr(
+      { number: 2, headRefName: 'event/2026-06-22-x-1' },
+      {
+        fetchState: () => ({ nodeId: 'PR_2', autoMergeEnabled: true, mergeStateStatus: 'CLEAN', inMergeQueue: true }),
+        recover: () => { recoverCalled = true; },
+        log: quiet,
+      },
+    );
+    assert.equal(outcome, 'skipped');
+    assert.equal(recoverCalled, false);
+  });
+
+  it('STRAND-16: a fetch failure is caught and reported as failed (02-§112.6)', () => {
+    const outcome = processPr(
+      { number: 3, headRefName: 'event/2026-06-22-x-1' },
+      { fetchState: () => { throw new Error('boom'); }, recover: () => {}, log: quiet },
+    );
+    assert.equal(outcome, 'failed');
+  });
+
+  it('STRAND-17: a recover failure is caught and reported as failed (02-§112.13)', () => {
+    const outcome = processPr(
+      { number: 4, headRefName: 'event/2026-06-22-x-1' },
+      { fetchState: () => strandedState, recover: () => { throw new Error('Resource not accessible by integration'); }, log: quiet },
+    );
+    assert.equal(outcome, 'failed');
+  });
+});
+
+describe('runSweep — fail-loud aggregation with isolation (02-§112.6, 112.13)', () => {
+  it('STRAND-18: returns 0 when every PR recovers or skips, recovering only the stranded one', () => {
+    const recovered = [];
+    const deps = {
+      fetchState: (n) => (n === 1
+        ? { nodeId: 'PR_1', ...STRANDED }
+        : { nodeId: `PR_${n}`, autoMergeEnabled: true, mergeStateStatus: 'CLEAN', inMergeQueue: true }),
+      recover: (id) => recovered.push(id),
+      log: quiet,
+    };
+    const failures = runSweep(
+      [
+        { number: 1, headRefName: 'event/a-1' },
+        { number: 2, headRefName: 'event/b-1' },
+      ],
+      deps,
+    );
+    assert.equal(failures, 0);
+    assert.deepEqual(recovered, ['PR_1']);
+  });
+
+  it('STRAND-19: a failing PR is counted but does not abort the others (02-§112.6)', () => {
+    const recovered = [];
+    const deps = {
+      fetchState: () => ({ nodeId: 'PR_x', ...STRANDED }),
+      // First recover throws, the rest succeed — the sweep must keep going.
+      recover: (() => {
+        let n = 0;
+        return (id) => { n += 1; if (n === 1) throw new Error('denied'); recovered.push(id); };
+      })(),
+      log: quiet,
+    };
+    const failures = runSweep(
+      [
+        { number: 1, headRefName: 'event/a-1' },
+        { number: 2, headRefName: 'event/b-1' },
+        { number: 3, headRefName: 'event/c-1' },
+      ],
+      deps,
+    );
+    assert.equal(failures, 1);
+    // The two PRs after the failure were still attempted and recovered.
+    assert.equal(recovered.length, 2);
   });
 });
