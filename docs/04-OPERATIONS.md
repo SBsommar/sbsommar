@@ -208,6 +208,32 @@ camp:
 events: []
 ```
 
+### When a Camp Opens (split seeded events into fragments)
+
+A camp is seeded as a monolith: the activities organizers prepare in advance live
+in the camp file's `events:` list. But once the camp opens, participants edit and
+delete events through fragment files only — the live submission flow never writes
+the camp file. A seeded event left in the camp file therefore cannot be edited or
+deleted ("event hittas inte"). So when the camp opens for editing, move its seeded
+events into fragments:
+
+```bash
+node source/scripts/split-camp-events.js 2026-07-syssleback
+git add -A source/data
+git commit -m "data: split 2026-07-syssleback seeded events into fragments"
+```
+
+- Run this **at or shortly before the camp's `opens_for_editing` date**, before
+  any participant can edit or delete.
+- The script writes one fragment per event under `source/data/<stem>/` and leaves
+  the camp file with an empty `events:` list. It is safe to run again — a camp
+  whose `events:` list is already empty is a no-op.
+- If it reports that a fragment already exists for an event id, it has written
+  nothing; investigate the existing fragment before re-running.
+
+This is the opening bracket of the camp's fragment window. The closing bracket is
+compaction at archive, which folds the fragments back into the camp file.
+
 ### During Camp
 
 Participants add events through the web form at `/lagg-till.html`.

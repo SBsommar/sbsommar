@@ -79,6 +79,40 @@ The fragment directory is optional; a camp with none behaves exactly as before
 file is tracked as a separate follow-up; until it runs, fragments simply
 accumulate and the loader reads them alongside the file.
 
+### 1.2 Split at open: seeding fragments from the camp file
+
+A camp is seeded as a monolith before it opens — organizers handwrite the
+activities directly in the camp file's `events:` list. But add, edit, and delete
+act only on fragment files and never write the camp file (02-§109.26), so once
+the camp opens a participant cannot edit or delete a seeded event that still
+lives in the camp file: there is no fragment to act on, and the operation fails
+with "not found" (02-§109.12). The seeded events must therefore be moved into
+fragments when the camp opens. This is the inverse of compaction; the two
+maintenance steps bracket the live window — **split at open → fragments while
+live → compaction at archive** (02-§110.1).
+
+`source/scripts/split-camp-events.js <camp>` performs the split. The argument is
+a camp's `file` value or its `id`; the script resolves it against `camps.yaml`.
+For the named camp it:
+
+1. reads the camp file's `events:` list (02-§110.1);
+2. serialises each event with `buildFragmentYaml()` from `source/api/github.js`
+   — the same serialiser the add/edit API uses — so a seeded fragment is
+   byte-for-byte the format a submitted fragment would have (02-§110.2);
+3. validates each fragment with `assertFragmentYamlValid()`, `validateFragment()`
+   (`lint-yaml.js`), and `scanYaml()` (`check-yaml-security.js`) before writing
+   anything (02-§110.5);
+4. writes each fragment to `source/data/<stem>/<event-id>.yaml` and rewrites the
+   camp file with an empty `events:` list, keeping the `camp:` header
+   (02-§110.3) — done in one commit so the event set is never doubled
+   (02-§110.4).
+
+The split is idempotent: a camp whose `events:` list is already empty is a no-op
+(02-§110.6). If a fragment file already exists for a seeded event's id the script
+writes nothing and exits with an error, so an existing fragment is never
+overwritten (02-§110.7). The operator runs it when a camp opens for editing; the
+lifecycle placement is documented in `docs/04-OPERATIONS.md` (02-§110.8).
+
 ---
 
 ## 2. Metadata Layer
@@ -264,7 +298,7 @@ Edit and delete operate only on the event's fragment file (02-§109.9):
 
 No add, edit, or delete writes the camp YAML file (02-§109.26). An open camp's
 events therefore live entirely in fragment files: a split step moves a camp's
-seeded events into fragments when it opens (tracked separately) and compaction
+seeded events into fragments when it opens (§1.2) and compaction
 folds them back after archival (§1.1). Between those steps the camp YAML file's
 `events:` list is empty, so concurrent edits and deletes of different events
 never touch the same file and their pull requests can never conflict or go
