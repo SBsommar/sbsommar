@@ -91,6 +91,10 @@ final class GitHub
         $this->putFile($fragPath, $content, null, $commitMsg, $branchName);
         $pr = $this->createPullRequest($commitMsg, $branchName, 'Automatically created by the SB Sommar add-event API.');
         $this->enableAutoMerge($pr['node_id']);
+        // Place the PR in the merge queue right away to merge in ~50 s instead of
+        // waiting for the reactive recovery sweep. Best-effort: never fails the
+        // submission (02-§113.1, §113.4).
+        $this->enqueueBestEffort($pr['node_id']);
     }
 
     /**
@@ -172,6 +176,8 @@ final class GitHub
         }
         $pr = $this->createPullRequest($commitMsg, $branchName, 'Automatically created by the SB Sommar add-events API (batch).');
         $this->enableAutoMerge($pr['node_id']);
+        // Proactive merge-queue enqueue, best-effort (02-§113.1, §113.4).
+        $this->enqueueBestEffort($pr['node_id']);
 
         return $eventIds;
     }
@@ -209,6 +215,8 @@ final class GitHub
         $this->putFile($fragPath, $content, $fragSha, $commitMsg, $branchName);
         $pr = $this->createPullRequest($commitMsg, $branchName, 'Automatically created by the SB Sommar edit-event API.');
         $this->enableAutoMerge($pr['node_id']);
+        // Proactive merge-queue enqueue, best-effort (02-§113.1, §113.4).
+        $this->enqueueBestEffort($pr['node_id']);
     }
 
     /**
@@ -235,6 +243,8 @@ final class GitHub
         $this->deleteFile($fragPath, $fragSha, $commitMsg, $branchName);
         $pr = $this->createPullRequest($commitMsg, $branchName, 'Automatically created by the SB Sommar delete-event API.');
         $this->enableAutoMerge($pr['node_id']);
+        // Proactive merge-queue enqueue, best-effort (02-§113.1, §113.4).
+        $this->enqueueBestEffort($pr['node_id']);
     }
 
     // ── Camp resolution ──────────────────────────────────────────────────
@@ -615,6 +625,66 @@ final class GitHub
 
         if (!empty($data['errors'])) {
             throw new \RuntimeException('GraphQL error enabling auto-merge: ' . $data['errors'][0]['message']);
+        }
+    }
+
+    /**
+     * Build the GraphQL mutation that places a pull request in the merge queue
+     * (02-§113.1). Pure (no network) so it can be unit-tested. Unlike
+     * enablePullRequestAutoMerge, enqueuePullRequest takes no merge method — the
+     * merge queue's configured method is used (02-§113.3).
+     *
+     * @return array{query:string,variables:array{id:string}}
+     */
+    public static function buildEnqueueMutation(string $nodeId): array
+    {
+        return [
+            'query' => '
+                mutation($id: ID!) {
+                    enqueuePullRequest(input: { pullRequestId: $id }) {
+                        mergeQueueEntry { id }
+                    }
+                }
+            ',
+            'variables' => ['id' => $nodeId],
+        ];
+    }
+
+    /**
+     * Place a pull request in the merge queue via the GraphQL API (02-§113.1).
+     * GraphQL errors arrive as HTTP 200 with a body-level errors array — checked
+     * explicitly, mirroring enableAutoMerge. Best-effort containment lives in the
+     * caller (enqueueBestEffort), so this stays a plain "enqueue or throw"
+     * primitive.
+     */
+    private function enqueuePullRequest(string $nodeId): void
+    {
+        ['query' => $query, 'variables' => $variables] = self::buildEnqueueMutation($nodeId);
+
+        $data = $this->githubRequest('POST', '/graphql', [
+            'query'     => $query,
+            'variables' => $variables,
+        ]);
+
+        if (!empty($data['errors'])) {
+            throw new \RuntimeException('GraphQL error enqueuing pull request: ' . $data['errors'][0]['message']);
+        }
+    }
+
+    /**
+     * Best-effort wrapper around enqueuePullRequest (02-§113.4–113.7): it must
+     * never fail the user's submission. The pull request has already been created
+     * with auto-merge enabled, so a failed enqueue — most commonly because the
+     * required checks are still running, so the queue declines an unmergeable pull
+     * request (02-§113.5) — is logged as a warning and falls back to auto-merge
+     * plus the reactive recovery in §112.
+     */
+    private function enqueueBestEffort(string $nodeId): void
+    {
+        try {
+            $this->enqueuePullRequest($nodeId);
+        } catch (\Throwable $e) {
+            error_log('Proactive enqueue failed (best-effort; falling back to auto-merge + recovery): ' . $e->getMessage());
         }
     }
 

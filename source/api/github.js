@@ -317,6 +317,55 @@ async function enableAutoMerge(nodeId) {
   }
 }
 
+// Build the GraphQL mutation that places a pull request in the merge queue
+// (02-§113.1). Pure (no network) so it can be unit-tested. Unlike
+// enablePullRequestAutoMerge, enqueuePullRequest takes no merge method — the merge
+// queue's configured method is used (02-§113.3).
+function buildEnqueueMutation(nodeId) {
+  return {
+    query: `
+      mutation($id: ID!) {
+        enqueuePullRequest(input: { pullRequestId: $id }) {
+          mergeQueueEntry { id }
+        }
+      }
+    `,
+    variables: { id: nodeId },
+  };
+}
+
+// Place a pull request in the merge queue via the GraphQL API (02-§113.1).
+// GraphQL errors arrive as HTTP 200 with a body-level errors array — checked
+// explicitly, mirroring enableAutoMerge. Best-effort containment lives in the
+// caller (enqueueBestEffort), so this stays a plain "enqueue or throw" primitive.
+async function enqueuePullRequest(nodeId) {
+  const token = env('GITHUB_TOKEN');
+  const { query, variables } = buildEnqueueMutation(nodeId);
+
+  const { data } = await githubRequest('POST', '/graphql', { query, variables }, token);
+
+  if (data && data.errors && data.errors.length > 0) {
+    throw new Error(`GraphQL error enqueuing pull request: ${data.errors[0].message}`);
+  }
+}
+
+// Best-effort wrapper around enqueue (02-§113.4–113.7): it must never fail the
+// user's submission. The pull request has already been created with auto-merge
+// enabled, so a failed enqueue — most commonly because the required checks are
+// still running, so the queue declines an unmergeable pull request (02-§113.5) —
+// is logged as a warning and falls back to auto-merge plus the reactive recovery
+// in §112. Returns true when the pull request was enqueued, false otherwise.
+// `enqueue` and `log` are injectable so the containment is unit-testable.
+async function enqueueBestEffort(nodeId, { enqueue = enqueuePullRequest, log = console.warn } = {}) {
+  try {
+    await enqueue(nodeId);
+    return true;
+  } catch (e) {
+    log(`Proactive enqueue failed (best-effort; falling back to auto-merge + recovery): ${e.message}`);
+    return false;
+  }
+}
+
 // ── Public API ───────────────────────────────────────────────────────────────
 
 // Resolve the active camp from camps.yaml on main (shared by all mutations).
@@ -399,6 +448,10 @@ async function addEventToActiveCamp(body) {
   await putFile(fragPath, content, null, commitMsg, branchName);
   const pr = await createPullRequest(commitMsg, branchName, 'Automatically created by the SB Sommar add-event API.');
   await enableAutoMerge(pr.node_id);
+  // Place the PR in the merge queue right away to merge in ~50 s instead of
+  // waiting for the reactive recovery sweep. Best-effort: never fails the
+  // submission (02-§113.1, §113.4).
+  await enqueueBestEffort(pr.node_id);
 }
 
 // Edits an event by ID. The event lives in its own fragment file, which this
@@ -425,6 +478,8 @@ async function updateEventInActiveCamp(eventId, updates) {
   await putFile(fragPath, content, frag.sha, commitMsg, branchName);
   const pr = await createPullRequest(commitMsg, branchName, 'Automatically created by the SB Sommar edit-event API.');
   await enableAutoMerge(pr.node_id);
+  // Proactive merge-queue enqueue, best-effort (02-§113.1, §113.4).
+  await enqueueBestEffort(pr.node_id);
 }
 
 // Deletes an event by ID by removing its fragment file; the camp YAML file is
@@ -444,6 +499,8 @@ async function removeEventFromActiveCamp(eventId) {
   await deleteFile(fragPath, frag.sha, commitMsg, branchName);
   const pr = await createPullRequest(commitMsg, branchName, 'Automatically created by the SB Sommar delete-event API.');
   await enableAutoMerge(pr.node_id);
+  // Proactive merge-queue enqueue, best-effort (02-§113.1, §113.4).
+  await enqueueBestEffort(pr.node_id);
 }
 
-module.exports = { addEventToActiveCamp, updateEventInActiveCamp, removeEventFromActiveCamp, isDuplicateEvent, DUPLICATE_EVENT_MESSAGE, slugify, yamlScalar, buildEventYaml, buildFragmentYaml, fragmentDir, fragmentPath, assertFragmentYamlValid, detectEventIndent, assertEventYamlValid, githubRequest, env };
+module.exports = { addEventToActiveCamp, updateEventInActiveCamp, removeEventFromActiveCamp, isDuplicateEvent, DUPLICATE_EVENT_MESSAGE, slugify, yamlScalar, buildEventYaml, buildFragmentYaml, fragmentDir, fragmentPath, assertFragmentYamlValid, detectEventIndent, assertEventYamlValid, buildEnqueueMutation, enqueuePullRequest, enqueueBestEffort, githubRequest, env };
