@@ -975,3 +975,65 @@ stuck in the queue handoff.
   none are stranded. <!-- 02-§112.9 -->
 - Recovery is idempotent. A pull request that is not stranded is left unchanged on
   every pass, so running recovery repeatedly is safe. <!-- 02-§112.10 -->
+
+## 113. Proactive Merge-Queue Enqueue
+
+### 113.1 Context
+
+Event pull requests opened by the form API (add, edit, delete, batch) have
+auto-merge (squash) enabled at creation (§109, §110, §111). Enabling auto-merge is
+not the same as being placed in the merge queue: GitHub only adds a pull request to
+the queue once its required checks pass, and during bursts a pull request can fail to
+enter the queue at all and hang with auto-merge enabled but no queue entry (§112).
+The reactive recovery in §112 repairs such a pull request, but it is reactive — a
+stranded pull request can in the worst case wait up to the recovery sweep's interval
+(~15 minutes) before it is detected and re-queued.
+
+To keep submission latency low, the form API places each newly opened event pull
+request in the merge queue immediately at submission, via the GraphQL
+`enqueuePullRequest` mutation, so that a submitted activity merges in roughly the
+queue's normal cycle (~50 seconds) rather than waiting for a recovery sweep. This is
+a latency optimisation layered on top of the existing safety nets, not a replacement
+for them: auto-merge stays enabled as a complement, and the reactive recovery in
+§112 remains in place for any pull request that still falls out of the queue.
+
+### 113.2 Proactive enqueue at submission (site requirements)
+
+- Immediately after the form API creates an event pull request (add, edit, delete, or
+  batch) and enables squash auto-merge on it, it places the pull request in the merge
+  queue with the GraphQL `enqueuePullRequest` mutation, using the pull request's node
+  id. <!-- 02-§113.1 -->
+- Enabling squash auto-merge with `enablePullRequestAutoMerge` is retained as a
+  complement to the enqueue call: when a pull request cannot be enqueued at submission
+  time, auto-merge places it in the queue once its required checks pass. <!-- 02-§113.2 -->
+- The merge method of an enqueued pull request is the merge queue's configured method;
+  the `enqueuePullRequest` mutation does not specify a merge method, unlike
+  `enablePullRequestAutoMerge`. <!-- 02-§113.3 -->
+
+### 113.3 Best-effort behaviour (site requirements)
+
+- The enqueue call is best-effort: a failure to enqueue never fails the user's
+  submission. The pull request has already been created with auto-merge enabled, so a
+  failed enqueue falls back to auto-merge plus the reactive recovery in §112 as the
+  safety net. <!-- 02-§113.4 -->
+- A pull request whose required checks are still running is not yet mergeable, so the
+  merge queue declines to enqueue it. This is an expected outcome of a burst
+  submission, not an error condition: the failure is logged as a warning and the
+  submission still succeeds. <!-- 02-§113.5 -->
+- A failed enqueue is logged (warning), creating no GitHub issue and no user-facing
+  error. The submission response is identical to one where enqueue succeeded; the
+  difference is only how soon the pull request reaches the queue. <!-- 02-§113.6 -->
+- A submission is never more fragile than it was before proactive enqueue: every code
+  path that could throw from the enqueue step is contained so the submission outcome
+  is unchanged whether enqueue succeeds or fails. <!-- 02-§113.7 -->
+
+### 113.4 Unchanged guarantees (site requirements)
+
+- The reactive stranded-recovery automation (§112) is unchanged and remains the safety
+  net for any event pull request that falls out of the merge queue, including one whose
+  proactive enqueue failed at submission. <!-- 02-§113.8 -->
+- The event-data validation gate is unchanged by proactive enqueue: the `event-data
+  check` (the hard `check-yaml-security.js` block and `lint-yaml.js`) and the API-layer
+  validation remain required and run exactly as before. Enqueuing a pull request places
+  it in the queue, where its required checks still run and must pass before it
+  merges. <!-- 02-§113.9 -->
