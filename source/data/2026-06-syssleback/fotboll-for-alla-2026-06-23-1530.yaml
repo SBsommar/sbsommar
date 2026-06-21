@@ -1,0 +1,21 @@
+event:
+  id: fotboll-for-alla-2026-06-23-1530
+  title: 'Fotboll - för alla!'
+  date: '2026-06-23'
+  start: '15:30'
+  end: '16:30'
+  location: Fotbollsplan
+  responsible: Fredrik och Arvid Julius Sköldefors
+  description: |
+    Alla som vill välkomnas till fotbollsplan. Vi delar upp lag och spelar en stund.
+    Alla välkomna oavsett ålder och skicklighet.
+    
+    Vi kör måndag, tisdag och fredag.
+    Vi pausar onsdag för braingames och på torsdag håller Arvid en pizza-aktivitet.
+  link: null
+  owner:
+    name: ''
+    email: ''
+  meta:
+    created_at: 2026-06-21 16:38
+    updated_at: 2026-06-21 16:38
