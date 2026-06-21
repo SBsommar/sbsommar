@@ -282,10 +282,28 @@ are idempotent (02-§112.10).
 - A job in `event-data-deploy-post-merge.yml` (push to `main`, `source/data/**.yaml`),
   alongside `close-redundant-event-prs` — the event merge that triggers this workflow
   is exactly the base move that can strand a sibling, so recovery happens immediately
-  (02-§112.7). The job needs `pull-requests: write` to toggle auto-merge.
+  (02-§112.7).
 - A scheduled workflow, `merge-queue-recovery.yml`, on a 15-minute cron, as a safety
   net for strandings that no event-data merge follows (02-§112.8). The sweep lists the
   open event pull requests first and exits cheaply when none are stranded (02-§112.9).
+
+**Authentication (02-§112.12, 112.14, 112.15).** The default Actions workflow token
+(`secrets.GITHUB_TOKEN`) cannot run the `enablePullRequestAutoMerge` /
+`disablePullRequestAutoMerge` GraphQL mutations even with `pull-requests: write` — it
+fails with `Resource not accessible by integration`. Both recovery jobs therefore pass
+the repository-level secret `EVENT_AUTOMERGE_TOKEN` (a credential with pull-request and
+contents write access) to the script as `GITHUB_TOKEN`, which `gh` uses for its API
+calls. The secret is repository-level because the recovery jobs run without a GitHub
+Environment and so see only repository- and organisation-level secrets. Re-enabling
+auto-merge under this identity — rather than the Actions bot — also means the eventual
+merge to `main` triggers the push-driven `event-data-deploy-post-merge.yml` deploy
+(02-§112.15).
+
+**Failure handling (02-§112.13).** Each pull request is still processed in its own
+`try`/`catch` so one failure does not abort the sweep (02-§112.6), but `main()` counts
+the failures and throws once every pull request has been attempted, exiting non-zero.
+A recovery that cannot complete therefore fails the job loudly instead of passing as a
+green run with only a `::warning::`.
 
 ---
 

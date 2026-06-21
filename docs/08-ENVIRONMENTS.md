@@ -89,6 +89,7 @@ the secrets.
 | Secret     | Used by    | Purpose                                           |
 | ---------- | ---------- | ------------------------------------------------- |
 | `SITE_URL` | `ci.yml`   | Any valid URL — just needs to pass the build step |
+| `EVENT_AUTOMERGE_TOKEN` | `merge-queue-recovery.yml`, `event-data-deploy-post-merge.yml` (`recover-stranded-event-prs` job) | Token used by the stranded-PR recovery sweep to toggle auto-merge (§112). The default `GITHUB_TOKEN` cannot run the auto-merge GraphQL mutations, so a separate credential is required. Use a fine-grained PAT scoped to this repository with **Pull requests: Read and write** and **Contents: Read and write**, or a GitHub App installation token with the same access. Must be **repository-level** (the recovery jobs run without a GitHub Environment and cannot read environment-scoped secrets). |
 
 ### GitHub Environment: `qa` (PHP on Loopia)
 
@@ -237,7 +238,7 @@ After both secrets are generated and the `.env` files are in place on your serve
 6. Under **Environment secrets**, add each secret from the `production` table with production values.
 7. Under **Environment protection rules** for `production`, add **Required reviewers** and enter the GitHub username(s) who may approve production deploys.
 8. Optionally add a **Wait timer** (e.g. 5 minutes) for an extra safety window.
-9. Verify that `SITE_URL` also exists as a **repository-level** secret (Settings > Secrets and variables > Actions > Repository secrets).
+9. Verify that `SITE_URL` and `EVENT_AUTOMERGE_TOKEN` also exist as **repository-level** secrets (Settings > Secrets and variables > Actions > Repository secrets). `EVENT_AUTOMERGE_TOKEN` powers the stranded-PR recovery sweep (§112) — see the repository-level secrets table above for the token type and permissions it needs. After an ownership change, re-check that the token's owner still has write access to the repository, or the sweep will fail with `Resource not accessible by integration`.
 
 ---
 
