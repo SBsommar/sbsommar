@@ -102,7 +102,7 @@ their `source/data/**.yaml` path filter matches files nested one level under
 | --- | --- | --- |
 | `ci.yml` | All branches + PRs | Lint, test, build for code changes; pass-through for data-only |
 | `event-data-deploy.yml` | PRs from `event/**`, `event-edit/**` | No-op branch protection gate |
-| `event-data-deploy-post-merge.yml` | Push to `main` (data YAMLs only) | setup-node + npm ci + build + deploy to QA, Production |
+| `event-data-deploy-post-merge.yml` | Push to `main` (data YAMLs only) | setup-node + npm ci + build + deploy to QA, Production; plus a write-scoped job that closes duplicate event PRs made redundant by the merge (02-§110.7) |
 | `deploy-qa.yml` | Push to `main` (ignores per-camp event YAMLs) | Full build + SCP/SSH swap (QA) |
 | `deploy-prod.yml` | Manual `workflow_dispatch` | Full build + SCP/SSH swap (Production) |
 | `deploy-reusable.yml` | Called by `deploy-qa.yml` / `deploy-prod.yml` | Shared build-and-deploy logic |
