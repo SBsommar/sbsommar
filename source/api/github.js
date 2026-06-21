@@ -332,7 +332,9 @@ async function resolveActiveCampFromGitHub() {
 const DUPLICATE_EVENT_MESSAGE = 'Den här aktiviteten finns redan i schemat.';
 
 // Build the error thrown when a fragment with the target id already exists. The
-// `status` lets the HTTP layer answer 409 instead of a generic 500 (02-§110.2).
+// `status`/`userMessage` mark it as a duplicate so a synchronous caller can answer
+// 409; the Node entrypoint instead calls isDuplicateEvent() before its
+// fire-and-forget write, while PHP maps DuplicateEventException → 409 (02-§110.2).
 function duplicateEventError(eventId) {
   const err = new Error(`Event already exists: ${eventId}`);
   err.status = 409;

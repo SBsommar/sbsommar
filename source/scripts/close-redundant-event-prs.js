@@ -62,17 +62,24 @@ function main() {
   for (const pr of prs) {
     if (!pr.headRefName || !pr.headRefName.startsWith('event/')) continue;
 
-    const files = JSON.parse(gh(['api', `repos/${repo}/pulls/${pr.number}/files`, '--paginate']));
-    const verdict = classifyEventPr({ branch: pr.headRefName, files });
+    // Isolate per-PR failures so one bad fetch/close does not abort the sweep.
+    try {
+      // An event PR changes one fragment (a batch a few) — well under one page,
+      // so no --paginate (which can concatenate pages into invalid JSON).
+      const files = JSON.parse(gh(['api', `repos/${repo}/pulls/${pr.number}/files`]));
+      const verdict = classifyEventPr({ branch: pr.headRefName, files });
 
-    if (verdict === 'close') {
-      console.log(`Closing redundant duplicate PR #${pr.number} (${pr.headRefName}) — empty net diff against main`);
-      gh([
-        'pr', 'close', String(pr.number), ...repoArgs, '--delete-branch',
-        '--comment', 'Stänger automatiskt: aktiviteten finns redan på sajten (identiskt inskick). Inget går förlorat.',
-      ]);
-    } else if (verdict === 'log-manual') {
-      console.log(`::warning::Event PR #${pr.number} (${pr.headRefName}) shares an id with an existing activity but has a different body — needs manual review (02-§110.9)`);
+      if (verdict === 'close') {
+        console.log(`Closing redundant duplicate PR #${pr.number} (${pr.headRefName}) — empty net diff against main`);
+        gh([
+          'pr', 'close', String(pr.number), ...repoArgs, '--delete-branch',
+          '--comment', 'Stänger automatiskt: aktiviteten finns redan på sajten (identiskt inskick). Inget går förlorat.',
+        ]);
+      } else if (verdict === 'log-manual') {
+        console.log(`::warning::Event PR #${pr.number} (${pr.headRefName}) shares an id with an existing activity but has a different body — needs manual review (02-§110.9)`);
+      }
+    } catch (err) {
+      console.log(`::warning::Could not process event PR #${pr.number} (${pr.headRefName}): ${err.message}`);
     }
   }
 }
