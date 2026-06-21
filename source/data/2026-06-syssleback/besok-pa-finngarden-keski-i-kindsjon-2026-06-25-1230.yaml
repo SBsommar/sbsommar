@@ -1,0 +1,21 @@
+event:
+  id: besok-pa-finngarden-keski-i-kindsjon-2026-06-25-1230
+  title: Besök på Finngården Keski i Kindsjön
+  date: '2026-06-25'
+  start: '15:00'
+  end: '19:00'
+  location: Annat
+  responsible: Mia Florell
+  description: |
+    Vi besöker Finngården Keski i Kindsjön.
+    Lars Nordström tar emot och visar gården, talar om kompostering och allt annat inom självhushåll.
+    
+    Mer info på finnskogsgarden.se
+    
+  link: 'https://finnskogsgarden.se'
+  owner:
+    name: ''
+    email: ''
+  meta:
+    created_at: 2026-06-17 20:45
+    updated_at: 2026-06-18 21:16

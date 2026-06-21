@@ -144,7 +144,7 @@ Part of [the traceability index](./index.md).
 | `02-§18.21` | The edit page reads the `id` query param, checks for a matching ownership entry, and fetches `/events.json` to pre-populate the form | 03-architecture/forms-and-api.md §7 | — (browser-only: open `redigera.html?id=<owned>` with signed cookie and confirm form populates) | `source/assets/js/client/redigera.js` – `readSessionIds()` returns only signed, non-expired ownership IDs before fetching `/events.json` | implemented |
 | `02-§18.22` | If the event has no matching ownership entry and the user has no valid admin token, or the event has passed, the edit page shows an error and no form | 03-architecture/forms-and-api.md §7 | — (browser-only: open `redigera.html?id=<legacy-only>` and confirm Swedish authorization error) | `source/assets/js/client/redigera.js` – client gate uses signed ownership IDs or admin token before showing the form | implemented |
 | `02-§18.23` | The edit form exposes the same fields as the add-activity form | 03-architecture/forms-and-api.md §7 | REDT-04..11 | `source/build/render-edit.js` – all add-activity fields present | covered |
-| `02-§18.24` | The event's stable `id` must not change after creation even when mutable fields are edited | 06-EVENT_DATA_MODEL.md §4 | EDIT-13 | `source/api/edit-event.js` – `patchEventInYaml()` preserves `event.id` | covered |
+| `02-§18.24` | The event's stable `id` must not change after creation even when mutable fields are edited | 06-EVENT_DATA_MODEL.md §4 | EDIT-13 | `source/api/edit-event.js` – `patchEventObject()` preserves `event.id` | covered |
 | `02-§18.25` | The edit form is subject to the same validation rules as the add-activity form (§9) | 03-architecture/forms-and-api.md §7 | VLD-27..32 | `source/api/validate.js` – `validateEditRequest()`; `redigera.js` client-side validate | covered |
 | `02-§18.26` | After a successful edit, a clear Swedish confirmation is shown; schedule updates within minutes | 03-architecture/forms-and-api.md §7 | — | `render-edit.js` – `#result` section; `github.js` – `updateEventInActiveCamp()` PR pipeline | implemented |
 | `02-§18.27` | The edit form is written entirely in Swedish | 02-requirements/platform-security.md §14 | REDT-12..16 | `source/build/render-edit.js` – all labels and messages in Swedish | covered |
@@ -154,9 +154,9 @@ Part of [the traceability index](./index.md).
 | `02-§18.31` | The server reads `sb_session` and verifies valid ownership for the target ID, or that the request body contains a valid `adminToken` (§91) | 03-architecture/forms-and-api.md §7 | ADED-01..08, SES-17..21, PSES-02 | `app.js` `/edit-event`; `api/index.php` `handleEditEvent()` use `parseVerifiedSessionIds()` plus admin-token bypass | covered |
 | `02-§18.32` | If the cookie lacks valid ownership and no valid admin token is provided, the server responds with HTTP 403 | 03-architecture/forms-and-api.md §7 | ADED-01b, ADED-04..07, SES-18..21, PSES-02 | `app.js` and `api/index.php` reject missing/legacy/tampered/expired ownership without a valid admin token | covered |
 | `02-§18.33` | If the event's date has already passed, the server responds with HTTP 400 | 03-architecture/forms-and-api.md §7 | EDIT-01..03 | `app.js` – `isEventPast(req.body.date)` → `res.status(400)` | covered |
-| `02-§18.34` | On a valid edit, the server reads YAML from GitHub, replaces mutable fields, commits via ephemeral branch + PR with auto-merge | 03-architecture/forms-and-api.md §7 | EDIT-04..17 | `source/api/github.js` – `updateEventInActiveCamp()`; `edit-event.js` – `patchEventInYaml()` | covered |
-| `02-§18.35` | The event's `meta.updated_at` is updated on every successful edit | 06-EVENT_DATA_MODEL.md §6 | EDIT-15 | `source/api/edit-event.js` – `patchEventInYaml()` sets `meta.updated_at = now` | covered |
-| `02-§18.36` | Only recognised edit-form fields are written; no unrecognised POST body fields are ever committed | 03-architecture/forms-and-api.md §7 | REDT-21 | `source/api/validate.js` – `validateEditRequest()`; `patchEventInYaml()` explicit field set | covered |
+| `02-§18.34` | On a valid edit, the server reads YAML from GitHub, replaces mutable fields, commits via ephemeral branch + PR with auto-merge | 03-architecture/forms-and-api.md §7 | EDIT-05..15 | `source/api/github.js` – `updateEventInActiveCamp()` (fragment); `edit-event.js` – `patchEventObject()` | covered |
+| `02-§18.35` | The event's `meta.updated_at` is updated on every successful edit | 06-EVENT_DATA_MODEL.md §6 | EDIT-15 | `source/api/edit-event.js` – `patchEventObject()` sets `meta.updated_at = now` | covered |
+| `02-§18.36` | Only recognised edit-form fields are written; no unrecognised POST body fields are ever committed | 03-architecture/forms-and-api.md §7 | REDT-21 | `source/api/validate.js` – `validateEditRequest()`; `patchEventObject()` explicit field set | covered |
 | `02-§18.37` | The add-event form fetch must use `credentials: 'include'` so cross-origin `Set-Cookie` response headers are applied by the browser | 03-architecture/forms-and-api.md §7 | — (manual: verify cookie saved after form submit in a cross-origin deployment) | `source/assets/js/client/lagg-till.js` – `credentials: 'include'` in `fetch()` options | implemented |
 | `02-§18.38` | The cookie consent prompt must be displayed as a modal dialog (backdrop, focus trap, centered box) reusing the submit-feedback modal's styling and accessibility patterns | 03-architecture/forms-and-api.md §7, §8 | — (manual: submit form without prior consent and confirm modal appears with backdrop and focus trap) | `source/assets/js/client/cookie-consent.js` – `showConsentModal()` via `modalApi` from `lagg-till.js` | implemented |
 | `02-§18.39` | The add-activity form has no owner name field; event ownership is established entirely via session cookie | 03-architecture/forms-and-api.md §7 | — (manual: confirm no ownerName input in rendered lagg-till.html) | `source/build/render-add.js` – `ownerName` field removed from form | implemented |
@@ -1211,7 +1211,7 @@ its requirement rows together with the test-legend rows that evidence them.
 | `02-§89.14` | covered | ADED-01b, ADED-04..07, SES-18..21: missing/legacy/tampered/expired ownership is rejected without valid admin token |
 | `02-§89.15` | implemented | app.js returns 400 when isEventPast is true; api/index.php same |
 | `02-§89.16` | implemented | app.js returns 400 when isOutsideEditingPeriod is true; api/index.php same |
-| `02-§89.17` | covered | DEL-01–DEL-07: removeEventFromYaml tested; github.js + GitHub.php removeEventFromActiveCamp implemented |
+| `02-§89.17` | covered | FRAGONLY-04, -11: delete removes the event's fragment file via `deleteFile()`; github.js + GitHub.php `removeEventFromActiveCamp` (no camp-YAML write) |
 | `02-§89.18` | implemented | redigera.js removeIdFromCookie updates sb_session after delete |
 | `02-§89.19` | implemented | Reuses submit-modal, openModal, trapFocus patterns from edit flow |
 | `02-§89.20` | implemented | style.css btn-destructive uses --color-error custom property |
@@ -1533,7 +1533,7 @@ refactor of `render-lokaler.js` onto the shared module).
 | `02-§102.3` | covered | YSEC-10..12: `description` permits `\t`/`\n`/`\r`, rejects all other control chars; `source/api/validate.js` – `DESCRIPTION_ALLOWED_CONTROLS`; `api/src/Validate.php` mirrors |
 | `02-§102.4` | covered | YSEC-15..16: carriage returns in `description` normalised to `\n` in `buildEventYaml()`; `source/api/github.js` + `api/src/GitHub.php` |
 | `02-§102.5` | covered | YSEC-20..23: add/batch flows call `assertEventYamlValid()` to parse the full proposed document and confirm the new event id(s) before any branch/PR; `source/api/github.js` (add) + `api/src/GitHub.php` (add + batch) |
-| `02-§102.6` | implemented | Architectural: edit/delete rebuild via the YAML serializer (02-§10.4) and need no re-parse; existing EDIT/DEL tests confirm valid serialiser output. `source/api/edit-event.js` + `GitHub::patchEventInYaml`/`removeEventFromYaml` |
+| `02-§102.6` | implemented | Architectural: a fragment edit serialises via `buildFragmentYaml` and is re-parsed by `assertFragmentYamlValid` (02-§109.17); a delete removes a file, no serialisation. `source/api/edit-event.js` `patchEventObject`, `source/api/github.js` / `GitHub.php` |
 | `02-§102.7` | covered | PHP parity is exercised by the PHPUnit suite (§103): `api/tests/ValidateTest.php` + `api/tests/GitHubTest.php` assert the same control-character, whole-document, indentation and CR behaviour as the Node tests; PHP batch flow also covered |
 | `02-§102.8` | covered | YSEC-17..19, YSEC-23: `detectEventIndent()` reads the existing list indentation (default 2); appended block matches it so the document stays valid; `source/api/github.js` + `api/src/GitHub.php` |
 
@@ -1665,10 +1665,10 @@ Doc ref: `03-architecture/data-layer.md §1.1`, `§3`, `§3.1`, `§3.4`, `§4a`;
 | `02-§109.6` | implemented | `GitHub::addEventsToActiveCamp()` writes one fragment per date on one branch/PR; network write manual |
 | `02-§109.7` | covered | FRAG-37, FRAG-38: distinct ids → distinct files (no shared file); same id → same path |
 | `02-§109.8` | implemented | New-file create on an existing id → GitHub 422 → `classifyGitHubError` "En skrivkonflikt uppstod" (§3.3, FRAG-38); live 422 manual |
-| `02-§109.9` | implemented | `update/removeEventInActiveCamp()` call `getFileMaybe(fragmentPath)` first, then camp-file fallback; network manual |
-| `02-§109.10` | implemented | Fragment edit rewrites the file via `patchEventObject`+`buildFragmentYaml` (preserves id/created_at, bumps updated_at); manual |
-| `02-§109.11` | implemented | Fragment delete via `deleteFile()` (Contents API DELETE); manual |
-| `02-§109.12` | implemented | No fragment for id → `patchEventInYaml`/`removeEventFromYaml` on the camp file (existing path); manual |
+| `02-§109.9` | covered | FRAGONLY-01..04, -10, -11: Node+PHP edit/delete bodies act on `fragmentPath` only and never reference `campFilePath` |
+| `02-§109.10` | covered | EDIT-05..15, EEC-01..04: `patchEventObject` preserves id/created_at and bumps updated_at; edit rewrites the fragment via `buildFragmentYaml` |
+| `02-§109.11` | covered | FRAGONLY-04, -11: fragment delete via `deleteFile()`, no `putFile` in the delete path |
+| `02-§109.12` | covered | FRAGONLY-02, -04, -10, -11: no fragment → `throw`, no camp-YAML write (PHP returns a Swedish error, Node logs) |
 | `02-§109.13` | covered | FRAG-02: `build.js` loads the active camp and the archive loop via `loadCampEvents()` |
 | `02-§109.14` | covered | FRAG-09: merged set sorted by `groupAndSortEvents()` (date, start) |
 | `02-§109.15` | covered | FRAG-05: `loadCampEvents()` de-dups by id (fragment wins) and logs a warning |
@@ -1682,3 +1682,4 @@ Doc ref: `03-architecture/data-layer.md §1.1`, `§3`, `§3.1`, `§3.4`, `§4a`;
 | `02-§109.23` | covered | EDW-29, EDW-30, FRAG-52: prod gate maps fragment → camp file, then the camps.yaml `qa` lookup |
 | `02-§109.24` | covered | FRAG-70..73: fragment-only diff is data-only under `ci.yml`'s `^source/data/` + camps/local rule |
 | `02-§109.25` | covered | EDW-31, EDW-32: both event-data workflows trigger on `source/data/**.yaml` (matches nested fragments) |
+| `02-§109.26` | covered | FRAGONLY-05, -12: monolith patch/remove helpers removed (Node+PHP); mutation bodies never reference `campFilePath`. Split-at-open and compaction tracked separately |

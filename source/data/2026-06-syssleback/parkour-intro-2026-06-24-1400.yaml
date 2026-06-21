@@ -1,0 +1,18 @@
+event:
+  id: parkour-intro-2026-06-24-1400
+  title: Parkour intro
+  date: '2026-06-24'
+  start: '14:00'
+  end: '15:00'
+  location: GA Idrott
+  responsible: Joel Tegnander
+  description: |
+    Alla välkomna. Behövs bra kläder samt inneskor om man vill.
+    
+  link: null
+  owner:
+    name: ''
+    email: ''
+  meta:
+    created_at: 2026-06-20 18:21
+    updated_at: 2026-06-20 18:21

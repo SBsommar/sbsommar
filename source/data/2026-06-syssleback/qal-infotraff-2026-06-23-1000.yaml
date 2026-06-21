@@ -1,0 +1,19 @@
+event:
+  id: qal-infotraff-2026-06-23-1000
+  title: Handarbetsträff
+  date: '2026-06-23'
+  start: '10:00'
+  end: '11:30'
+  location: Tält1
+  responsible: Lisa Lautrup
+  description: |
+    Vi träffas och handarbetar tillsammans. Material för virkning finns på plats men man kan även ta med egna arbeten.
+    Alla åldrar och nivåer är varmt välkomna!
+    
+  link: null
+  owner:
+    name: ''
+    email: ''
+  meta:
+    created_at: 2026-06-18 07:32
+    updated_at: 2026-06-20 18:14

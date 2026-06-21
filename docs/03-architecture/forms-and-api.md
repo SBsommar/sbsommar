@@ -85,8 +85,10 @@ form with current event data.
    request body contains a valid `adminToken`.
 3. Validate the submitted fields (same rules as `POST /add-event`).
 4. Confirm the event's date has not passed.
-5. Read the camp YAML from GitHub, locate the event by ID, replace mutable
-   fields, update `meta.updated_at`.
+5. Rewrite the event's fragment file `source/data/<stem>/<event-id>.yaml` in
+   place — replace mutable fields, preserve `id` and `meta.created_at`, update
+   `meta.updated_at`. If no fragment exists for the id, make no change and return
+   an error; the camp YAML file is never rewritten (02-§109.9, §109.12).
 6. Commit to an ephemeral branch and open a PR with auto-merge — same
    pipeline as event additions.
 
@@ -100,8 +102,8 @@ flowchart TD
     F --> G["POST /edit-event (server)"]
     G --> H{Signed cookie ownership OR valid adminToken? + fields + date not passed}
     H -->|Fail| I[HTTP 400/403]
-    H -->|Pass| J[GitHub API: read camp YAML]
-    J --> K[Replace event fields · update meta.updated_at]
+    H -->|Pass| J[GitHub API: rewrite event's fragment file]
+    J --> K[Preserve id/created_at · update meta.updated_at]
     K --> L[Commit to ephemeral branch · open PR · enable auto-merge]
     L --> M[Auto-merge · deploy · schedule updated]
 ```
@@ -199,9 +201,10 @@ field error state — submission is blocked while the error is visible.
 
 ## 7b. Participant Event Deletion
 
-Participants who own an event can delete it from the edit page. Deletion
-removes the event entirely from the camp's YAML file using the same
-ephemeral-branch → PR → auto-merge pipeline as additions and edits.
+Participants who own an event can delete it from the edit page. Deletion removes
+the event's fragment file using the same ephemeral-branch → PR → auto-merge
+pipeline as additions and edits, and never rewrites the camp's YAML file
+(02-§109.9, §109.26).
 
 ### Server-side flow
 
@@ -213,10 +216,10 @@ POST /delete-event  { id }
   ├─ reject if event date < today → 400
   └─ removeEventFromActiveCamp(id)
        ├─ resolve active camp from camps.yaml
-       ├─ fetch camp YAML + SHA from GitHub
-       ├─ remove event entry from YAML
+       ├─ locate the event's fragment source/data/<stem>/<id>.yaml
+       ├─ no fragment for id → error, no change (02-§109.12)
        ├─ create ephemeral branch event-delete/<id>
-       ├─ commit removal
+       ├─ delete the fragment file
        ├─ open PR → auto-merge (squash)
        └─ return success
 ```
@@ -242,8 +245,7 @@ URL falls back to `/delete-event`.
 | File | Change |
 | --- | --- |
 | `app.js` | Add `POST /delete-event` route |
-| `source/api/edit-event.js` | Add `removeEventFromYaml()` function |
-| `source/api/github.js` | Add `removeEventFromActiveCamp()` function |
+| `source/api/github.js` | `removeEventFromActiveCamp()` deletes the event's fragment file (02-§109.11) |
 | `source/build/render-edit.js` | Add delete button and confirmation dialog HTML |
 | `source/assets/js/client/redigera.js` | Add delete button handler, confirmation, progress modal |
 

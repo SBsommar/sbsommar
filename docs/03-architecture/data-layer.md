@@ -252,18 +252,23 @@ camp YAML file (§1.1). The mutation endpoints behave as follows: <!-- 03-§3.4 
   HTTP 422 and the API surfaces the "En skrivkonflikt uppstod" message (§3.3)
   rather than overwriting the existing event (02-§109.8). <!-- 03-§3.4a -->
 
-Edit and delete resolve the storage location by id (02-§109.9): <!-- 03-§3.4b -->
+Edit and delete operate only on the event's fragment file (02-§109.9):
+<!-- 03-§3.4b -->
 
 1. If `source/data/<stem>/<event-id>.yaml` exists, the operation targets that
    fragment — **edit** rewrites it in place (preserving `id` and
    `meta.created_at`, bumping `meta.updated_at`); **delete** removes the file
    (02-§109.10, 02-§109.11).
-2. Otherwise the operation falls back to patching the camp YAML file in place,
-   exactly as before (02-§109.12).
+2. If no fragment exists for the id, the operation makes no change and fails with
+   a clear Swedish error; it never writes the camp YAML file (02-§109.12).
 
-Because newly submitted events (the only ones edited during the live window) live
-in their own fragment files, concurrent edits and deletes of different events
-also never touch the same file.
+No add, edit, or delete writes the camp YAML file (02-§109.26). An open camp's
+events therefore live entirely in fragment files: a split step moves a camp's
+seeded events into fragments when it opens (tracked separately) and compaction
+folds them back after archival (§1.1). Between those steps the camp YAML file's
+`events:` list is empty, so concurrent edits and deletes of different events
+never touch the same file and their pull requests can never conflict or go
+stale.
 
 ---
 

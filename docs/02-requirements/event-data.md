@@ -659,6 +659,19 @@ folds fragments back into the camp file (compaction) is tracked as its own
 follow-up and is not part of this section — until it runs, fragments simply
 accumulate and the build reads them alongside the camp file.
 
+The same shared-region problem applies to deletions and edits. When a delete or
+edit rewrites the whole camp YAML file, two such pull requests cut from the same
+`main` conflict exactly as appends did; a delete pull request also freezes a
+whole-file snapshot that goes stale, so merging it can reintroduce events other
+pull requests removed and drop events they added (issue #467). The desired state
+is therefore that add, edit, and delete all act only on fragment files and never
+write the camp YAML file. This requires an open camp's events to be stored as
+fragments in the first place: when a camp opens, its seeded events are split into
+fragments (split-at-open, tracked separately), and compaction folds them back
+into the camp YAML file after the camp is archived. Between those two maintenance
+steps the camp YAML file's `events:` list is empty and the fragments are the
+camp's live events.
+
 ### 109.2 Fragment storage layout (data requirements)
 
 - A camp's events are sourced from two places that the build treats as one set:
@@ -695,17 +708,18 @@ accumulate and the build reads them alongside the camp file.
 
 ### 109.4 Edit and delete (site requirements)
 
-- Edit and delete first look for a fragment file matching the event id; only when
-  none exists do they fall back to the camp YAML file. <!-- 02-§109.9 -->
+- Edit and delete operate only on the event's fragment file
+  (`source/data/<stem>/<event-id>.yaml`); neither operation reads or modifies the
+  camp's YAML file. <!-- 02-§109.9 -->
 - `POST /edit-event` for an event stored as a fragment rewrites that fragment file
   (`source/data/<stem>/<event-id>.yaml`) in place on its ephemeral branch,
   preserving the event's `id` and `meta.created_at` and updating
   `meta.updated_at`. <!-- 02-§109.10 -->
 - `POST /delete-event` for an event stored as a fragment removes that fragment
   file on its ephemeral branch. <!-- 02-§109.11 -->
-- When the target event is not stored as a fragment, edit and delete operate on
-  the camp YAML file (in-place patch or removal), exactly as they do for events
-  that have never been fragments. <!-- 02-§109.12 -->
+- An edit or delete request for an event id that has no fragment file makes no
+  change and fails with a clear Swedish error; it never writes the camp YAML
+  file. <!-- 02-§109.12 -->
 
 ### 109.5 Build-time merge (site requirements)
 
@@ -758,3 +772,10 @@ accumulate and the build reads them alongside the camp file.
 - The post-merge deploy workflow and the event-data PR-check workflow trigger on
   fragment paths, because their `source/data/**.yaml` path filter matches files
   nested one level under `source/data/`. <!-- 02-§109.25 -->
+
+### 109.8 Fragment-only mutation (site requirements)
+
+- No add, edit, or delete request writes a camp's YAML file. A camp's `events:`
+  list is maintained only by out-of-band steps outside the live submission flow:
+  the split that moves an open camp's events into fragments, and the compaction
+  that folds fragments back after the camp is archived. <!-- 02-§109.26 -->

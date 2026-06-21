@@ -161,7 +161,8 @@ final class GitHub
     }
 
     /**
-     * Patch an existing event in the active camp's YAML file.
+     * Edit an existing event by rewriting its fragment file in place. The camp
+     * YAML file is never read or rewritten (02-§109.9, §109.26).
      *
      * @param array<string,mixed> $updates  Validated request body
      */
@@ -173,41 +174,31 @@ final class GitHub
         $mainSha    = $this->getMainSha();
         $branchName = "event-edit/{$eventId}-" . time();
 
-        // Fragment first (02-§109.9): rewrite the fragment file in place.
+        // Edit operates only on the event's fragment file; no fragment → no
+        // change, error raised (02-§109.12).
         $fragPath = self::fragmentPath($camp['file'], $eventId);
         $frag     = $this->getFileMaybe($fragPath);
-        if ($frag !== null) {
-            [$fragContent, $fragSha] = $frag;
-            $doc = Yaml::parse($fragContent);
-            if (!is_array($doc) || !is_array($doc['event'] ?? null)) {
-                throw new \RuntimeException("Event not found: {$eventId}");
-            }
-            $patched = self::patchEventObject($doc['event'], $updates, $now);
-            $content = self::buildFragmentYaml($patched) . "\n";
-            self::assertFragmentYamlValid($content, $eventId);
-            $this->createBranch($branchName, $mainSha);
-            $this->putFile($fragPath, $content, $fragSha, $commitMsg, $branchName);
-            $pr = $this->createPullRequest($commitMsg, $branchName, 'Automatically created by the SB Sommar edit-event API.');
-            $this->enableAutoMerge($pr['node_id']);
-            return;
-        }
-
-        // Fallback (02-§109.12): patch the camp YAML file in place.
-        $campFilePath = 'source/data/' . $camp['file'];
-        [$campContent, $fileSha] = $this->getFile($campFilePath);
-        $newContent = self::patchEventInYaml($campContent, $eventId, $updates);
-        if ($newContent === null) {
+        if ($frag === null) {
             throw new \RuntimeException("Event not found: {$eventId}");
         }
+        [$fragContent, $fragSha] = $frag;
+        $doc = Yaml::parse($fragContent);
+        if (!is_array($doc) || !is_array($doc['event'] ?? null)) {
+            throw new \RuntimeException("Event not found: {$eventId}");
+        }
+        $patched = self::patchEventObject($doc['event'], $updates, $now);
+        $content = self::buildFragmentYaml($patched) . "\n";
+        self::assertFragmentYamlValid($content, $eventId);
         $this->createBranch($branchName, $mainSha);
-        $this->putFile($campFilePath, $newContent, $fileSha, $commitMsg, $branchName);
+        $this->putFile($fragPath, $content, $fragSha, $commitMsg, $branchName);
         $pr = $this->createPullRequest($commitMsg, $branchName, 'Automatically created by the SB Sommar edit-event API.');
         $this->enableAutoMerge($pr['node_id']);
     }
 
     /**
-     * Remove an event from the active camp's YAML file via ephemeral
-     * branch → PR → auto-merge.
+     * Delete an event by removing its fragment file via ephemeral
+     * branch → PR → auto-merge. The camp YAML file is never rewritten
+     * (02-§109.9, §109.26).
      */
     public function removeEventFromActiveCamp(string $eventId): void
     {
@@ -216,27 +207,16 @@ final class GitHub
         $mainSha    = $this->getMainSha();
         $branchName = "event-delete/{$eventId}-" . time();
 
-        // Fragment first (02-§109.11): delete the fragment file.
+        // Delete operates only on the event's fragment file; no fragment → no
+        // change, error raised (02-§109.12).
         $fragPath = self::fragmentPath($camp['file'], $eventId);
         $frag     = $this->getFileMaybe($fragPath);
-        if ($frag !== null) {
-            [, $fragSha] = $frag;
-            $this->createBranch($branchName, $mainSha);
-            $this->deleteFile($fragPath, $fragSha, $commitMsg, $branchName);
-            $pr = $this->createPullRequest($commitMsg, $branchName, 'Automatically created by the SB Sommar delete-event API.');
-            $this->enableAutoMerge($pr['node_id']);
-            return;
-        }
-
-        // Fallback (02-§109.12): remove from the camp YAML file.
-        $campFilePath = 'source/data/' . $camp['file'];
-        [$campContent, $fileSha] = $this->getFile($campFilePath);
-        $newContent = self::removeEventFromYaml($campContent, $eventId);
-        if ($newContent === null) {
+        if ($frag === null) {
             throw new \RuntimeException("Event not found: {$eventId}");
         }
+        [, $fragSha] = $frag;
         $this->createBranch($branchName, $mainSha);
-        $this->putFile($campFilePath, $newContent, $fileSha, $commitMsg, $branchName);
+        $this->deleteFile($fragPath, $fragSha, $commitMsg, $branchName);
         $pr = $this->createPullRequest($commitMsg, $branchName, 'Automatically created by the SB Sommar delete-event API.');
         $this->enableAutoMerge($pr['node_id']);
     }
@@ -386,8 +366,9 @@ final class GitHub
     }
 
     /**
-     * Apply $updates to a single event array, mirroring patchEventInYaml's
-     * mutable-field rules. Used for fragment edits (02-§109.10).
+     * Apply $updates to a single event array using the project's mutable-field
+     * rules. This is the only edit path — every event lives in its own fragment
+     * file (02-§109.9, §109.10).
      *
      * @param array<string,mixed> $event
      * @param array<string,mixed> $updates
@@ -473,76 +454,6 @@ final class GitHub
                 throw new \RuntimeException('Proposed camp YAML is missing expected event id: ' . $id);
             }
         }
-    }
-
-    /**
-     * Remove an event from a YAML string, returning the new YAML or null if not found.
-     */
-    public static function removeEventFromYaml(string $yamlContent, string $eventId): ?string
-    {
-        $data = Yaml::parse($yamlContent);
-        if (!is_array($data) || !is_array($data['events'] ?? null)) {
-            return null;
-        }
-
-        $idx = null;
-        foreach ($data['events'] as $i => $event) {
-            if (($event['id'] ?? null) === $eventId) {
-                $idx = $i;
-                break;
-            }
-        }
-        if ($idx === null) {
-            return null;
-        }
-
-        array_splice($data['events'], $idx, 1);
-
-        return Yaml::dump($data, 4, 2, Yaml::DUMP_NULL_AS_TILDE);
-    }
-
-    /**
-     * Patch an event in a YAML string, returning the new YAML or null if not found.
-     */
-    public static function patchEventInYaml(string $yamlContent, string $eventId, array $updates): ?string
-    {
-        $data = Yaml::parse($yamlContent);
-        if (!is_array($data) || !is_array($data['events'] ?? null)) {
-            return null;
-        }
-
-        $idx = null;
-        foreach ($data['events'] as $i => $event) {
-            if (($event['id'] ?? null) === $eventId) {
-                $idx = $i;
-                break;
-            }
-        }
-        if ($idx === null) {
-            return null;
-        }
-
-        $event = $data['events'][$idx];
-        $now   = (new \DateTimeImmutable('now', new \DateTimeZone('UTC')))->format('Y-m-d H:i');
-
-        $data['events'][$idx] = [
-            'id'          => $event['id'],
-            'title'       => array_key_exists('title', $updates) ? ($updates['title'] ?: $event['title']) : $event['title'],
-            'date'        => array_key_exists('date', $updates) ? ($updates['date'] ?: $event['date']) : $event['date'],
-            'start'       => array_key_exists('start', $updates) ? ($updates['start'] ?: $event['start']) : $event['start'],
-            'end'         => array_key_exists('end', $updates) ? ($updates['end'] ?: null) : $event['end'],
-            'location'    => array_key_exists('location', $updates) ? ($updates['location'] ?: $event['location']) : $event['location'],
-            'responsible' => array_key_exists('responsible', $updates) ? ($updates['responsible'] ?: $event['responsible']) : $event['responsible'],
-            'description' => array_key_exists('description', $updates) ? ($updates['description'] ?: null) : ($event['description'] ?? null),
-            'link'        => array_key_exists('link', $updates) ? ($updates['link'] ?: null) : ($event['link'] ?? null),
-            'owner'       => $event['owner'] ?? null,
-            'meta'        => [
-                'created_at' => $event['meta']['created_at'] ?? null,
-                'updated_at' => $now,
-            ],
-        ];
-
-        return Yaml::dump($data, 4, 2, Yaml::DUMP_NULL_AS_TILDE);
     }
 
     /**

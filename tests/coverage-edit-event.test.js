@@ -4,7 +4,7 @@ const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
 const yaml = require('js-yaml');
 
-const { patchEventInYaml } = require('../source/api/edit-event');
+const { patchEventObject } = require('../source/api/edit-event');
 const { addOneDay, isOutsideEditingPeriod } = require('../source/api/time-gate');
 const {
   createOwnershipEntry,
@@ -43,44 +43,45 @@ events:
     updated_at: 2099-05-01 12:00
 `;
 
+// Edits go through the fragment path (patchEventObject); each event lives in its
+// own file, so these checks operate on the single event object.
+const SAMPLE_EVENT = yaml.load(SAMPLE_YAML).events[0];
+const NOW = '2099-05-02 09:00';
+
 describe('05-§6.2 — Event ID stable after edits', () => {
   it('EEC-01: id unchanged after editing title', () => {
-    const result = patchEventInYaml(SAMPLE_YAML, 'stable-id-001', { title: 'Ny titel' });
-    const parsed = yaml.load(result);
-    assert.strictEqual(parsed.events[0].id, 'stable-id-001');
+    const ev = patchEventObject(SAMPLE_EVENT, { title: 'Ny titel' }, NOW);
+    assert.strictEqual(ev.id, 'stable-id-001');
   });
 
   it('EEC-02: id unchanged after editing multiple fields', () => {
-    const result = patchEventInYaml(SAMPLE_YAML, 'stable-id-001', {
+    const ev = patchEventObject(SAMPLE_EVENT, {
       title: 'Ny titel',
       date: '2099-06-03',
       start: '12:00',
       end: '13:00',
       location: 'Strand',
       responsible: 'Bo',
-    });
-    const parsed = yaml.load(result);
-    assert.strictEqual(parsed.events[0].id, 'stable-id-001');
+    }, NOW);
+    assert.strictEqual(ev.id, 'stable-id-001');
   });
 
   it('EEC-03: owner preserved even when all mutable fields change', () => {
-    const result = patchEventInYaml(SAMPLE_YAML, 'stable-id-001', {
+    const ev = patchEventObject(SAMPLE_EVENT, {
       title: 'X', date: '2099-06-02', start: '14:00', end: '15:00',
       location: 'Y', responsible: 'Z', description: 'Desc', link: 'https://x.com',
-    });
-    const parsed = yaml.load(result);
-    assert.deepStrictEqual(parsed.events[0].owner, { name: '', email: '' });
+    }, NOW);
+    assert.deepStrictEqual(ev.owner, { name: '', email: '' });
   });
 });
 
 // ── 02-§18.35  meta.updated_at updated on every edit ────────────────────────
 
 describe('02-§18.35 — meta.updated_at updated on edit', () => {
-  it('EEC-04: meta.created_at preserved after edit', () => {
-    const result = patchEventInYaml(SAMPLE_YAML, 'stable-id-001', { title: 'Ändrad' });
-    const parsed = yaml.load(result);
-    // created_at should stay as the original (or at least not be null)
-    assert.ok(parsed.events[0].meta.created_at !== null, 'created_at preserved');
+  it('EEC-04: meta.updated_at set to now, created_at preserved after edit', () => {
+    const ev = patchEventObject(SAMPLE_EVENT, { title: 'Ändrad' }, NOW);
+    assert.strictEqual(ev.meta.updated_at, NOW);
+    assert.ok(ev.meta.created_at !== null, 'created_at preserved');
   });
 });
 

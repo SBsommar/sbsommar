@@ -152,10 +152,9 @@ missing, the operation throws and nothing is written to git. This is the
 defence-in-depth backstop behind the field-level control-char checks above.
 
 The edit and delete flows do not need this backstop: a fragment edit rewrites the
-file with the same serializer used to build it, and the camp-file fallback paths
-rebuild the document with the YAML serializer (`yaml.dump` / `Yaml::dump`, see
-02-§10.4), which cannot emit structurally invalid YAML even if a field somehow
-held a newline.
+file with the same serializer used to build it (and is re-parsed by
+`assertFragmentYamlValid`, 02-§109.17), and a delete simply removes the fragment
+file. Neither rewrites the camp YAML file (02-§109.9, §109.26).
 
 #### Build-time fragment integrity (02-§109.19, 02-§109.20)
 

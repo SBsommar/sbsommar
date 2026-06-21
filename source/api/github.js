@@ -2,7 +2,7 @@
 
 const https = require('https');
 const yaml  = require('js-yaml');
-const { patchEventInYaml, patchEventObject, removeEventFromYaml } = require('./edit-event');
+const { patchEventObject } = require('./edit-event');
 const { resolveActiveCamp } = require('../scripts/resolve-active-camp');
 
 const CAMPS_PATH = 'source/data/camps.yaml';
@@ -367,9 +367,10 @@ async function addEventToActiveCamp(body) {
   await enableAutoMerge(pr.node_id);
 }
 
-// Edits an event by ID. Looks for the event's fragment file first; if present it
-// rewrites that file in place (02-§109.10). Otherwise it falls back to patching
-// the camp YAML file, exactly as before (02-§109.12).
+// Edits an event by ID. The event lives in its own fragment file, which this
+// rewrites in place; the camp YAML file is never read or rewritten
+// (02-§109.9, §109.10, §109.26). If no fragment exists for the id, nothing is
+// written and an error is raised (02-§109.12).
 async function updateEventInActiveCamp(eventId, updates) {
   const camp       = await resolveActiveCampFromGitHub();
   const now        = new Date().toISOString().replace('T', ' ').slice(0, 16);
@@ -377,35 +378,24 @@ async function updateEventInActiveCamp(eventId, updates) {
   const mainSha    = await getMainSha();
   const branchName = `event-edit/${eventId}-${Date.now()}`;
 
-  // Fragment path first (02-§109.9).
   const fragPath = fragmentPath(camp.file, eventId);
   const frag     = await getFileMaybe(fragPath);
-  if (frag) {
-    const doc = yaml.load(frag.content) || {};
-    if (!doc.event) throw new Error(`Event not found: ${eventId}`);
-    const patched = patchEventObject(doc.event, updates, now);
-    const content = buildFragmentYaml(patched) + '\n';
-    assertFragmentYamlValid(content, eventId);
-    await createBranch(branchName, mainSha);
-    await putFile(fragPath, content, frag.sha, commitMsg, branchName);
-    const pr = await createPullRequest(commitMsg, branchName, 'Automatically created by the SB Sommar edit-event API.');
-    await enableAutoMerge(pr.node_id);
-    return;
-  }
+  if (!frag) throw new Error(`Event not found: ${eventId}`);
 
-  // Fallback: patch the camp YAML file in place.
-  const campFilePath = `source/data/${camp.file}`;
-  const { content: campContent, sha: fileSha } = await getFile(campFilePath);
-  const newContent = patchEventInYaml(campContent, eventId, updates);
-  if (newContent === null) throw new Error(`Event not found: ${eventId}`);
+  const doc = yaml.load(frag.content) || {};
+  if (!doc.event) throw new Error(`Event not found: ${eventId}`);
+  const patched = patchEventObject(doc.event, updates, now);
+  const content = buildFragmentYaml(patched) + '\n';
+  assertFragmentYamlValid(content, eventId);
   await createBranch(branchName, mainSha);
-  await putFile(campFilePath, newContent, fileSha, commitMsg, branchName);
+  await putFile(fragPath, content, frag.sha, commitMsg, branchName);
   const pr = await createPullRequest(commitMsg, branchName, 'Automatically created by the SB Sommar edit-event API.');
   await enableAutoMerge(pr.node_id);
 }
 
-// Deletes an event by ID. Removes the event's fragment file if it exists
-// (02-§109.11); otherwise removes it from the camp YAML file (02-§109.12).
+// Deletes an event by ID by removing its fragment file; the camp YAML file is
+// never rewritten (02-§109.9, §109.11, §109.26). If no fragment exists for the
+// id, nothing is written and an error is raised (02-§109.12).
 async function removeEventFromActiveCamp(eventId) {
   const camp       = await resolveActiveCampFromGitHub();
   const commitMsg  = `Delete event in ${camp.name}: ${eventId}`;
@@ -414,20 +404,10 @@ async function removeEventFromActiveCamp(eventId) {
 
   const fragPath = fragmentPath(camp.file, eventId);
   const frag     = await getFileMaybe(fragPath);
-  if (frag) {
-    await createBranch(branchName, mainSha);
-    await deleteFile(fragPath, frag.sha, commitMsg, branchName);
-    const pr = await createPullRequest(commitMsg, branchName, 'Automatically created by the SB Sommar delete-event API.');
-    await enableAutoMerge(pr.node_id);
-    return;
-  }
+  if (!frag) throw new Error(`Event not found: ${eventId}`);
 
-  const campFilePath = `source/data/${camp.file}`;
-  const { content: campContent, sha: fileSha } = await getFile(campFilePath);
-  const newContent = removeEventFromYaml(campContent, eventId);
-  if (newContent === null) throw new Error(`Event not found: ${eventId}`);
   await createBranch(branchName, mainSha);
-  await putFile(campFilePath, newContent, fileSha, commitMsg, branchName);
+  await deleteFile(fragPath, frag.sha, commitMsg, branchName);
   const pr = await createPullRequest(commitMsg, branchName, 'Automatically created by the SB Sommar delete-event API.');
   await enableAutoMerge(pr.node_id);
 }

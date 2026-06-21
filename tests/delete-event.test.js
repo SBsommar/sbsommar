@@ -2,52 +2,10 @@
 
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
-const yaml = require('js-yaml');
 
-const { removeEventFromYaml } = require('../source/api/edit-event');
 const { renderEditPage } = require('../source/build/render-edit');
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
-
-const SAMPLE_YAML = `\
-camp:
-  id: test-camp
-  name: Test Camp
-  location: Testort
-  start_date: '2099-06-01'
-  end_date: '2099-06-07'
-events:
-- id: event-one-2099-06-01-1000
-  title: Event One
-  date: '2099-06-01'
-  start: '10:00'
-  end: '11:00'
-  location: Stor scenen
-  responsible: Anna
-  description: null
-  link: null
-  owner:
-    name: ''
-    email: ''
-  meta:
-    created_at: 2099-05-01 12:00
-    updated_at: 2099-05-01 12:00
-- id: event-two-2099-06-02-1400
-  title: Event Two
-  date: '2099-06-02'
-  start: '14:00'
-  end: '15:00'
-  location: Matsalen
-  responsible: Bo
-  description: Med lite text.
-  link: https://example.com
-  owner:
-    name: ''
-    email: ''
-  meta:
-    created_at: 2099-05-02 09:00
-    updated_at: 2099-05-02 09:00
-`;
 
 const CAMP = {
   name: 'SB Sommar 2026',
@@ -61,54 +19,10 @@ function render() {
   return renderEditPage(CAMP, LOCATIONS, API_URL);
 }
 
-// ── removeEventFromYaml (02-§89.17) ──────────────────────────────────────────
-
-describe('removeEventFromYaml', () => {
-  it('DEL-01: returns null when the event ID is not found', () => {
-    const result = removeEventFromYaml(SAMPLE_YAML, 'no-such-id');
-    assert.strictEqual(result, null);
-  });
-
-  it('DEL-02: removes the target event from the events array', () => {
-    const result = removeEventFromYaml(SAMPLE_YAML, 'event-one-2099-06-01-1000');
-    const parsed = yaml.load(result);
-    const found = parsed.events.find(e => e.id === 'event-one-2099-06-01-1000');
-    assert.strictEqual(found, undefined, 'Deleted event should not be present');
-  });
-
-  it('DEL-03: leaves other events unchanged', () => {
-    const result = removeEventFromYaml(SAMPLE_YAML, 'event-one-2099-06-01-1000');
-    const parsed = yaml.load(result);
-    assert.strictEqual(parsed.events.length, 1);
-    const remaining = parsed.events[0];
-    assert.strictEqual(remaining.id, 'event-two-2099-06-02-1400');
-    assert.strictEqual(remaining.title, 'Event Two');
-    assert.strictEqual(remaining.responsible, 'Bo');
-  });
-
-  it('DEL-04: preserves camp metadata', () => {
-    const result = removeEventFromYaml(SAMPLE_YAML, 'event-one-2099-06-01-1000');
-    const parsed = yaml.load(result);
-    assert.strictEqual(parsed.camp.id, 'test-camp');
-    assert.strictEqual(parsed.camp.name, 'Test Camp');
-  });
-
-  it('DEL-05: result is parseable as valid YAML', () => {
-    const result = removeEventFromYaml(SAMPLE_YAML, 'event-one-2099-06-01-1000');
-    assert.doesNotThrow(() => yaml.load(result), 'Result should be valid YAML');
-  });
-
-  it('DEL-06: returns null for invalid YAML content', () => {
-    const result = removeEventFromYaml('not: valid: yaml: [', 'event-one');
-    assert.strictEqual(result, null);
-  });
-
-  it('DEL-07: returns null when events array is missing', () => {
-    const noEvents = 'camp:\n  id: test\n';
-    const result = removeEventFromYaml(noEvents, 'event-one');
-    assert.strictEqual(result, null);
-  });
-});
+// Deletion removes the event's fragment file (02-§109.11); there is no
+// camp-YAML string helper to unit-test. The fragment-only delete path is
+// covered by the structural checks in fragment-only-mutation.test.js and the
+// manual checkpoints there.
 
 // ── Delete button on edit page (02-§89.1, 02-§89.2) ─────────────────────────
 

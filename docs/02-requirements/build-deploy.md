@@ -331,8 +331,8 @@ that supports Node.js.
 - The PHP API must commit new events to the active camp's YAML file via the
   GitHub Contents API, using the same ephemeral-branch → PR → auto-merge
   pipeline as the Node.js implementation. <!-- 02-§44.11 -->
-- Edit requests must patch the existing event in the YAML file using the
-  same field replacement logic as the Node.js `patchEventInYaml`. <!-- 02-§44.12 -->
+- Edit requests must rewrite the existing event's fragment file using the
+  same field-replacement logic as the Node.js `patchEventObject`. <!-- 02-§44.12 -->
 - The active camp must be resolved by reading `source/data/camps.yaml` from
   GitHub (not from a local file), using the same derivation rules as
   `resolveActiveCamp`. <!-- 02-§44.13 -->
