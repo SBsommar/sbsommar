@@ -164,8 +164,10 @@ filename stem, failing the build (and therefore the post-merge deploy) on a
 mismatch (02-§109.19). When an id appears in both the camp file and a fragment it
 de-duplicates by keeping the fragment and logging a warning (02-§109.15), so the
 rendered set always has unique ids. Strict cross-source id uniqueness
-(02-§109.20) is enforced at the source: the add API rejects a duplicate create
-with HTTP 422 (§3.4). Submitted content destined for a fragment passes the same
+(02-§109.20) is enforced at the source: the add API rejects a duplicate
+submission with a pre-check against `main` (HTTP 409; see *Duplicate-submission
+hardening* below), with the HTTP 422 new-file-create conflict (§3.4) remaining
+only as a deep backstop. Submitted content destined for a fragment passes the same
 API-layer field validation and security scan (`validate.js` / `Validate.php`,
 above) as content destined for the camp file. The PR-check workflow
 (`event-data-deploy.yml`) runs `check-yaml-security.js` (hard block) and
@@ -176,6 +178,43 @@ belonging to a non-archived camp (02-§109.18, 02-§109.21).
 Carriage returns in `description` are normalised to line feeds in
 `buildEventYaml()` before the literal block is emitted, so the stored value uses
 `\n` line endings regardless of the submitter's platform (02-§102.4).
+
+#### Duplicate-submission hardening (02-§111)
+
+Because an event id is derived from title + date + start, the same activity
+submitted twice resolves to the same fragment path. Two defences keep that from
+producing a stuck pull request, one per timing window.
+
+**Pre-check before a branch (02-§111.1–111.5).** Before any branch is created, the
+add and batch-add flows look up the target fragment on `main`
+(`getFileMaybe(fragmentPath)` in `source/api/github.js` / `GitHub::getFileMaybe()`
+in PHP — the same lookup edit and delete already use). If the fragment already
+exists, the submission is rejected with **HTTP 409** and a Swedish message saying
+the activity is already in the schedule, rather than the generic "En skrivkonflikt
+uppstod". No branch or pull request is created, so no dangling branch is left
+behind. This is the primary realisation of cross-source id uniqueness (02-§109.20)
+and refines the duplicate handling of 02-§109.8. The PHP entrypoint runs the whole
+add synchronously, so the rejection reaches the user as-is; the Node entrypoint
+(`app.js`) responds before its fire-and-forget GitHub write, so the pre-check runs
+as an awaited step *before* `res.json(...)` rather than inside the background call
+(02-§111.3). A batch is rejected atomically — if any chosen date's fragment already
+exists, none of the batch's fragments are created (02-§111.5).
+
+The pre-check closes the **already-merged** window. The HTTP 422 new-file-create
+conflict (§3.4) remains a last resort but is no longer the normal path.
+
+**Auto-close of concurrent duplicates (02-§111.6–111.9).** The pre-check cannot see
+a duplicate that has not merged yet: when two identical submissions are in flight,
+each is cut from a `main` that lacks the other's fragment, so both creates succeed
+and both pull requests open. The first merges; the second's diff against the new
+`main` is then empty, because it would add a file that already exists with
+identical content. A post-merge cleanup — a job in/alongside
+`event-data-deploy-post-merge.yml`, triggered on push to `main` for
+`source/data/**` — re-evaluates the open `event/*` pull requests and closes
+(deleting the branch) any whose net diff against `main` is empty (02-§111.7,
+§111.8). A collision that resolves to the same id but a *different* body has a
+non-empty diff; it is left open and logged for manual attention rather than closed
+silently (02-§111.9).
 
 ### 11.7 Required repository settings
 

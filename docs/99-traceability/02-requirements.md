@@ -1698,3 +1698,20 @@ Doc ref: `02-requirements/event-data.md §110`; `03-architecture/data-layer.md �
 | `02-§110.6` | covered | SPLIT-05: idempotent no-op when the camp file's `events:` list is already empty |
 | `02-§110.7` | covered | SPLIT-06: pre-existing fragment for a seeded id aborts with an error and writes nothing |
 | `02-§110.8` | covered | `04-OPERATIONS.md` (Camp Lifecycle → When a Camp Opens) documents the manual step run at/just before `opens_for_editing`; manual checkpoint |
+
+### §111 — Duplicate Submission Hardening
+
+Doc ref: `02-requirements/event-data.md §111`;
+`03-architecture/ci-and-deploy.md §11.6` (Duplicate-submission hardening).
+
+| ID | Status | Notes |
+| --- | --- | --- |
+| `02-§111.1` | gap | Pre-check via `getFileMaybe(fragmentPath)` against `main` before any branch — to add to `addEventToActiveCamp`/`addEventsToActiveCamp` (Node + PHP) |
+| `02-§111.2` | gap | Duplicate → HTTP 409 + Swedish "finns redan i schemat"; refines 02-§109.8 (replaces the 422 "skrivkonflikt" path); no branch/PR created |
+| `02-§111.3` | gap | Pre-check runs synchronously before the response in both runtimes; in `app.js` it must be awaited before `res.json`, not inside the fire-and-forget write |
+| `02-§111.4` | gap | Pre-check applies to single `POST /add-event` and batch `POST /add-events` |
+| `02-§111.5` | gap | Batch rejected atomically when any target fragment exists; no batch fragment created |
+| `02-§111.6` | gap | Concurrent window: both pre-checks pass; after the first merge the second PR's net diff vs `main` is empty |
+| `02-§111.7` | gap | Auto-close: an `event/*` PR with empty net diff vs `main` is closed and its branch deleted, no maintainer action |
+| `02-§111.8` | gap | Cleanup runs after each event-data merge to `main` (push, `source/data/**`), re-evaluating open event PRs |
+| `02-§111.9` | gap | Same-id/different-body collision (non-empty diff) is logged for manual attention, not closed silently |
