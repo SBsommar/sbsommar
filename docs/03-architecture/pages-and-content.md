@@ -186,9 +186,14 @@ a camp countdown.
 receives `heroSrc`, `heroAlt`, and new parameters for social links and the
 countdown target date.
 
-`build.js` computes the countdown target by finding the nearest future camp
-from `camps.yaml` (comparing `start_date` against today). This date is
-embedded as a `data-target` attribute on the countdown element.
+`build.js` computes the countdown target via `resolveCountdownTarget`
+(`source/build/utils.js`). It returns the `start_date` of the nearest upcoming
+camp, or `null` when the countdown should be hidden — while any camp is ongoing
+(today on or between its `start_date` and `end_date`, inclusive) or when no
+upcoming camp exists. Hiding it during the camp is what fixes #521: the
+countdown no longer skips ahead to the next camp mid-camp. A `null` target means
+no countdown element is rendered. The chosen date is embedded as a `data-target`
+attribute on the countdown element.
 
 Social link URLs (Discord and Facebook) are passed from `build.js` based on
 configuration.

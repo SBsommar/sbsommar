@@ -24,7 +24,7 @@ const { loadCampEvents } = require('./load-events');
 const { addOneDay } = require('../api/time-gate');
 const { setFeedbackUrl } = require('./layout');
 const { resolveVersionString } = require('./version');
-const { escapeHtml, injectHtaccessCsp } = require('./utils');
+const { escapeHtml, injectHtaccessCsp, resolveCountdownTarget } = require('./utils');
 const { getImageDimensions } = require('./image-dimensions');
 const { filterAvailableLocations } = require('./locations');
 
@@ -350,12 +350,13 @@ async function main() {
   // ── Compute hero social links and countdown target ────────────────────────
   const discordUrl = 'https://discord.com/channels/992817044527534181/1390691617052037232';
 
-  // Countdown: find the nearest future camp by start_date
+  // Countdown: count down to the nearest upcoming camp, but stay hidden while a
+  // camp is ongoing so it never counts toward a later camp mid-camp (#521).
   const todayStr = new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Stockholm' });
   const futureCamps = camps
     .filter((c) => toDateString(c.start_date) > todayStr)
     .sort((a, b) => toDateString(a.start_date).localeCompare(toDateString(b.start_date)));
-  const countdownTarget = futureCamps.length > 0 ? toDateString(futureCamps[0].start_date) : null;
+  const countdownTarget = resolveCountdownTarget(camps, todayStr);
 
   // Facebook link: prefer active camp, fall back to nearest future camp
   const facebookUrl = (activeCamp.link || '').trim()

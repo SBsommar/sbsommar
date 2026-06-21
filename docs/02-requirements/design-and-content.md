@@ -54,14 +54,16 @@ and connects visitors to community channels.
 - Below the social icons, a countdown displays the number of days remaining
   until the next camp starts. <!-- 02-§30.13 -->
 - The countdown target date is derived automatically from `camps.yaml`:
-  the `start_date` of the nearest future camp (or the active camp if its
-  start date is still in the future). <!-- 02-§30.14 -->
+  the `start_date` of the nearest upcoming camp. <!-- 02-§30.14 -->
 - The countdown shows two lines: the number (large, prominent) and the
   label "Dagar kvar" beneath it. <!-- 02-§30.15 -->
 - The countdown is rendered at build time as a `data-target` attribute.
   Client-side JavaScript calculates and updates the number on page
   load. <!-- 02-§30.16 -->
-- If no future camp exists, the countdown is hidden. <!-- 02-§30.17 -->
+- If no upcoming camp exists, the countdown is hidden. <!-- 02-§30.17 -->
+- While a camp is ongoing — today is on or between its `start_date` and
+  `end_date`, inclusive — the countdown is not displayed. It reappears, counting
+  toward the next camp, once the ongoing camp has ended. <!-- 02-§30.26 -->
 - The countdown area has a subtle background (cream/sand oval or rounded
   rectangle) to visually separate it from the sidebar. <!-- 02-§30.18 -->
 

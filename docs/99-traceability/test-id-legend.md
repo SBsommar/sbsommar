@@ -56,6 +56,7 @@ Part of [the traceability index](./index.md).
 | HERO-10..13 | `tests/hero.test.js` | `hero section – countdown (02-§30.13–30.17)` |
 | HERO-14..15 | `tests/hero.test.js` | `hero section – links from config (02-§30.22)` |
 | HERO-16 | `tests/hero.test.js` | `hero section – Discord icon image (02-§30.24)` |
+| CDOWN-01..09 | `tests/countdown-target.test.js` | `resolveCountdownTarget (02-§30.14, 30.17, 30.26)` |
 | VLD-33..39 | `tests/validate.test.js` | `validateEventRequest – time format` |
 | VLD-40..41 | `tests/validate.test.js` | `validateEditRequest – time format` |
 | VLD-42..48 | `tests/validate.test.js` | `validateEventRequest – string length limits` |
