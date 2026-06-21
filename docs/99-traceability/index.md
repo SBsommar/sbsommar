@@ -116,7 +116,7 @@ ID ranges.
 
 ---
 
-Audit date: 2026-02-24. Last updated: 2026-06-21 (duplicate submission hardening delivered, #480: 02-§111.1–111.9: 7 covered, 2 implemented; split-on-open delivered, #470: 02-§110.1–110.8 covered; fragment-only edit/delete delivered, #467: 02-§109.1–109.26: 22 covered, 4 implemented; config-file QA deploy trigger 02-§108.1–108.4 covered; location availability 02-§107.1–107.8 covered; countdown hidden during ongoing camp delivered, #521: 02-§30.26 covered).
+Audit date: 2026-02-24. Last updated: 2026-06-21 (duplicate submission hardening delivered, #480: 02-§111.1–111.9: 7 covered, 2 implemented; split-on-open delivered, #470: 02-§110.1–110.8 covered; fragment-only edit/delete delivered, #467: 02-§109.1–109.26: 22 covered, 4 implemented; config-file QA deploy trigger 02-§108.1–108.4 covered; location availability 02-§107.1–107.8 covered; countdown hidden during ongoing camp delivered, #521: 02-§30.26 covered; stranded-recovery auth + fail-loud 02-§112.12–112.15: 1 covered, 3 implemented).
 
 ---
 
@@ -138,9 +138,9 @@ Test IDs referenced in the `Test(s)` column are defined in the
 ## Summary
 
 ```text
-Total requirements:            1418
-Covered (implemented + tested): 762
-Implemented, not tested:        656
+Total requirements:            1422
+Covered (implemented + tested): 763
+Implemented, not tested:        659
 Gap (no implementation):          0
 Orphan tests (no requirement):    0
 
@@ -159,17 +159,20 @@ Note: §113 (Proactive Merge-Queue Enqueue) adds 9 requirements
   submission time (and thus whether the latency goal is actually met) must be
   confirmed against production (#481).
 
-Note: §112 (Stranded Auto-Merge Recovery) adds 11 requirements
-  (02-§112.1–112.11): 5 covered (STRAND-01..13,
-  tests/stranded-recovery.test.js) and 6 implemented (the GraphQL
-  disable→enable toggle, the per-PR isolation and early-exit in main(), and
-  the two workflow entry points, STRAND-M01 manual). Event PRs merge through a
+Note: §112 (Stranded Auto-Merge Recovery) adds 15 requirements
+  (02-§112.1–112.15): 6 covered (STRAND-01..19,
+  tests/stranded-recovery.test.js) and 9 implemented (the GraphQL
+  disable→enable toggle, the per-PR isolation and early-exit in main(), the two
+  workflow entry points, the EVENT_AUTOMERGE_TOKEN auth, and the deploy-trigger
+  identity, STRAND-M01 manual). Event PRs merge through a
   required merge queue; when main advances between auto-merge enablement and
   queue entry, a sibling event PR can strand (auto-merge on, mergeStateStatus
   CLEAN, no mergeQueueEntry) and never merge. recover-stranded-event-prs.js
   detects that signature and toggles auto-merge off then on to register a fresh
   queue entry, running after each event merge and on a 15-minute safety-net
-  schedule (#495).
+  schedule (#495). The toggle uses EVENT_AUTOMERGE_TOKEN because the default
+  GITHUB_TOKEN cannot run the auto-merge mutations, and the sweep exits non-zero
+  when any stranded PR could not be recovered (#496-followup).
 
 Note: §111 (Duplicate Submission Hardening) adds 9 requirements
   (02-§111.1–111.9): 7 covered (DEDUP-01..09, DEDUPCLEAN-01..09,
