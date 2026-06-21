@@ -1,18 +1,21 @@
 event:
   id: farga-t-shirt-2026-06-22-1300
-  title: Färga t-shirt
+  title: Färga t-shirt BOKA via länk
   date: '2026-06-22'
   start: '13:00'
   end: '19:00'
   location: Tält1
   responsible: Martina Sjöström
   description: |
+    Klicka på länken för att boka t-shirt
+    
+    
     Nej såhär bör man absolut inte göra, boka upp en yta och sedan bara använda den halva tiden. Anledningen till att jag tror det funkar är pga att det är måndag. Om det behövs så tar jag bort sakerna, men bokar detta så att man i första hand väljer en annan lokal. Är du intresserad av aktivitetrn har jag en tråd på fb.
     
-  link: null
+  link: 'https://event-queue-buddy.lovable.app/'
   owner:
     name: ''
     email: ''
   meta:
     created_at: 2026-06-21 10:38
-    updated_at: 2026-06-21 10:51
+    updated_at: 2026-06-21 18:49
