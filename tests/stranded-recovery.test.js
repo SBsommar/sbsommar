@@ -8,7 +8,7 @@
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
 
-const { classifyStrandedPr } = require('../source/scripts/recover-stranded-event-prs');
+const { classifyStrandedPr, withRetry } = require('../source/scripts/recover-stranded-event-prs');
 
 // A pull request that GitHub considers fully mergeable but that never reached the
 // queue: auto-merge on, checks green (CLEAN), and no queue entry.
@@ -76,5 +76,34 @@ describe('classifyStrandedPr — stranded auto-merge recovery (02-§112.1–112.
       classifyStrandedPr({ branch: 'event/2026-06-22-x-1', autoMergeEnabled: true, mergeStateStatus: 'CLEAN', inMergeQueue: true }),
       'skip',
     );
+  });
+});
+
+describe('withRetry — enable-step resilience (02-§112.11)', () => {
+  it('STRAND-11: returns the result on first success without retrying', () => {
+    let calls = 0;
+    const result = withRetry(() => { calls += 1; return 'ok'; }, { baseMs: 0 });
+    assert.equal(result, 'ok');
+    assert.equal(calls, 1);
+  });
+
+  it('STRAND-12: retries on throw and succeeds before attempts are exhausted', () => {
+    let calls = 0;
+    const result = withRetry(() => {
+      calls += 1;
+      if (calls < 3) throw new Error('transient');
+      return 'recovered';
+    }, { attempts: 3, baseMs: 0 });
+    assert.equal(result, 'recovered');
+    assert.equal(calls, 3);
+  });
+
+  it('STRAND-13: re-throws the last error once all attempts are exhausted', () => {
+    let calls = 0;
+    assert.throws(
+      () => withRetry(() => { calls += 1; throw new Error(`fail-${calls}`); }, { attempts: 3, baseMs: 0 }),
+      /fail-3/,
+    );
+    assert.equal(calls, 3);
   });
 });

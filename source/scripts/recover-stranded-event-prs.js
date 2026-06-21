@@ -51,6 +51,29 @@ function gh(args) {
   return execFileSync('gh', args, { encoding: 'utf8' });
 }
 
+// Synchronous sleep without extra dependencies (CI runs are single-threaded here).
+function sleepSync(ms) {
+  if (ms > 0) Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
+}
+
+/**
+ * Run `fn`, retrying on throw with exponential backoff. Pure with respect to
+ * `fn`, so it is unit-tested with a synchronous stub and baseMs 0.
+ * Returns `fn`'s value, or re-throws the last error once attempts are exhausted.
+ */
+function withRetry(fn, { attempts = 3, baseMs = 1000 } = {}) {
+  let lastErr;
+  for (let i = 0; i < attempts; i += 1) {
+    try {
+      return fn();
+    } catch (err) {
+      lastErr = err;
+      if (i < attempts - 1) sleepSync(baseMs * 2 ** i);
+    }
+  }
+  throw lastErr;
+}
+
 // Read the merge state of one PR via GraphQL. Separated from main() so the network
 // shell stays thin; classifyStrandedPr does the deciding.
 function fetchPrState(owner, repo, number) {
@@ -82,17 +105,21 @@ function fetchPrState(owner, repo, number) {
 }
 
 // Disable then re-enable auto-merge (squash) to register a fresh queue entry.
+// Disable runs once: if it fails the PR is left untouched (auto-merge still on)
+// and the next sweep retries the whole recovery. Enable is retried, because once
+// disable has succeeded a transient enable failure would otherwise leave the PR
+// with auto-merge off — worse than stranded (02-§112.11).
 function recoverPr(nodeId) {
   gh([
     'api', 'graphql',
     '-f', 'query=mutation($id:ID!){disablePullRequestAutoMerge(input:{pullRequestId:$id}){pullRequest{number}}}',
     '-f', `id=${nodeId}`,
   ]);
-  gh([
+  withRetry(() => gh([
     'api', 'graphql',
     '-f', 'query=mutation($id:ID!){enablePullRequestAutoMerge(input:{pullRequestId:$id,mergeMethod:SQUASH}){pullRequest{number}}}',
     '-f', `id=${nodeId}`,
-  ]);
+  ]));
 }
 
 function main() {
@@ -142,4 +169,4 @@ if (require.main === module) {
   }
 }
 
-module.exports = { classifyStrandedPr };
+module.exports = { classifyStrandedPr, withRetry };

@@ -138,14 +138,14 @@ Test IDs referenced in the `Test(s)` column are defined in the
 ## Summary
 
 ```text
-Total requirements:            1407
-Covered (implemented + tested): 753
+Total requirements:            1408
+Covered (implemented + tested): 754
 Implemented, not tested:        654
 Gap (no implementation):          0
 Orphan tests (no requirement):    0
 
-Note: §112 (Stranded Auto-Merge Recovery) adds 10 requirements
-  (02-§112.1–112.10): 4 covered (STRAND-01..10,
+Note: §112 (Stranded Auto-Merge Recovery) adds 11 requirements
+  (02-§112.1–112.11): 5 covered (STRAND-01..13,
   tests/stranded-recovery.test.js) and 6 implemented (the GraphQL
   disable→enable toggle, the per-PR isolation and early-exit in main(), and
   the two workflow entry points, STRAND-M01 manual). Event PRs merge through a

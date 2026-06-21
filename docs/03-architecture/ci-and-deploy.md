@@ -260,8 +260,13 @@ the queue (`mergeQueueEntry`). A pure, unit-tested classifier
 
 For a `recover` verdict the script calls `disablePullRequestAutoMerge` then
 `enablePullRequestAutoMerge` (mergeMethod `SQUASH`, matching the form API, 02-§112.3).
-Each pull request is processed inside its own `try`/`catch`, so one failed read or
-mutation does not abort the sweep (02-§112.6), mirroring the redundant-PR cleanup.
+The re-enable is wrapped in `withRetry` (exponential backoff) because once auto-merge
+has been disabled, a transient failure to re-enable it would leave the pull request
+with auto-merge off — worse than stranded; the disable is a single attempt, since a
+failed disable leaves the pull request unchanged for the next sweep to retry
+(02-§112.11). Each pull request is processed inside its own `try`/`catch`, so one
+failed read or mutation does not abort the sweep (02-§112.6), mirroring the
+redundant-PR cleanup.
 The classifier never recovers a pull request that is not stranded, so repeated runs
 are idempotent (02-§112.10).
 

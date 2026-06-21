@@ -1734,3 +1734,4 @@ Doc ref: `02-requirements/event-data.md §112`;
 | `02-§112.8` | implemented | `merge-queue-recovery.yml` runs the sweep on a 15-minute `schedule` cron (plus `workflow_dispatch`); CI/manual checkpoint STRAND-M01 |
 | `02-§112.9` | implemented | `main()` filters to open event PRs and returns early with "nothing to recover" when none exist; live behaviour is STRAND-M01 |
 | `02-§112.10` | covered | STRAND-10: `classifyStrandedPr` is pure and returns `skip` for any non-stranded PR, so repeated sweeps are no-ops |
+| `02-§112.11` | covered | STRAND-11/-12/-13: `recoverPr()` wraps the re-enable in `withRetry` (exponential backoff); disable is a single attempt; live toggle is STRAND-M01 |

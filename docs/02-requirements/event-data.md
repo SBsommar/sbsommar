@@ -950,6 +950,12 @@ stuck in the queue handoff.
 - An event pull request whose required checks are still pending, or have failed, is
   left untouched: it is not yet eligible to merge, so there is nothing to
   recover. <!-- 02-§112.5 -->
+- The re-enable step is retried with backoff. Once auto-merge has been disabled, a
+  transient failure to re-enable it would leave the pull request with auto-merge off
+  — worse than stranded — so re-enabling is retried until it succeeds or the
+  attempts are exhausted, in which case the failure is logged. The disable step is
+  not retried: if it fails the pull request is unchanged and the next recovery pass
+  retries the whole recovery. <!-- 02-§112.11 -->
 - Each event pull request is evaluated in isolation, so a failure to read or recover
   one pull request does not abort the recovery of the others. <!-- 02-§112.6 -->
 
