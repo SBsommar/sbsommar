@@ -1715,3 +1715,22 @@ Doc ref: `02-requirements/event-data.md §111`;
 | `02-§111.7` | implemented | DEDUPCLEAN-01/-02 decide `close`; `main()` runs `gh pr close --delete-branch` on an `event/*` PR — the GitHub close + branch delete is the DEDUP-M02 manual checkpoint |
 | `02-§111.8` | implemented | `close-redundant-event-prs` job in `event-data-deploy-post-merge.yml` runs the script on push to `main` (`source/data/**`); CI/manual checkpoint (DEDUP-M02) |
 | `02-§111.9` | covered | DEDUPCLEAN-04: a modified (same-id/different-body) fragment → `log-manual`, not closed |
+
+### §112 — Stranded Auto-Merge Recovery
+
+Doc ref: `02-requirements/event-data.md §112`;
+`03-architecture/ci-and-deploy.md §11.8` (Stranded auto-merge recovery);
+`04-OPERATIONS.md §Merge queue`.
+
+| ID | Status | Notes |
+| --- | --- | --- |
+| `02-§112.1` | gap | `classifyStrandedPr` returns `recover` only for an `event/`/`event-edit/`/`event-delete/` branch with auto-merge enabled, `mergeStateStatus === CLEAN`, and no `mergeQueueEntry` |
+| `02-§112.2` | gap | Recovery calls `disablePullRequestAutoMerge` then `enablePullRequestAutoMerge`; the live "disable→enable creates a fresh queue entry, re-enable alone is a no-op" premise is a manual checkpoint (STRAND-M01) |
+| `02-§112.3` | gap | Re-enable uses mergeMethod `SQUASH`, matching `enableAutoMerge` in the form API |
+| `02-§112.4` | gap | `classifyStrandedPr` returns `skip` when a `mergeQueueEntry` is present (already progressing) |
+| `02-§112.5` | gap | `classifyStrandedPr` returns `skip` when `mergeStateStatus` is not `CLEAN` (checks pending/failing) |
+| `02-§112.6` | gap | Per-PR `try`/`catch` in `main()` isolates a failed read or mutation from the rest of the sweep |
+| `02-§112.7` | gap | `recover-stranded-event-prs` job in `event-data-deploy-post-merge.yml` runs on push to `main` (`source/data/**`); CI/manual checkpoint (STRAND-M01) |
+| `02-§112.8` | gap | `merge-queue-recovery.yml` runs the sweep on a 15-minute `schedule` cron; CI/manual checkpoint (STRAND-M01) |
+| `02-§112.9` | gap | `main()` lists open event PRs first and returns without mutations when none classify as `recover` |
+| `02-§112.10` | gap | `classifyStrandedPr` is pure and returns `skip` for any non-stranded PR, so repeated sweeps are no-ops |

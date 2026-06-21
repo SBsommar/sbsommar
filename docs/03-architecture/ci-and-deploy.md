@@ -102,7 +102,8 @@ their `source/data/**.yaml` path filter matches files nested one level under
 | --- | --- | --- |
 | `ci.yml` | All branches + PRs | Lint, test, build for code changes; pass-through for data-only |
 | `event-data-deploy.yml` | PRs from `event/**`, `event-edit/**` | No-op branch protection gate |
-| `event-data-deploy-post-merge.yml` | Push to `main` (data YAMLs only) | setup-node + npm ci + build + deploy to QA, Production; plus a write-scoped job that closes duplicate event PRs made redundant by the merge (02-§111.7) |
+| `event-data-deploy-post-merge.yml` | Push to `main` (data YAMLs only) | setup-node + npm ci + build + deploy to QA, Production; plus write-scoped jobs that close duplicate event PRs made redundant by the merge (02-§111.7) and recover event PRs stranded in the merge queue by the base move (02-§112.7) |
+| `merge-queue-recovery.yml` | 15-minute `schedule` cron | Write-scoped safety-net sweep that recovers event PRs stranded in the merge queue (02-§112.8) |
 | `deploy-qa.yml` | Push to `main` (ignores per-camp event YAMLs) | Full build + SCP/SSH swap (QA) |
 | `deploy-prod.yml` | Manual `workflow_dispatch` | Full build + SCP/SSH swap (Production) |
 | `deploy-reusable.yml` | Called by `deploy-qa.yml` / `deploy-prod.yml` | Shared build-and-deploy logic |
@@ -223,6 +224,56 @@ silently (02-§111.9).
   protection for `main`.
 - No new secrets are needed beyond the existing SSH deploy secrets (scoped per
   GitHub Environment; see [08-ENVIRONMENTS.md](08-ENVIRONMENTS.md)).
+
+### 11.8 Stranded auto-merge recovery (02-§112)
+
+All pull requests to `main` merge through a merge queue required by the `main`
+branch ruleset. The form API enables auto-merge (squash) on each event pull request
+(`enableAutoMerge` in `source/api/github.js` / `GitHub::enableAutoMerge()` in PHP),
+and GitHub places the pull request in the queue once its required checks pass. The
+queue re-tests each entry on a `gh-readonly-queue/main/*` branch; `ci.yml` reaches
+those branches through its `push: '**'` trigger, so no `merge_group:` trigger is
+needed (see [04-OPERATIONS.md](../04-OPERATIONS.md) §"Merge queue").
+
+When event submissions arrive in a burst, several pull requests compete for the
+queue. If one merges and advances `main` while a sibling's auto-merge was enabled
+against the previous tip, GitHub can leave that sibling **stranded**: auto-merge
+stays enabled, the required checks are green and the mergeable state is clean, but
+the pull request never enters the queue (it has no `mergeQueueEntry`). Because
+GitHub already considers auto-merge enabled, re-enabling it is a no-op; only
+disabling and re-enabling auto-merge registers a fresh queue entry against the
+current `main` (02-§112.2).
+
+**Recovery sweep (02-§112.1–112.6).** `source/scripts/recover-stranded-event-prs.js`
+is a sibling to `close-redundant-event-prs.js`. It lists the open pull requests on
+`event/*`, `event-edit/*`, and `event-delete/*` branches and, for each, reads three
+GraphQL fields via `gh api graphql`: whether auto-merge is enabled
+(`autoMergeRequest`), the mergeable state (`mergeStateStatus`), and whether it is in
+the queue (`mergeQueueEntry`). A pure, unit-tested classifier
+(`classifyStrandedPr`) decides:
+
+- `recover` — auto-merge enabled, `mergeStateStatus` is `CLEAN`, and no
+  `mergeQueueEntry`: the pull request is stranded (02-§112.1).
+- `skip` — already has a `mergeQueueEntry` (progressing, 02-§112.4); checks pending
+  or failing so `mergeStateStatus` is not `CLEAN` (02-§112.5); or auto-merge is not
+  enabled.
+
+For a `recover` verdict the script calls `disablePullRequestAutoMerge` then
+`enablePullRequestAutoMerge` (mergeMethod `SQUASH`, matching the form API, 02-§112.3).
+Each pull request is processed inside its own `try`/`catch`, so one failed read or
+mutation does not abort the sweep (02-§112.6), mirroring the redundant-PR cleanup.
+The classifier never recovers a pull request that is not stranded, so repeated runs
+are idempotent (02-§112.10).
+
+**When it runs (02-§112.7–112.9).** The sweep runs in two places:
+
+- A job in `event-data-deploy-post-merge.yml` (push to `main`, `source/data/**.yaml`),
+  alongside `close-redundant-event-prs` — the event merge that triggers this workflow
+  is exactly the base move that can strand a sibling, so recovery happens immediately
+  (02-§112.7). The job needs `pull-requests: write` to toggle auto-merge.
+- A scheduled workflow, `merge-queue-recovery.yml`, on a 15-minute cron, as a safety
+  net for strandings that no event-data merge follows (02-§112.8). The sweep lists the
+  open event pull requests first and exits cheaply when none are stranded (02-§112.9).
 
 ---
 

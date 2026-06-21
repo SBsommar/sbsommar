@@ -152,10 +152,9 @@ auto-merge is enabled, GitHub adds it to the queue instead of merging it directl
 
 The queue merges one entry at a time. Each queued PR is re-tested on a temporary
 `gh-readonly-queue/main/*` branch built on the current `main` tip, so a PR forked
-from an older `main` is rebuilt against the latest commit and merged in order.
-Concurrent form submissions therefore all reach `main` automatically: no PR is
-left stranded `behind` the branch it was forked from, and no manual
-"Update branch" step is needed.
+from an older `main` is rebuilt against the latest commit and merged in order. Once
+a PR is *in* the queue, concurrent form submissions all reach `main` automatically,
+with no manual "Update branch" step.
 
 The required `Lint, Test & Build` check reaches a queue branch because `ci.yml`
 triggers on `push` to `**`, which matches `gh-readonly-queue/main/*`. No workflow
@@ -164,6 +163,18 @@ from reporting on the queue branch: queued PRs then wait out the 60-minute
 status-check timeout, are treated as failed, and drop from the queue without
 merging. Add an explicit `merge_group:` trigger to the check-providing workflows
 before narrowing the `push` trigger.
+
+**Stranded auto-merge.** The handoff *into* the queue is not always reliable. When
+event submissions arrive in a burst and one merges, `main` advances; a sibling PR
+whose auto-merge was enabled against the previous tip can be left stranded —
+auto-merge enabled, checks green, `mergeable_state: clean`, but with **no
+merge-queue entry**, so it never merges. Re-enabling auto-merge is a no-op (GitHub
+sees it as already on); only disabling and re-enabling it registers a fresh queue
+entry. This is recovered automatically: a sweep
+(`source/scripts/recover-stranded-event-prs.js`) runs after every event-data merge
+and on a 15-minute schedule (`merge-queue-recovery.yml`), finds stranded `event/*`,
+`event-edit/*`, and `event-delete/*` PRs, and toggles their auto-merge off then on
+(02-§112, issue #495).
 
 ### Environment Variables
 
