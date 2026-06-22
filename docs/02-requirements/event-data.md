@@ -977,6 +977,16 @@ stuck in the queue handoff.
 - The scheduled safety-net pass is inexpensive when there are no open event pull
   requests: it lists the open event pull requests and exits without further work when
   none are stranded. <!-- 02-§112.9 -->
+- Recovery also runs when a check suite completes (`check_suite` `completed`). A pull
+  request becomes stranded at the moment its required checks finish and it turns
+  mergeable, so running the sweep on check-suite completion recovers it then —
+  independently of the schedule, whose delivery GitHub does not guarantee at the
+  configured interval. <!-- 02-§112.16 -->
+- Recovery runs are single-flight: all recovery triggers (post-merge, scheduled,
+  check-suite, manual) share one concurrency group, and an in-progress run is never
+  cancelled. This coalesces bursts of check-suite completions into few runs and
+  guarantees a run that is mid-toggle (auto-merge disabled, not yet re-enabled) is
+  allowed to finish, so a pull request is never left with auto-merge off. <!-- 02-§112.17 -->
 - Recovery is idempotent. A pull request that is not stranded is left unchanged on
   every pass, so running recovery repeatedly is safe. <!-- 02-§112.10 -->
 
