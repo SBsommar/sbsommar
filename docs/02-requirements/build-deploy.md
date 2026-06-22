@@ -249,8 +249,8 @@ secrets to manage. Production remains on FTP until QA is validated.
   secret the full site deploy uses), with `/public_html/` appended,
   instead of requiring a separate `FTP_TARGET_DIR` secret. <!-- 02-§43.3 -->
 - The upload must include the same files as today: `schema.html`,
-  `idag.html`, `live.html`, `dagens-schema.html`, `dagens-schema/index.html`,
-  `events.json`, `schema.rss`, and per-event detail pages under `schema/`. <!-- 02-§43.4 -->
+  `idag.html`, `live.html`, `dagens-schema.html`, `events.json`,
+  `schema.rss`, and per-event detail pages under `schema/`. <!-- 02-§43.4 -->
 - The `FTP_TARGET_DIR` validation step must be removed from the QA
   job. <!-- 02-§43.5 -->
 
@@ -456,9 +456,8 @@ workflow builds and deploys event-data files.
   [Archived (superseded)](./archive.md).
 - The workflow must build the site using `node source/build/build.js`. <!-- 02-§50.15 -->
 - The workflow must stage only event-data-derived files for upload: `schema.html`,
-  `idag.html`, `live.html`, `dagens-schema.html`, `dagens-schema/index.html`,
-  `events.json`, `schema.rss`, `schema.ics`, `kalender.html`, and per-event pages
-  under `schema/`. <!-- 02-§50.16 -->
+  `idag.html`, `live.html`, `dagens-schema.html`, `events.json`, `schema.rss`,
+  `schema.ics`, `kalender.html`, and per-event pages under `schema/`. <!-- 02-§50.16 -->
 - The workflow must deploy to QA via rsync in a parallel job. <!-- 02-§50.17 -->
 - The workflow must deploy to Production via SCP, skipped when the changed
   file belongs to a QA camp. <!-- 02-§50.18 -->
