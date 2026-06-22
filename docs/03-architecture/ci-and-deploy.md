@@ -79,9 +79,7 @@ Each deploy job:
    earlier basename-only lookup so QA-camp fragments never deploy to production.
 4. Runs `node source/build/build.js`.
 5. Stages only event-data-derived files: `schema.html`, `idag.html`,
-   `live.html`, `dagens-schema/index.html` (the display-page alias, which
-   embeds the day's events and so must redeploy with `live.html`),
-   `events.json`, `schema.rss`, `schema.ics`,
+   `live.html`, `events.json`, `schema.rss`, `schema.ics`,
    `kalender.html`, and per-event pages under `schema/`.
 6. Uploads the staged files via SCP to the target environment.
 

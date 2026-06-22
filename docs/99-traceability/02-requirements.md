@@ -42,7 +42,6 @@ Part of [the traceability index](./index.md).
 | `02-§4.20` | Display view heading is positioned inside the sidebar, not above the event list | 02-requirements/schedule-and-detail.md §4; 07-design/components.md §6.44 | DIS-24, DIS-25 | `source/build/render-today.js` – `<h1 id="today-heading" class="sidebar-heading">` inside `<aside class="dagens-sidebar">` | covered |
 | `02-§4.21` | Display view is optimised for portrait screens; event rows are compact | 02-requirements/schedule-and-detail.md §4; 07-design/components.md §6.45, §6.48 | — (manual: open `/live.html` in a portrait viewport ~1080×1920 and confirm event rows are compact and the sidebar is narrow) | `source/assets/cs/style.css` – `.dagens-events { flex: 3 }`, `.dagens-sidebar { flex: 1 }`, `body.display-mode .event-row { font-size: 13px; padding: 6px }` | implemented |
 | `02-§76.1` | Old `/dagens-schema.html` URL redirects to `/live.html` | 02-requirements/schedule-and-detail.md §4 | RDR-01..04 | `source/build/render-today.js` – `renderRedirectPage()`; `source/build/build.js` → `public/dagens-schema.html` | covered |
-| `02-§76.2` | `/dagens-schema/` is a true content alias of `/live.html` (display page + `<base href="/">`), deployed alongside `live.html` on every deploy | 02-requirements/schedule-and-detail.md §4; 03-architecture/ci-and-deploy.md §11.3 | ALIAS-01..03, EDW-DS-01..02 | `source/build/render-today.js` – `renderDisplayAlias()`; `source/build/build.js` → `public/dagens-schema/index.html`; `.github/workflows/event-data-deploy-post-merge.yml` – staging step | covered |
 | `02-§77.1` | Build computes MD5 hash of each JS file referenced by `<script>` tags | 03-architecture/ci-and-deploy.md §27 | CACHE-10 | `source/build/build.js` – JS cache-busting post-processing | covered |
 | `02-§77.2` | Build replaces `src="<file>.js"` with `src="<file>.js?v=<hash>"` in all HTML | 03-architecture/ci-and-deploy.md §27 | CACHE-11 | `source/build/build.js` – JS cache-busting post-processing | covered |
 | `02-§77.3` | JS hash is deterministic: identical content → identical hash | 03-architecture/ci-and-deploy.md §27 | CACHE-12 | `source/build/build.js` – `crypto.createHash('md5')` | covered |
@@ -1017,7 +1016,6 @@ its requirement rows together with the test-legend rows that evidence them.
 | `02-§75.11` | covered | NL-03: each nav link has both short and long label spans; `layout.js` |
 | | | **§76 — Redirect from old display view URL** |
 | `02-§76.1` | covered | RDR-01..04: `renderRedirectPage()` produces redirect; `build.js` writes `public/dagens-schema.html` |
-| `02-§76.2` | covered | ALIAS-01..03: `renderDisplayAlias()` injects `<base href="/">` into the display page; `build.js` writes `public/dagens-schema/index.html`. EDW-DS-01..02: both deploy jobs stage `dagens-schema/index.html` |
 | | | **§77 — JavaScript Cache-Busting** |
 | `02-§77.1` | covered | CACHE-10: build.js computes MD5 hash for JS files |
 | `02-§77.2` | covered | CACHE-11: build.js replaces JS src with ?v=hash |

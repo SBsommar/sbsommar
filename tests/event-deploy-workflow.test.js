@@ -299,25 +299,3 @@ describe('02-§109.25 — Event-data workflows trigger on fragment paths (EDW-31
     );
   });
 });
-
-// ── 02-§76.2  /dagens-schema/ alias redeploys with live.html on data-only deploys ──
-// The alias embeds the day's events, so it must be staged alongside live.html in
-// every deploy job or it would diverge from live.html after a data-only deploy.
-
-describe('02-§76.2 — Both deploy jobs stage the /dagens-schema/ alias (EDW-DS-01..02)', () => {
-  const deployJobs = jobNames.filter((n) => n.startsWith('deploy'));
-
-  for (const name of deployJobs) {
-    it(`EDW-DS-01: ${name} staging step copies dagens-schema/index.html`, () => {
-      const steps = workflow.jobs[name].steps || [];
-      const stage = steps.find(
-        (s) => s.run && s.run.includes('mkdir -p staging')
-      );
-      assert.ok(stage, `${name} must have a staging step`);
-      assert.ok(
-        stage.run.includes('dagens-schema/index.html'),
-        `${name} staging step must stage dagens-schema/index.html`
-      );
-    });
-  }
-});

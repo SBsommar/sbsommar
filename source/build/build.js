@@ -8,7 +8,7 @@ const QRCode = require('qrcode');
 const { renderSchedulePage, toDateString } = require('./render');
 const { renderAddPage } = require('./render-add');
 const { renderEditPage, editApiUrl } = require('./render-edit');
-const { renderTodayPage, renderRedirectPage, renderDisplayAlias } = require('./render-today');
+const { renderTodayPage, renderRedirectPage } = require('./render-today');
 const { renderIdagPage } = require('./render-idag');
 const { renderLokalerPage } = require('./render-lokaler');
 const { renderIndexPage, convertMarkdown, extractHeroImage, extractH1, renderUpcomingCampsHtml, renderLocationAccordions, formatLongSvDate } = require('./render-index');
@@ -208,15 +208,6 @@ async function main() {
 
   fs.writeFileSync(path.join(OUTPUT_DIR, 'dagens-schema.html'), renderRedirectPage(), 'utf8');
   console.log('Built: public/dagens-schema.html  (redirect → live.html)');
-
-  // Directory-style alias /dagens-schema/ serves the live display page directly,
-  // so kiosk screens that reload that URL on a timer never flash through a
-  // redirect. Asset/version.json paths resolve from root via the injected
-  // <base href="/">. (02-§76.2)
-  const dagensSchemaDir = path.join(OUTPUT_DIR, 'dagens-schema');
-  fs.mkdirSync(dagensSchemaDir, { recursive: true });
-  fs.writeFileSync(path.join(dagensSchemaDir, 'index.html'), renderDisplayAlias(todayHtml), 'utf8');
-  console.log('Built: public/dagens-schema/index.html  (display-page alias)');
 
   // ── Write version.json — polled by live.html for live reload ─────────────────
   fs.writeFileSync(path.join(OUTPUT_DIR, 'version.json'), JSON.stringify({ version: buildTime }), 'utf8');
