@@ -1744,8 +1744,8 @@ Doc ref: `02-requirements/event-data.md §112`;
 | `02-§112.13` | covered | STRAND-16/-17 (`processPr` returns `'failed'` on fetch/recover error), STRAND-18/-19 (`runSweep` counts failures and keeps going); `main()` throws when the count is non-zero |
 | `02-§112.14` | implemented | `EVENT_AUTOMERGE_TOKEN` documented as a repository-level secret in 08-ENVIRONMENTS; recovery jobs declare no `environment:` so only repo-level secrets resolve |
 | `02-§112.15` | implemented | Re-enable runs under the PAT identity so the merge triggers `event-data-deploy-post-merge.yml`; manual checkpoint STRAND-M01 |
-| `02-§112.16` | gap | `merge-queue-recovery.yml` adds a `check_suite: [completed]` trigger so the sweep runs when a PR's checks finish |
-| `02-§112.17` | gap | Shared `concurrency: stranded-recovery` group with `cancel-in-progress: false` on the scheduled workflow and the post-merge job |
+| `02-§112.16` | covered | RECTRIG-02: `merge-queue-recovery.yml` declares a `check_suite: [completed]` trigger (schedule + workflow_dispatch retained, RECTRIG-01) |
+| `02-§112.17` | covered | RECTRIG-03/-04: scheduled workflow and post-merge job share `concurrency: stranded-recovery` with `cancel-in-progress: false` |
 
 ### §113 — Proactive Merge-Queue Enqueue
 
