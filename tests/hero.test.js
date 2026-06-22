@@ -16,6 +16,7 @@ function buildPage(heroOpts = {}) {
     sections: [{ id: 'start', navLabel: 'Om lägret', html: '<p>Intro</p>' }],
     discordUrl: heroOpts.discordUrl ?? 'https://discord.com/channels/123/456',
     facebookUrl: heroOpts.facebookUrl ?? 'https://www.facebook.com/groups/test',
+    edqhubUrl: heroOpts.edqhubUrl ?? 'https://edqhub.com/join/sb-sommarlager-2026',
     countdownTarget: heroOpts.countdownTarget ?? '2026-06-21',
   };
 }
@@ -148,6 +149,44 @@ describe('hero section – Discord icon image (02-§30.24)', () => {
       html.includes('src="images/discord-ikon.webp"'),
       `Expected discord-ikon.webp, got: ${html.match(/<img[^>]*Discord[^>]*>/)?.[0] || 'no match'}`,
     );
+  });
+});
+
+// ── EDQ Hub link (02-§30.9, 30.27–30.30) ────────────────────────────────────
+
+describe('hero section – EDQ Hub link (02-§30.27–30.30)', () => {
+  it('HERO-17: renders an EDQ Hub link with the provided URL', () => {
+    const html = renderIndexPage(buildPage({ edqhubUrl: 'https://edqhub.com/join/test-camp' }));
+    assert.ok(
+      html.includes('href="https://edqhub.com/join/test-camp"'),
+      'Expected EDQ Hub link href',
+    );
+  });
+
+  it('HERO-18: EDQ Hub link uses an inline SVG icon and an accessible label', () => {
+    const html = renderIndexPage(buildPage());
+    const linkMatch = html.match(/<a[^>]*data-goatcounter-click="click-edqhub"[^>]*>[\s\S]*?<\/a>/);
+    assert.ok(linkMatch, 'Expected an EDQ Hub social link');
+    assert.ok(linkMatch[0].includes('aria-label="EDQ Hub"'), `Expected aria-label, got: ${linkMatch[0]}`);
+    assert.ok(linkMatch[0].includes('<svg'), `Expected inline SVG icon, got: ${linkMatch[0]}`);
+    assert.ok(linkMatch[0].includes('aria-hidden="true"'), `Expected aria-hidden on svg, got: ${linkMatch[0]}`);
+  });
+
+  it('HERO-19: renders three social links with EDQ Hub after Facebook', () => {
+    const html = renderIndexPage(buildPage());
+    const socialLinks = html.match(/<a[^>]*class="hero-social-link"[^>]*>/g) || [];
+    assert.equal(socialLinks.length, 3, `Expected 3 social links, got ${socialLinks.length}`);
+    const fbPos = html.indexOf('click-facebook');
+    const edqPos = html.indexOf('click-edqhub');
+    assert.ok(fbPos !== -1 && edqPos !== -1 && edqPos > fbPos, 'Expected EDQ Hub link after Facebook');
+  });
+
+  it('HERO-20: EDQ Hub link opens in a new tab with noopener noreferrer', () => {
+    const html = renderIndexPage(buildPage());
+    const linkMatch = html.match(/<a[^>]*data-goatcounter-click="click-edqhub"[^>]*>/);
+    assert.ok(linkMatch, 'Expected an EDQ Hub social link');
+    assert.ok(linkMatch[0].includes('target="_blank"'), `Expected target="_blank", got: ${linkMatch[0]}`);
+    assert.ok(linkMatch[0].includes('rel="noopener noreferrer"'), `Expected rel, got: ${linkMatch[0]}`);
   });
 });
 

@@ -349,6 +349,7 @@ async function main() {
 
   // ── Compute hero social links and countdown target ────────────────────────
   const discordUrl = 'https://discord.com/channels/992817044527534181/1390691617052037232';
+  const edqhubUrl = 'https://edqhub.com/join/sb-sommarlager-2026';
 
   // Countdown: count down to the nearest upcoming camp, but stay hidden while a
   // camp is ongoing so it never counts toward a later camp mid-camp (#521).
@@ -386,7 +387,7 @@ async function main() {
     }));
 
   const heroDims = heroSrc ? getImageDimensions(path.join(CONTENT_DIR, heroSrc)) : null;
-  const indexHtml = renderIndexPage({ heroSrc, heroAlt, heroDims, sections, discordUrl, facebookUrl, countdownTarget, opensForEditing, editingCloses, registrationCamps }, footerWithVersion, navSections, GOATCOUNTER_CODE);
+  const indexHtml = renderIndexPage({ heroSrc, heroAlt, heroDims, sections, discordUrl, facebookUrl, edqhubUrl, countdownTarget, opensForEditing, editingCloses, registrationCamps }, footerWithVersion, navSections, GOATCOUNTER_CODE);
   fs.writeFileSync(path.join(OUTPUT_DIR, 'index.html'), indexHtml, 'utf8');
   console.log(`Built: public/index.html  (${sections.length} sections)`);
 

@@ -161,22 +161,35 @@ function convertMarkdown(input, headingOffset = 0, collapsible = false, contentD
  * @param {string|null} opts.heroAlt  - alt text for hero image
  * @param {string|null} opts.discordUrl  - URL for Discord link
  * @param {string|null} opts.facebookUrl - URL for Facebook link
+ * @param {string|null} opts.edqhubUrl   - URL for EDQ Hub community-app link
  * @param {string|null} opts.countdownTarget - YYYY-MM-DD date for countdown
  * @param {string|null} opts.opensForEditing - YYYY-MM-DD first editing date
  * @param {string|null} opts.editingCloses  - YYYY-MM-DD last editing date (end_date + 1)
  * @param {Array<{id: string, navLabel: string, html: string}>} opts.sections
  * @param {Array<{id: string, name: string, registrationOpens: string, registrationCloses: string}>} [opts.registrationCamps]
  */
-function renderIndexPage({ heroSrc, heroAlt, heroDims, sections, discordUrl, facebookUrl, countdownTarget, opensForEditing, editingCloses, registrationCamps }, footerHtml = '', navSections = [], goatcounterCode = '') {
+function renderIndexPage({ heroSrc, heroAlt, heroDims, sections, discordUrl, facebookUrl, edqhubUrl, countdownTarget, opensForEditing, editingCloses, registrationCamps }, footerHtml = '', navSections = [], goatcounterCode = '') {
   const countdownHtml = countdownTarget
     ? `<div class="hero-countdown" data-target="${countdownTarget}">\n        <span class="hero-countdown-number">00</span>\n        <span class="hero-countdown-label">Dagar kvar</span>\n      </div>`
     : '';
 
-  const socialLinks = (discordUrl || facebookUrl)
+  // EDQ Hub has no brand image asset in the repo, so its icon is an inline SVG:
+  // a circular navy badge with a white "hub" glyph (central node linked to three
+  // satellite nodes) signalling a community hub. Sized and shaped to match the
+  // raster Discord/Facebook icons beside it.
+  const edqhubIcon = '<svg viewBox="0 0 32 32" width="32" height="32" fill="none" aria-hidden="true">'
+    + '<circle cx="16" cy="16" r="16" fill="#192A3D"/>'
+    + '<g stroke="#FFFFFF" stroke-width="1.6"><line x1="16" y1="16" x2="16" y2="8"/><line x1="16" y1="16" x2="9" y2="22"/><line x1="16" y1="16" x2="23" y2="22"/></g>'
+    + '<g fill="#FFFFFF"><circle cx="16" cy="16" r="3.2"/><circle cx="16" cy="8" r="2.4"/><circle cx="9" cy="22" r="2.4"/><circle cx="23" cy="22" r="2.4"/></g>'
+    + '</svg>';
+
+  const socialLinks = (discordUrl || facebookUrl || edqhubUrl)
     ? `\n    <div class="hero-social">${
       discordUrl ? `\n      <a href="${discordUrl}" class="hero-social-link" target="_blank" rel="noopener noreferrer" data-goatcounter-click="click-discord">\n        <img src="images/discord-ikon.webp" alt="Discord" width="32" height="32">\n      </a>` : ''
     }${
       facebookUrl ? `\n      <a href="${facebookUrl}" class="hero-social-link" target="_blank" rel="noopener noreferrer" data-goatcounter-click="click-facebook">\n        <img src="images/facebook-ikon.webp" alt="Facebook" width="32" height="32">\n      </a>` : ''
+    }${
+      edqhubUrl ? `\n      <a href="${edqhubUrl}" class="hero-social-link" target="_blank" rel="noopener noreferrer" aria-label="EDQ Hub" data-goatcounter-click="click-edqhub">\n        ${edqhubIcon}\n      </a>` : ''
     }\n    </div>`
     : '';
 

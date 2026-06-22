@@ -36,6 +36,7 @@ const INDEX_PAGE = {
   heroAlt: 'Camp view',
   discordUrl: null,
   facebookUrl: null,
+  edqhubUrl: null,
   countdownTarget: null,
   sections: [{ id: 'start', navLabel: 'Start', html: '<p>Intro</p>' }],
 };
@@ -187,6 +188,14 @@ describe('02-§63.37 — Custom events use data-goatcounter-click', () => {
       '', [], GC_CODE,
     );
     assert.ok(page.includes('data-goatcounter-click="click-facebook"'), 'Facebook link tracked');
+  });
+
+  it('ANA-EVT-07: EDQ Hub link has data-goatcounter-click', () => {
+    const page = renderIndexPage(
+      { ...INDEX_PAGE, edqhubUrl: 'https://edqhub.com/join/test' },
+      '', [], GC_CODE,
+    );
+    assert.ok(page.includes('data-goatcounter-click="click-edqhub"'), 'EDQ Hub link tracked');
   });
 });
 
