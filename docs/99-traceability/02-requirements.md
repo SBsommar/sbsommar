@@ -634,6 +634,8 @@ Part of [the traceability index](./index.md).
 | `02-§46.13` | Webcal URL in copy-friendly code block | 07-design/ | KAL-15 | `source/build/render-kalender.js` – `.ical-url-block` | covered |
 | `02-§46.14` | Every VEVENT includes DTSTAMP (RFC 5545 §3.6.1) | 03-architecture/pages-and-content.md §22 | ICAL-29, ICAL-31 | `source/build/render-ical.js` – `buildDtstamp()` | covered |
 | `02-§46.15` | DTSTAMP is UTC build-time timestamp (YYYYMMDDTHHMMSSZ) | 03-architecture/pages-and-content.md §22 | ICAL-30 | `source/build/render-ical.js` – `buildDtstamp()` | covered |
+| `02-§46.16` | Every today-view event row has per-event iCal download link | 03-architecture/pages-and-content.md §22.5a | IDAG-20; manual: browser check | `source/build/render-idag.js` – `__SHOW_ICAL__` flag; `source/assets/js/client/events-today.js` – `icalLink()` | covered |
+| `02-§46.17` | Display view (`live.html`) shows no per-event iCal link | 03-architecture/pages-and-content.md §22.5a | IDAG-21 | `source/build/render-today.js` – flag unset | covered |
 | `02-§47.1` | All headings (h1–h6) use terracotta color | 07-design/index.md §3 | HDC-01..03 | `source/assets/cs/style.css` – h1, h2, h3 rules | covered |
 | `02-§47.2` | Content links have permanent underline | 07-design/components.md §6 | HDC-04 | `source/assets/cs/style.css` – `.content a` rule | covered |
 | `02-§47.3` | Nav/back-links retain existing styles | 07-design/components.md §6 | manual: visual check | no change to `.nav-link` or `.back-link` rules | implemented |

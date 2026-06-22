@@ -400,6 +400,16 @@ the end of the row. The link downloads the per-event `.ics` file directly
 A text link to `kalender.html` also appears near the intro text so users
 can discover subscription instructions.
 
+### 22.5a Today view integration
+
+The today view (`idag.html`) renders its event rows client-side in
+`source/assets/js/client/events-today.js`. When `window.__SHOW_ICAL__` is
+true, each row gets the same small "iCal" download link as the weekly
+schedule, pointing at `schema/<id>/event.ics`. `render-idag.js` sets the
+flag; `render-today.js` (the display view, `live.html`) leaves it unset, so
+the passive screen shows no clickable link. The link is only emitted for
+events that carry an `id`.
+
 ### 22.6 Event detail page
 
 The per-event detail page adds a calendar download link as a third line
