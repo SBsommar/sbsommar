@@ -263,6 +263,11 @@ jobs:
   recover-stranded-event-prs:
     name: Recover event PRs stranded in the merge queue
     runs-on: ubuntu-latest
+    # Shared with merge-queue-recovery.yml so all recovery triggers are single-flight;
+    # cancel-in-progress is false so a mid-toggle run is never cancelled (02-§112.17).
+    concurrency:
+      group: stranded-recovery
+      cancel-in-progress: false
 
     steps:
       - uses: actions/checkout@v6

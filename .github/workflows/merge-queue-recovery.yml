@@ -1,21 +1,32 @@
-name: Merge Queue Recovery (Scheduled)
+name: Merge Queue Recovery
 
-# Safety-net sweep for event PRs stranded in the merge-queue handoff (02-§112.8).
+# Sweep for event PRs stranded in the merge-queue handoff (02-§112).
 #
-# The post-merge sweep in event-data-deploy-post-merge.yml recovers a stranded PR
-# immediately after the next event-data merge. This scheduled run covers the case
-# where no such merge follows — e.g. the burst ends with a stranded PR. It is cheap
-# when there is nothing to do: it lists open event PRs and exits when none are
-# stranded (02-§112.9).
+# A PR strands at the moment its required checks finish and it turns mergeable, so the
+# primary trigger is check_suite: completed — recovery runs right then (02-§112.16),
+# rather than waiting for GitHub's unreliable schedule delivery. The post-merge sweep
+# in event-data-deploy-post-merge.yml covers the burst case; the schedule below is a
+# slow backstop (02-§112.8). The sweep is cheap when idle: it lists open event PRs and
+# exits when none are stranded (02-§112.9).
 
 permissions:
   contents: read
 
 on:
+  check_suite:
+    types: [completed]
   schedule:
-    # Every 15 minutes.
+    # Every 15 minutes — slow backstop; GitHub does not guarantee this cadence.
     - cron: '*/15 * * * *'
   workflow_dispatch:
+
+# All recovery triggers (here plus the post-merge job) share one group so bursts of
+# check-suite completions coalesce. cancel-in-progress is false so a run that is
+# mid-toggle (auto-merge disabled, not yet re-enabled) is never cancelled, which would
+# otherwise leave a PR with auto-merge off — worse than stranded (02-§112.17, 112.11).
+concurrency:
+  group: stranded-recovery
+  cancel-in-progress: false
 
 jobs:
   recover-stranded-event-prs:
