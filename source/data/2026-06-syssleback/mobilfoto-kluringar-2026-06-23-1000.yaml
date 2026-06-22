@@ -7,7 +7,7 @@ event:
   location: Tält2
   responsible: 'Julius & Anita'
   description: |
-    Mobilfoto-kluringar är en aktivitet där ni delas in i grupper som gör mobilfoto-kluringar tillsammans. Ni diskuterar och hjälper varandra att ta kul bilder. Du behöver ha med dig en mobiltelefon.
+    Mobilfoto-kluringar är en aktivitet där ni delas in i grupper som gör mobilfoto-kluringar tillsammans. Ni diskuterar och hjälper varandra att ta kul bilder. Du behöver ha med dig en fulladdad mobiltelefon.
     
   link: null
   owner:
@@ -15,4 +15,4 @@ event:
     email: ''
   meta:
     created_at: 2026-06-22 07:26
-    updated_at: 2026-06-22 08:58
+    updated_at: 2026-06-22 16:06
