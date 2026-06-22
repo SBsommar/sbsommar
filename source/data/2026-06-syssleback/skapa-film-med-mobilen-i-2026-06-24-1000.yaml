@@ -1,6 +1,6 @@
 event:
   id: skapa-film-med-mobilen-i-2026-06-24-1000
-  title: Skapa film med mobilen I
+  title: Filmutmaning I
   date: '2026-06-24'
   start: '10:00'
   end: '11:30'
@@ -8,10 +8,11 @@ event:
   responsible: 'Julius & Anita'
   description: |
     Aktivitet där ni delas in i grupper som samarbetar och spelar in mobilfilm. Du behöver ha med dig en fulladdad mobiltelefon.
+    
   link: null
   owner:
     name: ''
     email: ''
   meta:
     created_at: 2026-06-22 12:44
-    updated_at: 2026-06-22 12:44
+    updated_at: 2026-06-22 18:01
