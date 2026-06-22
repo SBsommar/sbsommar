@@ -8,7 +8,7 @@
 locations:
   - id: andreas-taltet
     name: AndreasTältet
-    information: ""
+    information: "Känns igen på sin rosa färgmarkering."
     image_path: ""
   - id: annat
     name: Annat
@@ -87,7 +87,7 @@ locations:
       - "images/camping-badplats.webp"
   - id: kaffe-paviljongen
     name: KaffePaviljongen
-    information: "Placerat framför stuga 6, där kaffe och te finns dygnet runt."
+    information: "Placerat framför stuga 6, där kaffe och te finns dygnet runt. Känns igen på sin blå färgmarkering."
     image_path: ""
   - id: kaffetalt
     name: Kaffetält
@@ -95,7 +95,7 @@ locations:
       Placerat i gaveln på simhallen. Kaffe och te finns här. Ofta en plats
       för föräldrar att sitta på och prata lite, centralt och tillgängligt.
       Förslagsvis används detta tältet för “föräldrafika” med olika känsliga
-      ämnen.
+      ämnen. Känns igen på sin röda färgmarkering.
     image_path: "images/kaffetalt.webp"
   - id: nerf-arena
     name: Nerf-arena
@@ -107,14 +107,14 @@ locations:
     information: >
       Det finns en hel del rollspel under lägret och för dessa finns det två
       tält. De som spelar rollspel brukar ansvara för att sätta upp och ta ner
-      tälten.
+      tälten. Känns igen på sin gröna färgmarkering.
     image_path: "images/rollspelstalt.webp"
   - id: rollspelstalt-2
     name: Rollspelstält2
     information: >
       Det finns en hel del rollspel under lägret och för dessa finns det två
       tält. De som spelar rollspel brukar ansvara för att sätta upp och ta ner
-      tälten.
+      tälten. Känns igen på sin svarta färgmarkering.
     image_path: "images/rollspelstalt.webp"
   - id: servicehus
     name: Servicehus
@@ -145,11 +145,11 @@ locations:
       - "images/hemkunskap-2.webp"
   - id: talt-1
     name: Tält1
-    information: "Tält 1 är närmast väggen."
+    information: "Tält 1 är närmast väggen. Känns igen på sin gula färgmarkering."
     image_path: "images/talt-1-och-2.webp"
   - id: talt-2
     name: Tält2
-    information: "Tält 2 är det vi ser mest av på bilden. I mitten."
+    information: "Tält 2 är det vi ser mest av på bilden. I mitten. Känns igen på sin orange färgmarkering."
     image_path: "images/talt-1-och-2.webp"
   - id: talt-3
     name: Tält3
