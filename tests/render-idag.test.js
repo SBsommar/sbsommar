@@ -20,6 +20,7 @@ const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
 
 const { renderIdagPage } = require('../source/build/render-idag');
+const { renderTodayPage } = require('../source/build/render-today');
 
 const CAMP = { name: 'Test Camp' };
 const EVENTS = [
@@ -92,6 +93,37 @@ describe('renderIdagPage – session.js script tag (02-§18.42)', () => {
     assert.ok(
       posSession > posToday,
       'session.js must come after events-today.js so rows exist when links are injected',
+    );
+  });
+});
+
+// ── 02-§46.16 / 02-§46.17: per-event iCal link in today view ─────────────────
+//
+// The iCal link itself is injected client-side by events-today.js, which only
+// runs in a real DOM. Here we verify the structural trigger: idag.html opts in
+// via window.__SHOW_ICAL__, and the display view (live.html) does not.
+//
+// Manual verification checkpoint for 02-§46.16:
+//   1. Build the site and open idag.html in a browser on a day with events.
+//   2. Confirm each event row ends with a small "iCal" link.
+//   3. Click it and confirm the per-event .ics file downloads.
+
+describe('renderIdagPage – per-event iCal opt-in (02-§46.16)', () => {
+  it('IDAG-20: rendered HTML sets window.__SHOW_ICAL__ = true', () => { // IDAG-20
+    const html = renderIdagPage(CAMP, EVENTS);
+    assert.ok(
+      /window\.__SHOW_ICAL__\s*=\s*true/.test(html),
+      'Expected window.__SHOW_ICAL__ = true in rendered idag.html',
+    );
+  });
+});
+
+describe('renderTodayPage – display view has no iCal opt-in (02-§46.17)', () => {
+  it('IDAG-21: rendered display HTML does not set window.__SHOW_ICAL__', () => { // IDAG-21
+    const html = renderTodayPage(CAMP, EVENTS, '<svg></svg>');
+    assert.ok(
+      !/__SHOW_ICAL__/.test(html),
+      'Display view (live.html) must not opt in to per-event iCal links',
     );
   });
 });
