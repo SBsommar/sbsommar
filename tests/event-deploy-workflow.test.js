@@ -299,3 +299,74 @@ describe('02-§109.25 — Event-data workflows trigger on fragment paths (EDW-31
     );
   });
 });
+
+// ── 02-§62.9 / 62.20  Event-data deploy embeds the current prod version ──────
+// The post-merge deploy rebuilds schema.html, idag.html, kalender.html and the
+// per-event pages. It must pass BUILD_VERSION so those pages show the same
+// footer version as every other page (issue #574 — otherwise they alone showed
+// no version after an event merge). The version is the latest git tag, so the
+// checkout must fetch tags.
+
+describe('02-§62.20 — Event-data deploy checks out with tags fetched (EDW-33..34)', () => {
+  for (const name of ['deploy-qa', 'deploy-prod']) {
+    it(`EDW-33/34: ${name} checkout sets fetch-tags: true`, () => {
+      const steps = workflow.jobs[name].steps || [];
+      const checkout = steps.find(
+        (s) => s.uses && s.uses.startsWith('actions/checkout')
+      );
+      assert.ok(checkout, `${name} must have a checkout step`);
+      assert.strictEqual(
+        checkout.with?.['fetch-tags'],
+        true,
+        `${name} checkout must set fetch-tags: true so git tags are available`
+      );
+    });
+  }
+});
+
+describe('02-§62.9 — Event-data deploy passes BUILD_VERSION to the build (EDW-35..36)', () => {
+  for (const name of ['deploy-qa', 'deploy-prod']) {
+    it(`EDW-35/36: ${name} computes a version and feeds it into the build as BUILD_VERSION`, () => {
+      const steps = workflow.jobs[name].steps || [];
+
+      // A version step, gated on the same detection output as the build.
+      const version = steps.find((s) => s.id === 'version');
+      assert.ok(version, `${name} must have a step with id "version"`);
+      assert.ok(
+        version.if && version.if.includes('gate'),
+        `${name} version step must be gated on detection output`
+      );
+      assert.ok(
+        version.run && version.run.includes('git tag --list'),
+        `${name} version step must resolve the latest git tag`
+      );
+
+      // The build step must pass that version through as BUILD_VERSION.
+      const build = steps.find(
+        (s) => s.run && s.run.includes('node source/build/build.js')
+      );
+      assert.ok(build, `${name} must have a build step`);
+      assert.ok(
+        build.env && build.env.BUILD_VERSION
+          && build.env.BUILD_VERSION.includes('steps.version.outputs.build_version'),
+        `${name} build step must set BUILD_VERSION from the version step output`
+      );
+    });
+  }
+
+  it('EDW-35: deploy-qa version carries the QA PR suffix', () => {
+    const version = (workflow.jobs['deploy-qa'].steps || []).find((s) => s.id === 'version');
+    assert.ok(
+      version.run.includes('QA PR'),
+      'deploy-qa version string must include the QA PR suffix (matching a full QA deploy)'
+    );
+  });
+
+  it('EDW-36: deploy-prod version is a bare semver with no QA suffix', () => {
+    const version = (workflow.jobs['deploy-prod'].steps || []).find((s) => s.id === 'version');
+    assert.ok(
+      !version.run.includes('QA'),
+      'deploy-prod version string must not include a QA suffix'
+    );
+  });
+});
