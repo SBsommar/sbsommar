@@ -87,6 +87,54 @@ describe('classifyStrandedPr — stranded auto-merge recovery (02-§112.1–112.
   });
 });
 
+describe('classifyStrandedPr — recover on checks-passed despite laggy mergeable state (02-§112.18)', () => {
+  // GitHub takes minutes to recompute mergeStateStatus to CLEAN after checks finish,
+  // so recovery keys off the check rollup, not the laggy mergeable state.
+  const base = { branch: 'event/2026-06-26-x-1', autoMergeEnabled: true, inMergeQueue: false };
+
+  it('STRAND-20: checks passed, mergeStateStatus still BLOCKED, not queued → recover (the #585 case)', () => {
+    assert.equal(
+      classifyStrandedPr({ ...base, mergeStateStatus: 'BLOCKED', checksPassed: true }),
+      'recover',
+    );
+  });
+
+  it('STRAND-21: checks passed, mergeStateStatus still UNKNOWN → recover', () => {
+    assert.equal(
+      classifyStrandedPr({ ...base, mergeStateStatus: 'UNKNOWN', checksPassed: true }),
+      'recover',
+    );
+  });
+
+  it('STRAND-22: checks NOT passed and BLOCKED → skip (genuinely pending/failing, 02-§112.5)', () => {
+    assert.equal(
+      classifyStrandedPr({ ...base, mergeStateStatus: 'BLOCKED', checksPassed: false }),
+      'skip',
+    );
+  });
+
+  it('STRAND-23: real conflict (DIRTY) is never recovered even with checks passed', () => {
+    assert.equal(
+      classifyStrandedPr({ ...base, mergeStateStatus: 'DIRTY', checksPassed: true }),
+      'skip',
+    );
+  });
+
+  it('STRAND-24: checks passed but already in the queue → skip (progressing)', () => {
+    assert.equal(
+      classifyStrandedPr({ ...base, inMergeQueue: true, mergeStateStatus: 'BLOCKED', checksPassed: true }),
+      'skip',
+    );
+  });
+
+  it('STRAND-25: CLEAN still recovers without an explicit rollup (backward compatible)', () => {
+    assert.equal(
+      classifyStrandedPr({ ...base, mergeStateStatus: 'CLEAN' }),
+      'recover',
+    );
+  });
+});
+
 describe('withRetry — enable-step resilience (02-§112.11)', () => {
   it('STRAND-11: returns the result on first success without retrying', () => {
     let calls = 0;
