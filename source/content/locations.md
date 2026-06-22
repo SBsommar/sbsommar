@@ -27,8 +27,8 @@ För att det ska vara lätt att hitta rätt är tälten färgmarkerade:
 | Tält | Färg |
 |------|------|
 | Kaffepaviljongen | Blå |
-| Servicetält | Rosa |
-| Heliga Birgittas kapell | Röd |
+| Andreastältet | Rosa |
+| Kaffetältet | Röd |
 | Tält 1 | Gul |
 | Tält 2 | Orange |
 | Rollspelstält 1 | Grön |
