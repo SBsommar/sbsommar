@@ -87,6 +87,13 @@ jobs:
               echo "Staged: $REL"
             done
           fi
+          # Directory-style /dagens-schema/ alias embeds the day's events, so it
+          # must redeploy alongside live.html or it would show stale events.
+          if [ -f "public/dagens-schema/index.html" ]; then
+            mkdir -p staging/dagens-schema
+            cp public/dagens-schema/index.html staging/dagens-schema/index.html
+            echo "Staged: dagens-schema/index.html"
+          fi
 
       - name: Upload event data pages via rsync
         if: steps.gate.outputs.skip != 'true'
@@ -173,6 +180,13 @@ jobs:
               cp "$PAGE" "staging/$REL"
               echo "Staged: $REL"
             done
+          fi
+          # Directory-style /dagens-schema/ alias embeds the day's events, so it
+          # must redeploy alongside live.html or it would show stale events.
+          if [ -f "public/dagens-schema/index.html" ]; then
+            mkdir -p staging/dagens-schema
+            cp public/dagens-schema/index.html staging/dagens-schema/index.html
+            echo "Staged: dagens-schema/index.html"
           fi
 
       - name: Upload event data pages via SCP

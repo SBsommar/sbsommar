@@ -76,6 +76,19 @@ ${pwaHeadTags()}
 }
 
 /**
+ * Wraps the display-page HTML for the `/dagens-schema/` directory alias.
+ *
+ * The alias serves the live display page directly (no redirect) so kiosk
+ * screens that reload that URL on a timer never flash through an intermediate
+ * page. A `<base href="/">` tag is injected so relative asset URLs
+ * (`style.css`, `events-today.js`) and the `version.json` poll resolve against
+ * the site root instead of `/dagens-schema/`. (02-§76.2)
+ */
+function renderDisplayAlias(todayHtml) {
+  return todayHtml.replace('<head>', '<head>\n  <base href="/">');
+}
+
+/**
  * Renders a lightweight redirect page from the old dagens-schema.html URL
  * to the new live.html URL.
  */
@@ -95,4 +108,4 @@ function renderRedirectPage() {
 `;
 }
 
-module.exports = { renderTodayPage, renderRedirectPage };
+module.exports = { renderTodayPage, renderRedirectPage, renderDisplayAlias };

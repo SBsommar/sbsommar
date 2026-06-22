@@ -3,7 +3,7 @@
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
 
-const { renderTodayPage, renderRedirectPage } = require('../source/build/render-today');
+const { renderTodayPage, renderRedirectPage, renderDisplayAlias } = require('../source/build/render-today');
 
 // ── Shared fixtures ─────────────────────────────────────────────────────────
 
@@ -258,5 +258,34 @@ describe('02-§76.1 — Redirect page from dagens-schema.html to live.html', () 
 
   it('RDR-04: has a visible link to live.html', () => {
     assert.ok(html.includes('href="live.html"'), 'link to live.html present');
+  });
+});
+
+// ── 02-§76.2  Directory-style /dagens-schema/ display-page alias ─────────────
+
+describe('02-§76.2 — /dagens-schema/ alias serves the display page directly', () => {
+  const todayHtml = renderTodayPage(CAMP, EVENTS, QR_SVG, 'https://sbsommar.se', '2099-07-01T08:00:00.000Z');
+  const aliasHtml = renderDisplayAlias(todayHtml);
+
+  it('ALIAS-01: injects <base href="/"> so relative assets resolve from root', () => {
+    assert.ok(aliasHtml.includes('<base href="/">'), 'base href present');
+    assert.ok(
+      aliasHtml.includes('<head>\n  <base href="/">'),
+      'base href is the first element inside <head>',
+    );
+  });
+
+  it('ALIAS-02: is not a redirect — it keeps the full display layout and event payload', () => {
+    assert.ok(aliasHtml.includes('class="dagens-layout"'), 'display layout present');
+    assert.ok(!aliasHtml.includes('http-equiv="refresh"'), 'no meta refresh');
+    assert.ok(aliasHtml.includes('window.__EVENTS__'), 'embedded events present');
+  });
+
+  it('ALIAS-03: differs from the live.html page only by the injected <base> tag', () => {
+    assert.strictEqual(
+      aliasHtml.replace('\n  <base href="/">', ''),
+      todayHtml,
+      'removing the base tag yields the identical live.html source',
+    );
   });
 });

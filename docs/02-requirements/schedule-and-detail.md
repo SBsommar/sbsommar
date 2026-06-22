@@ -38,6 +38,7 @@ Part of [the requirements index](./index.md). Section IDs (`02-§N.M`) are stabl
 - The heading is positioned inside the sidebar, not above the event list, so events use the full available height. <!-- 02-§4.20 -->
 - The layout is optimised for portrait-orientation screens; event rows are compact to maximise the number of visible events. <!-- 02-§4.21 -->
 - The old URL `/dagens-schema.html` serves a redirect page that sends the visitor to `/live.html` via `<meta http-equiv="refresh">` and a JavaScript fallback. <!-- 02-§76.1 -->
+- The directory-style URL `/dagens-schema/` is served by `/dagens-schema/index.html`, which is the same display page as `/live.html` with a `<base href="/">` tag so its relative assets and the `version.json` poll resolve against the site root. It is a true content alias, not a redirect: the page renders directly with no intermediate navigation, so kiosk screens that reload that URL on a timer never flash through a redirect page. Because it embeds the day's events, it is deployed together with `/live.html` on every deploy, including data-only event deploys, so it never shows stale events. <!-- 02-§76.2 -->
 
 ### All schedule views
 
