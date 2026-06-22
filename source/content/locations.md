@@ -19,3 +19,17 @@ Kvistbergskolan; Kom ihåg, det tar cirka 15-20 minuter att gå till skolan och 
 ## Lokaler
 
 Alla lokaler och all information om dem är baserat på senaste års läger. Varje år brukar en del justeringar ske. Hur det blir detta året bestäms på plats. Om någon/några har andra förslag på vad olika ytor kan användas till då kan denna information behöva uppdateras. Allt baseras på behov och engagemang det finns detta året. Se nedan som inspiration, och en inblick i vilka faciliteter som finns och hur de ser ut.
+
+### Tältens färger
+
+För att det ska vara lätt att hitta rätt är tälten färgmarkerade:
+
+| Tält | Färg |
+|------|------|
+| Kaffepaviljongen | Blå |
+| Servicetält | Rosa |
+| Heliga Birgittas kapell | Röd |
+| Tält 1 | Gul |
+| Tält 2 | Orange |
+| Rollspelstält 1 | Grön |
+| Rollspelstält 2 | Svart |
