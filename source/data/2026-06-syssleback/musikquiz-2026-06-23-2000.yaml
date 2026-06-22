@@ -1,0 +1,17 @@
+event:
+  id: musikquiz-2026-06-23-2000
+  title: Musikquiz
+  date: '2026-06-23'
+  start: '20:00'
+  end: '21:30'
+  location: Servicehus
+  responsible: Ola Hammar
+  description: |
+    Musikquiz för den som har lust! Ingen föranmälan. Vi träffas vid servicehuset, jag tar med papper, penna, högtalare och lite frågor att sätta tänderna i. Beräknar att det tar en dryg timme och så blir det facit i direkt anslutning till quizet, om man vill veta hur det gick. Väl mötta! / Ola
+  link: null
+  owner:
+    name: ''
+    email: ''
+  meta:
+    created_at: 2026-06-22 14:41
+    updated_at: 2026-06-22 14:41
