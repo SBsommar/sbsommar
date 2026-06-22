@@ -1,6 +1,6 @@
 event:
   id: spela-in-film-med-mobilen-ii-2026-06-25-1000
-  title: Skapa film med mobilen II
+  title: Filmutmaning II
   date: '2026-06-25'
   start: '10:00'
   end: '11:30'
@@ -15,4 +15,4 @@ event:
     email: ''
   meta:
     created_at: 2026-06-22 11:51
-    updated_at: 2026-06-22 13:47
+    updated_at: 2026-06-22 18:03
