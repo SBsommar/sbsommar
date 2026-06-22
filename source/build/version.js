@@ -63,9 +63,14 @@ function buildLocalVersion(baseVersion) {
  * should be shown.
  *
  * Logic:
- *   - If BUILD_VERSION is set: use it directly (set by CI for prod/QA).
+ *   - If BUILD_VERSION is set: use it directly. All deploy workflows set
+ *     it — full prod/QA deploys and the post-merge event-data deploy,
+ *     which computes the current production version from the latest git
+ *     tag (02-§62.9).
  *   - If running in CI (GITHUB_ACTIONS is set) without BUILD_VERSION:
- *     return null (event-data deploy — no misleading version).
+ *     return null. This is a defensive fallback (02-§62.21) — a CI build
+ *     that forgot to pass BUILD_VERSION renders no version rather than a
+ *     misleading local timestamp.
  *   - Otherwise (local dev): build a local timestamp version.
  *     Local .env may set BUILD_ENV for testing, but that should not
  *     suppress the version — only real CI runs should.

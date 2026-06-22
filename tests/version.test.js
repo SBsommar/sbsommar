@@ -1,6 +1,6 @@
 'use strict';
 
-// Tests for source/build/version.js — 02-§62.8, 02-§62.9, 02-§62.15, 02-§62.16, 02-§62.17.
+// Tests for source/build/version.js — 02-§62.8, 02-§62.15, 02-§62.16, 02-§62.17, 02-§62.21.
 //
 // These verify:
 //   - readVersionFile reads the VERSION file or falls back to '0.0' (VER-01..02)
@@ -71,7 +71,7 @@ describe('buildLocalVersion (02-§62.8)', () => {
 
 // ── resolveVersionString ────────────────────────────────────────────────────
 
-describe('resolveVersionString (02-§62.9, 02-§62.15, 02-§62.16)', () => {
+describe('resolveVersionString (02-§62.15, 02-§62.16, 02-§62.21)', () => {
   it('VER-05: returns BUILD_VERSION directly when set', () => {
     const dir = makeTmpDir();
     const env = { BUILD_VERSION: '1.0.4' };
@@ -79,7 +79,7 @@ describe('resolveVersionString (02-§62.9, 02-§62.15, 02-§62.16)', () => {
     fs.rmSync(dir, { recursive: true });
   });
 
-  it('VER-06: returns null in CI without BUILD_VERSION (event-data deploy)', () => {
+  it('VER-06: returns null in CI without BUILD_VERSION (defensive fallback)', () => {
     const dir = makeTmpDir();
     const env = { GITHUB_ACTIONS: 'true', BUILD_ENV: 'production' };
     assert.strictEqual(resolveVersionString(env, dir), null);

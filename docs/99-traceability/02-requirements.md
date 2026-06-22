@@ -777,7 +777,7 @@ Part of [the traceability index](./index.md).
 | `02-§62.6` | Production: full semver from tags | — | — | `.github/workflows/deploy-prod.yml` | implemented |
 | `02-§62.7` | QA: full semver + PR number | — | — | `.github/workflows/deploy-qa.yml` | implemented |
 | `02-§62.8` | Local: base version + timestamp | — | VER-03..04, VER-07 | `source/build/version.js` | covered |
-| `02-§62.9` | Event-data deploy: no version shown | — | VER-06, VER-09 | `source/build/version.js` | covered |
+| `02-§62.9` | Event-data deploy embeds current prod version | — | EDW-33..36 | `.github/workflows/event-data-deploy-post-merge.yml` | covered |
 | `02-§62.10` | Annotated git tag per prod deploy | — | — | `.github/workflows/deploy-prod.yml` | implemented |
 | `02-§62.11` | Tag created after successful deploy | — | — | `.github/workflows/deploy-prod.yml` | implemented |
 | `02-§62.12` | Tag skip if already exists | — | — | `.github/workflows/deploy-prod.yml` | implemented |
@@ -788,6 +788,8 @@ Part of [the traceability index](./index.md).
 | `02-§62.17` | Version logic in separate testable module | — | VER-01..09 | `source/build/version.js` | covered |
 | `02-§62.18` | QA redeploy triggered after prod deploy | 09-RELEASING.md | manual: trigger prod deploy and verify QA workflow runs | `.github/workflows/deploy-prod.yml` | implemented |
 | `02-§62.19` | QA redeploy uses exact prod version string | 09-RELEASING.md | manual: verify QA footer shows exact prod version after redeploy | `.github/workflows/deploy-prod.yml` | implemented |
+| `02-§62.20` | Event-data deploy checks out with tags fetched | — | EDW-33..34 | `.github/workflows/event-data-deploy-post-merge.yml` | covered |
+| `02-§62.21` | Defensive fallback: no version when BUILD_VERSION unset in CI | — | VER-06, VER-09 | `source/build/version.js` | covered |
 | `02-§62.20` | Normal QA deploy restores QA-suffixed version | — | manual: merge PR and verify QA footer shows QA suffix | `.github/workflows/deploy-qa.yml` | implemented |
 | | | **§63 — Site Analytics** | | | |
 | `02-§63.1` | GoatCounter as analytics tool | 03-architecture/pages-and-content.md §23 | — | `source/build/analytics.js` | implemented |

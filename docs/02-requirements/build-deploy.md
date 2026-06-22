@@ -655,9 +655,21 @@ the footer solves this with minimal visual impact.
 - **Local**: The version string must include the base version and a
   Stockholm-timezone timestamp, e.g.
   `v1.0 – Lokal 2026-03-02 14:30`. <!-- 02-§62.8 -->
-- **Event-data deploys**: When `BUILD_ENV` is set but `BUILD_VERSION` is
-  not (event-data deploys), no version string is rendered in the
-  footer. <!-- 02-§62.9 -->
+- **Event-data deploys**: The post-merge event-data deploy workflow
+  computes the current production version from the latest `v{base}.*`
+  git tag and passes it to the build as `BUILD_VERSION`. The event-data
+  pages it rebuilds (`schema.html`, `idag.html`, `kalender.html`, the
+  per-event pages and feeds) therefore show the same footer version
+  string as every other page on the same environment. On production the
+  string is the full semver (e.g. `v1.0.4`); on QA it additionally
+  carries the QA PR suffix (e.g. `v1.0.4 – QA PR547`), matching a full QA
+  deploy. <!-- 02-§62.9 -->
+- The event-data deploy workflow checks out with tags fetched
+  (`fetch-tags: true`) so the latest tag is available for this
+  computation. <!-- 02-§62.20 -->
+- When `BUILD_VERSION` is unset in a CI build — a defensive fallback, not
+  the normal path — the build renders no version string rather than a
+  misleading one. <!-- 02-§62.21 -->
 
 ### 62.4 Automatic production tagging
 
