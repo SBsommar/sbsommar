@@ -195,8 +195,8 @@ countdown no longer skips ahead to the next camp mid-camp. A `null` target means
 no countdown element is rendered. The chosen date is embedded as a `data-target`
 attribute on the countdown element.
 
-Social link URLs (Discord and Facebook) are passed from `build.js` based on
-configuration.
+Social link URLs (Discord, Facebook, and EDQ Hub) are passed from `build.js`
+based on configuration.
 
 ### 15.3 Client-side countdown
 
@@ -212,9 +212,16 @@ No external dependencies.
 
 ### 15.4 Social icons
 
-Discord and Facebook SVG/WebP icons are stored in `source/content/images/`.
+Discord and Facebook WebP icons are stored in `source/content/images/`.
 They are rendered as `<a>` elements wrapping `<img>` tags with appropriate
 `alt` text and `target="_blank" rel="noopener noreferrer"`.
+
+The EDQ Hub icon is an inline SVG (a circular community-hub badge) rendered
+directly inside its `<a>` element rather than referencing an image file. Its
+`<a>` carries `aria-label="EDQ Hub"` and the `<svg>` is marked
+`aria-hidden="true"`. The same `.hero-social-link` sizing rule styles both
+`<img>` and inline `<svg>` icons as 32px circular marks. The EDQ Hub link is
+tracked with `data-goatcounter-click="click-edqhub"`.
 
 ### 15.5 CSS
 

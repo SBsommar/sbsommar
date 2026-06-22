@@ -328,7 +328,7 @@ Part of [the traceability index](./index.md).
 | `02-§30.6` | Hero image has rounded corners (--radius-lg) | 07-design/css-strategy.md §7 | — (manual: visual check) | `style.css` – `.hero-img { border-radius: var(--radius-lg) }` | implemented |
 | `02-§30.7` | Hero image uses object-fit: cover and is responsive | 07-design/components.md §6 | HERO-05, HERO-06 | `style.css` – `.hero-img { object-fit: cover; width: 100% }` | covered |
 | `02-§30.8` | Image occupies ~2/3 of hero width on desktop | 07-design/components.md §6 | HERO-01 | `style.css` – `.hero { grid-template-columns: 2fr 1fr }` | covered |
-| `02-§30.9` | Sidebar contains Discord and Facebook icons stacked vertically | 03-architecture/pages-and-content.md §15.4 | HERO-09 | `source/build/render-index.js` – `.hero-sidebar` with two `.hero-social-link` | covered |
+| `02-§30.9` | Sidebar contains Discord, Facebook, and EDQ Hub icons | 03-architecture/pages-and-content.md §15.4 | HERO-09, HERO-19 | `source/build/render-index.js` – `.hero-social` with three `.hero-social-link` | gap |
 | `02-§30.10` | Discord icon links to Discord channel | 03-architecture/pages-and-content.md §15.4 | HERO-07 | `source/build/render-index.js` – `<a href="${discordUrl}">` | covered |
 | `02-§30.11` | Facebook icon links to Facebook group | 03-architecture/pages-and-content.md §15.4 | HERO-08 | `source/build/render-index.js` – `<a href="${facebookUrl}">` | covered |
 | `02-§30.12` | Icons displayed at ~64px, vertically centered | 07-design/components.md §6 | — (manual: visual check) | `style.css` – `.hero-social-link img { width: 64px; height: 64px }` | implemented |
@@ -346,6 +346,10 @@ Part of [the traceability index](./index.md).
 | `02-§30.24` | Discord icon uses `discord-ikon.webp` | 03-architecture/pages-and-content.md §15.4 | HERO-16 | `render-index.js` – `discord-ikon.webp` in Discord link `<img>` | covered |
 | `02-§30.25` | Sidebar vertically centered alongside hero image | 07-design/components.md §6 | — (manual: visual check) | `style.css` – `.hero { align-items: center }` | implemented |
 | `02-§30.26` | Countdown not displayed while a camp is ongoing (today within start..end) | 03-architecture/pages-and-content.md §15.2 | CDOWN-03..07 | `source/build/utils.js` – `resolveCountdownTarget` returns null when ongoing | covered |
+| `02-§30.27` | EDQ Hub icon links to the EDQ Hub community app | 03-architecture/pages-and-content.md §15.4 | HERO-17 | `source/build/render-index.js` – `<a href="${edqhubUrl}">` | gap |
+| `02-§30.28` | EDQ Hub icon appears after the Facebook icon | 03-architecture/pages-and-content.md §15.4 | HERO-19 | `source/build/render-index.js` – EDQ Hub block follows Facebook block | gap |
+| `02-§30.29` | Each social link opens in a new tab with `rel="noopener noreferrer"` | 03-architecture/pages-and-content.md §15.4 | HERO-20 | `source/build/render-index.js` – `target="_blank" rel="noopener noreferrer"` | gap |
+| `02-§30.30` | EDQ Hub icon is an inline-SVG circular badge with accessible label | 03-architecture/pages-and-content.md §15.4 | HERO-18 | `source/build/render-index.js` – inline `<svg>` + `aria-label="EDQ Hub"` | gap |
 
 ### 31. Inline Camp Listing and Link Styling
 
@@ -828,7 +832,7 @@ Part of [the traceability index](./index.md).
 | `02-§63.34` | No personal data collected | 03-architecture/pages-and-content.md §23.1 | — | GoatCounter built-in | implemented |
 | `02-§63.35` | No cookie consent banner needed | 03-architecture/pages-and-content.md §23.1 | — | GoatCounter built-in | implemented |
 | `02-§63.36` | No wrapper JS libraries | 03-architecture/pages-and-content.md §23.3 | — | convention | implemented |
-| `02-§63.37` | Use data-goatcounter-click attrs | 03-architecture/pages-and-content.md §23.3 | ANA-EVT-01..06 | `source/build/render-index.js`, `render.js` | covered |
+| `02-§63.37` | Use data-goatcounter-click attrs | 03-architecture/pages-and-content.md §23.3 | ANA-EVT-01..07 | `source/build/render-index.js`, `render.js` | covered |
 | `02-§63.38` | All deploy workflows pass GOATCOUNTER_SITE_CODE | 03-architecture/pages-and-content.md §23.2 | manual: add event, verify script on schema.html | `.github/workflows/event-data-deploy-post-merge.yml`, `deploy-reusable.yml` | implemented |
 
 ---
