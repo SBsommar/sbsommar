@@ -16,6 +16,8 @@
   var headingPrefix = window.__HEADING_PREFIX__ || '';
   var emptyClass = window.__EMPTY_CLASS__ || 'intro';
   var showFooter = window.__SHOW_FOOTER__ || false;
+  // idag.html opts in; the passive display view (live.html) leaves this unset.
+  var showIcal = window.__SHOW_ICAL__ || false;
 
   function pad(n) { return String(n).padStart(2, '0'); }
 
@@ -54,10 +56,19 @@
     return /^https?:\/\//i.test(s) ? s : '';
   }
 
+  // Per-event iCal download link, matching icalDownloadLink() in render.js.
+  // Only emitted on idag.html (showIcal) and only when the event has an id.
+  function icalLink(e) {
+    if (!showIcal || !e.id) return '';
+    return '<a href="schema/' + esc(e.id) + '/event.ics" class="ev-ical" download ' +
+      'title="Ladda ner iCal" data-goatcounter-click="download-ical">iCal</a>';
+  }
+
   var rows = todayEvents.map(function (e) {
     var timeStr = e.end ? esc(e.start) + '–' + esc(e.end) : esc(e.start);
     var metaParts = [e.location, e.responsible].filter(Boolean).map(esc);
     var metaEl = metaParts.length ? '<span class="ev-meta"> · ' + metaParts.join(' · ') + '</span>' : '';
+    var icalEl = icalLink(e);
     var safeLink = safeHttp(e.link);
     var hasExtra = e.description || e.descriptionHtml || safeLink;
     var idAttr = e.id ? ' data-event-id="' + esc(e.id) + '"' : '';
@@ -76,14 +87,14 @@
       return '<details class="event-row"' + idAttr + dateAttr + '><summary>' +
         '<span class="ev-time">' + timeStr + '</span>' +
         '<span class="ev-title">' + esc(e.title) + '</span>' +
-        metaEl + '</summary>' +
+        metaEl + icalEl + '</summary>' +
         '<div class="event-extra">' + extraParts.join('') + '</div>' +
         '</details>';
     } else {
       return '<div class="event-row plain"' + idAttr + dateAttr + '>' +
         '<span class="ev-time">' + timeStr + '</span>' +
         '<span class="ev-title">' + esc(e.title) + '</span>' +
-        metaEl + '</div>';
+        metaEl + icalEl + '</div>';
     }
   });
 

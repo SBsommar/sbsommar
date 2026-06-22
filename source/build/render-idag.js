@@ -47,7 +47,7 @@ ${pageNav('idag.html', navSections)}
 
   <div id="today-events"></div>
 </main>
-  <script>window.__EVENTS__ = ${eventsJson}; window.__HEADING_PREFIX__ = 'Dagens aktiviteter'; window.__EMPTY_CLASS__ = 'intro'; window.__SHOW_FOOTER__ = false;</script>
+  <script>window.__EVENTS__ = ${eventsJson}; window.__HEADING_PREFIX__ = 'Dagens aktiviteter'; window.__EMPTY_CLASS__ = 'intro'; window.__SHOW_FOOTER__ = false; window.__SHOW_ICAL__ = true;</script>
   <script src="events-today.js"></script>
   <script src="session.js"></script>
   <script src="nav.js" defer></script>
