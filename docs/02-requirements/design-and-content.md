@@ -42,12 +42,18 @@ and connects visitors to community channels.
 
 ### 30.4 Social links sidebar
 
-- The sidebar contains two social link icons stacked vertically:
-  a Discord icon and a Facebook icon. <!-- 02-§30.9 -->
+- The sidebar contains three social link icons:
+  a Discord icon, a Facebook icon, and an EDQ Hub icon. <!-- 02-§30.9 -->
 - The Discord icon links to the project Discord channel. <!-- 02-§30.10 -->
 - The Facebook icon links to the camp's Facebook group. <!-- 02-§30.11 -->
 - Icons are displayed at a recognizable size (approximately 64px) and are
   vertically centered within their area of the sidebar. <!-- 02-§30.12 -->
+- The EDQ Hub icon links to the camp's EDQ Hub community app at
+  `https://edqhub.com/join/sb-sommarlager-2026`. <!-- 02-§30.27 -->
+- The EDQ Hub icon appears after the Facebook icon in the social link
+  row. <!-- 02-§30.28 -->
+- Each social link opens in a new browser tab with
+  `rel="noopener noreferrer"`. <!-- 02-§30.29 -->
 
 ### 30.5 Countdown
 
@@ -72,6 +78,8 @@ and connects visitors to community channels.
 - The countdown background color is `#FAF7EF` (a near-white cream), not
   semi-transparent. <!-- 02-§30.23 -->
 - The Discord icon uses the image `discord-ikon.webp`. <!-- 02-§30.24 -->
+- The EDQ Hub icon is an inline SVG rendered as a circular community badge,
+  with an accessible label of "EDQ Hub". <!-- 02-§30.30 -->
 - The sidebar is vertically centered alongside the hero image (not
   top-aligned). <!-- 02-§30.25 -->
 
@@ -83,8 +91,8 @@ and connects visitors to community channels.
   dependency. <!-- 02-§30.20 -->
 - Social icon images are stored in `source/content/images/` and copied
   to `public/images/` at build time. <!-- 02-§30.21 -->
-- The Facebook link and Discord link are provided at build time from
-  configuration, not hardcoded in templates. <!-- 02-§30.22 -->
+- The Facebook link, Discord link, and EDQ Hub link are provided at build
+  time from configuration, not hardcoded in templates. <!-- 02-§30.22 -->
 
 ---
 
