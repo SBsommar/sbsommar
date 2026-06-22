@@ -1746,6 +1746,7 @@ Doc ref: `02-requirements/event-data.md §112`;
 | `02-§112.15` | implemented | Re-enable runs under the PAT identity so the merge triggers `event-data-deploy-post-merge.yml`; manual checkpoint STRAND-M01 |
 | `02-§112.16` | covered | RECTRIG-02: `merge-queue-recovery.yml` declares a `check_suite: [completed]` trigger (schedule + workflow_dispatch retained, RECTRIG-01) |
 | `02-§112.17` | covered | RECTRIG-03/-04: scheduled workflow and post-merge job share `concurrency: stranded-recovery` with `cancel-in-progress: false` |
+| `02-§112.18` | covered | STRAND-20/-21 (recover on checksPassed + BLOCKED/UNKNOWN), STRAND-22/-23 (skip pending and DIRTY), STRAND-25 (CLEAN still recovers); `fetchPrState` reads `statusCheckRollup.state` |
 
 ### §113 — Proactive Merge-Queue Enqueue
 

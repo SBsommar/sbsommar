@@ -936,8 +936,18 @@ stuck in the queue handoff.
 
 - A stranded event pull request is one that is open, whose head branch is named
   `event/*`, `event-edit/*`, or `event-delete/*`, that has auto-merge enabled, whose
-  required status checks all pass, whose mergeable state is clean, and that has no
-  merge-queue entry. <!-- 02-§112.1 -->
+  required status checks have all passed, and that has no merge-queue entry. Its
+  mergeable state may already report clean, or may still be catching up
+  (see §112.18). <!-- 02-§112.1 -->
+- Recovery keys off the status-check rollup, not the mergeable-state status. After a
+  check suite completes, GitHub can take minutes to recompute a pull request's
+  mergeable state to clean, and no further check-suite event follows to re-trigger
+  recovery in that window. Recovery therefore treats an event pull request whose
+  checks have all passed and that is not in the queue as stranded even while its
+  mergeable state still reports `BLOCKED` or `UNKNOWN`; a mergeable state of clean
+  also qualifies. A pull request whose mergeable state reports a real conflict
+  (`DIRTY`) is not recovered, because re-enabling auto-merge cannot resolve a
+  conflict. <!-- 02-§112.18 -->
 - A stranded event pull request is recovered by disabling and then re-enabling
   auto-merge, which registers a fresh merge-queue entry against the current `main`
   so the pull request merges. Re-enabling auto-merge without first disabling it is a

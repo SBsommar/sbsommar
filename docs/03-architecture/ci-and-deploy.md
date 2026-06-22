@@ -251,19 +251,24 @@ when it fails — typically because the required checks are still running — th
 request falls back to auto-merge, and this recovery sweep remains the safety net for
 any pull request that ends up stranded.
 
-**Recovery sweep (02-§112.1–112.6).** `source/scripts/recover-stranded-event-prs.js`
+**Recovery sweep (02-§112.1–112.6, 112.18).** `source/scripts/recover-stranded-event-prs.js`
 is a sibling to `close-redundant-event-prs.js`. It lists the open pull requests on
-`event/*`, `event-edit/*`, and `event-delete/*` branches and, for each, reads three
+`event/*`, `event-edit/*`, and `event-delete/*` branches and, for each, reads four
 GraphQL fields via `gh api graphql`: whether auto-merge is enabled
-(`autoMergeRequest`), the mergeable state (`mergeStateStatus`), and whether it is in
-the queue (`mergeQueueEntry`). A pure, unit-tested classifier
-(`classifyStrandedPr`) decides:
+(`autoMergeRequest`), the mergeable state (`mergeStateStatus`), whether it is in the
+queue (`mergeQueueEntry`), and the head commit's status-check rollup
+(`statusCheckRollup.state`, surfaced as `checksPassed === 'SUCCESS'`). A pure,
+unit-tested classifier (`classifyStrandedPr`) decides:
 
-- `recover` — auto-merge enabled, `mergeStateStatus` is `CLEAN`, and no
-  `mergeQueueEntry`: the pull request is stranded (02-§112.1).
-- `skip` — already has a `mergeQueueEntry` (progressing, 02-§112.4); checks pending
-  or failing so `mergeStateStatus` is not `CLEAN` (02-§112.5); or auto-merge is not
-  enabled.
+- `recover` — auto-merge enabled, not in the queue, and either `mergeStateStatus` is
+  `CLEAN`, or the checks have passed (`checksPassed`) while `mergeStateStatus` is still
+  `BLOCKED`/`UNKNOWN`: the pull request is stranded (02-§112.1, 112.18). Keying off the
+  check rollup rather than `mergeStateStatus` matters because GitHub takes minutes to
+  recompute the mergeable state to `CLEAN` after checks finish, and no further
+  check-suite event fires in that window.
+- `skip` — already has a `mergeQueueEntry` (progressing, 02-§112.4); checks still
+  pending or failing (02-§112.5); a real conflict (`mergeStateStatus` `DIRTY`); or
+  auto-merge is not enabled.
 
 For a `recover` verdict the script calls `disablePullRequestAutoMerge` then
 `enablePullRequestAutoMerge` (mergeMethod `SQUASH`, matching the form API, 02-§112.3).

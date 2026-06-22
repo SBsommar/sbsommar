@@ -33,18 +33,30 @@ function isEventBranch(branch) {
  *   mergeStateStatus  – GitHub mergeStateStatus enum (CLEAN, BLOCKED, BEHIND,
  *                       UNSTABLE, DIRTY, DRAFT, HAS_HOOKS, UNKNOWN)
  *   inMergeQueue      – true when the PR has a mergeQueueEntry
+ *   checksPassed      – true when the head commit's status-check rollup is SUCCESS
+ *
+ * Recovery keys off the check rollup, not mergeStateStatus, because GitHub takes
+ * minutes to recompute mergeStateStatus to CLEAN after checks finish and fires no
+ * further check-suite event in that window (02-§112.18). So a checks-passed PR that
+ * is not queued is treated as stranded even while mergeStateStatus still reads
+ * BLOCKED/UNKNOWN. A real conflict (DIRTY) is left alone — re-enabling auto-merge
+ * cannot resolve it.
  *
  * Returns:
  *   'ignore'  – not an event-submission PR
- *   'recover' – stranded: auto-merge on, CLEAN, and not in the queue
- *   'skip'    – event PR that is not stranded (queued, not CLEAN, or auto-merge off)
+ *   'recover' – stranded: auto-merge on, not in the queue, and mergeable (CLEAN) or
+ *               checks-passed while the mergeable state is still catching up
+ *   'skip'    – event PR that is not stranded (queued, checks pending/failing,
+ *               conflicting, or auto-merge off)
  */
-function classifyStrandedPr({ branch, autoMergeEnabled, mergeStateStatus, inMergeQueue } = {}) {
+function classifyStrandedPr({ branch, autoMergeEnabled, mergeStateStatus, inMergeQueue, checksPassed } = {}) {
   if (!isEventBranch(branch)) return 'ignore';
   if (!autoMergeEnabled) return 'skip';      // nothing to recover
   if (inMergeQueue) return 'skip';           // already progressing through the queue
-  if (mergeStateStatus !== 'CLEAN') return 'skip'; // checks pending/failing or not mergeable
-  return 'recover';
+  if (mergeStateStatus === 'CLEAN') return 'recover'; // GitHub already considers it mergeable
+  // Checks are green but the mergeable state has not converged yet (02-§112.18).
+  if (checksPassed && (mergeStateStatus === 'BLOCKED' || mergeStateStatus === 'UNKNOWN')) return 'recover';
+  return 'skip'; // checks pending/failing, conflicting, or otherwise not eligible
 }
 
 function gh(args) {
@@ -85,6 +97,7 @@ function fetchPrState(owner, repo, number) {
           autoMergeRequest { enabledAt }
           mergeStateStatus
           mergeQueueEntry { id }
+          commits(last:1){ nodes { commit { statusCheckRollup { state } } } }
         }
       }
     }`;
@@ -96,11 +109,13 @@ function fetchPrState(owner, repo, number) {
     '-F', `num=${number}`,
   ]);
   const pr = JSON.parse(out).data.repository.pullRequest;
+  const rollup = pr.commits?.nodes?.[0]?.commit?.statusCheckRollup?.state;
   return {
     nodeId: pr.id,
     autoMergeEnabled: pr.autoMergeRequest != null,
     mergeStateStatus: pr.mergeStateStatus,
     inMergeQueue: pr.mergeQueueEntry != null,
+    checksPassed: rollup === 'SUCCESS',
   };
 }
 
