@@ -1,0 +1,19 @@
+event:
+  id: yoga-30-min-2026-06-23-0900
+  title: Yoga 30 min
+  date: '2026-06-23'
+  start: '09:00'
+  end: '09:30'
+  location: GA Idrott
+  responsible: Agnes Granberg
+  description: |
+    Välkomna till en stunds yoga med fokus på styrka och rörlighet. Före eller efter frukost?
+    
+    För alla åldrar, alla nivåer av träning. Passet anpassas till de som dyker upp. Olika alternativ ges. Ta gärna med yogamatta, filt eller liggunderlag. Det borde också kunna gå bra att ta några gympamattor i hallen.
+  link: null
+  owner:
+    name: ''
+    email: ''
+  meta:
+    created_at: 2026-06-22 17:38
+    updated_at: 2026-06-22 17:38
