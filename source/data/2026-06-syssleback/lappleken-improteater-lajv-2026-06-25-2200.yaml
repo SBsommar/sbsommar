@@ -1,6 +1,6 @@
 event:
   id: lappleken-improteater-lajv-2026-06-25-2200
-  title: Lappleken (Improteater/Lajv)
+  title: 'Lappsspelet (Improteater/Lajv), Ungdomsstugan'
   date: '2026-06-25'
   start: '22:00'
   end: '00:00'
@@ -8,10 +8,11 @@ event:
   responsible: 'Edgar Alfredsson & Antonia Ilke'
   description: |
     Alla drar 2 lappar med sjuka karaktärsdrag och hänger i ungdomsstugan. Tänk er ungefär Cards Against Humanity fast man skådespelar korten.
+    
   link: null
   owner:
     name: ''
     email: ''
   meta:
     created_at: 2026-06-22 13:39
-    updated_at: 2026-06-22 13:39
+    updated_at: 2026-06-22 17:07
