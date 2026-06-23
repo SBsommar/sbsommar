@@ -4,7 +4,7 @@ event:
   date: '2026-06-24'
   start: '00:00'
   end: '01:00'
-  location: GA Lego
+  location: GA Kreativ hörna
   responsible: Mio Johansson
   description: null
   link: null
@@ -13,4 +13,4 @@ event:
     email: ''
   meta:
     created_at: 2026-06-23 07:32
-    updated_at: 2026-06-23 07:32
+    updated_at: 2026-06-23 08:38
