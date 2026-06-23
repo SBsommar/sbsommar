@@ -1,0 +1,16 @@
+event:
+  id: vm-sverige-japan-2026-06-26-0030
+  title: VM Sverige - Japan
+  date: '2026-06-26'
+  start: '00:30'
+  end: '03:00'
+  location: GA Stilla hyllan
+  responsible: Morgan
+  description: null
+  link: null
+  owner:
+    name: ''
+    email: ''
+  meta:
+    created_at: 2026-06-23 15:44
+    updated_at: 2026-06-23 15:44
