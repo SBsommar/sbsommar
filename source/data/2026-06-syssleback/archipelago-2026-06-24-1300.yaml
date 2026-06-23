@@ -1,0 +1,25 @@
+event:
+  id: archipelago-2026-06-24-1300
+  title: Archipelago
+  date: '2026-06-24'
+  start: '13:00'
+  end: '13:30'
+  location: GA Datorsal
+  responsible: Lukas
+  description: |
+    I en archipelago-randomizer sprids olika föremål från ett spel ut bland andra spelares spel. Målet är att alla spelare skall klara alla sina spel som finns i randomizern medan de samtidigt letar efter andra personers föremål i sina egna spel. Mer info: https://archipelago.gg/
+    
+    Innan bör deltagare ha installerat archipelago-klienten: https://github.com/ArchipelagoMW/Archipelago/releases/tag/0.6.7
+    Och även modsen som krävs för själva spelen du ska spela (välj själv från listan): https://archipelago.miraheze.org/wiki/Category:Games
+    Om du inte har det som behövs nedladdat be en vuxen dela internet med dig.
+    
+    Den angivna tiden (onsdag 13.00) är avsatt för att sätta upp själva randomziern men själva spelet kommer att vara tillgängligt under datasalens öppettider tom fredag.
+    
+    Jag rekommenderar att ladda ner två spel för att inte riskera att fastna under en längre tid,
+  link: null
+  owner:
+    name: ''
+    email: ''
+  meta:
+    created_at: 2026-06-23 10:43
+    updated_at: 2026-06-23 10:43
