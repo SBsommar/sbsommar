@@ -4,7 +4,7 @@ event:
   date: '2026-06-24'
   start: '13:20'
   end: '14:50'
-  location: Nerf-arena
+  location: Tält2
   responsible: Antonia Ilke
   description: |
     Vi kör olika lekar för att komma igång med tramset :)
@@ -12,10 +12,11 @@ event:
     Efter varje lek känner vi efter.
     
     Om ni har en teaterlek på lager: säg gärna till och förklara för mig i början så kan vi köra den!
+    
   link: null
   owner:
     name: ''
     email: ''
   meta:
     created_at: 2026-06-21 10:46
-    updated_at: 2026-06-23 11:42
+    updated_at: 2026-06-24 01:50
