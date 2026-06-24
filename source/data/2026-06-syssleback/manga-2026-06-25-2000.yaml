@@ -1,0 +1,21 @@
+event:
+  id: manga-2026-06-25-2000
+  title: Manga
+  date: '2026-06-25'
+  start: '20:00'
+  end: '21:30'
+  location: GA Stilla hyllan
+  responsible: Naxy Isenfors
+  description: |
+    Kom till stilla hyllan och rita manga tillsammans!
+    Ta med eget ritmaterial, om ni vill. Det går också bra att reda digitalt men en app.
+    Det finns också möjlighet att låna lite material om det behövs.
+    
+    Meddela gärna först i förväg om ni kommer via Facebook
+  link: null
+  owner:
+    name: ''
+    email: ''
+  meta:
+    created_at: 2026-06-24 23:44
+    updated_at: 2026-06-24 23:44
