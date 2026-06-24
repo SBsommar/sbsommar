@@ -1,0 +1,17 @@
+event:
+  id: traning-2026-06-24-1600
+  title: Träning
+  date: '2026-06-24'
+  start: '16:00'
+  end: '16:45'
+  location: Fotbollsplan
+  responsible: Agnes Rydler
+  description: |
+    En kollega till mig håller träningspass via länk, som jag tänkte köra. Varmt välkomna att vara med! 30-min, kondition idag. På gräsytan nedanför fotbollsplanen.
+  link: null
+  owner:
+    name: ''
+    email: ''
+  meta:
+    created_at: 2026-06-24 11:49
+    updated_at: 2026-06-24 11:49
