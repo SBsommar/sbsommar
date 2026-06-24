@@ -1,0 +1,16 @@
+event:
+  id: bokcirkel-infiltrerad-2026-06-26-1300
+  title: Bokcirkel Infiltrerad
+  date: '2026-06-26'
+  start: '13:00'
+  end: '14:00'
+  location: Tält1
+  responsible: Martina Sjöström
+  description: null
+  link: null
+  owner:
+    name: ''
+    email: ''
+  meta:
+    created_at: 2026-06-24 18:15
+    updated_at: 2026-06-24 18:15
