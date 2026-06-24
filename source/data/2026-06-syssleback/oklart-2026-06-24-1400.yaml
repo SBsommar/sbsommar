@@ -6,11 +6,12 @@ event:
   end: '17:00'
   location: Tält1
   responsible: Martina Sjöström
-  description: null
+  description: |
+    Barn under 10 år har vårdnadshavare med sig. Söker assistenter. 1 som jobbar en kvart innan med att lägga ut plast på marken och ställa dit 3bord, 1 under eventet och 1 som hjälper till att städa efter. 
   link: null
   owner:
     name: ''
     email: ''
   meta:
     created_at: 2026-06-24 10:22
-    updated_at: 2026-06-24 18:16
+    updated_at: 2026-06-24 22:03
