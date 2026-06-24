@@ -1,7 +1,7 @@
 event:
   id: oklart-2026-06-24-1400
   title: Oklart
-  date: '2026-06-24'
+  date: '2026-06-25'
   start: '15:00'
   end: '17:00'
   location: Tält1
@@ -13,4 +13,4 @@ event:
     email: ''
   meta:
     created_at: 2026-06-24 10:22
-    updated_at: 2026-06-24 10:26
+    updated_at: 2026-06-24 16:53
