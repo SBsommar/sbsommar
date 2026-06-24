@@ -1,0 +1,21 @@
+event:
+  id: photo-roulette-2026-06-25-1400
+  title: Photo Roulette
+  date: '2026-06-25'
+  start: '14:00'
+  end: '15:00'
+  location: Tält2
+  responsible: Isak Rydler
+  description: |
+    Vi kommer köra Photo roulette, vilket som är ett spel där det kommer upp en bild från någon av de deltagandes galleri, och man ska gissa vems bild det är.
+    Det du behöver är en hyfsat laddad mobil och själva appen, men den går även att ladda ner på plats
+    Det är max 10 personer i ett spel, men blir vi fler kommer det gå att ordna
+    
+    Jag har länkat appen nedanför
+  link: 'https://apps.apple.com/se/developer/photo-roulette-as/id1355069651'
+  owner:
+    name: ''
+    email: ''
+  meta:
+    created_at: 2026-06-24 11:22
+    updated_at: 2026-06-24 11:22
