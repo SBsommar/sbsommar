@@ -1,9 +1,9 @@
 event:
   id: oklart-2026-06-26-1800
-  title: Oklart
+  title: Ampel
   date: '2026-06-26'
   start: '18:00'
-  end: '20:01'
+  end: '19:30'
   location: Tält1
   responsible: Martina Sjöström
   description: null
@@ -13,4 +13,4 @@ event:
     email: ''
   meta:
     created_at: 2026-06-24 10:27
-    updated_at: 2026-06-24 10:27
+    updated_at: 2026-06-24 22:20
