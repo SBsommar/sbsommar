@@ -2709,6 +2709,45 @@ body.modal-open {
   }
 }
 
+/* ── Edit-shortcut button (02-§115) ── */
+
+.edit-shortcut-btn {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .edit-shortcut-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: var(--space-xs);
+    left: calc(var(--space-sm) + 42px + var(--space-xs));
+    width: 42px;
+    height: 42px;
+    background: var(--color-terracotta);
+    color: var(--color-white);
+    border-radius: var(--radius-md);
+    line-height: 0;
+    z-index: 201;
+  }
+
+  /* The hidden attribute (set until nav.js reveals the button) must win over
+     the mobile display: flex above. */
+  .edit-shortcut-btn[hidden] {
+    display: none;
+  }
+
+  .edit-shortcut-btn:hover {
+    background: var(--color-sage-hover);
+  }
+
+  .edit-shortcut-btn:focus-visible {
+    outline: 2px solid var(--color-white);
+    outline-offset: 2px;
+  }
+}
+
 /* ── Quick-add activity button (02-§114) ── */
 
 .quick-add-btn {

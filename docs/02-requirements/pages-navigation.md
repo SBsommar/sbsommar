@@ -499,3 +499,46 @@ activity from anywhere on the site without opening the menu.
 - The quick-add button displays a plus (+) icon. <!-- 02-§114.8 -->
 - The PWA-install button is positioned to the left of the quick-add button so
   the two buttons never overlap. <!-- 02-§114.9 -->
+
+---
+
+## 115. Edit-Shortcut Button in Sticky Navigation
+
+### Context
+
+A participant who has added activities needs a fast way back to them to make
+edits. Without a shortcut, the only route is to open the schedule and locate
+each owned row. A button beside the menu button in the always-visible sticky
+navigation — shown only to people who actually own an upcoming activity — takes
+them straight to the edit page, which lists their own activities. Holding an
+admin token is irrelevant here: the shortcut is about *my* activities, not
+administration.
+
+### 115.1 User requirements
+
+- A participant who owns at least one upcoming activity sees an edit-shortcut
+  button beside the menu button in the sticky top navigation, taking them
+  directly to the edit page. <!-- 02-§115.1 -->
+- A visitor who owns no upcoming activity sees no edit-shortcut button. <!-- 02-§115.2 -->
+- Holding an admin token does not by itself reveal the button; visibility
+  depends only on the visitor's own activities. <!-- 02-§115.3 -->
+
+### 115.2 Site requirements
+
+- The shared navigation renders the edit-shortcut button as an `<a>` element
+  linking to `redigera.html`, with `aria-label="Redigera mina aktiviteter"`. <!-- 02-§115.4 -->
+- The edit-shortcut button appears on every page except `redigera.html`, where
+  it is omitted. <!-- 02-§115.5 -->
+- The edit-shortcut button is hidden by default and is revealed by client-side
+  JavaScript only when the `sb_session` cookie holds valid signed ownership for
+  at least one activity whose date has not passed. <!-- 02-§115.6 -->
+- The presence of an admin token in `localStorage` never reveals the
+  edit-shortcut button; only own-activity ownership does. <!-- 02-§115.7 -->
+- The edit-shortcut button is visible only on mobile viewports (≤ 767 px). On
+  desktop it is never displayed. <!-- 02-§115.8 -->
+- The edit-shortcut button is a child of `<nav class="page-nav">`, positioned
+  beside the hamburger menu button. <!-- 02-§115.9 -->
+- The edit-shortcut button matches the menu and floating action buttons in size
+  (42 × 42 px), terracotta background, white icon, and `var(--radius-md)`
+  border-radius. <!-- 02-§115.10 -->
+- The edit-shortcut button displays a pencil (edit) icon. <!-- 02-§115.11 -->

@@ -127,6 +127,46 @@ browser fires `beforeinstallprompt`, so the gap is only ever visible in the
 rare case the app is installable while the user is on the add page — not worth
 page-specific positioning rules.
 
+### 12.8 Edit-shortcut button (02-§115)
+
+`pageNav()` renders an edit-shortcut button as an `<a class="edit-shortcut-btn"
+href="redigera.html" aria-label="Redigera mina aktiviteter" hidden>` element
+containing an inline SVG pencil icon. It is a direct child of `<nav
+class="page-nav">`, rendered immediately after the hamburger menu button so it
+sits beside it.
+
+`pageNav(activeHref, …)` omits the button entirely when `activeHref ===
+'redigera.html'`, so it never appears on the edit page itself.
+
+Unlike the quick-add button, the edit-shortcut button is **conditional**: it is
+rendered with the `hidden` attribute and revealed only for visitors who own an
+upcoming activity. The reveal is handled by a small IIFE in `nav.js` (the only
+client script loaded on every page with navigation), so no new per-page script
+tag is needed:
+
+1. It reads the `sb_session` cookie and keeps only valid signed ownership
+   entries (`{ id, exp, sig }` with a non-expired `exp`). If there are none it
+   returns immediately — non-owners never trigger a fetch.
+2. Otherwise it fetches `/events.json` and reveals the button (`btn.hidden =
+   false`) when at least one owned ID maps to an event whose `date` is today or
+   later. On a fetch error the button stays hidden.
+
+An admin token is deliberately **not** consulted — visibility depends only on
+the visitor's own activities (02-§115.7). This is the opposite of
+`injectEditLinks()`, where a valid admin token lights up edit links on every
+row.
+
+The button is mobile-only. Its `display` is `none` by default and `flex` inside
+the `@media (max-width: 767px)` block, with an `.edit-shortcut-btn[hidden] {
+display: none }` rule so the `hidden` attribute keeps it hidden until JS clears
+it — the same pattern as `.scroll-top`. On desktop the bare `display: none`
+applies regardless of the `hidden` attribute, so the button never appears there.
+
+It shares the 42 × 42 px terracotta pill styling and is positioned with
+`position: absolute; top: var(--space-xs)` beside the hamburger menu button
+(`left: calc(var(--space-sm) + 42px + var(--space-xs))`), matching the menu
+button's positioning model.
+
 ---
 
 ## 14. Upcoming Camps Section on Homepage

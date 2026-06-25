@@ -66,6 +66,19 @@ function pageNav(activeHref, navSections = []) {
       </svg>
     </a>\n`;
 
+  // Edit-shortcut button — a one-tap link to the edit page, shown beside the
+  // hamburger menu button. Rendered hidden; nav.js reveals it only for visitors
+  // who own an upcoming activity (admin token is deliberately ignored).
+  // Omitted on the edit page itself, where it would be redundant.
+  const editShortcutBtn = activeHref === 'redigera.html'
+    ? ''
+    : `    <a class="edit-shortcut-btn" href="redigera.html" aria-label="Redigera mina aktiviteter" hidden>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 20h9"/>
+        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/>
+      </svg>
+    </a>\n`;
+
   const installBtn = `    <button type="button" class="pwa-install-btn" aria-label="Installera appen" hidden>
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
@@ -81,7 +94,7 @@ function pageNav(activeHref, navSections = []) {
       <span class="nav-toggle-bar"></span>
       <span class="nav-toggle-bar"></span>
     </button>
-    <button type="button" class="scroll-top" aria-label="Till toppen" hidden>&#x2B06;</button>
+${editShortcutBtn}    <button type="button" class="scroll-top" aria-label="Till toppen" hidden>&#x2B06;</button>
 ${quickAddBtn}${installBtn}
 ${feedbackBtn}
     <div class="nav-menu" id="nav-menu">
