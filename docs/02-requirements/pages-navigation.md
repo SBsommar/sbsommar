@@ -536,9 +536,9 @@ administration.
   edit-shortcut button; only own-activity ownership does. <!-- 02-§115.7 -->
 - The edit-shortcut button is visible only on mobile viewports (≤ 767 px). On
   desktop it is never displayed. <!-- 02-§115.8 -->
-- The edit-shortcut button is a child of `<nav class="page-nav">`, positioned
-  beside the hamburger menu button. <!-- 02-§115.9 -->
-- The edit-shortcut button matches the menu and floating action buttons in size
+- The edit-shortcut button is a child of `<nav class="page-nav">`, positioned in
+  the row of floating action buttons beside the quick-add button. <!-- 02-§115.9 -->
+- The edit-shortcut button matches the other floating action buttons in size
   (42 × 42 px), terracotta background, white icon, and `var(--radius-md)`
   border-radius. <!-- 02-§115.10 -->
 - The edit-shortcut button displays a pencil (edit) icon. <!-- 02-§115.11 -->

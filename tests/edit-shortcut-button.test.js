@@ -97,14 +97,14 @@ describe('edit-shortcut button – omitted on edit page (02-§115.5)', () => {
 
 // ── reachable without the hamburger menu, beside the toggle (02-§115.9) ───────
 
-describe('edit-shortcut button – beside the menu button (02-§115.9)', () => {
-  it('ESHORT-08: rendered after the nav-toggle but before the nav-menu', () => {
+describe('edit-shortcut button – beside the quick-add button (02-§115.9)', () => {
+  it('ESHORT-08: rendered next to the quick-add button, outside the nav-menu', () => {
     const html = pageNav('schema.html', SECTIONS);
-    const togglePos = html.indexOf('class="nav-toggle"');
+    const quickPos = html.indexOf('quick-add-btn');
     const btnPos = html.indexOf('edit-shortcut-btn');
     const menuPos = html.indexOf('<div class="nav-menu"');
-    assert.ok(togglePos !== -1 && btnPos !== -1 && menuPos !== -1, 'toggle, button and menu must all exist');
-    assert.ok(togglePos < btnPos, 'Edit-shortcut button must come after the hamburger toggle so it sits beside it');
+    assert.ok(quickPos !== -1 && btnPos !== -1 && menuPos !== -1, 'quick-add, edit button and menu must all exist');
+    assert.ok(quickPos < btnPos, 'Edit-shortcut button is rendered next to the quick-add button');
     assert.ok(
       btnPos < menuPos,
       'Edit-shortcut button must be outside the nav-menu so it is reachable without opening the hamburger',
@@ -162,10 +162,12 @@ describe('edit-shortcut button – CSS rules (02-§115.8, §115.9, §115.10)', (
     );
   });
 
-  it('ESHORT-14: positioned beside the hamburger menu button', () => {
+  it('ESHORT-14: positioned beside the quick-add button (one slot left of it)', () => {
+    const mobileRule = CSS.match(/\.edit-shortcut-btn\s*\{[^}]*var\(--color-terracotta\)[^}]*\}/);
+    assert.ok(mobileRule, 'Expected the mobile `.edit-shortcut-btn` rule');
     assert.ok(
-      CSS.includes('left: calc(var(--space-sm) + 42px + var(--space-xs))'),
-      'Edit-shortcut button should sit one slot right of the left-anchored hamburger',
+      /right:\s*calc\(var\(--space-sm\) \+ 2 \* \(42px \+ var\(--space-xs\)\)\)/.test(mobileRule[0]),
+      'Edit-shortcut button should occupy the slot beside the quick-add button',
     );
   });
 });

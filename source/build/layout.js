@@ -67,7 +67,7 @@ function pageNav(activeHref, navSections = []) {
     </a>\n`;
 
   // Edit-shortcut button — a one-tap link to the edit page, shown beside the
-  // hamburger menu button. Rendered hidden; nav.js reveals it only for visitors
+  // quick-add button. Rendered hidden; nav.js reveals it only for visitors
   // who own an upcoming activity (admin token is deliberately ignored).
   // Omitted on the edit page itself, where it would be redundant.
   const editShortcutBtn = activeHref === 'redigera.html'
@@ -94,8 +94,8 @@ function pageNav(activeHref, navSections = []) {
       <span class="nav-toggle-bar"></span>
       <span class="nav-toggle-bar"></span>
     </button>
-${editShortcutBtn}    <button type="button" class="scroll-top" aria-label="Till toppen" hidden>&#x2B06;</button>
-${quickAddBtn}${installBtn}
+    <button type="button" class="scroll-top" aria-label="Till toppen" hidden>&#x2B06;</button>
+${quickAddBtn}${editShortcutBtn}${installBtn}
 ${feedbackBtn}
     <div class="nav-menu" id="nav-menu">
       <div class="nav-pages">

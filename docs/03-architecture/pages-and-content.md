@@ -132,8 +132,8 @@ page-specific positioning rules.
 `pageNav()` renders an edit-shortcut button as an `<a class="edit-shortcut-btn"
 href="redigera.html" aria-label="Redigera mina aktiviteter" hidden>` element
 containing an inline SVG pencil icon. It is a direct child of `<nav
-class="page-nav">`, rendered immediately after the hamburger menu button so it
-sits beside it.
+class="page-nav">`, rendered next to the quick-add button so the two
+sit beside each other in the floating-action-button row.
 
 `pageNav(activeHref, …)` omits the button entirely when `activeHref ===
 'redigera.html'`, so it never appears on the edit page itself.
@@ -162,10 +162,15 @@ display: none }` rule so the `hidden` attribute keeps it hidden until JS clears
 it — the same pattern as `.scroll-top`. On desktop the bare `display: none`
 applies regardless of the `hidden` attribute, so the button never appears there.
 
-It shares the 42 × 42 px terracotta pill styling and is positioned with
-`position: absolute; top: var(--space-xs)` beside the hamburger menu button
-(`left: calc(var(--space-sm) + 42px + var(--space-xs))`), matching the menu
-button's positioning model.
+It shares the 42 × 42 px terracotta pill styling of the other floating action
+buttons and is positioned with `position: fixed; top: var(--space-xs)` in the
+slot immediately left of the quick-add button
+(`right: calc(var(--space-sm) + 2 * (42px + var(--space-xs)))`). The
+`.pwa-install-btn` moves one slot further left
+(`right: calc(var(--space-sm) + 3 * (42px + var(--space-xs)))`) so the buttons
+never overlap. Because both the edit-shortcut and install buttons are usually
+hidden, the row collapses to just the feedback and quick-add buttons for most
+visitors, with no visible gaps.
 
 ---
 

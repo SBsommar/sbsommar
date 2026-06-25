@@ -2656,7 +2656,7 @@ body.modal-open {
     justify-content: center;
     position: fixed;
     top: var(--space-xs);
-    right: calc(var(--space-sm) + 2 * (42px + var(--space-xs)));
+    right: calc(var(--space-sm) + 3 * (42px + var(--space-xs)));
     width: 42px;
     height: 42px;
     background: var(--color-terracotta);
@@ -2720,9 +2720,9 @@ body.modal-open {
     display: flex;
     align-items: center;
     justify-content: center;
-    position: absolute;
+    position: fixed;
     top: var(--space-xs);
-    left: calc(var(--space-sm) + 42px + var(--space-xs));
+    right: calc(var(--space-sm) + 2 * (42px + var(--space-xs)));
     width: 42px;
     height: 42px;
     background: var(--color-terracotta);

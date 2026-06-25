@@ -149,10 +149,12 @@ describe('quick-add button – CSS rules (02-§114.5, §114.6, §114.7, §114.9)
     );
   });
 
-  it('QADD-13: PWA-install button shifts one slot left so they never overlap', () => {
+  it('QADD-13: PWA-install button shifts left of quick-add so they never overlap', () => {
+    // The edit-shortcut button (02-§115) sits in the slot immediately left of
+    // quick-add, so the PWA-install button moves one slot further still.
     assert.ok(
-      CSS.includes('right: calc(var(--space-sm) + 2 * (42px + var(--space-xs)))'),
-      'PWA-install button should move one slot further left',
+      CSS.includes('right: calc(var(--space-sm) + 3 * (42px + var(--space-xs)))'),
+      'PWA-install button should sit two slots left of quick-add',
     );
   });
 });

@@ -1786,7 +1786,7 @@ Doc ref: `02-requirements/pages-navigation.md §114`;
 | `02-§114.6` | covered | QADD-12: `right: calc(var(--space-sm) + 42px + var(--space-xs))` between scroll-top and feedback; `source/assets/cs/style.css`. Visual placement is manual checkpoint |
 | `02-§114.7` | covered | QADD-11: 42 × 42 px, `var(--color-terracotta)`, white icon, `var(--radius-md)`; `source/assets/cs/style.css` |
 | `02-§114.8` | covered | QADD-04: inline SVG plus icon inside the anchor; `source/build/layout.js` |
-| `02-§114.9` | covered | QADD-13: `.pwa-install-btn` mobile rule uses `right: calc(var(--space-sm) + 2 * (42px + var(--space-xs)))`; `source/assets/cs/style.css` |
+| `02-§114.9` | covered | QADD-13: `.pwa-install-btn` mobile rule uses `right: calc(var(--space-sm) + 3 * (42px + var(--space-xs)))` (one slot left of the edit-shortcut button, which took the slot beside quick-add); `source/assets/cs/style.css` |
 
 ### §115 — Edit-Shortcut Button in Sticky Navigation
 
@@ -1804,6 +1804,6 @@ Doc ref: `02-requirements/pages-navigation.md §115`;
 | `02-§115.6` | covered | ESHORT-15/-16/-17: `nav.js` reads `sb_session` signed entries, fetches `events.json`, sets `btn.hidden = false` for an owned event with `date >= today`; `source/assets/js/client/nav.js` |
 | `02-§115.7` | covered | ESHORT-18: the `nav.js` reveal IIFE never consults the admin token; `source/assets/js/client/nav.js` |
 | `02-§115.8` | covered | ESHORT-11/-12/-13: `.edit-shortcut-btn { display: none }` default, `flex` inside `@media (max-width: 767px)`, `[hidden]` re-hide; `source/assets/cs/style.css`. Desktop absence is a manual checkpoint |
-| `02-§115.9` | covered | ESHORT-08/-14: rendered after the toggle, before `.nav-menu`; positioned `left: calc(var(--space-sm) + 42px + var(--space-xs))` beside the hamburger; `layout.js` / `style.css` |
+| `02-§115.9` | covered | ESHORT-08/-14: rendered in the floating-action-button group, outside `.nav-menu`; positioned `right: calc(var(--space-sm) + 2 * (42px + var(--space-xs)))` beside the quick-add button; `layout.js` / `style.css` |
 | `02-§115.10` | covered | ESHORT-12: 42 × 42 px, `var(--color-terracotta)`, white icon, `var(--radius-md)`; `source/assets/cs/style.css` |
 | `02-§115.11` | covered | ESHORT-05: inline SVG pencil icon inside the anchor; `source/build/layout.js` |
