@@ -230,6 +230,7 @@ mint form's per-field validation uses the inline field-error component
 - The heading (`h1#today-heading`) sits at the top of the sidebar. It shows only the current day and date; no page-title prefix. <!-- 07-§6.46 -->
 - Sidebar heading: sage green (`var(--color-sage)`), `22px`, `700`, line-height `1.2`, margin-bottom `var(--space-sm)`. <!-- 07-§6.47 -->
 - Display-mode event rows are compact: `font-size: 13px`, reduced vertical padding (`6px` top/bottom). <!-- 07-§6.48 -->
+- When a next day is shown, today's and the next day's activity cards are separated by a divider (`.day-divider`): a centred sage-green label (`var(--color-sage)`, `20px`, `700`) reading "Imorgon", flanked on both sides by a `2px` sage rule at `0.5` opacity. Spacing: margin `var(--space-lg)` above, `var(--space-md)` below. <!-- 07-§6.133 -->
 
 ### Display sidebar status widget
 

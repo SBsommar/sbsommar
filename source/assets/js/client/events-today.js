@@ -18,6 +18,9 @@
   var showFooter = window.__SHOW_FOOTER__ || false;
   // idag.html opts in; the passive display view (live.html) leaves this unset.
   var showIcal = window.__SHOW_ICAL__ || false;
+  // Display view (live.html) also shows the next day; idag.html leaves this unset.
+  var showNextDay = window.__SHOW_NEXT_DAY__ || false;
+  var campEnd = window.__CAMP_END__ || '';
 
   function pad(n) { return String(n).padStart(2, '0'); }
 
@@ -37,7 +40,9 @@
   var container = document.getElementById('today-events');
   if (!container) return;
 
-  if (todayEvents.length === 0) {
+  // idag.html shows today only: with no events there is nothing more to render.
+  // live.html (showNextDay) continues so it can still show the next day below.
+  if (todayEvents.length === 0 && !showNextDay) {
     container.innerHTML = '<p class="' + emptyClass + '">Inga aktiviteter schemalagda för idag.</p>';
     return;
   }
@@ -64,7 +69,8 @@
       'title="Ladda ner iCal" data-goatcounter-click="download-ical">iCal</a>';
   }
 
-  var rows = todayEvents.map(function (e) {
+  // Builds the HTML for one event row (collapsible when it has extra detail).
+  function buildRowHtml(e) {
     var timeStr = e.end ? esc(e.start) + '–' + esc(e.end) : esc(e.start);
     var metaParts = [e.location, e.responsible].filter(Boolean).map(esc);
     var metaEl = metaParts.length ? '<span class="ev-meta"> · ' + metaParts.join(' · ') + '</span>' : '';
@@ -90,17 +96,45 @@
         metaEl + icalEl + '</summary>' +
         '<div class="event-extra">' + extraParts.join('') + '</div>' +
         '</details>';
-    } else {
-      return '<div class="event-row plain"' + idAttr + dateAttr + '>' +
-        '<span class="ev-time">' + timeStr + '</span>' +
-        '<span class="ev-title">' + esc(e.title) + '</span>' +
-        metaEl + icalEl + '</div>';
     }
-  });
+    return '<div class="event-row plain"' + idAttr + dateAttr + '>' +
+      '<span class="ev-time">' + timeStr + '</span>' +
+      '<span class="ev-title">' + esc(e.title) + '</span>' +
+      metaEl + icalEl + '</div>';
+  }
 
-  var output = '<div class="today-card"><div class="event-list">' + rows.join('') + '</div></div>';
-  if (showFooter) {
-    output += '<p class="display-footer">' + todayEvents.length + ' aktiviteter schemalagda idag.</p>';
+  // Wraps a list of events in a card. The optional id lets the live "now" logic
+  // target today's rows only, leaving the next day's rows untouched.
+  function renderCard(list, listId) {
+    var idAttr = listId ? ' id="' + listId + '"' : '';
+    return '<div class="today-card"><div class="event-list"' + idAttr + '>' +
+      list.map(buildRowHtml).join('') + '</div></div>';
+  }
+
+  // Next day (display view only): the camp must have another day (tomorrow on or
+  // before the camp end date) and that day must have at least one activity.
+  var tomorrowEvents = [];
+  if (showNextDay) {
+    var tmr = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+    var tomorrowStr = tmr.getFullYear() + '-' + pad(tmr.getMonth() + 1) + '-' + pad(tmr.getDate());
+    if (!campEnd || tomorrowStr <= campEnd) {
+      tomorrowEvents = events.filter(function (e) { return e.date === tomorrowStr; });
+      tomorrowEvents.sort(function (a, b) { return a.start.localeCompare(b.start); });
+    }
+  }
+
+  var output;
+  if (todayEvents.length) {
+    output = renderCard(todayEvents, 'today-list');
+    if (showFooter) {
+      output += '<p class="display-footer">' + todayEvents.length + ' aktiviteter schemalagda idag.</p>';
+    }
+  } else {
+    output = '<p class="' + emptyClass + '">Inga aktiviteter schemalagda för idag.</p>';
+  }
+  if (tomorrowEvents.length) {
+    output += '<div class="day-divider"><span>Imorgon</span></div>';
+    output += renderCard(tomorrowEvents, null);
   }
   container.innerHTML = output;
 
@@ -149,13 +183,20 @@
       var m = /^(\d{1,2}):(\d{2})/.exec(hhmm || '');
       return m ? parseInt(m[1], 10) * 60 + parseInt(m[2], 10) : null;
     }
-    var rowEls = container.querySelectorAll('.event-row');
-    // Reuse the same empty-state styling as the build-time "no events" message.
+    // Scope to today's list only: the next day's rows must never be removed or
+    // highlighted by this logic.
+    var todayListEl = document.getElementById('today-list');
+    var rowEls = todayListEl ? todayListEl.querySelectorAll('.event-row') : [];
+    // Reuse the same empty-state styling as the build-time "no events" message,
+    // placed right after today's card so it stays above any next-day divider.
     var doneMsg = document.createElement('p');
     doneMsg.className = emptyClass;
     doneMsg.textContent = 'Inga fler aktiviteter idag.';
     doneMsg.hidden = true;
-    container.appendChild(doneMsg);
+    if (todayListEl) {
+      var todayCard = todayListEl.parentNode;
+      todayCard.parentNode.insertBefore(doneMsg, todayCard.nextSibling);
+    }
     function classifyRows() {
       var d = new Date();
       var nowMin = d.getHours() * 60 + d.getMinutes();

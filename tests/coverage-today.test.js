@@ -144,6 +144,20 @@ describe('02-§4.16 — Build time embedded at build', () => {
   });
 });
 
+// ── 02-§4.24  Next-day section enabled in display view ──────────────────────
+
+describe('02-§4.24 — Next-day data is exposed to the display view', () => {
+  it('DIS-32: window.__SHOW_NEXT_DAY__ is true in display mode', () => {
+    const html = renderTodayPage(CAMP, EVENTS, QR_SVG);
+    assert.ok(html.includes('window.__SHOW_NEXT_DAY__ = true'), 'next-day flag set');
+  });
+
+  it('DIS-33: window.__CAMP_END__ carries the camp end date', () => {
+    const html = renderTodayPage(CAMP, EVENTS, QR_SVG);
+    assert.ok(html.includes("window.__CAMP_END__ = '2099-07-07'"), 'camp end date embedded');
+  });
+});
+
 // ── 02-§4.15  Live clock element ────────────────────────────────────────────
 
 describe('02-§4.15 — Status bar with live clock is present', () => {

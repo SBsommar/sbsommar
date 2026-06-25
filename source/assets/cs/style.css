@@ -462,6 +462,27 @@ body.display-mode .event-row.is-now {
   box-shadow: inset 3px 0 0 var(--color-terracotta);
 }
 
+/* Next-day divider (live.html): a sage label flanked by rules, separating
+   today's activities from the following day's. */
+body.display-mode .day-divider {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin: var(--space-lg) 0 var(--space-md);
+  color: var(--color-sage);
+  font-size: 20px;
+  font-weight: 700;
+}
+
+body.display-mode .day-divider::before,
+body.display-mode .day-divider::after {
+  content: "";
+  flex: 1;
+  height: 2px;
+  background: var(--color-sage);
+  opacity: 0.5;
+}
+
 /* ── Dagens schema two-column layout ── */
 
 .dagens-layout {
