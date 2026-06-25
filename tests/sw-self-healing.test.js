@@ -116,6 +116,27 @@ describe('02-§96.6 — network-first strategies keep ignoreSearch', () => {
   });
 });
 
+// ── §96.16 — version.json is never cached ───────────────────────────────────
+
+describe('02-§96.16 — fetch handler bypasses version.json', () => {
+  it('SWH-12: fetch handler returns early for version.json before any cache strategy', () => {
+    const body = extractFunctionBody(SW_SRC, "addEventListener('fetch'");
+    const guardIdx = body.search(/version\.json['"]\s*\)\s*\)\s*return/);
+    assert.ok(
+      guardIdx !== -1,
+      "fetch handler must early-return for a path ending in version.json",
+    );
+    // The bypass must come before the events.json / navigation routing so it
+    // wins over any caching strategy.
+    const eventsIdx = body.indexOf("endsWith('events.json')");
+    assert.ok(eventsIdx !== -1, 'fetch handler must route events.json');
+    assert.ok(
+      guardIdx < eventsIdx,
+      'version.json bypass must precede the events.json cache route',
+    );
+  });
+});
+
 // ── §96.13 — vanilla JavaScript, no imports ─────────────────────────────────
 
 describe('02-§96.13 — sw.js is vanilla JavaScript with no imports', () => {
