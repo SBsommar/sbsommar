@@ -1778,12 +1778,12 @@ Doc ref: `02-requirements/pages-navigation.md §114`;
 
 | ID | Status | Notes |
 | --- | --- | --- |
-| `02-§114.1` | gap | Mobile sticky nav shows a `+` link to the add-activity page |
-| `02-§114.2` | gap | Reachable without opening the hamburger menu; omitted only on `lagg-till.html` |
-| `02-§114.3` | gap | `pageNav()` renders `<a class="quick-add-btn" href="lagg-till.html" aria-label="Lägg till aktivitet">` |
-| `02-§114.4` | gap | Button omitted when `activeHref === 'lagg-till.html'` |
-| `02-§114.5` | gap | Mobile-only: `display: none` by default, `flex` inside `@media (max-width: 767px)` |
-| `02-§114.6` | gap | Child of `.page-nav`, positioned between scroll-to-top and feedback buttons |
-| `02-§114.7` | gap | 42 × 42 px, terracotta background, white icon, `var(--radius-md)` border-radius |
-| `02-§114.8` | gap | Inline SVG plus (+) icon |
-| `02-§114.9` | gap | `.pwa-install-btn` shifts one slot left so the buttons never overlap |
+| `02-§114.1` | covered | QADD-05/-08 confirm the button (a `lagg-till.html` link) renders on every non-add page; `layout.js` `pageNav()`. Mobile-only visibility is manual checkpoint (open schema.html at ≤767 px) |
+| `02-§114.2` | covered | QADD-07: the button is rendered before (outside) `.nav-menu`, so it is reachable without opening the hamburger; `layout.js` `pageNav()` |
+| `02-§114.3` | covered | QADD-01/-02/-03: `<a class="quick-add-btn" href="lagg-till.html" aria-label="Lägg till aktivitet">`; `source/build/layout.js` |
+| `02-§114.4` | covered | QADD-06/-09: omitted when `activeHref === 'lagg-till.html'`; `source/build/layout.js` |
+| `02-§114.5` | covered | QADD-10/-11: `.quick-add-btn { display: none }` by default, `display: flex` inside `@media (max-width: 767px)`; `source/assets/cs/style.css`. Desktop absence is manual checkpoint |
+| `02-§114.6` | covered | QADD-12: `right: calc(var(--space-sm) + 42px + var(--space-xs))` between scroll-top and feedback; `source/assets/cs/style.css`. Visual placement is manual checkpoint |
+| `02-§114.7` | covered | QADD-11: 42 × 42 px, `var(--color-terracotta)`, white icon, `var(--radius-md)`; `source/assets/cs/style.css` |
+| `02-§114.8` | covered | QADD-04: inline SVG plus icon inside the anchor; `source/build/layout.js` |
+| `02-§114.9` | covered | QADD-13: `.pwa-install-btn` mobile rule uses `right: calc(var(--space-sm) + 2 * (42px + var(--space-xs)))`; `source/assets/cs/style.css` |
