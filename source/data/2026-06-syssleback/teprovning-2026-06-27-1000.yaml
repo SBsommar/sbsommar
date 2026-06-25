@@ -1,0 +1,18 @@
+event:
+  id: teprovning-2026-06-27-1000
+  title: TEPROVNING
+  date: '2026-06-27'
+  start: '10:00'
+  end: '11:00'
+  location: KaffePaviljongen
+  responsible: Lisa Lautrup
+  description: |
+    Vi testar te från Japan och Sydkorea!
+    Ta med egen tekopp och gärna termometer om det finns.
+  link: null
+  owner:
+    name: ''
+    email: ''
+  meta:
+    created_at: 2026-06-25 22:28
+    updated_at: 2026-06-25 22:28
