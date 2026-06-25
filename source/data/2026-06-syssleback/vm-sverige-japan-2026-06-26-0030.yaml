@@ -1,10 +1,10 @@
 event:
   id: vm-sverige-japan-2026-06-26-0030
-  title: VM Sverige - Japan
+  title: 'VM Sverige - Japan GA hallen!!'
   date: '2026-06-26'
   start: '00:30'
   end: '03:00'
-  location: Servicehus
+  location: GA Kreativ hörna
   responsible: Morgan
   description: null
   link: null
@@ -13,4 +13,4 @@ event:
     email: ''
   meta:
     created_at: 2026-06-23 15:44
-    updated_at: 2026-06-25 11:46
+    updated_at: 2026-06-25 22:56
