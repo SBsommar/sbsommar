@@ -31,8 +31,9 @@ Part of [the requirements index](./index.md). Section IDs (`02-§N.M`) are stabl
 - Must not require any interaction to stay useful — it should be readable at a glance. <!-- 02-§4.7 -->
 - Shows no site-level footer. <!-- 02-§4.14 -->
 - Shows a live clock of the current time in the sidebar. The clock advances exactly once per wall-clock second, with no skipped or repeated values, by re-aligning each update to the next whole second rather than relying on a fixed-interval timer. <!-- 02-§4.15 -->
-- Shows when events were last updated; the timestamp is embedded at build time and shown below the clock. <!-- 02-§4.16 -->
+- Shows when the schedule content was last rebuilt, labelled "Schema uppdaterat" followed by the build date and time (e.g. "Schema uppdaterat 25 jun 18:03"), below the clock. The timestamp is embedded at build time. <!-- 02-§4.16 -->
 - Polls `version.json` once on load and every 60 seconds thereafter, and reloads the page automatically when a newer build is detected. A failed check is logged to the console and retried on the next interval; it does not stop the polling loop. <!-- 02-§4.17 -->
+- Surfaces a prominent warning only when the screen has lost contact with the server: when no version check has succeeded for more than 3 minutes, a red banner reading "⚠ Ingen kontakt med servern sedan HH:MM" (the time of the last successful check) is shown in the sidebar. While checks are succeeding the banner is hidden, and it clears automatically as soon as a check succeeds again. This lets an observer distinguish a stalled screen (banner shown, or the clock's seconds frozen) from a screen that is simply showing an unchanged schedule (no banner, clock ticking). <!-- 02-§4.23 -->
 - Automatically reloads shortly after midnight to show the new day's events. <!-- 02-§4.18 -->
 - The heading shows only the current day and date (e.g. "måndag 26 februari 2026") without a page-title prefix. <!-- 02-§4.19 -->
 - The heading is positioned inside the sidebar, not above the event list, so events use the full available height. <!-- 02-§4.20 -->

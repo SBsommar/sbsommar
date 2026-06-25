@@ -60,6 +60,7 @@ ${pwaHeadTags()}
         <span class="status-clock" id="live-clock"></span>
         <span class="status-updated" id="build-info"></span>
       </div>
+      <p class="status-offline" id="connection-warning" role="status" hidden></p>
       <p class="sidebar-text">Detta är schemat för aktiviteter som sker idag. För kartor, information och schema andra dagar – besök ${siteHost} eller skanna QR-koden.</p>
       <div class="qr-wrap">${qrSvg}</div>
     </aside>

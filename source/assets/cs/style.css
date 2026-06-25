@@ -513,6 +513,23 @@ body.display-mode .event-row.is-now {
   margin-top: var(--space-xs);
 }
 
+/* Connection warning — hidden while version checks succeed, shown only when the
+   live screen has lost contact with the server (events-today.js). */
+.status-offline {
+  display: block;
+  margin: var(--space-sm) 0 0;
+  padding: var(--space-xs) var(--space-sm);
+  background: var(--color-error);
+  color: var(--color-white);
+  font-size: 16px;
+  font-weight: 700;
+  border-radius: var(--radius-md);
+}
+
+.status-offline[hidden] {
+  display: none;
+}
+
 .sidebar-text {
   font-size: 15px;
   line-height: 1.65;

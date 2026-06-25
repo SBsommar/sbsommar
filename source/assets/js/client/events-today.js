@@ -127,14 +127,16 @@
     }
     tickClock();
 
-    // Last-updated display — formatted in Swedish
+    // Schedule-content timestamp — when the site was last rebuilt. This says
+    // nothing about whether the screen is still alive; that is what the
+    // connection warning below is for.
     var buildInfoEl = document.getElementById('build-info');
     if (buildInfoEl) {
       var shortMonths = ['jan', 'feb', 'mar', 'apr', 'maj', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec'];
       var bt = new Date(window.__BUILD_TIME__);
       var dateStr = bt.getDate() + ' ' + shortMonths[bt.getMonth()] + ' ' + bt.getFullYear();
       var btTime = pad(bt.getHours()) + ':' + pad(bt.getMinutes());
-      buildInfoEl.textContent = 'Uppdaterad ' + dateStr + ' ' + btTime;
+      buildInfoEl.textContent = 'Schema uppdaterat ' + dateStr + ' ' + btTime;
     }
 
     // Live "now" view — re-evaluated every minute so the board tracks the
@@ -188,7 +190,28 @@
     // Version polling — reload when a newer build is deployed. Runs immediately
     // and then every 60 s. A failed check is logged and retried on the next
     // interval rather than silently stopping the loop.
+    //
+    // Connection warning — surfaced only when checks have been failing. The page
+    // loads fresh from the server, so contact starts out healthy; each
+    // successful check refreshes the timestamp. When more than STALE_MS passes
+    // without a successful check (i.e. several missed polls, or a hung fetch
+    // that never resolves), a red banner appears showing when contact was last
+    // confirmed. It clears automatically on the next success. This separates a
+    // stalled screen from one that is merely showing an unchanged schedule.
     var loadedVersion = window.__VERSION__;
+    var warnEl = document.getElementById('connection-warning');
+    var lastOkCheck = Date.now();
+    var STALE_MS = 3 * 60 * 1000;
+    function refreshConnectionWarning() {
+      if (!warnEl) return;
+      if (Date.now() - lastOkCheck > STALE_MS) {
+        var t = new Date(lastOkCheck);
+        warnEl.textContent = '⚠ Ingen kontakt med servern sedan ' + pad(t.getHours()) + ':' + pad(t.getMinutes());
+        warnEl.hidden = false;
+      } else {
+        warnEl.hidden = true;
+      }
+    }
     function pollVersion() {
       fetch('version.json?t=' + Date.now(), { cache: 'no-store' })
         .then(function (r) {
@@ -196,6 +219,8 @@
           return r.json();
         })
         .then(function (data) {
+          lastOkCheck = Date.now();
+          refreshConnectionWarning();
           if (loadedVersion && data.version && data.version !== loadedVersion) {
             location.reload();
           }
@@ -204,10 +229,14 @@
           if (window.console && console.warn) {
             console.warn('Versionskontroll misslyckades:', err);
           }
+          refreshConnectionWarning();
         });
     }
     pollVersion();
     setInterval(pollVersion, 60 * 1000);
+    // Re-evaluate staleness independently of the fetch so a hung request that
+    // never resolves still trips the banner.
+    setInterval(refreshConnectionWarning, 30 * 1000);
 
     // Midnight reload — automatically switch to next day's events
     function scheduleMidnightReload() {

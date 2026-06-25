@@ -158,6 +158,22 @@ describe('02-§4.15 — Status bar with live clock is present', () => {
   });
 });
 
+// ── 02-§4.23  Connection warning element ────────────────────────────────────
+
+describe('02-§4.23 — Connection warning is rendered hidden', () => {
+  it('DIS-30: connection-warning element is present in the sidebar', () => {
+    const html = renderTodayPage(CAMP, EVENTS, QR_SVG);
+    assert.ok(html.includes('id="connection-warning"'), 'connection-warning element present');
+  });
+
+  it('DIS-31: connection-warning is hidden by default', () => {
+    const html = renderTodayPage(CAMP, EVENTS, QR_SVG);
+    const m = /<p class="status-offline"[^>]*>/.exec(html);
+    assert.ok(m, 'status-offline element present');
+    assert.ok(m[0].includes('hidden'), 'warning carries the hidden attribute at build time');
+  });
+});
+
 // ── 02-§4.19/4.20  Heading in sidebar, date-only ────────────────────────────
 
 describe('02-§4.19/4.20 — Heading is in sidebar with no prefix', () => {
