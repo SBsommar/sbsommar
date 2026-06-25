@@ -1,0 +1,19 @@
+event:
+  id: lingvistikproblem-2026-06-27-1300
+  title: Lingvistikproblem
+  date: '2026-06-27'
+  start: '13:00'
+  end: '15:00'
+  location: GA Stilla hyllan
+  responsible: Linnéa Tagel
+  description: |
+    Vi testar problem där vi försöker lista ut hur ett språk fungerar med hjälp av given information. Problemen kan t.ex. handla om talbaser, ordföljd eller skriftsystem och handlar om att hitta mönster och logiskt tänkande.
+    
+    Ingen förkunskap om språk eller lingvistik krävs, och det finns problem av olika svårhetsgrad. Ingen föranmälan krävs, och unga såsom vuxna är välkomna
+  link: null
+  owner:
+    name: ''
+    email: ''
+  meta:
+    created_at: 2026-06-25 23:40
+    updated_at: 2026-06-25 23:40
