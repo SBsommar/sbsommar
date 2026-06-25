@@ -110,15 +110,22 @@
 
   if (window.__BUILD_TIME__) {
 
-    // Live clock — updates every second
+    // Live clock — advances exactly once per wall-clock second.
     var clockEl = document.getElementById('live-clock');
     function updateClock() {
       if (!clockEl) return;
       var t = new Date();
       clockEl.textContent = pad(t.getHours()) + ':' + pad(t.getMinutes()) + ':' + pad(t.getSeconds());
     }
-    updateClock();
-    setInterval(updateClock, 1000);
+    // Self-correcting tick: a fixed setInterval(…, 1000) drifts a few ms per
+    // tick, slips out of phase with the wall clock, and roughly once a minute
+    // skips a displayed second ("racing"). Re-aligning to the next whole second
+    // after every update keeps the seconds incrementing smoothly.
+    function tickClock() {
+      updateClock();
+      setTimeout(tickClock, 1000 - (Date.now() % 1000));
+    }
+    tickClock();
 
     // Last-updated display — formatted in Swedish
     var buildInfoEl = document.getElementById('build-info');
@@ -126,23 +133,81 @@
       var shortMonths = ['jan', 'feb', 'mar', 'apr', 'maj', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec'];
       var bt = new Date(window.__BUILD_TIME__);
       var dateStr = bt.getDate() + ' ' + shortMonths[bt.getMonth()] + ' ' + bt.getFullYear();
-      var timeStr = pad(bt.getHours()) + ':' + pad(bt.getMinutes());
-      buildInfoEl.textContent = 'Uppdaterad ' + dateStr + ' ' + timeStr;
+      var btTime = pad(bt.getHours()) + ':' + pad(bt.getMinutes());
+      buildInfoEl.textContent = 'Uppdaterad ' + dateStr + ' ' + btTime;
     }
 
-    // Version polling — reload page if a new build has been deployed
+    // Live "now" view — re-evaluated every minute so the board tracks the
+    // current time without a reload: activities that have ended are removed from
+    // the list (.is-past, hidden via CSS) and the activity in progress is
+    // highlighted (.is-now). An event with no end time counts as in progress
+    // from its start onward (its end is unknown), so it is never removed on its
+    // own. When every activity has ended, a closing message is shown.
+    function toMinutes(hhmm) {
+      var m = /^(\d{1,2}):(\d{2})/.exec(hhmm || '');
+      return m ? parseInt(m[1], 10) * 60 + parseInt(m[2], 10) : null;
+    }
+    var rowEls = container.querySelectorAll('.event-row');
+    // Reuse the same empty-state styling as the build-time "no events" message.
+    var doneMsg = document.createElement('p');
+    doneMsg.className = emptyClass;
+    doneMsg.textContent = 'Inga fler aktiviteter idag.';
+    doneMsg.hidden = true;
+    container.appendChild(doneMsg);
+    function classifyRows() {
+      var d = new Date();
+      var nowMin = d.getHours() * 60 + d.getMinutes();
+      var visible = 0;
+      for (var i = 0; i < rowEls.length; i++) {
+        var ev = todayEvents[i];
+        var el = rowEls[i];
+        if (!ev || !el) continue;
+        var startMin = toMinutes(ev.start);
+        var endMin = ev.end ? toMinutes(ev.end) : null;
+        el.classList.remove('is-past', 'is-now');
+        if (startMin == null) { visible += 1; continue; }
+        // End at or before start means the activity crosses midnight.
+        if (endMin != null && endMin <= startMin) endMin += 24 * 60;
+        if (endMin != null && nowMin >= endMin) {
+          el.classList.add('is-past'); // hidden via CSS
+        } else {
+          if (nowMin >= startMin) el.classList.add('is-now');
+          visible += 1;
+        }
+      }
+      doneMsg.hidden = visible > 0;
+    }
+    // Self-correcting tick aligned to the minute boundary.
+    function tickClassify() {
+      classifyRows();
+      var d = new Date();
+      setTimeout(tickClassify, (60 - d.getSeconds()) * 1000 - d.getMilliseconds());
+    }
+    tickClassify();
+
+    // Version polling — reload when a newer build is deployed. Runs immediately
+    // and then every 60 s. A failed check is logged and retried on the next
+    // interval rather than silently stopping the loop.
     var loadedVersion = window.__VERSION__;
     function pollVersion() {
-      fetch('version.json?t=' + Date.now())
-        .then(function (r) { return r.json(); })
+      fetch('version.json?t=' + Date.now(), { cache: 'no-store' })
+        .then(function (r) {
+          if (!r.ok) throw new Error('HTTP ' + r.status);
+          return r.json();
+        })
         .then(function (data) {
           if (loadedVersion && data.version && data.version !== loadedVersion) {
             location.reload();
           }
         })
-        .catch(function () {}); // network error — fail silently
+        .catch(function (err) {
+          if (window.console && console.warn) {
+            console.warn('Versionskontroll misslyckades:', err);
+          }
+        });
     }
-    setInterval(pollVersion, 5 * 60 * 1000);
+    pollVersion();
+    setInterval(pollVersion, 60 * 1000);
 
     // Midnight reload — automatically switch to next day's events
     function scheduleMidnightReload() {

@@ -450,6 +450,18 @@ body.display-mode .event-extra {
   color: rgba(255, 255, 255, 0.6);
 }
 
+/* Live "now" view (live.html), re-applied each minute by events-today.js.
+   Activities that have ended are removed from the list; the ongoing one is
+   accented. */
+body.display-mode .event-row.is-past {
+  display: none;
+}
+
+body.display-mode .event-row.is-now {
+  background: rgba(199, 109, 72, 0.16); /* var(--color-terracotta) tint */
+  box-shadow: inset 3px 0 0 var(--color-terracotta);
+}
+
 /* ── Dagens schema two-column layout ── */
 
 .dagens-layout {

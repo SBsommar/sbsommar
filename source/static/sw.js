@@ -68,6 +68,13 @@ self.addEventListener('fetch', (event) => {
   // Never cache API calls or form-submission endpoints.
   if (NO_CACHE_PATTERNS.some((p) => url.pathname.includes(p))) return;
 
+  // version.json: never cached. live.html polls it every 60 s to detect new
+  // deploys and must always hit the network (the client also sends a
+  // cache-busting query and `cache: 'no-store'`). Routing it through a cache
+  // strategy would either serve a stale version or accumulate one cache entry
+  // per poll.
+  if (url.pathname.endsWith('version.json')) return;
+
   // events.json: network-first so offline still shows schedule data.
   if (url.pathname.endsWith('events.json')) {
     event.respondWith(networkFirstThenCache(request));

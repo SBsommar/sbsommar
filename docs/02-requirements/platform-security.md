@@ -992,6 +992,11 @@ from a stale cache.
   strategies continue to use `{ ignoreSearch: true }` when falling back
   to the cache, so that a cache-busted HTML or `events.json` URL still
   matches the previously stored entry during an offline fallback. <!-- 02-§96.6 -->
+- The `fetch` handler returns early for any request whose path ends in
+  `version.json`, so the service worker never stores or serves it. The
+  display view (`/live.html`) polls this file frequently to detect new
+  deploys and must always reach the network; caching it would either
+  serve a stale version or accumulate one cache entry per poll. <!-- 02-§96.16 -->
 
 ### 96.3 Pre-cache URL list (site requirements)
 

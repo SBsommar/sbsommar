@@ -30,13 +30,14 @@ Part of [the requirements index](./index.md). Section IDs (`02-§N.M`) are stabl
 - Must be legible at a distance: dark background, large text, minimal interface chrome. <!-- 02-§4.6 -->
 - Must not require any interaction to stay useful — it should be readable at a glance. <!-- 02-§4.7 -->
 - Shows no site-level footer. <!-- 02-§4.14 -->
-- Shows a live clock of the current time in the sidebar, updated every second. <!-- 02-§4.15 -->
+- Shows a live clock of the current time in the sidebar. The clock advances exactly once per wall-clock second, with no skipped or repeated values, by re-aligning each update to the next whole second rather than relying on a fixed-interval timer. <!-- 02-§4.15 -->
 - Shows when events were last updated; the timestamp is embedded at build time and shown below the clock. <!-- 02-§4.16 -->
-- Polls `version.json` every 5 minutes and reloads the page automatically if a newer build is detected. <!-- 02-§4.17 -->
+- Polls `version.json` once on load and every 60 seconds thereafter, and reloads the page automatically when a newer build is detected. A failed check is logged to the console and retried on the next interval; it does not stop the polling loop. <!-- 02-§4.17 -->
 - Automatically reloads shortly after midnight to show the new day's events. <!-- 02-§4.18 -->
 - The heading shows only the current day and date (e.g. "måndag 26 februari 2026") without a page-title prefix. <!-- 02-§4.19 -->
 - The heading is positioned inside the sidebar, not above the event list, so events use the full available height. <!-- 02-§4.20 -->
 - The layout is optimised for portrait-orientation screens; event rows are compact to maximise the number of visible events. <!-- 02-§4.21 -->
+- The event list tracks the current time without reloading: each activity is re-evaluated every minute, aligned to the minute boundary. An activity whose end time has passed is removed from the list; the activity currently in progress is highlighted. An activity with no end time is treated as in progress from its start time onward (it is never removed on its own). When every activity has ended, a closing message ("Inga fler aktiviteter idag.") is shown in place of the list. <!-- 02-§4.22 -->
 - The old URL `/dagens-schema.html` serves a redirect page that sends the visitor to `/live.html` via `<meta http-equiv="refresh">` and a JavaScript fallback. <!-- 02-§76.1 -->
 
 ### All schedule views
