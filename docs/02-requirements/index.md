@@ -18,7 +18,7 @@ Sections §1 and §1a (audiences, crawler policy) are kept here because they fra
 
 | File | Topic | Sections |
 | ---- | ----- | -------- |
-| [`pages-navigation.md`](./pages-navigation.md) | Pages and Navigation | §2, §3, §11, §17, §22, §24, §35, §61, §70, §71, §72, §74, §75, §79, §114 |
+| [`pages-navigation.md`](./pages-navigation.md) | Pages and Navigation | §2, §3, §11, §17, §22, §24, §35, §61, §70, §71, §72, §74, §75, §79, §114, §115 |
 | [`schedule-and-detail.md`](./schedule-and-detail.md) | Schedule and Activity Detail | §4, §5, §15, §36, §45, §46, §56, §59 |
 | [`add-edit-forms.md`](./add-edit-forms.md) | Add and Edit Forms | §6, §7, §8, §9, §10, §19, §20, §26, §27, §48, §53, §54, §57, §58, §80, §81, §82, §85, §89, §90, §99, §101 |
 | [`event-data.md`](./event-data.md) | Event Data | §16, §18, §21, §28, §29, §34, §37, §42, §107, §109, §110, §111, §112 |
