@@ -120,6 +120,13 @@ button (`right: calc(var(--space-sm) + 42px + var(--space-xs))`). The
 (`right: calc(var(--space-sm) + 2 * (42px + var(--space-xs)))`) so the two
 never overlap. The button needs no client-side script — it is a plain link.
 
+The install button keeps that fixed slot on `lagg-till.html` even though the
+quick-add button is absent there, so an empty slot can sit between it and the
+feedback button. This is intentional: the install button is hidden unless the
+browser fires `beforeinstallprompt`, so the gap is only ever visible in the
+rare case the app is installable while the user is on the add page — not worth
+page-specific positioning rules.
+
 ---
 
 ## 14. Upcoming Camps Section on Homepage
