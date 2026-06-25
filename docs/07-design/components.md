@@ -240,7 +240,7 @@ The sidebar of `/live.html` shows a compact status widget above the descriptive 
 - Clock text: sage green (`var(--color-sage)`), `48px`, `700` weight, tabular-nums, line-height `1`. <!-- 07-§6.41 -->
 - Update time text: `12px`, muted white (`rgba(255,255,255,0.4)`), block, margin-top `var(--space-xs)`. <!-- 07-§6.42 -->
 - The widget sits above the existing sidebar text and QR code, separated by `var(--space-md)` margin-bottom. <!-- 07-§6.43 -->
-- The update line is labelled "Schema uppdaterat" so it is clear it reports when the schedule content last changed, not whether the screen is still live. <!-- 07-§6.131 -->
+- The update line is labelled "Schema uppdaterat" so it is clear it reports when the schedule content last changed, not whether the screen is still live. When an app version is available it is appended to the same line as " · v{version}", giving the display view the version that other pages show in their footer. <!-- 07-§6.131 -->
 - Below the widget, a connection warning (`.status-offline`) is hidden by default and shown only when the screen has lost contact with the server. It is a red band: `var(--color-error)` background, `var(--color-white)` text, `16px`, `700` weight, `var(--radius-md)` corners, padding `var(--space-xs) var(--space-sm)`, margin-top `var(--space-sm)`. Its text is "⚠ Ingen kontakt med servern sedan HH:MM". <!-- 07-§6.132 -->
 
 ### Form field errors (inline)

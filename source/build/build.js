@@ -202,7 +202,7 @@ async function main() {
     .replace(/<\?xml[^?]*\?>\s*/g, '')
     .replace(/<!DOCTYPE[^>]*>\s*/g, '');
 
-  const todayHtml = renderTodayPage(camp, events, qrSvg, SITE_URL, buildTime, GOATCOUNTER_CODE);
+  const todayHtml = renderTodayPage(camp, events, qrSvg, SITE_URL, buildTime, GOATCOUNTER_CODE, versionString);
   fs.writeFileSync(path.join(OUTPUT_DIR, 'live.html'), todayHtml, 'utf8');
   console.log(`Built: public/live.html  (${events.length} events)`);
 

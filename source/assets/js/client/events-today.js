@@ -170,7 +170,10 @@
       var bt = new Date(window.__BUILD_TIME__);
       var dateStr = bt.getDate() + ' ' + shortMonths[bt.getMonth()] + ' ' + bt.getFullYear();
       var btTime = pad(bt.getHours()) + ':' + pad(bt.getMinutes());
-      buildInfoEl.textContent = 'Schema uppdaterat ' + dateStr + ' ' + btTime;
+      var infoText = 'Schema uppdaterat ' + dateStr + ' ' + btTime;
+      // App version, matching the footer on every other page (which live.html lacks).
+      if (window.__APP_VERSION__) infoText += ' · v' + window.__APP_VERSION__;
+      buildInfoEl.textContent = infoText;
     }
 
     // Live "now" view — re-evaluated every minute so the board tracks the

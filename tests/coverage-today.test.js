@@ -142,6 +142,11 @@ describe('02-§4.16 — Build time embedded at build', () => {
     const html = renderTodayPage(CAMP, EVENTS, QR_SVG);
     assert.ok(html.includes('window.__VERSION__'), '__VERSION__ embedded');
   });
+
+  it('DIS-34: app version is embedded as window.__APP_VERSION__', () => {
+    const html = renderTodayPage(CAMP, EVENTS, QR_SVG, '', '', '', '1.0.3');
+    assert.ok(html.includes("window.__APP_VERSION__ = '1.0.3'"), 'app version embedded');
+  });
 });
 
 // ── 02-§4.24  Next-day section enabled in display view ──────────────────────

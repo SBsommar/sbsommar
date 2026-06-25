@@ -15,12 +15,15 @@ const { pwaHeadTags } = require('./pwa');
  * Sidebar shows a live clock and last-updated time; page auto-reloads at
  * midnight and on new version detection via version.json polling.
  */
-function renderTodayPage(camp, events, qrSvg, siteUrl = '', buildTime = '', goatcounterCode = '') {
+function renderTodayPage(camp, events, qrSvg, siteUrl = '', buildTime = '', goatcounterCode = '', versionString = '') {
   const campName = escapeHtml(camp.name);
   const siteHost = siteUrl ? escapeHtml(siteUrl.replace(/^https?:\/\//, '').replace(/\/+$/, '')) : '';
   const safeBuildTime = escapeHtml(buildTime);
   // Camp end date lets the display view decide whether a "next day" exists.
   const safeCampEnd = escapeHtml(camp.end_date ? toDateString(camp.end_date) : '');
+  // App version (same string shown in the footer on every other page); the
+  // display view shows it on the "Schema uppdaterat" line since it has no footer.
+  const safeVersion = escapeHtml(versionString || '');
 
   const eventsJson = JSON.stringify(
     events.map((e) => ({
@@ -69,7 +72,7 @@ ${pwaHeadTags()}
 
   </div>
 </main>
-  <script>window.__EVENTS__ = ${eventsJson}; window.__HEADING_PREFIX__ = ''; window.__EMPTY_CLASS__ = 'sidebar-text'; window.__SHOW_FOOTER__ = true; window.__BUILD_TIME__ = '${safeBuildTime}'; window.__VERSION__ = '${safeBuildTime}'; window.__SHOW_NEXT_DAY__ = true; window.__CAMP_END__ = '${safeCampEnd}';</script>
+  <script>window.__EVENTS__ = ${eventsJson}; window.__HEADING_PREFIX__ = ''; window.__EMPTY_CLASS__ = 'sidebar-text'; window.__SHOW_FOOTER__ = true; window.__BUILD_TIME__ = '${safeBuildTime}'; window.__VERSION__ = '${safeBuildTime}'; window.__SHOW_NEXT_DAY__ = true; window.__CAMP_END__ = '${safeCampEnd}'; window.__APP_VERSION__ = '${safeVersion}';</script>
   <script src="events-today.js"></script>
   <script src="sw-register.js" defer></script>
   <script src="pwa-install.js" defer></script>${goatcounterScript(goatcounterCode)}
