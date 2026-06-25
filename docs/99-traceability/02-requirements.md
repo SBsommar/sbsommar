@@ -1796,14 +1796,14 @@ Doc ref: `02-requirements/pages-navigation.md §115`;
 
 | ID | Status | Notes |
 | --- | --- | --- |
-| `02-§115.1` | gap | Owner-only edit-shortcut button linking to the edit page |
-| `02-§115.2` | gap | Hidden when the visitor owns no upcoming activity |
-| `02-§115.3` | gap | Admin token alone does not reveal the button |
-| `02-§115.4` | gap | `<a class="edit-shortcut-btn" href="redigera.html" aria-label="Redigera mina aktiviteter">` |
-| `02-§115.5` | gap | Omitted when `activeHref === 'redigera.html'` |
-| `02-§115.6` | gap | Revealed by `nav.js` only for ≥1 owned, non-past activity in `sb_session` |
-| `02-§115.7` | gap | `nav.js` reveal ignores the admin token entirely |
-| `02-§115.8` | gap | Mobile-only (`display: none` default, `flex` ≤767 px) |
-| `02-§115.9` | gap | Child of `<nav class="page-nav">`, beside the hamburger menu button |
-| `02-§115.10` | gap | 42 × 42 px, terracotta, white icon, `var(--radius-md)` |
-| `02-§115.11` | gap | Inline SVG pencil icon |
+| `02-§115.1` | covered | ESHORT-01/-09: `.edit-shortcut-btn` link to `redigera.html` renders on non-edit pages; `layout.js` `pageNav()`. Browser-verified reveal for an owner is a manual checkpoint |
+| `02-§115.2` | covered | ESHORT-11/-13: hidden by default; revealed only on a positive ownership check in `nav.js`. Manual checkpoint: no cookie → no button |
+| `02-§115.3` | covered | ESHORT-18: `nav.js` never references `sb_admin`. Manual checkpoint: admin token only → button stays hidden |
+| `02-§115.4` | covered | ESHORT-01/-02/-03: `<a class="edit-shortcut-btn" href="redigera.html" aria-label="Redigera mina aktiviteter" hidden>`; `source/build/layout.js` |
+| `02-§115.5` | covered | ESHORT-07/-10: omitted when `activeHref === 'redigera.html'`; `source/build/layout.js` |
+| `02-§115.6` | covered | ESHORT-15/-16/-17: `nav.js` reads `sb_session` signed entries, fetches `events.json`, sets `btn.hidden = false` for an owned event with `date >= today`; `source/assets/js/client/nav.js` |
+| `02-§115.7` | covered | ESHORT-18: the `nav.js` reveal IIFE never consults the admin token; `source/assets/js/client/nav.js` |
+| `02-§115.8` | covered | ESHORT-11/-12/-13: `.edit-shortcut-btn { display: none }` default, `flex` inside `@media (max-width: 767px)`, `[hidden]` re-hide; `source/assets/cs/style.css`. Desktop absence is a manual checkpoint |
+| `02-§115.9` | covered | ESHORT-08/-14: rendered after the toggle, before `.nav-menu`; positioned `left: calc(var(--space-sm) + 42px + var(--space-xs))` beside the hamburger; `layout.js` / `style.css` |
+| `02-§115.10` | covered | ESHORT-12: 42 × 42 px, `var(--color-terracotta)`, white icon, `var(--radius-md)`; `source/assets/cs/style.css` |
+| `02-§115.11` | covered | ESHORT-05: inline SVG pencil icon inside the anchor; `source/build/layout.js` |
