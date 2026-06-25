@@ -1787,3 +1787,23 @@ Doc ref: `02-requirements/pages-navigation.md §114`;
 | `02-§114.7` | covered | QADD-11: 42 × 42 px, `var(--color-terracotta)`, white icon, `var(--radius-md)`; `source/assets/cs/style.css` |
 | `02-§114.8` | covered | QADD-04: inline SVG plus icon inside the anchor; `source/build/layout.js` |
 | `02-§114.9` | covered | QADD-13: `.pwa-install-btn` mobile rule uses `right: calc(var(--space-sm) + 2 * (42px + var(--space-xs)))`; `source/assets/cs/style.css` |
+
+### §115 — Edit-Shortcut Button in Sticky Navigation
+
+Doc ref: `02-requirements/pages-navigation.md §115`;
+`03-architecture/pages-and-content.md §12.8` (Edit-shortcut button);
+`07-design/components.md §6.128–6.130` (Edit-shortcut button design).
+
+| ID | Status | Notes |
+| --- | --- | --- |
+| `02-§115.1` | gap | Owner-only edit-shortcut button linking to the edit page |
+| `02-§115.2` | gap | Hidden when the visitor owns no upcoming activity |
+| `02-§115.3` | gap | Admin token alone does not reveal the button |
+| `02-§115.4` | gap | `<a class="edit-shortcut-btn" href="redigera.html" aria-label="Redigera mina aktiviteter">` |
+| `02-§115.5` | gap | Omitted when `activeHref === 'redigera.html'` |
+| `02-§115.6` | gap | Revealed by `nav.js` only for ≥1 owned, non-past activity in `sb_session` |
+| `02-§115.7` | gap | `nav.js` reveal ignores the admin token entirely |
+| `02-§115.8` | gap | Mobile-only (`display: none` default, `flex` ≤767 px) |
+| `02-§115.9` | gap | Child of `<nav class="page-nav">`, beside the hamburger menu button |
+| `02-§115.10` | gap | 42 × 42 px, terracotta, white icon, `var(--radius-md)` |
+| `02-§115.11` | gap | Inline SVG pencil icon |

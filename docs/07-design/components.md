@@ -56,6 +56,17 @@ Part of [the design index](./index.md). Section IDs (`07-§N.M`) are stable and 
   feedback button; the PWA-install button shifts one slot left so the
   buttons never overlap. <!-- 07-§6.127 -->
 
+### Edit-shortcut button (mobile)
+
+- A pencil edit-shortcut button (`.edit-shortcut-btn`) sits beside the
+  hamburger menu button in the sticky navigation, linking to the edit
+  page. <!-- 07-§6.128 -->
+- Mobile only (`≤ 767px`): `42 × 42px`, `background: var(--color-terracotta)`,
+  white pencil icon, `border-radius: var(--radius-md)` — matching the menu and
+  floating action buttons. Hidden on desktop. <!-- 07-§6.129 -->
+- Hidden by default; revealed by `nav.js` only for visitors who own an upcoming
+  activity. An admin token does not reveal it. <!-- 07-§6.130 -->
+
 ### Hero Section
 
 - Two-column layout on desktop: image area (~2/3) and sidebar panel (~1/3).
