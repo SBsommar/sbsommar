@@ -450,10 +450,11 @@ body.display-mode .event-extra {
   color: rgba(255, 255, 255, 0.6);
 }
 
-/* Live "now" highlighting (live.html), re-applied each minute by
-   events-today.js. Past activities fade back; the ongoing one is accented. */
+/* Live "now" view (live.html), re-applied each minute by events-today.js.
+   Activities that have ended are removed from the list; the ongoing one is
+   accented. */
 body.display-mode .event-row.is-past {
-  opacity: 0.35;
+  display: none;
 }
 
 body.display-mode .event-row.is-now {

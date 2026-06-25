@@ -137,19 +137,27 @@
       buildInfoEl.textContent = 'Uppdaterad ' + dateStr + ' ' + btTime;
     }
 
-    // Live "now" highlighting — re-evaluated every minute so the board tracks
-    // the current time without a reload: activities that have ended are dimmed
-    // (.is-past) and the activity in progress is highlighted (.is-now). An event
-    // with no end time counts as in progress from its start onward (its end is
-    // unknown), so it is never marked past on its own.
+    // Live "now" view — re-evaluated every minute so the board tracks the
+    // current time without a reload: activities that have ended are removed from
+    // the list (.is-past, hidden via CSS) and the activity in progress is
+    // highlighted (.is-now). An event with no end time counts as in progress
+    // from its start onward (its end is unknown), so it is never removed on its
+    // own. When every activity has ended, a closing message is shown.
     function toMinutes(hhmm) {
       var m = /^(\d{1,2}):(\d{2})/.exec(hhmm || '');
       return m ? parseInt(m[1], 10) * 60 + parseInt(m[2], 10) : null;
     }
     var rowEls = container.querySelectorAll('.event-row');
+    // Reuse the same empty-state styling as the build-time "no events" message.
+    var doneMsg = document.createElement('p');
+    doneMsg.className = emptyClass;
+    doneMsg.textContent = 'Inga fler aktiviteter idag.';
+    doneMsg.hidden = true;
+    container.appendChild(doneMsg);
     function classifyRows() {
       var d = new Date();
       var nowMin = d.getHours() * 60 + d.getMinutes();
+      var visible = 0;
       for (var i = 0; i < rowEls.length; i++) {
         var ev = todayEvents[i];
         var el = rowEls[i];
@@ -157,15 +165,17 @@
         var startMin = toMinutes(ev.start);
         var endMin = ev.end ? toMinutes(ev.end) : null;
         el.classList.remove('is-past', 'is-now');
-        if (startMin == null) continue;
+        if (startMin == null) { visible += 1; continue; }
         // End at or before start means the activity crosses midnight.
         if (endMin != null && endMin <= startMin) endMin += 24 * 60;
         if (endMin != null && nowMin >= endMin) {
-          el.classList.add('is-past');
-        } else if (nowMin >= startMin) {
-          el.classList.add('is-now');
+          el.classList.add('is-past'); // hidden via CSS
+        } else {
+          if (nowMin >= startMin) el.classList.add('is-now');
+          visible += 1;
         }
       }
+      doneMsg.hidden = visible > 0;
     }
     // Self-correcting tick aligned to the minute boundary.
     function tickClassify() {

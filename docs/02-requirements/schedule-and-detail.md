@@ -37,7 +37,7 @@ Part of [the requirements index](./index.md). Section IDs (`02-§N.M`) are stabl
 - The heading shows only the current day and date (e.g. "måndag 26 februari 2026") without a page-title prefix. <!-- 02-§4.19 -->
 - The heading is positioned inside the sidebar, not above the event list, so events use the full available height. <!-- 02-§4.20 -->
 - The layout is optimised for portrait-orientation screens; event rows are compact to maximise the number of visible events. <!-- 02-§4.21 -->
-- The event list tracks the current time without reloading: the classification of each activity is re-evaluated every minute, aligned to the minute boundary. An activity whose end time has passed is visually de-emphasised; the activity currently in progress is highlighted. An activity with no end time is treated as in progress from its start time onward. <!-- 02-§4.22 -->
+- The event list tracks the current time without reloading: each activity is re-evaluated every minute, aligned to the minute boundary. An activity whose end time has passed is removed from the list; the activity currently in progress is highlighted. An activity with no end time is treated as in progress from its start time onward (it is never removed on its own). When every activity has ended, a closing message ("Inga fler aktiviteter idag.") is shown in place of the list. <!-- 02-§4.22 -->
 - The old URL `/dagens-schema.html` serves a redirect page that sends the visitor to `/live.html` via `<meta http-equiv="refresh">` and a JavaScript fallback. <!-- 02-§76.1 -->
 
 ### All schedule views
