@@ -78,6 +78,7 @@ events:
     responsible: string
     description: string (markdown) | null
     link: string | null
+    cancelled: boolean | null
     owner:
       name: string
       email: string
@@ -124,6 +125,7 @@ event:
   responsible: string
   description: string (markdown) | null
   link: string | null
+  cancelled: boolean | null
   owner:
     name: string
     email: string
@@ -167,6 +169,10 @@ event:
 
 - `description` — markdown, parsed by `marked` (same variant as `content/*.md`). <!-- 05-§3.4 -->
 - `link`
+- `cancelled` — boolean. `true` marks the activity as cancelled ("inställd");
+  absent, `null`, or `false` means the activity is active. A cancelled activity
+  stays in the schedule, shown struck through and labelled "INSTÄLLD"
+  (see `02-requirements/schedule-and-detail.md §118`). <!-- 05-§3.5 -->
 - `owner`
 - `meta`
 

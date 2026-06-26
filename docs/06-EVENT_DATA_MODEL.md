@@ -101,6 +101,27 @@ Events must be chronologically sortable by `date` + `start`.
 
 ---
 
+## 4a. Cancellation Status
+
+An activity that has been arranged but will not happen is marked cancelled
+rather than removed. The optional `cancelled` boolean carries this state:
+`true` means cancelled, and an absent field, `null`, or `false` means active.
+
+The state is a flag rather than a deletion for two reasons. First, a
+participant who was expecting the activity should see that it is off, not find
+it silently gone — so a cancelled activity stays in the schedule, struck
+through and labelled "INSTÄLLD". Second, the flag keeps the event's `id`
+(derived from title + date + start) stable: cancelling rewrites no field that
+the id depends on, so links, the fragment file name, and the cookie ownership
+record all keep working.
+
+Because the flag is optional and defaults to active, every existing event
+without it is read exactly as before. The same flag drives every view built
+from the event data — schedule, today, per-event page, RSS, and iCal — so a
+cancellation is consistent everywhere instead of being re-derived per view.
+
+---
+
 ## 5. Ownership (Future-Proofing)
 
 Ownership is not yet active functionality, but must be structurally supported from the beginning.

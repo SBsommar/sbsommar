@@ -459,3 +459,65 @@ overridden — a broken size hierarchy where h3 appears larger than h2.
   not a library API reference. <!-- 02-§59.5 -->
 - The link text and URL must be identical in `/lagg-till.html` and
   `/redigera.html`. <!-- 02-§59.6 -->
+
+---
+
+## 118. Cancelled Activities
+
+### Context
+
+An activity that has been arranged but will not take place is marked as
+cancelled ("inställd") rather than deleted. It stays in the schedule so
+participants who were expecting it see that it is off, instead of it silently
+disappearing. A cancelled activity is shown struck through and labelled, and is
+marked as cancelled across every view built from the event data — the weekly
+schedule, the today view, the per-event page, the RSS feed, and the iCal
+export.
+
+### 118.1 Data
+
+- An event carries an optional boolean field `cancelled`. `cancelled: true`
+  means the activity is cancelled; an absent field, `null`, or `false` means it
+  is active. The field is optional, so existing events without it are
+  active. <!-- 02-§118.1 -->
+- The `cancelled` field round-trips through the edit API: an edit that sets or
+  clears it is written back to the event's fragment file, and the event data
+  validator accepts `cancelled` only as a boolean or null. <!-- 02-§118.2 -->
+- A cancelled activity keeps its stable event `id`; cancelling never rewrites
+  the title or any field that the id is derived from. <!-- 02-§118.3 -->
+
+### 118.2 Marking an activity cancelled (edit form)
+
+- The edit form (`/redigera.html`) has a button that cancels the activity
+  being edited. When the activity is active the button reads
+  "Ställ in aktiviteten"; when it is already cancelled the button reads
+  "Återställ aktiviteten", so cancelling can be undone. <!-- 02-§118.4 -->
+- Activating the button sets the `cancelled` state that is saved with the next
+  "Spara ändringar". The current cancelled state of the activity is reflected
+  in the form when it loads. <!-- 02-§118.5 -->
+
+### 118.3 Schedule display
+
+- In the weekly schedule, the today view, and the per-event page, a cancelled
+  activity stays listed in its normal chronological position; it is never
+  removed from the schedule. <!-- 02-§118.6 -->
+- A cancelled activity's heading begins with the word "INSTÄLLD". <!-- 02-§118.7 -->
+- A cancelled activity's row text is shown in terracotta
+  (`--color-terracotta`) and struck through (line-through) while the activity
+  is upcoming or in progress. <!-- 02-§118.8 -->
+- Once a cancelled activity has passed in time, it is shown with the same muted
+  grey, dimmed treatment as any other passed activity (`.is-past`): the
+  terracotta colour is dropped and it blends in with the rest of the past
+  schedule. The "INSTÄLLD" label and the strike-through remain so the record
+  stays truthful. <!-- 02-§118.9 -->
+- The "INSTÄLLD" label is part of the row's visible text, so it is announced by
+  screen readers — the cancelled state is never conveyed by colour or
+  strike-through alone. <!-- 02-§118.10 -->
+
+### 118.4 Feeds
+
+- In the RSS feed, a cancelled activity's `<title>` begins with the prefix
+  "[INSTÄLLD] ". <!-- 02-§118.11 -->
+- In the iCal export (both the full-camp `schema.ics` and the per-event
+  `event.ics`), a cancelled activity's VEVENT carries the standard
+  `STATUS:CANCELLED` property. <!-- 02-§118.12 -->

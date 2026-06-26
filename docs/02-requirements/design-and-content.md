@@ -472,3 +472,44 @@ overview, is covered in a later section. Issue #332.
   `<td>` for each day band. CSS Grid still drives the visual
   layout via `display: grid` on the `<table>` and `display:
   contents` on the `<tr>`s. <!-- 02-§98.23 -->
+
+---
+
+## 117. Schedule Colour Scheme
+
+### 117.1 Context
+
+In the schedule views the accent colour terracotta (`--color-terracotta`)
+reads as red. The schedule reserves that red signal exclusively for cancelled
+activities (§118), so the schedule's own attention accents are green and no
+non-cancelled schedule element is terracotta. Sage (`--color-sage`, `#ADBF77`)
+is a pale fill colour with too little contrast to use as text on the cream
+background, so a darker green token is used wherever green appears as text or a
+thin accent.
+
+### 117.2 Design token
+
+- A design token `--color-sage-dark` holds a green dark enough to meet the
+  WCAG AA contrast minimum (at least 4.5:1) for text on the cream background
+  (`--color-cream`, `#F5EEDF`). It is the green used for schedule text and thin
+  accent bars. <!-- 02-§117.1 -->
+
+### 117.3 Schedule colouring
+
+- On the weekly schedule (`schema.html`), the today view (`idag.html`), and the
+  per-event detail pages, the activity time (`.ev-time`) is `--color-sage-dark`,
+  not terracotta. <!-- 02-§117.2 -->
+- When an activity row is expanded to show its detail, its title accent is
+  `--color-sage-dark`, not terracotta. <!-- 02-§117.3 -->
+- The activity currently in progress (`.is-now`) is highlighted with a sage
+  tint background and a sage-green left accent bar, and its title is
+  `--color-sage-dark` — the in-progress highlight uses no terracotta. <!-- 02-§117.4 -->
+- The per-event detail page's back link (`.back-link`) and an activity's
+  external link (`.event-ext-link`) are `--color-sage-dark`, not terracotta. <!-- 02-§117.5 -->
+- On the display view (`live.html`), the in-progress highlight and the expanded
+  activity title use sage green (`--color-sage`, legible on the dark
+  background), not terracotta. <!-- 02-§117.6 -->
+- Within the schedule, today, display, and per-event views, terracotta
+  (`--color-terracotta`) is used only to mark cancelled activities (§118). Site
+  chrome shared with every page — navigation, footer, buttons, focus outlines —
+  keeps its existing colours and is not part of the schedule colour scheme. <!-- 02-§117.7 -->
