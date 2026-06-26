@@ -1,0 +1,20 @@
+event:
+  id: founder-s-forum-2026-06-27-1300
+  title: Founder’s Forum
+  date: '2026-06-27'
+  start: '13:00'
+  end: '14:00'
+  location: KaffePaviljongen
+  responsible: Robert Sabelström
+  description: |
+    Föräldrar som startat och skalar egna företag, delar erfarenheter.
+    // Presentationsrunda 
+    // SB i företagarrollen
+    // Balanseraring av bolagsbyggande med förädrarskap till barn med särskilda behov
+  link: null
+  owner:
+    name: ''
+    email: ''
+  meta:
+    created_at: 2026-06-26 23:16
+    updated_at: 2026-06-26 23:16
