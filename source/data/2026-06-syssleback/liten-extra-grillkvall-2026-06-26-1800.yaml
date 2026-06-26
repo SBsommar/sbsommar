@@ -1,8 +1,8 @@
 event:
   id: liten-extra-grillkvall-2026-06-26-1800
   title: Liten extra grillkväll
-  date: '2026-06-26'
-  start: '18:00'
+  date: '2026-06-27'
+  start: '20:00'
   end: '23:55'
   location: Grillplats
   responsible: Malin Isenfors
@@ -13,10 +13,11 @@ event:
     Vill man grilla gör man det, vill man äta innan gör man det, vill man ta med pizza gör man det.
     
     Jag tänder grillarna och hoppas jag kommer ihåg att ta med Thermacellerna den här gången.
+    
   link: null
   owner:
     name: ''
     email: ''
   meta:
     created_at: 2026-06-25 16:45
-    updated_at: 2026-06-25 16:45
+    updated_at: 2026-06-26 10:47
