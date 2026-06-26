@@ -5,7 +5,7 @@ event:
   start: '17:40'
   end: '19:30'
   location: GA Stilla hyllan
-  responsible: 'Karin, Tilde och Moa'
+  responsible: Tilde och Moa (Karin)
   description: |
     Kom och teckna/måla på valfritt sätt med valfri media. Barn upp till 12 år behöver en vuxen ansvarsperson med sig.
     Det finns akvarell, blyerts, kol, Markers, färgpennor och olika typer av papper. 
@@ -13,10 +13,11 @@ event:
     Tyvärr har vi inga plattor som man kan låna,  men tips på appar/program kan man få.
     
     Tanken är en lugn stund tillsammans (så lugn som GA hallen bjuder på) .
+    
   link: null
   owner:
     name: ''
     email: ''
   meta:
     created_at: 2026-06-26 10:37
-    updated_at: 2026-06-26 10:37
+    updated_at: 2026-06-26 10:59
