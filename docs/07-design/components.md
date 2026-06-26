@@ -221,8 +221,8 @@ mint form's per-field validation uses the inline field-error component
 
 - Clear time display: bold start time, lighter end time. <!-- 07-§6.31 -->
 - Location as small text below. <!-- 07-§6.32 -->
-- On the weekly schedule (`schema.html`), a row whose activity has ended (`.is-past`) has a light grey background — `rgba(0, 0, 0, 0.05)` — and its time and title are dimmed to `0.5` opacity, so the eye skips past what is over. <!-- 07-§6.134 -->
-- On the weekly schedule, the row whose activity is in progress (`.is-now`) is highlighted with a terracotta wash — `rgba(199, 109, 72, 0.1)` (a tint of `var(--color-terracotta)`) — and a `3px` terracotta left accent bar (`box-shadow: inset 3px 0 0 var(--color-terracotta)`), matching the highlight the dark display view uses for the current activity. These two rules are scoped to `body:not(.display-mode)` so they never affect the display view, which hides ended rows entirely. <!-- 07-§6.135 -->
+- On the weekly schedule (`schema.html`) and the today view (`idag.html`), a row whose activity has ended (`.is-past`) has a light grey background — `rgba(0, 0, 0, 0.05)` — and its time and title are dimmed to `0.5` opacity, so the eye skips past what is over. <!-- 07-§6.134 -->
+- On the same two views, the row whose activity is in progress (`.is-now`) is highlighted with a terracotta wash — `rgba(199, 109, 72, 0.1)` (a tint of `var(--color-terracotta)`) — and a `3px` terracotta left accent bar (`box-shadow: inset 3px 0 0 var(--color-terracotta)`), matching the highlight the dark display view uses for the current activity. These two rules are scoped to `body:not(.display-mode)` so they never affect the display view, which hides ended rows entirely. <!-- 07-§6.135 -->
 
 ### Display sidebar — portrait layout
 

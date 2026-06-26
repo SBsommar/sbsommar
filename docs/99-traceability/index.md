@@ -126,7 +126,7 @@ The matrix is split by ID family. Each file carries the rows for one family.
 
 | Family | Source | Rows | File |
 | --- | --- | --- | --- |
-| `02` | `docs/02-requirements/` | 1329 | [02-requirements](./02-requirements.md) |
+| `02` | `docs/02-requirements/` | 1330 | [02-requirements](./02-requirements.md) |
 | `03` | `docs/03-architecture/` | 0 | [03-architecture](./03-architecture.md) |
 | `05` | `docs/05-DATA_CONTRACT.md` | 19 | [05-data-contract](./05-data-contract.md) |
 | `07` | `docs/07-design/` | 93 | [07-design](./07-design.md) |
@@ -138,14 +138,18 @@ Test IDs referenced in the `Test(s)` column are defined in the
 ## Summary
 
 ```text
-Total requirements:            1431
-Covered (implemented + tested): 772
+Total requirements:            1432
+Covered (implemented + tested): 773
 Implemented, not tested:        659
 Gap (no implementation):          0
 Orphan tests (no requirement):    0
 
-Note: §116 (Weekly-Schedule Time Status) adds 4 requirements
-  (02-§116.1–116.4) plus 2 design rules (07-§6.134–6.135), all covered.
+Note: §116 (Schedule Time Status) adds 5 requirements
+  (02-§116.1–116.5) plus 2 design rules (07-§6.134–6.135), all covered.
+  Applies to both the weekly schedule (schema.html, via schema-status.js)
+  and the today view (idag.html, via events-today.js after it renders the
+  list; guarded to the non-display view). Tests: RND-48..50, RDC-22,
+  IDAG-20..21, CSS-38..39.
   On schema.html each activity row is marked against the current time:
   schema-status.js adds .is-past (light-grey background, dimmed text) once an
   activity has ended and .is-now (terracotta highlight + left accent bar) while
@@ -153,8 +157,9 @@ Note: §116 (Weekly-Schedule Time Status) adds 4 requirements
   does not auto-refresh; a manual reload re-evaluates the rows).
   renderEventRow() exposes data-event-start/data-event-end for the comparison;
   the styling is scoped to body:not(.display-mode) so the dark display view
-  (which hides ended rows) is unaffected. Tests: RND-48..50, RDC-22, CSS-38..39.
-  Browser-verified appearance and the reload refresh are manual checkpoints.
+  (which hides ended rows) is unaffected. The today view applies the same
+  classes the same way. Browser-verified appearance and the reload refresh are
+  manual checkpoints.
 
 Note: §113 (Proactive Merge-Queue Enqueue) adds 9 requirements
   (02-§113.1–113.9): 7 covered (ENQ-01..10 in tests/github.test.js plus the

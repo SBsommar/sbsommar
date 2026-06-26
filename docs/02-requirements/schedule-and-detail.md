@@ -27,6 +27,7 @@ Part of [the requirements index](./index.md). Section IDs (`02-§N.M`) are stabl
 
 - Shows only today's activities in the standard site layout. <!-- 02-§4.5 -->
 - No navigation to other days. This view is always today. <!-- 02-§4.13 -->
+- Each activity reflects its status relative to the current time, with the same treatment as the weekly schedule: a finished activity has a muted light-grey background and dimmed text, and the activity in progress is highlighted with a terracotta accent. Status is evaluated when the page loads; reloading the page re-evaluates it. <!-- 02-§116.5 -->
 
 ### Display view (`/live.html`)
 

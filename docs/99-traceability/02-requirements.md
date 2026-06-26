@@ -1815,7 +1815,7 @@ Doc ref: `02-requirements/pages-navigation.md §115`;
 
 ### §116 — Weekly-Schedule Time Status (ended / in progress)
 
-Doc ref: `02-requirements/schedule-and-detail.md §4` (Weekly schedule);
+Doc ref: `02-requirements/schedule-and-detail.md §4` (Weekly schedule and Today view);
 `03-architecture/rendering.md §5.4` (Weekly-schedule time status);
 `07-design/components.md §6.134–6.135` (Event / schedule items).
 
@@ -1825,3 +1825,4 @@ Doc ref: `02-requirements/schedule-and-detail.md §4` (Weekly schedule);
 | `02-§116.2` | covered | RND-48/-49: status compares the full date + start/end (`schema-status.js` `parseDateTime()` builds a `Date` from `data-event-date` + time), so past-day rows resolve to `.is-past` and only current-day rows can be `.is-now`. Logic validated against controlled cases (past day, today in-progress, future, midnight crossing) |
 | `02-§116.3` | covered | RND-50: `data-event-end` is omitted when the activity has no end; `schema-status.js` then treats the activity as in progress until midnight of its day, after which it is `.is-past` |
 | `02-§116.4` | covered | RDC-22: `schema-status.js` runs once on page load; the page does not auto-refresh. Manual checkpoint: open `schema.html`, then reload at a later time and confirm rows have re-evaluated against the new current time |
+| `02-§116.5` | covered | IDAG-20/-21: the today view (`idag.html`) gets the same treatment. `events-today.js`, after rendering `#today-list`, classifies each row once (guarded to `!window.__BUILD_TIME__` so the live display view's own per-minute logic is unaffected), adding `.is-past` / `.is-now` by comparing the current time of day to each activity's start/end. Same `body:not(.display-mode)` styling. Browser-verified appearance is a manual checkpoint |

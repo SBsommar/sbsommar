@@ -104,6 +104,16 @@ is a static page and does not auto-refresh; a manual reload re-evaluates
 every row against the current time. All visual styling lives in
 `style.css` (see 07-design/components.md §6 "Event / schedule items").
 
+The today view (`idag.html`) gets the same treatment (02-§116.5), but its
+rows are built client-side by `events-today.js`, not at build time. After
+that script renders today's list it classifies each row once, adding
+`.is-past` / `.is-now` by comparing the current time of day to each
+activity's start/end (all rows are today's, so a time-of-day comparison is
+sufficient). It runs only outside the dark display view — `live.html`
+already classifies its rows on a live per-minute timer — and the same
+`body:not(.display-mode)` styling applies. Like the weekly schedule it is
+evaluated once on load; a reload re-evaluates.
+
 ---
 
 ## 6. Project Structure

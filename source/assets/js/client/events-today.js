@@ -24,6 +24,13 @@
 
   function pad(n) { return String(n).padStart(2, '0'); }
 
+  // Parse "HH:MM" into minutes-since-midnight; returns null on bad input.
+  // Shared by the "Idag" status marking and the live display-view logic.
+  function toMinutes(hhmm) {
+    var m = /^(\d{1,2}):(\d{2})/.exec(hhmm || '');
+    return m ? parseInt(m[1], 10) * 60 + parseInt(m[2], 10) : null;
+  }
+
   var now = new Date();
   var today = now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate());
 
@@ -138,6 +145,34 @@
   }
   container.innerHTML = output;
 
+  // ── Time status on the standard "Idag" view (02-§116.5) ───────────────────
+  // Mark today's rows by their current-time status so the today view matches
+  // the weekly schedule: an activity that has ended gets .is-past (light grey),
+  // and the one in progress gets .is-now (highlighted). Evaluated once on load;
+  // a manual reload re-evaluates. The dark display view (window.__BUILD_TIME__)
+  // is handled separately below, on a live per-minute timer, so it is skipped
+  // here to avoid double-classifying.
+  if (!window.__BUILD_TIME__) {
+    var idagListEl = document.getElementById('today-list');
+    if (idagListEl) {
+      var nowMinIdag = now.getHours() * 60 + now.getMinutes();
+      var idagRows = idagListEl.querySelectorAll('.event-row');
+      for (var r = 0; r < idagRows.length; r++) {
+        var iev = todayEvents[r];
+        var iel = idagRows[r];
+        if (!iev || !iel) continue;
+        var iStart = toMinutes(iev.start);
+        if (iStart == null) continue;
+        var iEnd = iev.end ? toMinutes(iev.end) : null;
+        // End at or before start crosses midnight; no end runs until midnight.
+        if (iEnd != null && iEnd <= iStart) iEnd += 24 * 60;
+        if (iEnd == null) iEnd = 24 * 60;
+        if (nowMinIdag >= iEnd) iel.classList.add('is-past');
+        else if (nowMinIdag >= iStart) iel.classList.add('is-now');
+      }
+    }
+  }
+
   // ── Status bar and auto-reload (display mode only) ────────────────────────
   // Only active when __BUILD_TIME__ is defined, which only happens in
   // live.html. On idag.html these features are intentionally absent.
@@ -182,10 +217,7 @@
     // highlighted (.is-now). An event with no end time counts as in progress
     // from its start onward (its end is unknown), so it is never removed on its
     // own. When every activity has ended, a closing message is shown.
-    function toMinutes(hhmm) {
-      var m = /^(\d{1,2}):(\d{2})/.exec(hhmm || '');
-      return m ? parseInt(m[1], 10) * 60 + parseInt(m[2], 10) : null;
-    }
+    // (toMinutes is defined once at the top of this file.)
     // Scope to today's list only: the next day's rows must never be removed or
     // highlighted by this logic.
     var todayListEl = document.getElementById('today-list');

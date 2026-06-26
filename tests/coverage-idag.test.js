@@ -138,3 +138,25 @@ describe('02-§56.3 — Idag page pre-renders description HTML', () => {
     assert.ok(events[0].descriptionHtml.includes('<strong>bold</strong>'), 'description rendered as HTML');
   });
 });
+
+// ── 02-§116.5  Today view marks ended / in-progress activities ───────────────
+
+describe('02-§116.5 — Idag time-status marking', () => {
+  const fs = require('fs');
+  const path = require('path');
+  const JS = fs.readFileSync(
+    path.join(__dirname, '..', 'source', 'assets', 'js', 'client', 'events-today.js'),
+    'utf8',
+  );
+
+  it('IDAG-20 (02-§116.5): classifies today rows outside the display view', () => {
+    // The marking must run on idag.html (no __BUILD_TIME__), not only live.html.
+    assert.ok(/if\s*\(\s*!\s*window\.__BUILD_TIME__\s*\)/.test(JS), 'guarded to non-display view');
+    assert.ok(JS.includes("getElementById('today-list')"), 'targets today list');
+  });
+
+  it('IDAG-21 (02-§116.5): adds is-past and is-now classes', () => {
+    assert.ok(JS.includes("classList.add('is-past')"), 'adds is-past');
+    assert.ok(JS.includes("classList.add('is-now')"), 'adds is-now');
+  });
+});
