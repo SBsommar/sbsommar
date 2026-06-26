@@ -1,6 +1,6 @@
 event:
   id: killerball-under-140cm-2026-06-27-1630
-  title: Killerball- under 140cm
+  title: Killerball- under 150cm
   date: '2026-06-27'
   start: '16:30'
   end: '17:00'
@@ -13,4 +13,4 @@ event:
     email: ''
   meta:
     created_at: 2026-06-26 08:55
-    updated_at: 2026-06-26 08:55
+    updated_at: 2026-06-26 12:57
