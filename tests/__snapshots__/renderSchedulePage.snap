@@ -67,13 +67,13 @@
   <details class="day" id="2025-06-22" open>
     <summary>söndag 22 juni 2025</summary>
     <div class="event-list">
-    <div class="event-row plain" data-event-id="frukost-22" data-event-date="2025-06-22">
+    <div class="event-row plain" data-event-id="frukost-22" data-event-date="2025-06-22" data-event-start="08:00" data-event-end="09:00">
       <span class="ev-time">08:00–09:00</span>
       <span class="ev-title">Frukost</span>
       <span class="ev-meta"> · Matsalen · alla</span>
       <a href="schema/frukost-22/event.ics" class="ev-ical" download title="Ladda ner iCal" data-goatcounter-click="download-ical">iCal</a>
     </div>
-    <details class="event-row" data-event-id="workshop-22" data-event-date="2025-06-22">
+    <details class="event-row" data-event-id="workshop-22" data-event-date="2025-06-22" data-event-start="10:00" data-event-end="12:00">
       <summary>
         <span class="ev-time">10:00–12:00</span>
         <span class="ev-title">Workshop</span>
@@ -83,7 +83,7 @@
       <div class="event-extra"><div class="event-desc"><p>A useful workshop.</p>
 <p>Bring your laptop.</p></div><a class="event-ext-link" href="https://example.com" target="_blank" rel="noopener">Extern länk →</a></div>
     </details>
-    <div class="event-row plain" data-event-id="kväll-22" data-event-date="2025-06-22">
+    <div class="event-row plain" data-event-id="kväll-22" data-event-date="2025-06-22" data-event-start="20:00" data-event-end="22:00">
       <span class="ev-time">20:00–22:00</span>
       <span class="ev-title">Kvällsmys</span>
       <span class="ev-meta"> · Stugan · Anna</span>
@@ -95,7 +95,7 @@
   <details class="day" id="2025-06-23" open>
     <summary>måndag 23 juni 2025</summary>
     <div class="event-list">
-    <div class="event-row plain" data-event-id="swim-23" data-event-date="2025-06-23">
+    <div class="event-row plain" data-event-id="swim-23" data-event-date="2025-06-23" data-event-start="18:00">
       <span class="ev-time">18:00</span>
       <span class="ev-title">Evening Swim</span>
       <span class="ev-meta"> · Sjön · alla</span>
@@ -111,6 +111,7 @@
   <script src="sw-register.js" defer></script>
   <script src="pwa-install.js" defer></script>
   <script src="admin.js" defer></script>
+  <script src="schema-status.js" defer></script>
   <script>
   (function(){var t=new Date();t.setHours(0,0,0,0);document.querySelectorAll('details.day').forEach(function(d){var p=d.id.split('-');var dd=new Date(+p[0],+p[1]-1,+p[2]);if(dd<t)d.removeAttribute('open');});})();
   </script>

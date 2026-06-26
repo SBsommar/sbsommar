@@ -361,4 +361,53 @@ describe('renderEventRow', () => {
     assert.ok(match, 'Expected data-event-id attribute');
     assert.strictEqual(match[1], id);
   });
+
+  it('RND-48: exposes data-event-start and data-event-end on a plain row (02-§116.1)', () => { // RND-48
+    const e = {
+      title: 'Frukost',
+      date: '2025-06-22',
+      start: '08:00',
+      end: '09:00',
+      location: 'Matsalen',
+      responsible: 'alla',
+      description: null,
+      link: null,
+    };
+    const html = renderEventRow(e);
+    assert.ok(html.includes('data-event-start="08:00"'), `Missing data-event-start in:\n${html}`);
+    assert.ok(html.includes('data-event-end="09:00"'), `Missing data-event-end in:\n${html}`);
+  });
+
+  it('RND-49: exposes data-event-start and data-event-end on a details row (02-§116.1)', () => { // RND-49
+    const e = {
+      title: 'Workshop',
+      date: '2025-06-22',
+      start: '10:00',
+      end: '12:00',
+      location: 'Salen',
+      responsible: 'Bob',
+      description: 'Bring your laptop.',
+      link: null,
+    };
+    const html = renderEventRow(e);
+    assert.ok(html.includes('<details class="event-row"'), 'Expected details element');
+    assert.ok(html.includes('data-event-start="10:00"'), `Missing data-event-start in:\n${html}`);
+    assert.ok(html.includes('data-event-end="12:00"'), `Missing data-event-end in:\n${html}`);
+  });
+
+  it('RND-50: omits data-event-end when the activity has no end time (02-§116.3)', () => { // RND-50
+    const e = {
+      title: 'Morgonmöte',
+      date: '2025-06-22',
+      start: '07:30',
+      end: null,
+      location: 'Tältet',
+      responsible: 'alla',
+      description: null,
+      link: null,
+    };
+    const html = renderEventRow(e);
+    assert.ok(html.includes('data-event-start="07:30"'), 'Expected data-event-start');
+    assert.ok(!html.includes('data-event-end'), `Must not emit data-event-end without an end time:\n${html}`);
+  });
 });

@@ -101,6 +101,11 @@ describe('Schedule page — structural checks', () => {
     const html = renderSchedulePage(CAMP, [event()]);
     assert.ok(html.includes('klickar på en aktivitets rubrik'), 'Swedish intro');
   });
+
+  it('RDC-22: loads schema-status.js for time-status marking (02-§116.4)', () => {
+    const html = renderSchedulePage(CAMP, [event()]);
+    assert.ok(html.includes('src="schema-status.js"'), 'schema-status.js loaded');
+  });
 });
 
 // ── renderDaySection ────────────────────────────────────────────────────────

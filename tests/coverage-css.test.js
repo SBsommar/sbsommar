@@ -326,3 +326,19 @@ describe('02-§56.8 — Description paragraph italic removed', () => {
     // If the rule doesn't exist at all, that's also fine
   });
 });
+
+// ── 07-§6.134, 6.135  Weekly-schedule time status (ended / in progress) ──────
+
+describe('07-§6.134, 6.135 — Schedule row time status', () => {
+  it('CSS-38: ended schedule rows get a light-grey background (07-§6.134)', () => {
+    const m = CSS.match(/body:not\(\.display-mode\)\s+\.event-row\.is-past\s*\{([^}]+)\}/);
+    assert.ok(m, '.is-past rule scoped to non-display mode exists');
+    assert.ok(/background:\s*rgba\(0,\s*0,\s*0,\s*0\.05\)/.test(m[1]), 'light-grey background');
+  });
+
+  it('CSS-39: in-progress schedule rows get a terracotta highlight (07-§6.135)', () => {
+    const m = CSS.match(/body:not\(\.display-mode\)\s+\.event-row\.is-now\s*\{([^}]+)\}/);
+    assert.ok(m, '.is-now rule scoped to non-display mode exists');
+    assert.ok(/box-shadow:\s*inset 3px 0 0 var\(--color-terracotta\)/.test(m[1]), 'terracotta accent bar');
+  });
+});
