@@ -198,4 +198,31 @@ final class ValidateTest extends TestCase
         $this->assertFalse($r['ok']);
         $this->assertStringContainsString('ownerName', $r['error']);
     }
+
+    // ── Cancelled field (02-§118.1, 05-§3.5) ───────────────────────────────
+
+    public function testCancelledTrueAccepted(): void
+    {
+        $r = Validate::validateEditRequest(self::validEdit(['cancelled' => true]));
+        $this->assertTrue($r['ok']);
+    }
+
+    public function testCancelledFalseAccepted(): void
+    {
+        $r = Validate::validateEditRequest(self::validEdit(['cancelled' => false]));
+        $this->assertTrue($r['ok']);
+    }
+
+    public function testCancelledAbsentAccepted(): void
+    {
+        $r = Validate::validateEditRequest(self::validEdit());
+        $this->assertTrue($r['ok']);
+    }
+
+    public function testCancelledNonBooleanRejected(): void
+    {
+        $r = Validate::validateEditRequest(self::validEdit(['cancelled' => 'yes']));
+        $this->assertFalse($r['ok']);
+        $this->assertStringContainsString('cancelled', $r['error']);
+    }
 }

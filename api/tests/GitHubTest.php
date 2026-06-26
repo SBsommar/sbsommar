@@ -298,4 +298,47 @@ final class GitHubTest extends TestCase
         $this->assertStringContainsString('mergeQueueEntry', $query);
         $this->assertStringNotContainsString('enablePullRequestAutoMerge', $query);
     }
+
+    // ── Cancelled field round-trip (02-§118.2, §118.3) ──────────────────────
+
+    public function testPatchEventObjectSetsCancelledFromUpdates(): void
+    {
+        $patched = GitHub::patchEventObject(self::baseEvent(), ['cancelled' => true], '2026-06-22 08:00');
+        $this->assertTrue($patched['cancelled']);
+    }
+
+    public function testPatchEventObjectClearsCancelled(): void
+    {
+        $patched = GitHub::patchEventObject(self::baseEvent(['cancelled' => true]), ['cancelled' => false], '2026-06-22 08:00');
+        $this->assertFalse($patched['cancelled']);
+    }
+
+    public function testPatchEventObjectPreservesCancelledWhenAbsentFromUpdates(): void
+    {
+        $patched = GitHub::patchEventObject(self::baseEvent(['cancelled' => true]), ['title' => 'Nytt'], '2026-06-22 08:00');
+        $this->assertTrue($patched['cancelled']);
+    }
+
+    public function testPatchEventObjectKeepsIdStableWhenCancelling(): void
+    {
+        $patched = GitHub::patchEventObject(self::baseEvent(), ['cancelled' => true], '2026-06-22 08:00');
+        $this->assertSame('frukost-2026-06-22-0800', $patched['id']);
+    }
+
+    public function testBuildFragmentYamlEmitsCancelledTrue(): void
+    {
+        $yaml = GitHub::buildFragmentYaml(self::baseEvent(['cancelled' => true]));
+        $this->assertStringContainsString('cancelled: true', $yaml);
+        $doc = \Symfony\Component\Yaml\Yaml::parse($yaml);
+        $this->assertTrue($doc['event']['cancelled']);
+    }
+
+    public function testBuildFragmentYamlOmitsCancelledWhenNotCancelled(): void
+    {
+        $yaml = GitHub::buildFragmentYaml(self::baseEvent());
+        $this->assertStringNotContainsString('cancelled:', $yaml);
+        // Still valid and parses to one event.
+        $doc = \Symfony\Component\Yaml\Yaml::parse($yaml);
+        $this->assertSame('frukost-2026-06-22-0800', $doc['event']['id']);
+    }
 }
