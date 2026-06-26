@@ -966,7 +966,7 @@ from a stale cache.
 
 ### 96.2 Service worker (site requirements)
 
-- The service worker cache name is `sb-sommar-v6`. <!-- 02-§96.1 -->
+- The service worker cache name is `sb-sommar-v7`. <!-- 02-§96.1 -->
 - The `install` event handler calls `self.skipWaiting()` so that a new
   worker moves straight from `installed` to `activating` without
   waiting for all existing clients to close. <!-- 02-§96.2 -->
@@ -1015,8 +1015,8 @@ from a stale cache.
   `sbsommar.se` (or `qa.sbsommar.se`): the browser fetches `sw.js`
   bypassing its HTTP cache, installs the new worker, applies
   `skipWaiting`, and claims the open tab. <!-- 02-§96.9 -->
-- The new worker deletes the old `sb-sommar-v5` cache and rebuilds
-  `sb-sommar-v6` from fresh network responses. <!-- 02-§96.10 -->
+- The new worker deletes the old `sb-sommar-v6` cache and rebuilds
+  `sb-sommar-v7` from fresh network responses. <!-- 02-§96.10 -->
 - After at most one reload following the first post-deploy visit, every
   client sees the same assets that the server serves, including the
   current `style.css` with the §94 registration-banner rules. <!-- 02-§96.11 -->
