@@ -611,14 +611,16 @@ boolean — so no new endpoint, branch flow, or merge handling is added.
 
 ### 31.1 Edit-form toggle
 
-`render-edit.js` adds a button (`#btn-cancel`) inside the form's
-`.form-actions`. `redigera.js` tracks the current cancelled state in a variable
-seeded from the loaded event (`event.cancelled`), labels the button
-"Ställ in aktiviteten" when active and "Återställ aktiviteten" when cancelled,
-and toggles the variable on click. The edit submit body gains a
-`cancelled: <boolean>` field, sent alongside the existing fields, so "Spara
-ändringar" persists the current state. The button only changes the pending
-state; nothing is written until the form is saved.
+`render-edit.js` adds a button (`#btn-cancel`) in the edit header, beside the
+delete button. `redigera.js` seeds the current cancelled state from the loaded
+event (`event.cancelled`) and labels the button "Ställ in aktiviteten" when
+active and "Återställ aktiviteten" when cancelled. Clicking it saves in one
+step: `submitCancelToggle()` POSTs the current field values plus the flipped
+`cancelled` flag straight to the edit API — reusing the save flow's progress
+modal — and flips the tracked state only on success. There is no confirmation
+dialog (cancelling is reversible) and no separate "Spara ändringar" step. The
+normal save body still carries `cancelled: <boolean>`, so a regular save
+preserves the current state.
 
 ### 31.2 Persistence and validation
 
@@ -635,8 +637,8 @@ state; nothing is written until the form is saved.
 
 | File | Change |
 | --- | --- |
-| `source/build/render-edit.js` | Render the `#btn-cancel` button in `.form-actions` |
-| `source/assets/js/client/redigera.js` | Track cancelled state, toggle label, send `cancelled` in the edit body |
+| `source/build/render-edit.js` | Render the `#btn-cancel` button in the edit header, beside delete |
+| `source/assets/js/client/redigera.js` | `submitCancelToggle()` saves the flipped `cancelled` flag in one click; normal save still carries `cancelled` |
 | `api/src/Validate.php` | Accept optional `cancelled` boolean |
 | `api/src/GitHub.php` | `patchEventObject()` + `eventBodyLines()` round-trip `cancelled` |
 | `source/scripts/lint-yaml.js` | `cancelled` boolean type-check in `validateEventObject()` |

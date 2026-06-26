@@ -78,15 +78,14 @@ ${pageNav('redigera.html', navSections)}
   <section id="edit-section" hidden>
     <div class="edit-header">
       <h1>Redigera aktivitet</h1>
-      <!-- Cancel/restore toggle (02-§118) sits beside the delete button. Its
-           label flips to "Återställ aktiviteten" once cancelled; the pending
-           state is saved with "Spara ändringar". -->
+      <!-- Cancel/restore toggle (02-§118) sits beside the delete button. It
+           saves in one click — its label flips to "Återställ aktiviteten" once
+           the activity is cancelled. -->
       <div class="edit-header-actions">
         <button type="button" id="btn-cancel" class="btn-cancel-activity">Ställ in aktiviteten</button>
         <button type="button" id="btn-delete" class="btn-delete-pill">Radera aktivitet</button>
       </div>
     </div>
-    <p class="cancel-activity-note" id="cancel-activity-note" hidden></p>
 
     <form id="edit-form" class="event-form" novalidate
           data-api-url="${escapeHtml(apiUrl || '/edit-event')}"

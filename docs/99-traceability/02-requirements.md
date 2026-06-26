@@ -1856,7 +1856,7 @@ Doc ref: `02-requirements/schedule-and-detail.md §118`;
 | `02-§118.2` | covered | PHP `testPatchEventObjectSetsCancelledFromUpdates`/`testBuildFragmentYamlEmitsCancelledTrue`: `patchEventObject()` carries `cancelled` through an edit; `eventBodyLines()` serialises `cancelled: true`. Node mirror `edit-event.js`/`github.js` matches; LINTY-CANCEL type check |
 | `02-§118.3` | covered | PHP `testPatchEventObjectKeepsIdStableWhenCancelling`: `patchEventObject()` keeps `id` unchanged; cancelling rewrites no id-deriving field |
 | `02-§118.4` | covered | RED-CANCEL-01: `render-edit.js` emits `#btn-cancel` with "Ställ in aktiviteten"; the "Återställ aktiviteten" label toggle is a manual/browser checkpoint |
-| `02-§118.5` | implemented | Manual/browser checkpoint: edit body includes `cancelled` (redigera.js `editBody`); form reflects current state on load (redigera.js `populate()` → `cancelledState`) |
+| `02-§118.5` | implemented | Manual/browser checkpoint: `redigera.js` `submitCancelToggle()` POSTs the flipped `cancelled` in one click (no separate save, no confirmation dialog); the normal save body still carries `cancelled`; the button reflects the loaded state via `populate()` → `cancelledState` |
 | `02-§118.6` | covered | RND-CANCEL-01, IDAG-CANCEL-01, REV-CANCEL-01: cancelled row still rendered in schedule/today/event page |
 | `02-§118.7` | covered | RND-CANCEL-02/-03, IDAG-CANCEL-02, REV-CANCEL-01: `renderEventRow()`/`events-today.js`/`renderEventPage()` prefix the title with the `INSTÄLLD` label |
 | `02-§118.8` | covered | CSS-CANCEL-01: `.event-row.is-cancelled` text `line-through`; terracotta only `:not(.is-past)` |

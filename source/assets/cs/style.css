@@ -1210,12 +1210,6 @@ h1.is-cancelled {
   outline-offset: 2px;
 }
 
-.cancel-activity-note {
-  margin: var(--space-xs) 0 var(--space-sm);
-  font-size: var(--font-size-small);
-  color: var(--color-charcoal);
-  opacity: 0.8;
-}
 
 .delete-actions {
   display: flex;

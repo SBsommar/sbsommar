@@ -488,13 +488,15 @@ export.
 
 ### 118.2 Marking an activity cancelled (edit form)
 
-- The edit form (`/redigera.html`) has a button that cancels the activity
-  being edited. When the activity is active the button reads
-  "Ställ in aktiviteten"; when it is already cancelled the button reads
+- The edit form (`/redigera.html`) has a button, beside the delete button, that
+  cancels the activity being edited. When the activity is active the button
+  reads "Ställ in aktiviteten"; when it is already cancelled the button reads
   "Återställ aktiviteten", so cancelling can be undone. <!-- 02-§118.4 -->
-- Activating the button sets the `cancelled` state that is saved with the next
-  "Spara ändringar". The current cancelled state of the activity is reflected
-  in the form when it loads. <!-- 02-§118.5 -->
+- The button saves in a single click: activating it persists the new `cancelled`
+  state immediately through the edit API, with no separate "Spara ändringar"
+  step. Because cancelling is reversible, there is no confirmation dialog. The
+  current cancelled state of the activity is reflected in the button when the
+  form loads. <!-- 02-§118.5 -->
 
 ### 118.3 Schedule display
 

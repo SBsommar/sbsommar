@@ -17,7 +17,6 @@
   var submitBtn    = form ? form.querySelector('button[type="submit"]') : null;
   var deleteBtn    = document.getElementById('btn-delete');
   var cancelBtn    = document.getElementById('btn-cancel');
-  var cancelNote   = document.getElementById('cancel-activity-note');
   var deleteDialog = document.getElementById('delete-confirm');
   var deleteTitle  = document.getElementById('delete-confirm-title');
   var deleteYes    = document.getElementById('delete-confirm-yes');
@@ -153,10 +152,10 @@
     openModal();
   }
 
-  function setModalSuccess(title) {
+  function setModalSuccess(title, heading) {
     clearProgressTimers();
     completeAllSteps();
-    modalHeading.textContent = 'Aktiviteten är uppdaterad!';
+    modalHeading.textContent = heading || 'Aktiviteten är uppdaterad!';
     modalContent.innerHTML =
       '<p class="intro"><strong>' + escHtml(title) + '</strong>' +
       ' syns i schemat inom någon minut, men ibland kan det ta upp till 15 minuter.</p>' +
@@ -324,27 +323,65 @@
 
   // ── Cancel / restore activity toggle (02-§118) ──────────────────────────────
 
-  // Pending cancelled state for the activity being edited. Seeded from the
-  // loaded event and flipped by the toggle; saved with "Spara ändringar".
+  // Current cancelled state of the activity being edited, seeded from the
+  // loaded event. The toggle saves immediately — no separate "Spara ändringar"
+  // is needed (02-§118.5), mirroring how the delete button acts on its own.
   var cancelledState = false;
 
   function updateCancelButton() {
     if (!cancelBtn) return;
     cancelBtn.textContent = cancelledState ? 'Återställ aktiviteten' : 'Ställ in aktiviteten';
     cancelBtn.classList.toggle('is-cancelled', cancelledState);
-    if (cancelNote) {
-      cancelNote.textContent = cancelledState
-        ? 'Aktiviteten är markerad som inställd. Spara ändringarna för att uppdatera schemat.'
-        : '';
-      cancelNote.hidden = !cancelledState;
-    }
+  }
+
+  // Persist a cancel/restore in one click: send the current field values plus
+  // the flipped `cancelled` flag straight to the edit API, with the same
+  // progress modal the save flow uses. Cancelling is reversible, so there is no
+  // confirmation step. `cancelledState` only flips on success.
+  function submitCancelToggle() {
+    if (!form) return;
+    var els = form.elements;
+    var target = !cancelledState;
+    var body = {
+      id:          els.id.value,
+      title:       els.title.value.trim(),
+      date:        els.date.value,
+      start:       els.start.value,
+      end:         els.end.value,
+      location:    els.location.value,
+      responsible: els.responsible.value.trim(),
+      description: els.description.value,
+      link:        els.link.value.trim(),
+      cancelled:   target,
+    };
+    if (adminToken) body.adminToken = adminToken;
+
+    lock();
+    setModalLoading();
+
+    fetch(form.dataset.apiUrl || '/edit-event', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (json) {
+        if (!json.success) {
+          setModalError(json.error || 'Något gick fel.');
+          return;
+        }
+        cancelledState = target;
+        updateCancelButton();
+        setModalSuccess(body.title, target ? 'Aktiviteten är inställd!' : 'Aktiviteten är återställd!');
+      })
+      .catch(function () {
+        setModalError('Något gick fel. Kontrollera din internetanslutning och försök igen.');
+      });
   }
 
   if (cancelBtn) {
-    cancelBtn.addEventListener('click', function () {
-      cancelledState = !cancelledState;
-      updateCancelButton();
-    });
+    cancelBtn.addEventListener('click', submitCancelToggle);
   }
 
   // ── Time-gating (02-§26.9, §26.14–§26.19) ──────────────────────────────────
