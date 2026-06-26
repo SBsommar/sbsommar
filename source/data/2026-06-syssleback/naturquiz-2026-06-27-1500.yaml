@@ -5,13 +5,14 @@ event:
   start: '15:00'
   end: '16:00'
   location: Tält1
-  responsible: Enok Rydler
+  responsible: 'Manfred Senning, Enok Rydler'
   description: |
     Naturquiz med roliga frågor, passar både barn och vuxna.
+    
   link: null
   owner:
     name: ''
     email: ''
   meta:
     created_at: 2026-06-26 12:23
-    updated_at: 2026-06-26 12:23
+    updated_at: 2026-06-26 22:41
