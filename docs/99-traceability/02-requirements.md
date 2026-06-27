@@ -1904,6 +1904,7 @@ Reuses the shared overlap predicate (`conflict-check.js`, §99).
 | `02-§120.1` | covered | CLASH-01/-07: `markLocationClashes()` uses the shared `overlaps()` predicate (same-date, same-room, overlapping); back-to-back is not a clash |
 | `02-§120.2` | covered | CLASH-03/-09: `isRealLocation()` excludes "Annat"/"[annat]" so they never clash; build-integration check confirmed only real rooms are flagged on the live schedule |
 | `02-§120.3` | covered | CLASH-06: a cancelled activity is skipped both as the marked and the conflicting event |
-| `02-§120.4` | covered | CLASH-01/-02/-08: the later-created booking is flagged regardless of array order; with three overlaps the two later ones are marked |
+| `02-§120.4` | covered | CLASH-01/-02/-08: the later-created booking is flagged regardless of array order; with three overlaps the two later ones are marked. CLASH-12: creation times are compared by epoch (`createdMs`) so a YAML Date-object timestamp and a string timestamp order correctly |
 | `02-§120.5` | covered | CLASH-10/-11: `renderEventRow()` adds `is-clash`; `events-today.js` mirrors it via the `clash` JSON flag. CSS `.event-row.is-clash` uses `--color-error` (red wash + bar + title). The today/display view and visual appearance are manual/browser checkpoints |
 | `02-§120.6` | covered | CSS scopes the clash red with `:not(.is-past)` so a passed clash takes the grey `.is-past` treatment. Visual appearance is a manual/browser checkpoint |
+| `02-§120.7` | covered | CLASH-13/-14/-15: `isIgnoredActivity()` skips "Lunch"/"Middag" (case-insensitive) both as the marked and the conflicting event |

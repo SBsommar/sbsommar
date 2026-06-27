@@ -638,6 +638,10 @@ per-event conflict banner and the locale overview (§99).
   activity there is never part of a clash and never causes one. <!-- 02-§120.2 -->
 - A cancelled ("inställd") activity has freed its room: it is never marked and
   never causes another activity to be marked. <!-- 02-§120.3 -->
+- The communal meals "Lunch" and "Middag" are ignored by the clash logic
+  entirely (matched case-insensitively by title): a meal is never marked and
+  never causes another activity to be marked, because everyone shares the meal
+  and it is not a competing booking. <!-- 02-§120.7 -->
 
 ### 120.2 Which activity is marked
 

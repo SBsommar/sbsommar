@@ -19,10 +19,24 @@ function isRealLocation(loc) {
   return norm !== 'annat';
 }
 
-// Comparable creation key. Events without a created_at sort first (treated as
-// the original booking), so a missing timestamp never marks the legacy event.
-function createdKey(e) {
-  return e && e.meta && e.meta.created_at ? String(e.meta.created_at) : '';
+// Communal meals everyone shares. They are ignored by the clash logic entirely:
+// a meal is never flagged and never causes another activity to be flagged
+// (02-§120.7).
+const IGNORED_TITLES = new Set(['lunch', 'middag']);
+function isIgnoredActivity(e) {
+  return !!(e && e.title && IGNORED_TITLES.has(String(e.title).trim().toLowerCase()));
+}
+
+// Comparable creation time in epoch milliseconds. YAML parses an ISO timestamp
+// (`2026-02-27T09:12:59Z`) into a Date object but leaves a space-separated one
+// (`2026-06-27 00:40`) as a string, so the two must not be compared as raw text
+// — `new Date(...)` normalises both. A missing or unparseable created_at sorts
+// earliest, so it counts as the original booking and is never the one flagged.
+function createdMs(e) {
+  const v = e && e.meta ? e.meta.created_at : null;
+  if (!v) return -Infinity;
+  const t = new Date(v).getTime();
+  return Number.isNaN(t) ? -Infinity : t;
 }
 
 // Sets `_clash = true` on every event that overlaps an EARLIER-created event in
@@ -30,14 +44,14 @@ function createdKey(e) {
 // they neither clash nor cause a clash. Mutates and returns `events`.
 function markLocationClashes(events) {
   for (const e of events) {
-    if (e.cancelled || !isRealLocation(e.location)) continue;
-    const ek = createdKey(e);
+    if (e.cancelled || isIgnoredActivity(e) || !isRealLocation(e.location)) continue;
+    const ems = createdMs(e);
     for (const f of events) {
-      if (f === e || f.cancelled) continue;
+      if (f === e || f.cancelled || isIgnoredActivity(f)) continue;
       if (f.date !== e.date || f.location !== e.location) continue;
       if (!overlaps(e, f)) continue;
       // `e` came after `f` (created later) and they share the room — mark `e`.
-      if (createdKey(f) < ek) {
+      if (createdMs(f) < ems) {
         e._clash = true;
         break;
       }
@@ -46,4 +60,4 @@ function markLocationClashes(events) {
   return events;
 }
 
-module.exports = { markLocationClashes, isRealLocation };
+module.exports = { markLocationClashes, isRealLocation, isIgnoredActivity };
