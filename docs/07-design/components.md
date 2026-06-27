@@ -238,9 +238,9 @@ mint form's per-field validation uses the inline field-error component
 
 ### Moved activity (02-§119)
 
-- A moved activity (`.event-row.is-moved`) keeps its place at the new time. Its previous time is shown struck through in small, slightly muted text (`.ev-time-old`) and its new time is highlighted in amber (`.ev-time-new`: a `var(--color-amber)` tint behind bold text). The amber is an additional cue on top of the visible struck-through text — the moved state never depends on colour alone. <!-- 07-§6.142 -->
+- A moved activity (`.event-row.is-moved`) keeps its place at the new time. The new time sits on top, highlighted in amber (`.ev-time-new`: a `var(--color-amber)` tint behind bold text), and the previous time is struck through in smaller, slightly muted text (`.ev-time-old`) on its own line directly below. The amber is an additional cue on top of the visible struck-through text — the moved state never depends on colour alone. <!-- 07-§6.142 -->
 - Amber (`var(--color-amber)`) is reserved for the moved-activity marking, distinct from terracotta (cancelled) and sage (in progress), so the three states never read as one another. <!-- 07-§6.143 -->
-- At the slot a moved activity used to occupy, a minimal ghost marker (`.event-row.is-ghost`, muted and italic) shows only the activity's title and a `Flyttad till …` pointer (`.ev-moved-to`, in `var(--color-amber-dark)` for AA-readable text on cream). The marker carries no description, location, responsible, link, or iCal action. <!-- 07-§6.144 -->
+- At the slot a moved activity used to occupy, a minimal ghost marker (`.event-row.is-ghost`, italic with a soft `var(--color-amber)` background tint and an amber accent bar) shows only the activity's title and a `Flyttad till …` pointer (`.ev-moved-to`, in `var(--color-amber-dark)` for AA-readable text on cream). The marker carries no description, location, responsible, link, or iCal action. <!-- 07-§6.144 -->
 - A relocated activity shows its new location as usual, preceded by its previous location struck through in small, slightly muted text (`.ev-loc-old`, sharing the `.ev-time-old` treatment). A location change adds only this inline annotation — no ghost marker and no amber highlight. <!-- 07-§6.145 -->
 
 ### Display sidebar — portrait layout
