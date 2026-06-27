@@ -2,7 +2,7 @@ event:
   id: glass-pa-chokladfabriken-2026-06-28-1200
   title: Glass på chokladfabriken
   date: '2026-06-28'
-  start: '12:00'
+  start: '11:00'
   end: '15:00'
   location: Annat
   responsible: Alla
@@ -11,10 +11,15 @@ event:
     Det finns parkering för de som vill vara redo för “hemfärd”.
     Annars är det en lagom promenad på vägen bakom receptionen.
     Tiden är för det brukar vara lite “drop-in”.
+    
   link: null
+  moved:
+    from_date: '2026-06-28'
+    from_start: '12:00'
+    from_end: '15:00'
   owner:
     name: ''
     email: ''
   meta:
-    created_at: 2026-02-27 09:12:59
-    updated_at: 2026-02-27 09:12:59
+    created_at: 1772183579
+    updated_at: 2026-06-27 17:39
