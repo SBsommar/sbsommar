@@ -1,0 +1,17 @@
+event:
+  id: astronomiproblem-2026-06-27-2200
+  title: Astronomiproblem
+  date: '2026-06-27'
+  start: '22:00'
+  end: '23:00'
+  location: GA Stilla hyllan
+  responsible: Edvin
+  description: |
+    Lös astronomiproblem från astronomiolympiaden jr. Ta med egen penna
+  link: null
+  owner:
+    name: ''
+    email: ''
+  meta:
+    created_at: 2026-06-27 16:13
+    updated_at: 2026-06-27 16:13
