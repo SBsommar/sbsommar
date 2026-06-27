@@ -19,6 +19,14 @@ function isRealLocation(loc) {
   return norm !== 'annat';
 }
 
+// Communal meals everyone shares. They are ignored by the clash logic entirely:
+// a meal is never flagged and never causes another activity to be flagged
+// (02-§120.7).
+const IGNORED_TITLES = new Set(['lunch', 'middag']);
+function isIgnoredActivity(e) {
+  return !!(e && e.title && IGNORED_TITLES.has(String(e.title).trim().toLowerCase()));
+}
+
 // Comparable creation time in epoch milliseconds. YAML parses an ISO timestamp
 // (`2026-02-27T09:12:59Z`) into a Date object but leaves a space-separated one
 // (`2026-06-27 00:40`) as a string, so the two must not be compared as raw text
@@ -36,10 +44,10 @@ function createdMs(e) {
 // they neither clash nor cause a clash. Mutates and returns `events`.
 function markLocationClashes(events) {
   for (const e of events) {
-    if (e.cancelled || !isRealLocation(e.location)) continue;
+    if (e.cancelled || isIgnoredActivity(e) || !isRealLocation(e.location)) continue;
     const ems = createdMs(e);
     for (const f of events) {
-      if (f === e || f.cancelled) continue;
+      if (f === e || f.cancelled || isIgnoredActivity(f)) continue;
       if (f.date !== e.date || f.location !== e.location) continue;
       if (!overlaps(e, f)) continue;
       // `e` came after `f` (created later) and they share the room — mark `e`.
@@ -52,4 +60,4 @@ function markLocationClashes(events) {
   return events;
 }
 
-module.exports = { markLocationClashes, isRealLocation };
+module.exports = { markLocationClashes, isRealLocation, isIgnoredActivity };

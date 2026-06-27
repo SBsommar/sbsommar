@@ -8,7 +8,7 @@
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
 
-const { markLocationClashes, isRealLocation } = require('../source/build/clashes');
+const { markLocationClashes, isRealLocation, isIgnoredActivity } = require('../source/build/clashes');
 const { renderEventRow } = require('../source/build/render');
 
 function ev(id, location, start, end, created, extra) {
@@ -83,11 +83,32 @@ describe('markLocationClashes (02-§120)', () => {
     // Mirrors real data: a seed event whose created_at YAML-parsed into a Date
     // object, overlapping a later event whose created_at stayed a string. They
     // must be compared by time, not as raw text ("Fri Feb 27 …" vs "2026-06-…").
-    const seed = ev('Middag', 'Servicehus', '17:00', '18:00', new Date('2026-02-27T09:12:59Z'));
-    const late = ev('Töm', 'Servicehus', '17:00', '18:00', '2026-06-27 00:40');
+    const seed = ev('Pyssel', 'Servicehus', '17:00', '18:00', new Date('2026-02-27T09:12:59Z'));
+    const late = ev('Möte', 'Servicehus', '17:00', '18:00', '2026-06-27 00:40');
     markLocationClashes([seed, late]);
     assert.equal(seed._clash, undefined); // created first (Feb) — not flagged
     assert.equal(late._clash, true);      // created later (Jun) — flagged
+  });
+
+  it('CLASH-13: Lunch and Middag are never flagged, even when booked later', () => {
+    const seed = ev('Workshop', 'Servicehus', '17:00', '18:00', '2026-06-01 10:00');
+    const meal = ev('Middag', 'Servicehus', '17:00', '18:00', '2026-06-27 00:40');
+    markLocationClashes([seed, meal]);
+    assert.equal(meal._clash, undefined);
+  });
+
+  it('CLASH-14: a meal never causes another activity to be flagged', () => {
+    const meal = ev('Lunch', 'Servicehus', '12:00', '13:00', '2026-02-27 09:00');
+    const later = ev('Möte', 'Servicehus', '12:00', '13:00', '2026-06-27 09:00');
+    markLocationClashes([meal, later]);
+    assert.equal(later._clash, undefined); // only the (ignored) meal overlaps it
+  });
+
+  it('CLASH-15: meal titles are matched case-insensitively', () => {
+    assert.equal(isIgnoredActivity({ title: '  MIDDAG ' }), true);
+    assert.equal(isIgnoredActivity({ title: 'lunch' }), true);
+    assert.equal(isIgnoredActivity({ title: 'Middag & dans' }), false);
+    assert.equal(isIgnoredActivity({ title: 'Workshop' }), false);
   });
 
   it('CLASH-09: isRealLocation rejects annat variants and empty, accepts real rooms', () => {

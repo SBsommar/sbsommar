@@ -207,8 +207,11 @@ catch-all is excluded by `isRealLocation()`), it looks for an **earlier-created*
 activity on the same date in the same room whose time overlaps — reusing the
 shared `overlaps()` predicate from `conflict-check.js` (the same logic behind the
 per-event conflict banner and the locale overview). The later booking gets
-`_clash = true`; the earliest booking is left unmarked. Cancelled activities have
-freed the room, so they neither clash nor are marked.
+`_clash = true`; the earliest booking is left unmarked. Creation times are
+compared by epoch (`createdMs`) so a YAML Date-object timestamp and a string
+timestamp order correctly. Cancelled activities have freed the room, and the
+communal meals "Lunch"/"Middag" (`isIgnoredActivity`) are shared by everyone —
+both are skipped, so they neither clash nor are marked (02-§120.7).
 
 `renderEventRow()` (`render.js`) adds an `is-clash` class to a flagged row, and
 `build.js` exposes the boolean as `clash` in the today/display event JSON so

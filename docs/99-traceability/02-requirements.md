@@ -1907,3 +1907,4 @@ Reuses the shared overlap predicate (`conflict-check.js`, §99).
 | `02-§120.4` | covered | CLASH-01/-02/-08: the later-created booking is flagged regardless of array order; with three overlaps the two later ones are marked. CLASH-12: creation times are compared by epoch (`createdMs`) so a YAML Date-object timestamp and a string timestamp order correctly |
 | `02-§120.5` | covered | CLASH-10/-11: `renderEventRow()` adds `is-clash`; `events-today.js` mirrors it via the `clash` JSON flag. CSS `.event-row.is-clash` uses `--color-error` (red wash + bar + title). The today/display view and visual appearance are manual/browser checkpoints |
 | `02-§120.6` | covered | CSS scopes the clash red with `:not(.is-past)` so a passed clash takes the grey `.is-past` treatment. Visual appearance is a manual/browser checkpoint |
+| `02-§120.7` | covered | CLASH-13/-14/-15: `isIgnoredActivity()` skips "Lunch"/"Middag" (case-insensitive) both as the marked and the conflicting event |
