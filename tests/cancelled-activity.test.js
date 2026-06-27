@@ -201,6 +201,15 @@ describe('02-§118.8/.9 — cancelled CSS', () => {
     }
     assert.ok(checked > 0, 'at least one .event-row.is-cancelled terracotta rule exists');
   });
+
+  it('CSS-CANCEL-03: a cancelled in-progress row drops the green is-now highlight', () => {
+    // The .is-cancelled.is-now override must clear the in-progress background
+    // and accent bar, so a cancelled activity never looks like it is running.
+    const rule = CSS.match(/\.event-row\.is-cancelled\.is-now[^{]*\{([^}]*)\}/);
+    assert.ok(rule, '.is-cancelled.is-now override exists');
+    assert.match(rule[1], /background:\s*transparent/, 'background cleared');
+    assert.match(rule[1], /box-shadow:\s*none/, 'accent bar cleared');
+  });
 });
 
 // ── Validation (lint-yaml.js) ────────────────────────────────────────────────

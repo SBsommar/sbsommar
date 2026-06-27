@@ -764,6 +764,15 @@ body:not(.display-mode) .event-row.is-cancelled:not(.is-past) .ev-meta {
   opacity: 1;
 }
 
+/* A cancelled activity must never wear the green "in progress" highlight — it
+   is off, not running now. Suppress the .is-now background wash and accent bar
+   on cancelled rows; the terracotta struck-through text still marks it. */
+body:not(.display-mode) .event-row.is-cancelled.is-now,
+body.display-mode .event-row.is-cancelled.is-now {
+  background: transparent;
+  box-shadow: none;
+}
+
 .ev-cancelled-label {
   font-weight: 700;
 }
