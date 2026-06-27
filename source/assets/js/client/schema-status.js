@@ -45,7 +45,8 @@
 
       if (now >= end) {
         el.classList.add('is-past');
-      } else if (now >= start) {
+      } else if (now >= start && !el.classList.contains('is-ghost')) {
+        // A ghost marker (02-§119.8) is only ever upcoming or past, never "now".
         el.classList.add('is-now');
       }
     }
