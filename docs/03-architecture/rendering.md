@@ -177,10 +177,13 @@ them for the client-rendered today view.
   `buildGhosts()` produces one pseudo-event per moved activity, marked `_ghost`,
   which `renderEventRow()`/`buildRowHtml()` render as the title plus a
   `Flyttad till …` pointer (`.ev-moved-to`) and nothing else, in a soft amber
-  tone with an amber accent bar. The ghost carries
-  a `data-event-date` but **no** `data-event-start`, so `schema-status.js` (whose
-  selector requires both) never marks it `is-now`/`is-past`. The per-event page
-  emits no ghost — it has no schedule slot to mark (02-§119.10).
+  tone with an amber accent bar; the first line (old time + title) is struck
+  through, the pointer is not. The ghost carries its old `data-event-date`,
+  `data-event-start`, and `data-event-end`, so `schema-status.js` and
+  `events-today.js` grey it (`.is-past`) once that slot is in the past
+  (02-§119.17); the `is-ghost` class tells those classifiers never to mark it
+  `is-now` — a ghost is only ever upcoming or past. The per-event page emits no
+  ghost — it has no schedule slot to mark (02-§119.10).
 - **Location changes (`relocated`)** — `locationHtml()` renders the activity's
   location cell with the new location as usual, preceded by the previous
   location struck through in small text (`.ev-loc-old`) when the activity carries

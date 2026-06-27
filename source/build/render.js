@@ -51,16 +51,19 @@ function icalDownloadLink(e) {
 const CANCELLED_LABEL = '<span class="ev-cancelled-label">INSTÄLLD</span> ';
 
 // A previous-slot ghost marker for a moved activity (02-§119.8): the title and a
-// "Flyttad till …" pointer only — no meta, detail, or iCal link. It carries a
-// data-event-date but no data-event-start, so schema-status.js never marks it
-// is-now/is-past (its selector requires both attributes).
+// "Flyttad till …" pointer only — no meta, detail, or iCal link. It carries its
+// old date/start/end so schema-status.js can grey it once that slot is in the
+// past (02-§119.17); the is-ghost class tells the classifier never to mark it
+// is-now (a ghost is only ever upcoming or past).
 function renderGhostRow(e) {
   const timeStr = e.end
     ? `${escapeHtml(String(e.start))}–${escapeHtml(String(e.end))}`
     : escapeHtml(String(e.start));
   const dateAttr = e.date ? ` data-event-date="${escapeHtml(String(e.date))}"` : '';
+  const startAttr = e.start ? ` data-event-start="${escapeHtml(String(e.start))}"` : '';
+  const endAttr = e.end ? ` data-event-end="${escapeHtml(String(e.end))}"` : '';
   return [
-    `    <div class="event-row plain is-ghost"${dateAttr}>`,
+    `    <div class="event-row plain is-ghost"${dateAttr}${startAttr}${endAttr}>`,
     `      <span class="ev-time">${timeStr}</span>`,
     `      <span class="ev-title">${escapeHtml(e.title)}</span>`,
     `      <span class="ev-moved-to">${escapeHtml(e.movedToText)}</span>`,

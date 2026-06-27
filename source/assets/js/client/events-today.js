@@ -243,15 +243,17 @@
       for (var r = 0; r < idagRows.length; r++) {
         var iev = todayItems[r];
         var iel = idagRows[r];
-        if (!iev || !iel || iev._ghost) continue;
+        if (!iev || !iel) continue;
         var iStart = toMinutes(iev.start);
         if (iStart == null) continue;
         var iEnd = iev.end ? toMinutes(iev.end) : null;
         // End at or before start crosses midnight; no end runs until midnight.
         if (iEnd != null && iEnd <= iStart) iEnd += 24 * 60;
         if (iEnd == null) iEnd = 24 * 60;
+        // A ghost greys out once its old slot is past (02-§119.17) but is never
+        // marked "now" — it is only ever upcoming or past.
         if (nowMinIdag >= iEnd) iel.classList.add('is-past');
-        else if (nowMinIdag >= iStart) iel.classList.add('is-now');
+        else if (nowMinIdag >= iStart && !iev._ghost) iel.classList.add('is-now');
       }
     }
   }
@@ -324,18 +326,16 @@
         var el = rowEls[i];
         if (!ev || !el) continue;
         el.classList.remove('is-past', 'is-now');
-        // A ghost marker (02-§119.8) is never "now" or "past": it always stays
-        // visible at its old slot and points to the new time.
-        if (ev._ghost) { visible += 1; continue; }
         var startMin = toMinutes(ev.start);
         var endMin = ev.end ? toMinutes(ev.end) : null;
         if (startMin == null) { visible += 1; continue; }
         // End at or before start means the activity crosses midnight.
         if (endMin != null && endMin <= startMin) endMin += 24 * 60;
         if (endMin != null && nowMin >= endMin) {
-          el.classList.add('is-past'); // hidden via CSS
+          el.classList.add('is-past'); // hidden via CSS (incl. a past ghost)
         } else {
-          if (nowMin >= startMin) el.classList.add('is-now');
+          // A ghost is never "now" — only ever upcoming or past (02-§119.17).
+          if (nowMin >= startMin && !ev._ghost) el.classList.add('is-now');
           visible += 1;
         }
       }

@@ -198,7 +198,16 @@ describe('renderEventRow / renderSchedulePage – moved markup (02-§119.6, §11
     const html = renderEventRow({ _ghost: true, title: 'Frukost', date: '2026-06-22', start: '08:00', end: '09:00', movedToText: 'Flyttad till 24 juni 16:00–17:00' });
     assert.ok(html.includes('is-ghost'));
     assert.ok(html.includes('Flyttad till 24 juni 16:00–17:00'));
-    assert.ok(!html.includes('data-event-start'));
+    // No meta/responsible/location/iCal on a ghost.
+    assert.ok(!html.includes('ev-meta'));
+    assert.ok(!html.includes('ev-ical'));
+  });
+
+  it('MOVED-44: a ghost row carries its old date/start/end so it can be greyed when past', () => {
+    const html = renderEventRow({ _ghost: true, title: 'Frukost', date: '2026-06-22', start: '08:00', end: '09:00', movedToText: 'Flyttad till 24 juni 16:00–17:00' });
+    assert.ok(html.includes('data-event-date="2026-06-22"'));
+    assert.ok(html.includes('data-event-start="08:00"'));
+    assert.ok(html.includes('data-event-end="09:00"'));
   });
 
   it('MOVED-25: the schedule shows the activity on its new day and a ghost on the old day', () => {

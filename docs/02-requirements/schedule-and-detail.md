@@ -578,6 +578,12 @@ pointer at the slot it used to occupy. This is feedback from a camp organiser
   to) followed by the new day and time, or only the new time when the move is
   within the same day. The marker shows no description, location, responsible,
   link, or iCal download. <!-- 02-§119.9 -->
+- The marker's first line — its old time and the activity title — is struck
+  through. The "Flyttad till" pointer line below it is not struck through.
+  <!-- 02-§119.18 -->
+- Once the marker's old slot is in the past it is shown with the same muted grey,
+  dimmed treatment as any other passed row, in every view that shows passed
+  activities; the amber tone gives way to grey. <!-- 02-§119.17 -->
 - The per-event page shows no previous-slot marker — it describes a single
   activity and has no schedule position to mark. <!-- 02-§119.10 -->
 

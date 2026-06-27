@@ -826,12 +826,34 @@ body.display-mode .event-row.is-cancelled.is-now {
   box-shadow: inset 4px 0 0 var(--color-amber);
 }
 
+/* The ghost's first line (its old time and title) is struck through — that slot
+   no longer holds the activity. The "Flyttad till …" pointer below is not struck
+   so it stays readable. */
+.event-row.is-ghost .ev-time,
+.event-row.is-ghost .ev-title {
+  text-decoration: line-through;
+}
+
 .ev-moved-to {
   color: var(--color-amber-dark);
   font-size: var(--font-size-small);
   font-style: normal;
   font-weight: 600;
   margin-left: 0.5em;
+}
+
+/* Once the ghost's old slot is in the past it follows the ordinary grey, dimmed
+   past treatment like any other passed row — the amber tone and accent bar drop
+   away. The time and title are dimmed by the shared .is-past rule above; the
+   pointer text is dimmed here too. */
+body:not(.display-mode) .event-row.is-ghost.is-past {
+  background: rgba(0, 0, 0, 0.05);
+  box-shadow: none;
+}
+
+body:not(.display-mode) .event-row.is-ghost.is-past .ev-moved-to {
+  color: var(--color-charcoal);
+  opacity: 0.5;
 }
 
 /* Display mode (live.html): amber reads brighter against the dark board. */
