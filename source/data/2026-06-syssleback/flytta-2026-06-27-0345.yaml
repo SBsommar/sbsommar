@@ -1,0 +1,16 @@
+event:
+  id: flytta-2026-06-27-0345
+  title: Flytta
+  date: '2026-06-27'
+  start: '03:45'
+  end: '04:39'
+  location: AndreasTältet
+  responsible: Jag
+  description: null
+  link: null
+  owner:
+    name: ''
+    email: ''
+  meta:
+    created_at: 2026-06-27 01:39
+    updated_at: 2026-06-27 01:39
