@@ -1,0 +1,21 @@
+event:
+  id: vattenkrig-2026-06-27-1645
+  title: 'Vattenkrig!'
+  date: '2026-06-27'
+  start: '16:45'
+  end: '17:20'
+  location: Annat
+  responsible: Mamma Mia
+  description: |
+    Vattenkrig utanför GA-hallen.
+    Området kring småstugorna (där det varit nerfkrig).
+    Sunt förnuft gäller.
+    Blöt inte ner tälten.
+    Vattenpåfyllning kommer finnas vid hörnet utanför GA-hallen.
+  link: null
+  owner:
+    name: ''
+    email: ''
+  meta:
+    created_at: 2026-06-27 13:37
+    updated_at: 2026-06-27 13:37
