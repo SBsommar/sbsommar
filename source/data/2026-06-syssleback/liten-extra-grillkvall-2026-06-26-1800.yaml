@@ -15,6 +15,10 @@ event:
     Jag tänder grillarna och hoppas jag kommer ihåg att ta med Thermacellerna den här gången.
     
   link: null
+  moved:
+    from_date: '2026-06-26'
+    from_start: '18:00'
+    from_end: '23:55'
   owner:
     name: ''
     email: ''
