@@ -1,0 +1,16 @@
+event:
+  id: ny-test-2026-06-27-0438
+  title: Ny test
+  date: '2026-06-27'
+  start: '04:38'
+  end: '08:38'
+  location: KaffePaviljongen
+  responsible: Jag
+  description: null
+  link: null
+  owner:
+    name: ''
+    email: ''
+  meta:
+    created_at: 2026-06-27 01:38
+    updated_at: 2026-06-27 01:38
