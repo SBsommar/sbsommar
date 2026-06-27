@@ -79,6 +79,10 @@ events:
     description: string (markdown) | null
     link: string | null
     cancelled: boolean | null
+    moved:
+      from_date: YYYY-MM-DD
+      from_start: "HH:MM"
+      from_end: "HH:MM" | null
     owner:
       name: string
       email: string
@@ -126,6 +130,10 @@ event:
   description: string (markdown) | null
   link: string | null
   cancelled: boolean | null
+  moved:
+    from_date: YYYY-MM-DD
+    from_start: "HH:MM"
+    from_end: "HH:MM" | null
   owner:
     name: string
     email: string
@@ -173,6 +181,14 @@ event:
   absent, `null`, or `false` means the activity is active. A cancelled activity
   stays in the schedule, shown struck through and labelled "INSTÄLLD"
   (see `02-requirements/schedule-and-detail.md §118`). <!-- 05-§3.5 -->
+- `moved` — a mapping with `from_date` (`YYYY-MM-DD`), `from_start` (`HH:MM`),
+  and `from_end` (`HH:MM` or null). Present only when the activity has been
+  rescheduled to a different date or time; it records the slot the activity
+  occupied before its most recent reschedule. The edit API maintains this field
+  automatically — it is never set by a participant. A moved activity is shown at
+  its new time with the previous time struck through, and a minimal marker is
+  left at the previous slot
+  (see `02-requirements/schedule-and-detail.md §119`). <!-- 05-§3.6 -->
 - `owner`
 - `meta`
 

@@ -153,6 +153,38 @@ rule, so once a cancelled activity is in the past it takes the normal grey
 dimmed treatment; the label and strike-through remain (07-design/components.md
 §6.139–6.141).
 
+### 5.7 Moved activities (02-§119)
+
+An activity rescheduled to another time or day carries an optional `moved`
+mapping recording the slot it left (see `03-architecture/forms-and-api.md §32`).
+The renderers turn that into two things, built from the same merged event set so
+every view agrees. `source/build/moved.js` holds the shared server-side helpers
+(`isMoved`, `movedToText`, `movedFromText`, `movedTimeHtml`, `buildGhosts`);
+`events-today.js` mirrors them for the client-rendered today view.
+
+- **The activity itself** — wherever the activity appears it keeps its place at
+  the new time, with the previous time struck through in small text
+  (`.ev-time-old`) next to the highlighted new time (`.ev-time-new`, amber). The
+  row carries an `is-moved` class. A cross-day move shows the previous date too;
+  a same-day move shows only the previous time. `renderEventRow()` (`render.js`,
+  weekly schedule), `buildRowHtml()` (`events-today.js`, today/display), and
+  `renderEventPage()` (`render-event.js`) all apply this.
+- **A previous-slot marker** — for the weekly schedule and the today view a
+  minimal **ghost** row is generated at the activity's `from_date`/`from_start`:
+  `buildGhosts()` produces one pseudo-event per moved activity, marked `_ghost`,
+  which `renderEventRow()`/`buildRowHtml()` render as the title plus a
+  `Flyttad till …` pointer (`.ev-moved-to`) and nothing else. The ghost carries
+  a `data-event-date` but **no** `data-event-start`, so `schema-status.js` (whose
+  selector requires both) never marks it `is-now`/`is-past`. The per-event page
+  emits no ghost — it has no schedule slot to mark (02-§119.10).
+
+Because the ghost is derived from the live event at build time — never stored as
+its own record — a deleted activity loses its marker automatically, while a
+cancelled ("inställd") activity keeps it (02-§119.12). The today view sorts
+ghosts in with real rows by start time and keeps the real-event count for its
+footer; the live view's per-minute classifier skips ghosts so they always stay
+visible at the old slot.
+
 ---
 
 ## 6. Project Structure

@@ -341,4 +341,58 @@ final class GitHubTest extends TestCase
         $doc = \Symfony\Component\Yaml\Yaml::parse($yaml);
         $this->assertSame('frukost-2026-06-22-0800', $doc['event']['id']);
     }
+
+    // ── moved marker (02-§119) ──────────────────────────────────────────────
+
+    public function testPatchEventObjectRecordsMovedOnStartChange(): void
+    {
+        $patched = GitHub::patchEventObject(self::baseEvent(), ['start' => '10:00'], '2026-06-22 08:00');
+        $this->assertSame(
+            ['from_date' => '2026-06-22', 'from_start' => '08:00', 'from_end' => '09:00'],
+            $patched['moved'],
+        );
+    }
+
+    public function testPatchEventObjectRecordsMovedOnDateChange(): void
+    {
+        $patched = GitHub::patchEventObject(self::baseEvent(), ['date' => '2026-06-24'], '2026-06-22 08:00');
+        $this->assertSame('2026-06-22', $patched['moved']['from_date']);
+    }
+
+    public function testPatchEventObjectPreservesMovedOnTextOnlyEdit(): void
+    {
+        $base = self::baseEvent(['moved' => ['from_date' => '2026-06-21', 'from_start' => '07:00', 'from_end' => '08:00']]);
+        $patched = GitHub::patchEventObject($base, ['title' => 'Nytt namn'], '2026-06-22 08:00');
+        $this->assertSame('2026-06-21', $patched['moved']['from_date']);
+    }
+
+    public function testPatchEventObjectClearsMovedWhenReturnedToOriginalSlot(): void
+    {
+        // Currently at 10:00 with a marker pointing back to 08:00; moving it back
+        // to 08:00 clears the marker (02-§119.5).
+        $base = self::baseEvent([
+            'start' => '10:00',
+            'end'   => '11:00',
+            'moved' => ['from_date' => '2026-06-22', 'from_start' => '08:00', 'from_end' => '09:00'],
+        ]);
+        $patched = GitHub::patchEventObject($base, ['start' => '08:00', 'end' => '09:00'], '2026-06-22 08:00');
+        $this->assertArrayNotHasKey('moved', $patched);
+    }
+
+    public function testBuildFragmentYamlEmitsMovedBlock(): void
+    {
+        $yaml = GitHub::buildFragmentYaml(self::baseEvent([
+            'moved' => ['from_date' => '2026-06-21', 'from_start' => '07:00', 'from_end' => '08:00'],
+        ]));
+        $doc = \Symfony\Component\Yaml\Yaml::parse($yaml);
+        $this->assertSame('2026-06-21', $doc['event']['moved']['from_date']);
+        $this->assertSame('07:00', $doc['event']['moved']['from_start']);
+        $this->assertSame('08:00', $doc['event']['moved']['from_end']);
+    }
+
+    public function testBuildFragmentYamlOmitsMovedWhenAbsent(): void
+    {
+        $yaml = GitHub::buildFragmentYaml(self::baseEvent());
+        $this->assertStringNotContainsString('moved:', $yaml);
+    }
 }

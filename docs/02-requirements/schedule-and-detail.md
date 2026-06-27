@@ -523,3 +523,75 @@ export.
 - In the iCal export (both the full-camp `schema.ics` and the per-event
   `event.ics`), a cancelled activity's VEVENT carries the standard
   `STATUS:CANCELLED` property. <!-- 02-§118.12 -->
+
+---
+
+## 119. Moved Activities
+
+**Context.** When an activity is rescheduled to another time or another day,
+participants who remember the old slot need to see both that it changed and
+where it went. The schedule marks a moved activity in place and leaves a small
+pointer at the slot it used to occupy. This is feedback from a camp organiser
+(issue #729).
+
+### 119.1 Data
+
+- An event may carry an optional `moved` mapping recording the slot it occupied
+  before its most recent reschedule: `from_date` (`YYYY-MM-DD`), `from_start`
+  (`HH:MM`), and `from_end` (`HH:MM` or null). An event that has never been
+  moved, or whose last edit changed only its text, has no `moved` mapping.
+  <!-- 02-§119.1 -->
+- The `moved` mapping is derived and maintained by the edit API, never by a
+  participant directly. The add and edit request bodies do not accept a `moved`
+  field; any `moved` value in a request body is ignored. <!-- 02-§119.2 -->
+
+### 119.2 Capture (edit form)
+
+- When an edit changes an activity's `date`, `start`, or `end`, the edit API
+  records the activity's previous `date`, `start`, and `end` in its `moved`
+  mapping. <!-- 02-§119.3 -->
+- When an edit changes only text fields (title, description, location,
+  responsible, link, cancelled) and leaves `date`, `start`, and `end`
+  unchanged, the activity's existing `moved` mapping is left exactly as it was —
+  a text edit neither creates nor clears the moved marker. <!-- 02-§119.4 -->
+- When an edit moves an activity back to the exact slot recorded in its current
+  `moved` mapping, the `moved` mapping is removed: an activity returned to where
+  it started is no longer marked as moved. <!-- 02-§119.5 -->
+
+### 119.3 Marked time on the activity itself
+
+- In the weekly schedule, the today view, and the per-event page, a moved
+  activity keeps its place at its current (new) time. Its previous time is shown
+  struck through in small text and its new time is highlighted in amber
+  (`--color-amber`). <!-- 02-§119.6 -->
+- When the activity has moved to a different day, the struck-through previous
+  time includes the previous date; when it has only changed time within the same
+  day, only the previous time is shown. <!-- 02-§119.7 -->
+
+### 119.4 Marker at the previous slot
+
+- In the weekly schedule and the today view, a moved activity also appears as a
+  minimal marker at the slot it used to occupy (its `from_date` and
+  `from_start`), sorted into that day at its previous start time. <!-- 02-§119.8 -->
+- The marker shows only the activity's title and the label "Flyttad till" (moved
+  to) followed by the new day and time, or only the new time when the move is
+  within the same day. The marker shows no description, location, responsible,
+  link, or iCal download. <!-- 02-§119.9 -->
+- The per-event page shows no previous-slot marker — it describes a single
+  activity and has no schedule position to mark. <!-- 02-§119.10 -->
+
+### 119.5 Persistence and deletion
+
+- The moved marking and the previous-slot marker stay until the activity is
+  moved again (which records a new previous slot), moved back to its original
+  slot (which clears the marking), or the camp ends. <!-- 02-§119.11 -->
+- The previous-slot marker is derived from the live activity. When an activity
+  is deleted, its previous-slot marker disappears with it; a cancelled
+  ("inställd") activity still exists, so its previous-slot marker remains.
+  <!-- 02-§119.12 -->
+
+### 119.6 Accessibility
+
+- The previous time is conveyed by the visible struck-through text and the
+  "Flyttad till" label, not by colour alone; the amber highlight is an
+  additional cue, never the only one. <!-- 02-§119.13 -->

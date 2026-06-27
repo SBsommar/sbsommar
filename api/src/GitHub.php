@@ -329,6 +329,15 @@ final class GitHub
         if (!empty($event['cancelled'])) {
             $lines[] = "{$fp}cancelled: true";
         }
+        // Only write the moved block when the activity carries a previous-slot
+        // marker (02-§119.1). Moving it back to its original slot drops it again.
+        if (!empty($event['moved']) && !empty($event['moved']['from_date'])) {
+            $fromEnd  = $event['moved']['from_end'] ?? null;
+            $lines[]  = "{$fp}moved:";
+            $lines[]  = "{$dp}from_date: '{$event['moved']['from_date']}'";
+            $lines[]  = "{$dp}from_start: '{$event['moved']['from_start']}'";
+            $lines[]  = "{$dp}from_end: " . ($fromEnd ? "'{$fromEnd}'" : 'null');
+        }
         $lines[] = "{$fp}owner:";
         $lines[] = "{$dp}name: '" . str_replace("'", "''", $event['owner']['name'] ?? '') . "'";
         $lines[] = "{$dp}email: ''";
@@ -408,12 +417,18 @@ final class GitHub
      */
     public static function patchEventObject(array $event, array $updates, string $now): array
     {
-        return [
+        $date  = array_key_exists('date', $updates) ? ($updates['date'] ?: $event['date']) : $event['date'];
+        $start = array_key_exists('start', $updates) ? ($updates['start'] ?: $event['start']) : $event['start'];
+        $end   = array_key_exists('end', $updates) ? ($updates['end'] ?: null) : ($event['end'] ?? null);
+
+        $moved = self::resolveMoved($event, $date, $start, $end);
+
+        $patched = [
             'id'          => $event['id'],
             'title'       => array_key_exists('title', $updates) ? ($updates['title'] ?: $event['title']) : $event['title'],
-            'date'        => array_key_exists('date', $updates) ? ($updates['date'] ?: $event['date']) : $event['date'],
-            'start'       => array_key_exists('start', $updates) ? ($updates['start'] ?: $event['start']) : $event['start'],
-            'end'         => array_key_exists('end', $updates) ? ($updates['end'] ?: null) : ($event['end'] ?? null),
+            'date'        => $date,
+            'start'       => $start,
+            'end'         => $end,
             'location'    => array_key_exists('location', $updates) ? ($updates['location'] ?: $event['location']) : $event['location'],
             'responsible' => array_key_exists('responsible', $updates) ? ($updates['responsible'] ?: $event['responsible']) : $event['responsible'],
             'description' => array_key_exists('description', $updates) ? ($updates['description'] ?: null) : ($event['description'] ?? null),
@@ -425,6 +440,66 @@ final class GitHub
                 'updated_at' => $now,
             ],
         ];
+        if ($moved !== null) {
+            $patched['moved'] = $moved;
+        }
+
+        return $patched;
+    }
+
+    /**
+     * Normalise a raw `moved` value into null or a clean
+     * { from_date, from_start, from_end } array. A marker needs a previous date
+     * and start; from_end may be null (02-§119.1).
+     *
+     * @param mixed $raw
+     * @return array{from_date:string,from_start:string,from_end:?string}|null
+     */
+    public static function normaliseMoved(mixed $raw): ?array
+    {
+        if (!is_array($raw) || empty($raw['from_date']) || empty($raw['from_start'])) {
+            return null;
+        }
+        $fromEnd = $raw['from_end'] ?? null;
+
+        return [
+            'from_date'  => (string) $raw['from_date'],
+            'from_start' => (string) $raw['from_start'],
+            'from_end'   => $fromEnd ? (string) $fromEnd : null,
+        ];
+    }
+
+    /**
+     * Decide the event's `moved` marker after an edit (02-§119.3–§119.5):
+     * record the slot it left when date/start/end change, clear it when the move
+     * returns it to the slot already recorded in `moved`, and keep the existing
+     * marker untouched on a text-only edit. Mirrors resolveMoved() in
+     * source/api/edit-event.js.
+     *
+     * @param array<string,mixed> $event
+     * @return array{from_date:string,from_start:string,from_end:?string}|null
+     */
+    public static function resolveMoved(array $event, string $newDate, string $newStart, ?string $newEnd): ?array
+    {
+        $oldDate  = (string) $event['date'];
+        $oldStart = (string) $event['start'];
+        $oldEnd   = isset($event['end']) && $event['end'] !== null ? (string) $event['end'] : null;
+        $prev     = self::normaliseMoved($event['moved'] ?? null);
+
+        $timeChanged = $newDate !== $oldDate || $newStart !== $oldStart || $newEnd !== $oldEnd;
+        if (!$timeChanged) {
+            return $prev;
+        }
+
+        if ($prev !== null
+            && $prev['from_date'] === $newDate
+            && $prev['from_start'] === $newStart
+            && ($prev['from_end'] ?? null) === $newEnd
+        ) {
+            return null;
+        }
+
+        return ['from_date' => $oldDate, 'from_start' => $oldStart, 'from_end' => $oldEnd];
     }
 
     /**

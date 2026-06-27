@@ -58,6 +58,14 @@ function eventBodyLines(event, fp, dp) {
   if (event.cancelled) {
     lines.push(`${fp}cancelled: true`);
   }
+  // Only write the moved block when the activity carries a previous-slot marker
+  // (02-§119.1). Moving it back to its original slot drops the block again.
+  if (event.moved && event.moved.from_date) {
+    lines.push(`${fp}moved:`);
+    lines.push(`${dp}from_date: '${event.moved.from_date}'`);
+    lines.push(`${dp}from_start: '${event.moved.from_start}'`);
+    lines.push(`${dp}from_end: ${event.moved.from_end ? `'${event.moved.from_end}'` : 'null'}`);
+  }
   lines.push(`${fp}owner:`);
   lines.push(`${dp}name: '${((event.owner && event.owner.name) || '').replace(/'/g, "''")}'`);
   lines.push(`${dp}email: ''`);

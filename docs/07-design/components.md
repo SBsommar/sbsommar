@@ -236,6 +236,12 @@ mint form's per-field validation uses the inline field-error component
 - While the activity is upcoming or in progress, its row text is `var(--color-terracotta)`, the reserved red signal. The "INSTÄLLD" label is part of the visible text, so the cancelled state never depends on colour or strike-through alone. <!-- 07-§6.140 -->
 - Once a cancelled activity has passed (`.is-past`), it takes the same muted grey, `0.5`-opacity treatment as any other past row: the terracotta colour is dropped (the `.is-past` rule wins) while the "INSTÄLLD" label and strike-through remain. <!-- 07-§6.141 -->
 
+### Moved activity (02-§119)
+
+- A moved activity (`.event-row.is-moved`) keeps its place at the new time. Its previous time is shown struck through in small, slightly muted text (`.ev-time-old`) and its new time is highlighted in amber (`.ev-time-new`: a `var(--color-amber)` tint behind bold text). The amber is an additional cue on top of the visible struck-through text — the moved state never depends on colour alone. <!-- 07-§6.142 -->
+- Amber (`var(--color-amber)`) is reserved for the moved-activity marking, distinct from terracotta (cancelled) and sage (in progress), so the three states never read as one another. <!-- 07-§6.143 -->
+- At the slot a moved activity used to occupy, a minimal ghost marker (`.event-row.is-ghost`, muted and italic) shows only the activity's title and a `Flyttad till …` pointer (`.ev-moved-to`, in `var(--color-amber-dark)` for AA-readable text on cream). The marker carries no description, location, responsible, link, or iCal action. <!-- 07-§6.144 -->
+
 ### Display sidebar — portrait layout
 
 `/live.html` is optimised for portrait-orientation screens (e.g. 1080 × 1920 px). The heading moves into the sidebar so events use the full available height from the top of the page. <!-- 07-§6.44 -->

@@ -2,6 +2,7 @@
 
 const { pageNav, pageFooter } = require('./layout');
 const { toDateString, escapeHtml, formatDate, safeLinkHref } = require('./utils');
+const { isMoved, movedTimeHtml, buildGhosts } = require('./moved');
 const { renderDescriptionHtml } = require('./markdown');
 const { goatcounterScript } = require('./analytics');
 const { pwaHeadTags } = require('./pwa');
@@ -49,10 +50,35 @@ function icalDownloadLink(e) {
 // by screen readers — the cancelled state never relies on colour alone.
 const CANCELLED_LABEL = '<span class="ev-cancelled-label">INSTÄLLD</span> ';
 
-function renderEventRow(e) {
+// A previous-slot ghost marker for a moved activity (02-§119.8): the title and a
+// "Flyttad till …" pointer only — no meta, detail, or iCal link. It carries a
+// data-event-date but no data-event-start, so schema-status.js never marks it
+// is-now/is-past (its selector requires both attributes).
+function renderGhostRow(e) {
   const timeStr = e.end
     ? `${escapeHtml(String(e.start))}–${escapeHtml(String(e.end))}`
     : escapeHtml(String(e.start));
+  const dateAttr = e.date ? ` data-event-date="${escapeHtml(String(e.date))}"` : '';
+  return [
+    `    <div class="event-row plain is-ghost"${dateAttr}>`,
+    `      <span class="ev-time">${timeStr}</span>`,
+    `      <span class="ev-title">${escapeHtml(e.title)}</span>`,
+    `      <span class="ev-moved-to">${escapeHtml(e.movedToText)}</span>`,
+    '    </div>',
+  ].join('\n');
+}
+
+function renderEventRow(e) {
+  if (e._ghost) return renderGhostRow(e);
+
+  const timeStr = e.end
+    ? `${escapeHtml(String(e.start))}–${escapeHtml(String(e.end))}`
+    : escapeHtml(String(e.start));
+  // A moved activity shows its previous time struck through next to the
+  // highlighted new time (02-§119.6); otherwise the plain time string.
+  const moved = isMoved(e);
+  const timeCellHtml = moved ? movedTimeHtml(e, timeStr) : timeStr;
+  const movedClass = moved ? ' is-moved' : '';
   const metaParts = [e.location, e.responsible].filter(Boolean).map(escapeHtml);
   const metaEl = metaParts.length ? `<span class="ev-meta"> · ${metaParts.join(' · ')}</span>` : '';
   const icalEl = icalDownloadLink(e);
@@ -72,9 +98,9 @@ function renderEventRow(e) {
 
   if (hasExtra) {
     return [
-      `    <details class="event-row${cancelledClass}"${idAttr}${timeAttrs}>`,
+      `    <details class="event-row${cancelledClass}${movedClass}"${idAttr}${timeAttrs}>`,
       '      <summary>',
-      `        <span class="ev-time">${timeStr}</span>`,
+      `        <span class="ev-time">${timeCellHtml}</span>`,
       `        <span class="ev-title">${titleHtml}</span>`,
       metaEl ? `        ${metaEl}` : '',
       icalEl ? `        ${icalEl}` : '',
@@ -86,8 +112,8 @@ function renderEventRow(e) {
       .join('\n');
   } else {
     return [
-      `    <div class="event-row plain${cancelledClass}"${idAttr}${timeAttrs}>`,
-      `      <span class="ev-time">${timeStr}</span>`,
+      `    <div class="event-row plain${cancelledClass}${movedClass}"${idAttr}${timeAttrs}>`,
+      `      <span class="ev-time">${timeCellHtml}</span>`,
       `      <span class="ev-title">${titleHtml}</span>`,
       metaEl ? `      ${metaEl}` : '',
       icalEl ? `      ${icalEl}` : '',
@@ -111,7 +137,9 @@ function renderDaySection(date, dayEvents) {
 }
 
 function renderSchedulePage(camp, events, footerHtml = '', navSections = [], siteUrl = '', cookieDomain = '', goatcounterCode = '') {
-  const { dates, byDate } = groupAndSortEvents(events);
+  // A moved activity also leaves a minimal ghost marker at its previous slot
+  // (02-§119.8); ghosts group and sort into their old day like any other row.
+  const { dates, byDate } = groupAndSortEvents(events.concat(buildGhosts(events)));
   const daySections = dates.map((date) => renderDaySection(date, byDate[date])).join('\n\n');
   const campName = escapeHtml(camp.name);
 
