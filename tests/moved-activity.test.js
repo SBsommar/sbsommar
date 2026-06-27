@@ -189,6 +189,11 @@ describe('renderEventRow / renderSchedulePage – moved markup (02-§119.6, §11
     assert.ok(html.includes('<span class="ev-time-new">16:00–17:00</span>'));
   });
 
+  it('MOVED-43: the new time is rendered before (above) the struck old time', () => {
+    const html = renderEventRow(moved);
+    assert.ok(html.indexOf('ev-time-new') < html.indexOf('ev-time-old'));
+  });
+
   it('MOVED-24: a ghost row shows title + Flyttad till and no detail', () => {
     const html = renderEventRow({ _ghost: true, title: 'Frukost', date: '2026-06-22', start: '08:00', end: '09:00', movedToText: 'Flyttad till 24 juni 16:00–17:00' });
     assert.ok(html.includes('is-ghost'));
