@@ -2,8 +2,8 @@ event:
   id: en-annan-sak-2026-06-27-0229
   title: En annan sak
   date: '2026-06-27'
-  start: '02:29'
-  end: '03:29'
+  start: '04:29'
+  end: '05:29'
   location: Servicehus
   responsible: Jag
   description: null
@@ -13,4 +13,4 @@ event:
     email: ''
   meta:
     created_at: 2026-06-26 23:30
-    updated_at: 2026-06-27 00:27
+    updated_at: 2026-06-27 01:29
