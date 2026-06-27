@@ -35,12 +35,12 @@ function movedFromText(e) {
   return e.moved.from_date === e.date ? time : `${formatDateShort(e.moved.from_date)} ${time}`;
 }
 
-// Inner HTML for the .ev-time cell of a moved activity: previous time struck
-// through in small text, new time highlighted in amber (02-§119.6).
-// `newTimeStr` is the already-escaped current-time string.
+// Inner HTML for the .ev-time cell of a moved activity: the new time highlighted
+// in amber on top, the previous time struck through in smaller text directly
+// below (02-§119.6). `newTimeStr` is the already-escaped current-time string.
 function movedTimeHtml(e, newTimeStr) {
-  return `<span class="ev-time-old">${escapeHtml(movedFromText(e))}</span> `
-    + `<span class="ev-time-new">${newTimeStr}</span>`;
+  return `<span class="ev-time-new">${newTimeStr}</span>`
+    + `<span class="ev-time-old">${escapeHtml(movedFromText(e))}</span>`;
 }
 
 // True when the event carries a usable previous-location marker (02-§119.14).

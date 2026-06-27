@@ -780,18 +780,35 @@ body.display-mode .event-row.is-cancelled.is-now {
 }
 
 /* ── Moved activities (02-§119) ───────────────────────────────────────────────
-   A rescheduled activity keeps its place at the new time: its previous time is
-   struck through in small muted text and its new time is highlighted in amber.
-   A minimal ghost marker (.is-ghost) is left at the slot it used to occupy,
-   showing only the title and a "Flyttad till …" pointer to where it went.
-   A relocated activity shows its new location as usual with the previous
-   location struck through in small text (.ev-loc-old) — no ghost. */
+   A rescheduled activity keeps its place at the new time: the new time sits on
+   top (where the time normally is) and the previous time is struck through in
+   smaller text directly below it. A minimal ghost marker (.is-ghost) is left at
+   the slot it used to occupy, in a soft amber tone, showing only the title and a
+   "Flyttad till …" pointer to where it went. A relocated activity shows its new
+   location as usual with the previous location struck through in small text
+   (.ev-loc-old) — no ghost. */
 .ev-time-old,
 .ev-loc-old {
   text-decoration: line-through;
   font-size: var(--font-size-small);
   opacity: 0.7;
+}
+
+.ev-loc-old {
   margin-right: 0.25em;
+}
+
+/* Stack the moved time: the new time on top, the struck-through previous time
+   on its own line directly below. The cell's first baseline (the new time)
+   aligns with the activity title. */
+.event-row.is-moved .ev-time {
+  display: inline-flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.event-row.is-moved .ev-time-old {
+  display: block;
 }
 
 .ev-time-new {
@@ -801,9 +818,12 @@ body.display-mode .event-row.is-cancelled.is-now {
   font-weight: 700;
 }
 
+/* The previous-slot ghost marker carries a soft amber tone and an amber accent
+   bar, marking it clearly as a "moved away" pointer. */
 .event-row.is-ghost {
-  opacity: 0.75;
   font-style: italic;
+  background: rgba(232, 162, 61, 0.15); /* var(--color-amber) tint */
+  box-shadow: inset 4px 0 0 var(--color-amber);
 }
 
 .ev-moved-to {
@@ -818,6 +838,11 @@ body.display-mode .event-row.is-cancelled.is-now {
 body.display-mode .ev-time-new {
   background: rgba(232, 162, 61, 0.28);
   color: var(--color-white);
+}
+
+body.display-mode .event-row.is-ghost {
+  background: rgba(232, 162, 61, 0.18);
+  box-shadow: inset 3px 0 0 var(--color-amber);
 }
 
 body.display-mode .ev-moved-to {
