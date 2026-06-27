@@ -179,6 +179,38 @@ describe('moved.js helpers (02-§119.7–§119.9)', () => {
   });
 });
 
+describe('buildGhosts – ghost suppression for nearby same-day moves (02-§119.19, §119.20)', () => {
+  // A same-day move from 08:00 to 16:00. "Between" counts activities on the same
+  // day whose start falls strictly after 08:00 and strictly before 16:00.
+  const movedNear = baseEvent({ id: 'a', title: 'A', start: '16:00', end: '17:00', moved: { from_date: '2026-06-22', from_start: '08:00', from_end: '09:00' } });
+  // The same move, but to a different day — proximity never suppresses this one.
+  const movedFar = baseEvent({ id: 'b', title: 'B', date: '2026-06-24', start: '16:00', end: '17:00', moved: { from_date: '2026-06-22', from_start: '08:00', from_end: '09:00' } });
+
+  // A plain, unmoved activity starting at `start` on the move's day.
+  function filler(start) {
+    return baseEvent({ id: 'f' + start.replace(':', ''), title: 'F' + start, start, end: null });
+  }
+
+  it('MOVED-45: a same-day move with nothing between leaves no ghost', () => {
+    assert.equal(buildGhosts([movedNear]).length, 0);
+  });
+
+  it('MOVED-46: a cross-day move always leaves a ghost, however few lie between', () => {
+    assert.equal(buildGhosts([movedFar]).length, 1);
+  });
+
+  it('MOVED-47: a same-day move with more than the threshold between keeps its ghost', () => {
+    const between = ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00'].map(filler); // 6 > 5
+    assert.equal(buildGhosts([movedNear, ...between]).length, 1);
+  });
+
+  it('MOVED-48: the threshold is inclusive — exactly the threshold count is still suppressed', () => {
+    const five = ['09:00', '10:00', '11:00', '12:00', '13:00'].map(filler); // 5 == default threshold
+    assert.equal(buildGhosts([movedNear, ...five]).length, 0);
+    assert.equal(buildGhosts([movedNear, ...five, filler('14:00')]).length, 1); // 6 > threshold
+  });
+});
+
 describe('renderEventRow / renderSchedulePage – moved markup (02-§119.6, §119.8)', () => {
   const moved = baseEvent({ date: '2026-06-24', start: '16:00', end: '17:00', moved: { from_date: '2026-06-22', from_start: '08:00', from_end: '09:00' } });
 

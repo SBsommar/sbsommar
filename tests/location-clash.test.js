@@ -10,12 +10,20 @@ const assert = require('node:assert/strict');
 
 const { markLocationClashes, isRealLocation, isIgnoredActivity } = require('../source/build/clashes');
 const { renderEventRow } = require('../source/build/render');
+const { patchEventObject } = require('../source/api/edit-event');
+const { buildFragmentYaml } = require('../source/api/github');
+const yaml = require('js-yaml');
 
 function ev(id, location, start, end, created, extra) {
   return Object.assign({
     id, title: id, date: '2026-06-27', start, end, location,
     responsible: 'R', meta: { created_at: created },
   }, extra || {});
+}
+
+// Same as `ev` but also records when the room was chosen (`meta.location_set_at`).
+function evL(id, location, start, end, created, locationSetAt) {
+  return ev(id, location, start, end, created, { meta: { created_at: created, location_set_at: locationSetAt } });
 }
 
 describe('markLocationClashes (02-§120)', () => {
@@ -117,6 +125,73 @@ describe('markLocationClashes (02-§120)', () => {
     assert.equal(isRealLocation('  annat '), false);
     assert.equal(isRealLocation(''), false);
     assert.equal(isRealLocation('Samlingssalen'), true);
+  });
+
+  it('CLASH-16: the later room-chooser is flagged, even if it was created first', () => {
+    // A has held the room since 06-01. B was created earlier (05-01) but only
+    // moved into this room on 06-10 — B chose the room last, so B is flagged.
+    const A = evL('A', 'Sal', '14:00', '16:00', '2026-06-01 10:00', '2026-06-01 10:00');
+    const B = evL('B', 'Sal', '15:00', '17:00', '2026-05-01 10:00', '2026-06-10 10:00');
+    markLocationClashes([A, B]);
+    assert.equal(A._clash, undefined);
+    assert.equal(B._clash, true);
+  });
+
+  it('CLASH-17: array order does not change which room-chooser is flagged', () => {
+    const A = evL('A', 'Sal', '14:00', '16:00', '2026-06-01 10:00', '2026-06-01 10:00');
+    const B = evL('B', 'Sal', '15:00', '17:00', '2026-05-01 10:00', '2026-06-10 10:00');
+    markLocationClashes([B, A]);
+    assert.equal(B._clash, true);
+    assert.equal(A._clash, undefined);
+  });
+
+  it('CLASH-18: with three overlaps, the two later room-choosers are flagged', () => {
+    // A was created last (06-09) but chose the room first (06-01), so it keeps it.
+    const A = evL('A', 'Sal', '14:00', '17:00', '2026-06-09 10:00', '2026-06-01 10:00');
+    const B = evL('B', 'Sal', '15:00', '16:00', '2026-06-01 10:00', '2026-06-02 10:00');
+    const C = evL('C', 'Sal', '15:30', '16:30', '2026-06-02 10:00', '2026-06-03 10:00');
+    markLocationClashes([A, B, C]);
+    assert.equal(A._clash, undefined);
+    assert.equal(B._clash, true);
+    assert.equal(C._clash, true);
+  });
+
+  it('CLASH-20: an activity without location_set_at falls back to its creation time', () => {
+    // A recorded when it chose the room (06-01). B predates the field, so it
+    // falls back to created_at (06-03) and counts as the later chooser.
+    const A = evL('A', 'Sal', '14:00', '16:00', '2026-06-05 10:00', '2026-06-01 10:00');
+    const B = ev('B', 'Sal', '15:00', '17:00', '2026-06-03 10:00');
+    markLocationClashes([A, B]);
+    assert.equal(A._clash, undefined);
+    assert.equal(B._clash, true);
+  });
+});
+
+describe('patchEventObject / buildFragmentYaml – location_set_at (02-§120.8)', () => {
+  function full(extra) {
+    return Object.assign({
+      id: 'a', title: 'A', date: '2026-06-27', start: '14:00', end: '16:00',
+      location: 'Sal', responsible: 'R', description: null, link: null,
+      owner: { name: '', email: '' },
+      meta: { created_at: '2026-06-01 10:00', updated_at: '2026-06-01 10:00' },
+    }, extra || {});
+  }
+
+  it('CLASH-19: patchEventObject stamps location_set_at when the location changes', () => {
+    const p = patchEventObject(full(), { location: 'Tält' }, '2026-06-10 09:00');
+    assert.equal(p.meta.location_set_at, '2026-06-10 09:00');
+  });
+
+  it('CLASH-21: patchEventObject preserves location_set_at on a non-location edit', () => {
+    const ev0 = full({ meta: { created_at: '2026-06-01 10:00', updated_at: '2026-06-01 10:00', location_set_at: '2026-06-02 08:00' } });
+    const p = patchEventObject(ev0, { title: 'Nytt' }, '2026-06-10 09:00');
+    assert.equal(p.meta.location_set_at, '2026-06-02 08:00');
+  });
+
+  it('CLASH-22: buildFragmentYaml round-trips location_set_at and omits it when absent', () => {
+    const withTs = full({ meta: { created_at: '2026-06-01 10:00', updated_at: '2026-06-01 10:00', location_set_at: '2026-06-02 08:00' } });
+    assert.equal(yaml.load(buildFragmentYaml(withTs)).event.meta.location_set_at, '2026-06-02 08:00');
+    assert.ok(!buildFragmentYaml(full()).includes('location_set_at'));
   });
 });
 
