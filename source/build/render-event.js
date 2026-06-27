@@ -1,6 +1,7 @@
 'use strict';
 
 const { escapeHtml, formatDate, toDateString, safeLinkHref } = require('./utils');
+const { isMoved, movedTimeHtml } = require('./moved');
 const { pageNav, pageFooter } = require('./layout');
 const { renderDescriptionHtml } = require('./markdown');
 const { pwaHeadTags } = require('./pwa');
@@ -55,6 +56,10 @@ function renderEventPage(event, camp, siteUrl, footerHtml = '', navSections = []
   const timeStr = event.end
     ? `${escapeHtml(String(event.start))}–${escapeHtml(String(event.end))}`
     : escapeHtml(String(event.start));
+  // A moved activity shows its previous time struck through beside the
+  // highlighted new time (02-§119.6). The per-event page carries no ghost
+  // marker — it describes one activity and has no schedule slot (02-§119.10).
+  const timeDisplay = isMoved(event) ? movedTimeHtml(event, timeStr) : timeStr;
 
   let descriptionHtml = '';
   if (event.description) {
@@ -88,7 +93,7 @@ ${pageNav('schema.html', navSections)}
   <p class="back-link"><a href="schema.html">← Tillbaka till schemat</a></p>
   <h1${h1Class}>${h1Inner}</h1>
   <div class="event-detail">
-    <p>📅 ${date} 🕐 ${timeStr}</p>
+    <p>📅 ${date} 🕐 ${timeDisplay}</p>
     <p>📍 <strong>Plats:</strong> ${escapeHtml(event.location)} · 👤 <strong>Ansvarig:</strong> ${escapeHtml(event.responsible)}</p>
     <p>📆 <a href="schema/${escapeHtml(String(event.id))}/event.ics" download>Lägg till i kalender (.ics)</a></p>
 ${conflictHtml}${descriptionHtml}${linkHtml}  </div>

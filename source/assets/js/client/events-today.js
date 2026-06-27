@@ -43,13 +43,19 @@
 
   var todayEvents = events.filter(function (e) { return e.date === today; });
   todayEvents.sort(function (a, b) { return a.start.localeCompare(b.start); });
+  // Today's render list = real events + ghost markers for activities moved away
+  // from today (02-§119.8), sorted together by start time. todayEvents keeps the
+  // real-event count for the footer; todayItems drives rendering and status.
+  var todayItems = todayEvents.concat(buildGhostsFor(today));
+  todayItems.sort(function (a, b) { return a.start.localeCompare(b.start); });
 
   var container = document.getElementById('today-events');
   if (!container) return;
 
-  // idag.html shows today only: with no events there is nothing more to render.
+  // idag.html shows today only: with nothing to render (no events, no ghosts)
+  // there is nothing more to do.
   // live.html (showNextDay) continues so it can still show the next day below.
-  if (todayEvents.length === 0 && !showNextDay) {
+  if (todayItems.length === 0 && !showNextDay) {
     container.innerHTML = '<p class="' + emptyClass + '">Inga aktiviteter schemalagda för idag.</p>';
     return;
   }
@@ -68,6 +74,54 @@
     return /^https?:\/\//i.test(s) ? s : '';
   }
 
+  // ── Moved-activity helpers (02-§119), mirroring source/build/moved.js ──────
+  function shortDate(dateStr) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateStr || '');
+    return m ? parseInt(m[3], 10) + ' ' + months[parseInt(m[2], 10) - 1] : String(dateStr);
+  }
+  function timeRange(s, e) { return e ? (s + '–' + e) : String(s); }
+  function isMovedEvent(e) {
+    return !!(e && e.moved && e.moved.from_date && e.moved.from_start);
+  }
+  // "Flyttad till" target text: new day+time, or just the new time for a
+  // same-day move (02-§119.9).
+  function movedToText(e) {
+    var t = timeRange(e.start, e.end);
+    return e.moved.from_date === e.date ? 'Flyttad till ' + t : 'Flyttad till ' + shortDate(e.date) + ' ' + t;
+  }
+  // Previous-slot text struck through on the activity itself (02-§119.6/7).
+  function movedFromText(e) {
+    var t = timeRange(e.moved.from_start, e.moved.from_end);
+    return e.moved.from_date === e.date ? t : shortDate(e.moved.from_date) + ' ' + t;
+  }
+  // A minimal ghost marker for each activity moved away from `dateStr`
+  // (02-§119.8): title + "Flyttad till …" only, positioned at its old start.
+  function buildGhostsFor(dateStr) {
+    var ghosts = [];
+    for (var i = 0; i < events.length; i++) {
+      var e = events[i];
+      if (isMovedEvent(e) && e.moved.from_date === dateStr) {
+        ghosts.push({
+          _ghost: true,
+          title: e.title,
+          date: e.moved.from_date,
+          start: e.moved.from_start,
+          end: e.moved.from_end || null,
+          movedToText: movedToText(e),
+        });
+      }
+    }
+    return ghosts;
+  }
+  function buildGhostHtml(g) {
+    var timeStr = g.end ? esc(g.start) + '–' + esc(g.end) : esc(g.start);
+    var dateAttr = g.date ? ' data-event-date="' + esc(g.date) + '"' : '';
+    return '<div class="event-row plain is-ghost"' + dateAttr + '>' +
+      '<span class="ev-time">' + timeStr + '</span>' +
+      '<span class="ev-title">' + esc(g.title) + '</span>' +
+      '<span class="ev-moved-to">' + esc(g.movedToText) + '</span></div>';
+  }
+
   // Per-event iCal download link, matching icalDownloadLink() in render.js.
   // Only emitted on idag.html (showIcal) and only when the event has an id.
   function icalLink(e) {
@@ -82,6 +136,13 @@
   // renderEventRow() in render.js.
   function buildRowHtml(e) {
     var timeStr = e.end ? esc(e.start) + '–' + esc(e.end) : esc(e.start);
+    // A moved activity shows its previous time struck through next to the
+    // highlighted new time (02-§119.6).
+    var moved = isMovedEvent(e);
+    var timeCell = moved
+      ? '<span class="ev-time-old">' + esc(movedFromText(e)) + '</span> <span class="ev-time-new">' + timeStr + '</span>'
+      : timeStr;
+    var movedClass = moved ? ' is-moved' : '';
     var metaParts = [e.location, e.responsible].filter(Boolean).map(esc);
     var metaEl = metaParts.length ? '<span class="ev-meta"> · ' + metaParts.join(' · ') + '</span>' : '';
     var icalEl = icalLink(e);
@@ -102,51 +163,55 @@
       if (safeLink) {
         extraParts.push('<a class="event-ext-link" href="' + esc(safeLink) + '" target="_blank" rel="noopener">Extern länk →</a>');
       }
-      return '<details class="event-row' + cancelledClass + '"' + idAttr + dateAttr + '><summary>' +
-        '<span class="ev-time">' + timeStr + '</span>' +
+      return '<details class="event-row' + cancelledClass + movedClass + '"' + idAttr + dateAttr + '><summary>' +
+        '<span class="ev-time">' + timeCell + '</span>' +
         '<span class="ev-title">' + titleHtml + '</span>' +
         metaEl + icalEl + '</summary>' +
         '<div class="event-extra">' + extraParts.join('') + '</div>' +
         '</details>';
     }
-    return '<div class="event-row plain' + cancelledClass + '"' + idAttr + dateAttr + '>' +
-      '<span class="ev-time">' + timeStr + '</span>' +
+    return '<div class="event-row plain' + cancelledClass + movedClass + '"' + idAttr + dateAttr + '>' +
+      '<span class="ev-time">' + timeCell + '</span>' +
       '<span class="ev-title">' + titleHtml + '</span>' +
       metaEl + icalEl + '</div>';
   }
 
-  // Wraps a list of events in a card. The optional id lets the live "now" logic
-  // target today's rows only, leaving the next day's rows untouched.
+  // Wraps a list of items in a card. Each item is either a real event or a
+  // moved-activity ghost marker (_ghost). The optional id lets the live "now"
+  // logic target today's rows only, leaving the next day's rows untouched.
   function renderCard(list, listId) {
     var idAttr = listId ? ' id="' + listId + '"' : '';
     return '<div class="today-card"><div class="event-list"' + idAttr + '>' +
-      list.map(buildRowHtml).join('') + '</div></div>';
+      list.map(function (it) { return it._ghost ? buildGhostHtml(it) : buildRowHtml(it); }).join('') +
+      '</div></div>';
   }
 
   // Next day (display view only): the camp must have another day (tomorrow on or
-  // before the camp end date) and that day must have at least one activity.
-  var tomorrowEvents = [];
+  // before the camp end date) and that day must have at least one item — a real
+  // activity or a ghost for one moved away from tomorrow (02-§119.8).
+  var tomorrowItems = [];
   if (showNextDay) {
     var tmr = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
     var tomorrowStr = tmr.getFullYear() + '-' + pad(tmr.getMonth() + 1) + '-' + pad(tmr.getDate());
     if (!campEnd || tomorrowStr <= campEnd) {
-      tomorrowEvents = events.filter(function (e) { return e.date === tomorrowStr; });
-      tomorrowEvents.sort(function (a, b) { return a.start.localeCompare(b.start); });
+      tomorrowItems = events.filter(function (e) { return e.date === tomorrowStr; })
+        .concat(buildGhostsFor(tomorrowStr));
+      tomorrowItems.sort(function (a, b) { return a.start.localeCompare(b.start); });
     }
   }
 
   var output;
-  if (todayEvents.length) {
-    output = renderCard(todayEvents, 'today-list');
+  if (todayItems.length) {
+    output = renderCard(todayItems, 'today-list');
     if (showFooter) {
       output += '<p class="display-footer">' + todayEvents.length + ' aktiviteter schemalagda idag.</p>';
     }
   } else {
     output = '<p class="' + emptyClass + '">Inga aktiviteter schemalagda för idag.</p>';
   }
-  if (tomorrowEvents.length) {
+  if (tomorrowItems.length) {
     output += '<div class="day-divider"><span>Imorgon</span></div>';
-    output += renderCard(tomorrowEvents, null);
+    output += renderCard(tomorrowItems, null);
   }
   container.innerHTML = output;
 
@@ -163,9 +228,9 @@
       var nowMinIdag = now.getHours() * 60 + now.getMinutes();
       var idagRows = idagListEl.querySelectorAll('.event-row');
       for (var r = 0; r < idagRows.length; r++) {
-        var iev = todayEvents[r];
+        var iev = todayItems[r];
         var iel = idagRows[r];
-        if (!iev || !iel) continue;
+        if (!iev || !iel || iev._ghost) continue;
         var iStart = toMinutes(iev.start);
         if (iStart == null) continue;
         var iEnd = iev.end ? toMinutes(iev.end) : null;
@@ -242,12 +307,15 @@
       var nowMin = d.getHours() * 60 + d.getMinutes();
       var visible = 0;
       for (var i = 0; i < rowEls.length; i++) {
-        var ev = todayEvents[i];
+        var ev = todayItems[i];
         var el = rowEls[i];
         if (!ev || !el) continue;
+        el.classList.remove('is-past', 'is-now');
+        // A ghost marker (02-§119.8) is never "now" or "past": it always stays
+        // visible at its old slot and points to the new time.
+        if (ev._ghost) { visible += 1; continue; }
         var startMin = toMinutes(ev.start);
         var endMin = ev.end ? toMinutes(ev.end) : null;
-        el.classList.remove('is-past', 'is-now');
         if (startMin == null) { visible += 1; continue; }
         // End at or before start means the activity crosses midnight.
         if (endMin != null && endMin <= startMin) endMin += 24 * 60;

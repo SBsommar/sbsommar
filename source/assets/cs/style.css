@@ -9,6 +9,8 @@
   --color-white:      #FFFFFF;
   --color-cream-light:#FAF7EF;
   --color-error:      #b91c1c;
+  --color-amber:      #E8A23D; /* moved-activity highlight (02-§119) */
+  --color-amber-dark: #8A5A00; /* readable amber-brown for moved text on cream (AA) */
   --font-sans:   system-ui, -apple-system, sans-serif;
   --font-serif:  Georgia, serif;
   --font-size-base:  16px;
@@ -775,6 +777,48 @@ body.display-mode .event-row.is-cancelled.is-now {
 
 .ev-cancelled-label {
   font-weight: 700;
+}
+
+/* ── Moved activities (02-§119) ───────────────────────────────────────────────
+   A rescheduled activity keeps its place at the new time: its previous time is
+   struck through in small muted text and its new time is highlighted in amber.
+   A minimal ghost marker (.is-ghost) is left at the slot it used to occupy,
+   showing only the title and a "Flyttad till …" pointer to where it went. */
+.ev-time-old {
+  text-decoration: line-through;
+  font-size: var(--font-size-small);
+  opacity: 0.7;
+  margin-right: 0.25em;
+}
+
+.ev-time-new {
+  background: rgba(232, 162, 61, 0.30); /* var(--color-amber) tint */
+  border-radius: 3px;
+  padding: 0 0.25em;
+  font-weight: 700;
+}
+
+.event-row.is-ghost {
+  opacity: 0.75;
+  font-style: italic;
+}
+
+.ev-moved-to {
+  color: var(--color-amber-dark);
+  font-size: var(--font-size-small);
+  font-style: normal;
+  font-weight: 600;
+  margin-left: 0.5em;
+}
+
+/* Display mode (live.html): amber reads brighter against the dark board. */
+body.display-mode .ev-time-new {
+  background: rgba(232, 162, 61, 0.28);
+  color: var(--color-white);
+}
+
+body.display-mode .ev-moved-to {
+  color: var(--color-amber);
 }
 
 /* ── Per-event detail page ── */

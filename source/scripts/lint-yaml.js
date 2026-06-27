@@ -100,6 +100,24 @@ function validateEventObject(event, ref, opts = {}) {
   if (event.cancelled !== undefined && event.cancelled !== null && typeof event.cancelled !== 'boolean') {
     errors.push(`${ref}: cancelled must be a boolean or null`);
   }
+  // moved is an optional previous-slot marker (05-§3.6, 02-§119.1): a mapping
+  // with from_date (YYYY-MM-DD), from_start (HH:MM), and from_end (HH:MM|null).
+  if (event.moved !== undefined && event.moved !== null) {
+    const m = event.moved;
+    if (typeof m !== 'object' || Array.isArray(m)) {
+      errors.push(`${ref}: moved must be a mapping`);
+    } else {
+      if (!DATE_RE.test(String(m.from_date))) {
+        errors.push(`${ref}: moved.from_date must be YYYY-MM-DD, got "${m.from_date}"`);
+      }
+      if (!TIME_RE.test(String(m.from_start))) {
+        errors.push(`${ref}: moved.from_start must be HH:MM, got "${m.from_start}"`);
+      }
+      if (m.from_end !== undefined && m.from_end !== null && !TIME_RE.test(String(m.from_end))) {
+        errors.push(`${ref}: moved.from_end must be HH:MM or null, got "${m.from_end}"`);
+      }
+    }
+  }
 
   return errors;
 }

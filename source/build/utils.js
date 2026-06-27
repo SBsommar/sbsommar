@@ -59,6 +59,13 @@ function formatDate(dateStr) {
   return `${weekday} ${day} ${month} ${year}`;
 }
 
+// Short Swedish date ("27 juni"), used where a full weekday+year date would be
+// too long — e.g. the previous date on a moved activity (02-§119.7).
+function formatDateShort(dateStr) {
+  const d = new Date(dateStr + 'T12:00:00');
+  return `${d.getDate()} ${MONTHS_SV[d.getMonth()]}`;
+}
+
 const WEEKDAYS_SHORT_SV = ['Sön', 'Mån', 'Tis', 'Ons', 'Tor', 'Fre', 'Lör'];
 
 /**
@@ -110,4 +117,4 @@ function injectHtaccessCsp(template, apiUrl) {
   return template.replace(/__API_ORIGIN__ ?/g, origin ? origin + ' ' : '');
 }
 
-module.exports = { toDateString, resolveCountdownTarget, escapeHtml, formatDate, campDayButtons, safeLinkHref, injectHtaccessCsp };
+module.exports = { toDateString, resolveCountdownTarget, escapeHtml, formatDate, formatDateShort, campDayButtons, safeLinkHref, injectHtaccessCsp };
