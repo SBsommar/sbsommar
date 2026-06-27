@@ -1867,10 +1867,10 @@ Doc ref: `02-requirements/schedule-and-detail.md §118`;
 
 ### §119 — Moved Activities
 
-Doc ref: `02-requirements/schedule-and-detail.md §119`;
-`05-DATA_CONTRACT.md §2`, §2.1, §3 (moved field);
+Doc ref: `02-requirements/schedule-and-detail.md §119` (incl. §119.7 location
+changes); `05-DATA_CONTRACT.md §2`, §2.1, §3 (`moved` + `relocated` fields);
 `03-architecture/rendering.md §5.7`, `03-architecture/forms-and-api.md §32`;
-`07-design/components.md §6.142–6.144`, `07-design/css-strategy.md §7`.
+`07-design/components.md §6.142–6.145`, `07-design/css-strategy.md §7`.
 
 | ID | Status | Notes |
 | --- | --- | --- |
@@ -1887,3 +1887,6 @@ Doc ref: `02-requirements/schedule-and-detail.md §119`;
 | `02-§119.11` | covered | MOVED-07/-14: a second move records the immediately-prior slot; the block is dropped when the activity returns home. Camp-end clearing follows from the camp lifecycle |
 | `02-§119.12` | implemented | The ghost is derived from the live event (`buildGhosts()` over the merged set), so a deleted activity loses it automatically while a cancelled one keeps it. Verified by the build-integration check (demo fragment → `public/schema.html` ghost + marked row); a manual checkpoint |
 | `02-§119.13` | covered | MOVED-23/-24: the previous time is real struck-through text and the `Flyttad till` label is real text; amber (`.ev-time-new`) is an additional cue. CSS contrast is a manual checkpoint |
+| `02-§119.14` | covered | MOVED-30/-34/-35: `relocated` derived by the edit API (no request-body input); `buildFragmentYaml()` round-trips/omits the block; MOVED-36/-37: `lint-yaml.js` validates the mapping. PHP `testBuildFragmentYamlEmitsRelocatedBlock`/`...OmitsRelocatedWhenAbsent` |
+| `02-§119.15` | covered | MOVED-28/-29/-31/-32/-33: `resolveRelocated()` records the previous location on a location change, preserves it on a non-location edit, clears it on restore, and is independent of a time move. PHP `testPatchEventObjectRecordsRelocatedOnLocationChange`/`...Preserves...`/`...Clears...` parity |
+| `02-§119.16` | covered | MOVED-39/-40/-41/-42: `locationHtml()` shows the struck old location (`.ev-loc-old`) before the new one in `renderEventRow()`/`renderEventPage()` and emits no ghost. The today/display view via `events-today.js` is a manual/browser checkpoint |

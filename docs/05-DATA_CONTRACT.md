@@ -83,6 +83,8 @@ events:
       from_date: YYYY-MM-DD
       from_start: "HH:MM"
       from_end: "HH:MM" | null
+    relocated:
+      from_location: string
     owner:
       name: string
       email: string
@@ -134,6 +136,8 @@ event:
     from_date: YYYY-MM-DD
     from_start: "HH:MM"
     from_end: "HH:MM" | null
+  relocated:
+    from_location: string
   owner:
     name: string
     email: string
@@ -189,6 +193,13 @@ event:
   its new time with the previous time struck through, and a minimal marker is
   left at the previous slot
   (see `02-requirements/schedule-and-detail.md §119`). <!-- 05-§3.6 -->
+- `relocated` — a mapping with `from_location` (string). Present only when the
+  activity's location has changed; it records the location the activity had
+  before its most recent location change. The edit API maintains this field
+  automatically — it is never set by a participant. A relocated activity is
+  shown at its new location with the previous location struck through in smaller
+  text, with no previous-slot marker
+  (see `02-requirements/schedule-and-detail.md §119.7`). <!-- 05-§3.7 -->
 - `owner`
 - `meta`
 

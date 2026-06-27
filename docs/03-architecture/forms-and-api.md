@@ -671,6 +671,15 @@ forge or clear a marker.
 `{ from_date, from_start, from_end }` (with `from_end` allowed to be null), so a
 malformed or partial `moved` value never produces a marker.
 
+A **location change** is captured the same way through a separate
+`relocated` mapping (`{ from_location }`, 02-§119.14). `resolveRelocated(event,
+newLocation)` records the previous location when `location` changes, keeps the
+existing marker on an edit that leaves the location unchanged, and clears it when
+the location is set back to the recorded original (02-§119.15). The two markers
+are independent: an edit that changes both time and location records both
+`moved` and `relocated`. Unlike `moved`, `relocated` produces no ghost — it is
+shown only inline (see `03-architecture/rendering.md §5.7`).
+
 ### 32.2 Persistence and deletion
 
 `eventBodyLines()` serialises the `moved` block into the fragment YAML only when
@@ -684,7 +693,7 @@ removes its marker automatically: there is no separate record to clean up
 
 | File | Change |
 | --- | --- |
-| `source/api/edit-event.js` | `resolveMoved()` / `normaliseMoved()`; `patchEventObject()` maintains `moved` |
-| `source/api/github.js` | `eventBodyLines()` serialises the `moved` block |
+| `source/api/edit-event.js` | `resolveMoved()`/`resolveRelocated()` + `normalise*()`; `patchEventObject()` maintains `moved` and `relocated` |
+| `source/api/github.js` | `eventBodyLines()` serialises the `moved` and `relocated` blocks |
 | `api/src/GitHub.php` | PHP mirror of the same capture + serialisation |
-| `source/scripts/lint-yaml.js` | `moved` mapping type-check in `validateEventObject()` |
+| `source/scripts/lint-yaml.js` | `moved` and `relocated` mapping type-checks in `validateEventObject()` |

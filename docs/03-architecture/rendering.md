@@ -159,8 +159,9 @@ An activity rescheduled to another time or day carries an optional `moved`
 mapping recording the slot it left (see `03-architecture/forms-and-api.md §32`).
 The renderers turn that into two things, built from the same merged event set so
 every view agrees. `source/build/moved.js` holds the shared server-side helpers
-(`isMoved`, `movedToText`, `movedFromText`, `movedTimeHtml`, `buildGhosts`);
-`events-today.js` mirrors them for the client-rendered today view.
+(`isMoved`, `movedToText`, `movedFromText`, `movedTimeHtml`, `buildGhosts`, plus
+`isRelocated`/`locationHtml` for location changes); `events-today.js` mirrors
+them for the client-rendered today view.
 
 - **The activity itself** — wherever the activity appears it keeps its place at
   the new time, with the previous time struck through in small text
@@ -177,6 +178,12 @@ every view agrees. `source/build/moved.js` holds the shared server-side helpers
   a `data-event-date` but **no** `data-event-start`, so `schema-status.js` (whose
   selector requires both) never marks it `is-now`/`is-past`. The per-event page
   emits no ghost — it has no schedule slot to mark (02-§119.10).
+- **Location changes (`relocated`)** — `locationHtml()` renders the activity's
+  location cell with the new location as usual, preceded by the previous
+  location struck through in small text (`.ev-loc-old`) when the activity carries
+  a `relocated` marker (02-§119.16). It is applied wherever the location is
+  shown — the schedule/today meta line and the per-event page's "Plats" row — and
+  produces **no** ghost: a location change is purely an inline annotation.
 
 Because the ghost is derived from the live event at build time — never stored as
 its own record — a deleted activity loses its marker automatically, while a

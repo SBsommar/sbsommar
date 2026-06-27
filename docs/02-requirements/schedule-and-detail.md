@@ -595,3 +595,20 @@ pointer at the slot it used to occupy. This is feedback from a camp organiser
 - The previous time is conveyed by the visible struck-through text and the
   "Flyttad till" label, not by colour alone; the amber highlight is an
   additional cue, never the only one. <!-- 02-§119.13 -->
+
+### 119.7 Location changes
+
+- An event may carry an optional `relocated` mapping recording the location it
+  had before its most recent location change: `from_location` (string). An event
+  whose location has never changed, or whose last edit changed only other
+  fields, has no `relocated` mapping. Like `moved`, it is derived and maintained
+  by the edit API and is never accepted from a request body. <!-- 02-§119.14 -->
+- When an edit changes an activity's `location`, the edit API records the
+  previous location in `relocated.from_location`. An edit that leaves the
+  location unchanged keeps the existing `relocated` mapping untouched; changing
+  the location back to the recorded original removes the mapping. <!-- 02-§119.15 -->
+- Wherever an activity's location is shown — the weekly schedule, the today view,
+  and the per-event page — a relocated activity shows its new location as usual,
+  preceded by its previous location in smaller struck-through text. A location
+  change produces no previous-slot marker: only the inline struck-through old
+  location is added. <!-- 02-§119.16 -->

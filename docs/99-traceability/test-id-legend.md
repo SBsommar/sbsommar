@@ -218,5 +218,5 @@ Part of [the traceability index](./index.md).
 | DEDUP-01..09 | `tests/dedup-submission.test.js` | Duplicate pre-check (Node + PHP): `getFileMaybe` before any branch, 409 + Swedish message, awaited before `app.js`'s response, atomic batch reject (02-§111.1–111.5) |
 | DEDUP-M01..M02 | (manual) | Live 409 on a duplicate submission; a concurrent duplicate's redundant PR is auto-closed (02-§111.2, 111.6–111.9) |
 | DEDUPCLEAN-01..09 | `tests/dedup-cleanup.test.js` | `classifyEventPr` decision table: empty diff → close, fresh add → keep, same-id/different-body → log-manual, out-of-scope → ignore (02-§111.6–111.9) |
-| MOVED-01..27 | `tests/moved-activity.test.js` | Moved-activity capture, serialisation, validation, helpers, schedule/event-page markup + ghost (02-§119) |
-| (PHPUnit) | `api/tests/GitHubTest.php` | PHP mirror of the moved capture + serialisation: `patchEventObject`, `buildFragmentYaml` (02-§119) |
+| MOVED-01..42 | `tests/moved-activity.test.js` | Moved + relocated capture, serialisation, validation, helpers, schedule/event-page markup + ghost (02-§119) |
+| (PHPUnit) | `api/tests/GitHubTest.php` | PHP mirror of the moved + relocated capture + serialisation: `patchEventObject`, `buildFragmentYaml` (02-§119) |
