@@ -586,6 +586,17 @@ pointer at the slot it used to occupy. This is feedback from a camp organiser
   activities; the amber tone gives way to grey. <!-- 02-§119.17 -->
 - The per-event page shows no previous-slot marker — it describes a single
   activity and has no schedule position to mark. <!-- 02-§119.10 -->
+- A move within the same day leaves no previous-slot marker when at most
+  `GHOST_MAX_ACTIVITIES_BETWEEN` activities are scheduled between the old and the
+  new start time on that day. The highlighted new row is close enough that the
+  pointer would be redundant clutter. A move to a different day always leaves a
+  marker, however few activities lie between, because the old day would otherwise
+  show no trace of the activity. <!-- 02-§119.19 -->
+- The threshold governing this suppression is a single configuration value,
+  `GHOST_MAX_ACTIVITIES_BETWEEN`, with a default of 5. The count is of activities
+  whose start time falls strictly between the old and the new start time on the
+  move's day; the moved activity itself is never counted. The same value governs
+  the suppression in every view that draws the marker. <!-- 02-§119.20 -->
 
 ### 119.5 Persistence and deletion
 
@@ -645,10 +656,13 @@ per-event conflict banner and the locale overview (§99).
 
 ### 120.2 Which activity is marked
 
-- Of two clashing activities, the one created later (by its creation time) is
-  marked; the earlier booking keeps the room and is left unmarked. When three or
-  more activities overlap in the same room, every booking created after the
-  earliest is marked. <!-- 02-§120.4 -->
+- Of two clashing activities, the one that chose the room later is marked; the
+  activity that has held the room longest keeps it and is left unmarked. The
+  deciding moment is when each activity's location was last set to its current
+  room, not when the activity was created — an activity moved into an
+  already-booked room is the offender even if it was created first. When three or
+  more activities overlap in the same room, every booking except the one that
+  chose the room earliest is marked. <!-- 02-§120.4 -->
 
 ### 120.3 How it is shown
 
@@ -658,3 +672,16 @@ per-event conflict banner and the locale overview (§99).
 - Once a marked activity has passed in time, it takes the same muted grey,
   dimmed treatment as any other passed activity; the red gives way to grey.
   <!-- 02-§120.6 -->
+
+### 120.4 Room-choice time
+
+- Each event records when its location was last set in `meta.location_set_at`
+  (ISO-8601). The value is set when the activity is created and is renewed
+  whenever an edit changes the location; an edit that leaves the location
+  unchanged preserves it. Like `created_at`, it is maintained by the API and is
+  never accepted from a request body. <!-- 02-§120.8 -->
+- The clash logic compares activities by `meta.location_set_at`. For an activity
+  that predates the field (no `location_set_at`), its creation time
+  (`meta.created_at`) is used instead. An activity that has never changed room
+  therefore behaves exactly as if creation order decided the clash.
+  <!-- 02-§120.9 -->
