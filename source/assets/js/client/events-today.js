@@ -147,11 +147,11 @@
   // renderEventRow() in render.js.
   function buildRowHtml(e) {
     var timeStr = e.end ? esc(e.start) + '–' + esc(e.end) : esc(e.start);
-    // A moved activity shows its previous time struck through next to the
-    // highlighted new time (02-§119.6).
+    // A moved activity shows the highlighted new time on top with its previous
+    // time struck through directly below (02-§119.6).
     var moved = isMovedEvent(e);
     var timeCell = moved
-      ? '<span class="ev-time-old">' + esc(movedFromText(e)) + '</span> <span class="ev-time-new">' + timeStr + '</span>'
+      ? '<span class="ev-time-new">' + timeStr + '</span><span class="ev-time-old">' + esc(movedFromText(e)) + '</span>'
       : timeStr;
     var movedClass = moved ? ' is-moved' : '';
     // A relocated activity shows its new location with the old one struck

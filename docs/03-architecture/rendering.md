@@ -164,17 +164,20 @@ every view agrees. `source/build/moved.js` holds the shared server-side helpers
 them for the client-rendered today view.
 
 - **The activity itself** — wherever the activity appears it keeps its place at
-  the new time, with the previous time struck through in small text
-  (`.ev-time-old`) next to the highlighted new time (`.ev-time-new`, amber). The
-  row carries an `is-moved` class. A cross-day move shows the previous date too;
-  a same-day move shows only the previous time. `renderEventRow()` (`render.js`,
-  weekly schedule), `buildRowHtml()` (`events-today.js`, today/display), and
-  `renderEventPage()` (`render-event.js`) all apply this.
+  the new time. The highlighted new time (`.ev-time-new`, amber) sits on top and
+  the previous time is struck through in smaller text (`.ev-time-old`) directly
+  below it; in the schedule and today views the `.ev-time` cell becomes an
+  `inline-flex` column to stack them. The row carries an `is-moved` class. A
+  cross-day move shows the previous date too; a same-day move shows only the
+  previous time. `renderEventRow()` (`render.js`, weekly schedule),
+  `buildRowHtml()` (`events-today.js`, today/display), and `renderEventPage()`
+  (`render-event.js`) all apply this.
 - **A previous-slot marker** — for the weekly schedule and the today view a
   minimal **ghost** row is generated at the activity's `from_date`/`from_start`:
   `buildGhosts()` produces one pseudo-event per moved activity, marked `_ghost`,
   which `renderEventRow()`/`buildRowHtml()` render as the title plus a
-  `Flyttad till …` pointer (`.ev-moved-to`) and nothing else. The ghost carries
+  `Flyttad till …` pointer (`.ev-moved-to`) and nothing else, in a soft amber
+  tone with an amber accent bar. The ghost carries
   a `data-event-date` but **no** `data-event-start`, so `schema-status.js` (whose
   selector requires both) never marks it `is-now`/`is-past`. The per-event page
   emits no ghost — it has no schedule slot to mark (02-§119.10).
