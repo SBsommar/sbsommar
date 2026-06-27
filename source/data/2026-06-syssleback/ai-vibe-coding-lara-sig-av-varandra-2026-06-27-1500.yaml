@@ -4,7 +4,7 @@ event:
   date: '2026-06-27'
   start: '15:00'
   end: '16:00'
-  location: GA Stilla hyllan
+  location: Tält1
   responsible: Martin
   description: |
     Vibe codear du? (context engineering, Åre mortem analys, kaskad recept, fientlig granskning,lokalt,kinesiskt, amerikanskt eller franskt osv) Hur gör ni när ni vibe codear? Tänkte vore kul "compare notes", att lära sig av varandra, bli inspirerade av andra vinklar och approacher.
@@ -12,10 +12,13 @@ event:
     Visa något kul du gjort, så lär vi oss av varandra 
     
     finns otroligt många olika sätt jobba med dessa underliga rymdvarelser!
+    
   link: null
+  relocated:
+    from_location: GA Stilla hyllan
   owner:
     name: ''
     email: ''
   meta:
     created_at: 2026-06-24 19:55
-    updated_at: 2026-06-24 19:55
+    updated_at: 2026-06-27 13:04
