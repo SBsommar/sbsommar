@@ -643,3 +643,48 @@ preserves the current state.
 | `api/src/GitHub.php` | `patchEventObject()` + `eventBodyLines()` round-trip `cancelled` |
 | `source/scripts/lint-yaml.js` | `cancelled` boolean type-check in `validateEventObject()` |
 | `source/build/build.js` | Add `cancelled` to `PUBLIC_EVENT_FIELDS` (events.json) |
+
+## 32. Moved Activities (02-§119)
+
+When an edit changes an activity's `date`, `start`, or `end`, the edit API
+records the slot the activity left in an optional `moved` mapping
+(`{ from_date, from_start, from_end }`). This is the only field a participant
+cannot set: the request body never carries `moved`, and the patch derives it
+purely from the event's stored values and the new time — so a client cannot
+forge or clear a marker.
+
+### 32.1 Capture rule
+
+`patchEventObject()` (Node `source/api/edit-event.js`, mirrored in PHP
+`GitHub.php`) computes the new `date`/`start`/`end` first, then calls
+`resolveMoved(event, newDate, newStart, newEnd)`:
+
+- **time/date changed** → record the event's previous `date`/`start`/`end` as
+  the new `moved` mapping (02-§119.3);
+- **unless that move returns the activity to the slot already in its `moved`
+  mapping** → drop the marker; it is back where it started (02-§119.5);
+- **text-only edit** (date/start/end unchanged) → keep the existing `moved`
+  mapping exactly as it was, so a rename or description tweak neither creates nor
+  clears a marker (02-§119.4).
+
+`normaliseMoved()` cleans a loaded marker to either `null` or
+`{ from_date, from_start, from_end }` (with `from_end` allowed to be null), so a
+malformed or partial `moved` value never produces a marker.
+
+### 32.2 Persistence and deletion
+
+`eventBodyLines()` serialises the `moved` block into the fragment YAML only when
+the activity carries one — moving it back to its origin drops the block again
+(02-§119.11). Because the previous-slot marker is **derived from the live event
+at build time** (see `03-architecture/rendering.md §5.7`), deleting an activity
+removes its marker automatically: there is no separate record to clean up
+(02-§119.12).
+
+### 32.3 Files changed
+
+| File | Change |
+| --- | --- |
+| `source/api/edit-event.js` | `resolveMoved()` / `normaliseMoved()`; `patchEventObject()` maintains `moved` |
+| `source/api/github.js` | `eventBodyLines()` serialises the `moved` block |
+| `api/src/GitHub.php` | PHP mirror of the same capture + serialisation |
+| `source/scripts/lint-yaml.js` | `moved` mapping type-check in `validateEventObject()` |

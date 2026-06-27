@@ -1864,3 +1864,26 @@ Doc ref: `02-requirements/schedule-and-detail.md §118`;
 | `02-§118.10` | covered | RND-CANCEL-02: "INSTÄLLD" is real text in the row (`<span class="ev-cancelled-label">`), announced by screen readers |
 | `02-§118.11` | covered | RSS-CANCEL-01/-02: `render-rss.js` prefixes a cancelled item `<title>` with `[INSTÄLLD]` and a space; active titles unchanged |
 | `02-§118.12` | covered | ICAL-CANCEL-01/-02/-03: `render-ical.js` emits `STATUS:CANCELLED` in `schema.ics` and per-event `event.ics`; active events omit it |
+
+### §119 — Moved Activities
+
+Doc ref: `02-requirements/schedule-and-detail.md §119`;
+`05-DATA_CONTRACT.md §2`, §2.1, §3 (moved field);
+`03-architecture/rendering.md §5.7`, `03-architecture/forms-and-api.md §32`;
+`07-design/components.md §6.142–6.144`, `07-design/css-strategy.md §7`.
+
+| ID | Status | Notes |
+| --- | --- | --- |
+| `02-§119.1` | covered | MOVED-12/-13/-14: `buildFragmentYaml()` round-trips/omits the `moved` block; MOVED-15/-16: `lint-yaml.js` validates the mapping. PHP `testBuildFragmentYamlEmitsMovedBlock`/`testBuildFragmentYamlOmitsMovedWhenAbsent` mirror it |
+| `02-§119.2` | covered | MOVED-05: `patchEventObject()` derives `moved` only from stored values + new time; the request body never carries `moved`, so a client cannot set it |
+| `02-§119.3` | covered | MOVED-01/-02/-03: an edit that changes start/end/date records the previous slot. PHP `testPatchEventObjectRecordsMovedOnStartChange`/`...OnDateChange` parity |
+| `02-§119.4` | covered | MOVED-04/-05: a text-only edit leaves an existing marker untouched and adds none. PHP `testPatchEventObjectPreservesMovedOnTextOnlyEdit` |
+| `02-§119.5` | covered | MOVED-06: returning to the recorded original slot clears the marker. PHP `testPatchEventObjectClearsMovedWhenReturnedToOriginalSlot` |
+| `02-§119.6` | covered | MOVED-23/-27: `renderEventRow()` and `renderEventPage()` emit `is-moved` with `.ev-time-old` (struck) + `.ev-time-new` (amber). The today/display view via `events-today.js` `buildRowHtml()` is a manual/browser checkpoint |
+| `02-§119.7` | covered | MOVED-18/-19/-20/-21: `movedFromText()`/`movedToText()` include the date only for a cross-day move |
+| `02-§119.8` | covered | MOVED-22/-24/-25: `buildGhosts()` emits one ghost per moved activity at its old slot; `renderSchedulePage()` places it on the old day. The client ghost on idag/live is a manual/browser checkpoint |
+| `02-§119.9` | covered | MOVED-24: the ghost shows only title + `Flyttad till …` (`.ev-moved-to`) and no detail/iCal |
+| `02-§119.10` | covered | MOVED-27: `renderEventPage()` shows the marked time but emits no ghost (`ev-moved-to` absent) |
+| `02-§119.11` | covered | MOVED-07/-14: a second move records the immediately-prior slot; the block is dropped when the activity returns home. Camp-end clearing follows from the camp lifecycle |
+| `02-§119.12` | implemented | The ghost is derived from the live event (`buildGhosts()` over the merged set), so a deleted activity loses it automatically while a cancelled one keeps it. Verified by the build-integration check (demo fragment → `public/schema.html` ghost + marked row); a manual checkpoint |
+| `02-§119.13` | covered | MOVED-23/-24: the previous time is real struck-through text and the `Flyttad till` label is real text; amber (`.ev-time-new`) is an additional cue. CSS contrast is a manual checkpoint |

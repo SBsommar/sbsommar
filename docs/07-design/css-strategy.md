@@ -39,6 +39,8 @@ When CSS is written, start with these at `:root`:
   --color-charcoal: #3B3A38;
   --color-white: #FFFFFF;
   --color-cream-light: #FAF7EF;
+  --color-amber: #E8A23D; /* moved-activity highlight (02-§119) */
+  --color-amber-dark: #8A5A00; /* readable amber-brown for moved text on cream (AA) */
 
   /* Typography */
   --font-sans: system-ui, -apple-system, sans-serif;
