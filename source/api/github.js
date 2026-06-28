@@ -78,6 +78,11 @@ function eventBodyLines(event, fp, dp) {
   lines.push(`${fp}meta:`);
   lines.push(`${dp}created_at: ${event.meta.created_at}`);
   lines.push(`${dp}updated_at: ${event.meta.updated_at}`);
+  // Only write location_set_at when the activity carries it (02-§120.8); events
+  // that have never changed room and predate the field stay untouched.
+  if (event.meta.location_set_at) {
+    lines.push(`${dp}location_set_at: ${event.meta.location_set_at}`);
+  }
 
   return lines;
 }
@@ -443,7 +448,7 @@ async function addEventToActiveCamp(body) {
     id:          `${slugify(title)}-${date}-${start.replace(':', '')}`,
     title, date, start, end, location, responsible, description, link,
     owner:       { name: ownerName, email: '' },
-    meta:        { created_at: now, updated_at: now },
+    meta:        { created_at: now, updated_at: now, location_set_at: now },
   };
 
   const camp = await resolveActiveCampFromGitHub();

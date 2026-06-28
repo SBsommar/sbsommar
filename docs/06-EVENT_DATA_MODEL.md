@@ -161,7 +161,18 @@ Each event contains a `meta` object:
 meta:
   created_at: null
   updated_at: null
+  location_set_at: null
 ```
+
+`created_at` and `updated_at` track when the activity was first written and last
+edited. `location_set_at` tracks when its location was last set to its current
+room — stamped on creation and renewed only when an edit changes the location. It
+exists so the location-clash logic can mark the activity that *chose the room
+later*, rather than the one merely created later: an activity moved into an
+already-booked room should be the one flagged. It is a separate field from
+`updated_at` because any edit (a typo fix, a description tweak) bumps
+`updated_at`, which would otherwise make an untouched booking look like the later
+room-chooser.
 
 Format when populated: ISO datetime — `YYYY-MM-DDTHH:MM:SS`
 

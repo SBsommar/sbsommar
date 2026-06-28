@@ -7,10 +7,30 @@
 // minimal "ghost" marker is left at the slot it used to occupy.
 
 const { escapeHtml, formatDateShort } = require('./utils');
+const { GHOST_MAX_ACTIVITIES_BETWEEN } = require('../assets/js/client/ghost-config.js');
 
 // True when the event carries a usable previous-slot marker.
 function isMoved(e) {
   return !!(e && e.moved && e.moved.from_date && e.moved.from_start);
+}
+
+// True when a moved activity's previous-slot ghost should be suppressed
+// (02-§119.19). A ghost is dropped only for a SAME-DAY move whose old and new
+// slots are close together: at most GHOST_MAX_ACTIVITIES_BETWEEN activities
+// start strictly between the old and new start time on that day. A cross-day
+// move always keeps its ghost. `events` is the full event set; the moved
+// activity itself is never counted.
+function suppressGhost(e, events) {
+  if (e.moved.from_date !== e.date) return false; // cross-day move always shows
+  const lo = e.moved.from_start < e.start ? e.moved.from_start : e.start;
+  const hi = e.moved.from_start < e.start ? e.start : e.moved.from_start;
+  let between = 0;
+  for (const other of events) {
+    if (other === e) continue;
+    if (other.date !== e.date) continue;
+    if (other.start > lo && other.start < hi) between += 1;
+  }
+  return between <= GHOST_MAX_ACTIVITIES_BETWEEN;
 }
 
 // Format an "HH:MM" or "HH:MM–HH:MM" time range.
@@ -63,7 +83,7 @@ function locationHtml(e) {
 // minimal pseudo-event positioned at the old date/start. Marked `_ghost` so the
 // row renderer emits the stripped-down marker (title + "Flyttad till" only).
 function buildGhosts(events) {
-  return events.filter(isMoved).map((e) => ({
+  return events.filter(isMoved).filter((e) => !suppressGhost(e, events)).map((e) => ({
     _ghost: true,
     title: e.title,
     date: e.moved.from_date,

@@ -432,4 +432,39 @@ final class GitHubTest extends TestCase
     {
         $this->assertStringNotContainsString('relocated:', GitHub::buildFragmentYaml(self::baseEvent()));
     }
+
+    // ── location_set_at (02-§120.8) ─────────────────────────────────────────
+
+    public function testPatchEventObjectStampsLocationSetAtOnLocationChange(): void
+    {
+        $patched = GitHub::patchEventObject(self::baseEvent(), ['location' => 'Nya salen'], '2026-06-22 08:00');
+        $this->assertSame('2026-06-22 08:00', $patched['meta']['location_set_at']);
+    }
+
+    public function testPatchEventObjectPreservesLocationSetAtOnTextEdit(): void
+    {
+        $base = self::baseEvent(['meta' => [
+            'created_at'      => '2026-06-22 07:00',
+            'updated_at'      => '2026-06-22 07:00',
+            'location_set_at' => '2026-06-20 09:00',
+        ]]);
+        $patched = GitHub::patchEventObject($base, ['title' => 'Nytt'], '2026-06-22 08:00');
+        $this->assertSame('2026-06-20 09:00', $patched['meta']['location_set_at']);
+    }
+
+    public function testBuildFragmentYamlEmitsLocationSetAt(): void
+    {
+        $yaml = GitHub::buildFragmentYaml(self::baseEvent(['meta' => [
+            'created_at'      => '2026-06-22 07:00',
+            'updated_at'      => '2026-06-22 07:00',
+            'location_set_at' => '2026-06-20 09:00',
+        ]]));
+        $doc = \Symfony\Component\Yaml\Yaml::parse($yaml);
+        $this->assertSame('2026-06-20 09:00', $doc['event']['meta']['location_set_at']);
+    }
+
+    public function testBuildFragmentYamlOmitsLocationSetAtWhenAbsent(): void
+    {
+        $this->assertStringNotContainsString('location_set_at:', GitHub::buildFragmentYaml(self::baseEvent()));
+    }
 }

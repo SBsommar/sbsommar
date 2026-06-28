@@ -64,7 +64,7 @@ final class GitHub
             'description' => $description,
             'link'        => $link,
             'owner'       => ['name' => $ownerName, 'email' => ''],
-            'meta'        => ['created_at' => $now, 'updated_at' => $now],
+            'meta'        => ['created_at' => $now, 'updated_at' => $now, 'location_set_at' => $now],
         ];
 
         // 1. Resolve active camp
@@ -139,7 +139,7 @@ final class GitHub
                 'description' => $description,
                 'link'        => $link,
                 'owner'       => ['name' => $ownerName, 'email' => ''],
-                'meta'        => ['created_at' => $now, 'updated_at' => $now],
+                'meta'        => ['created_at' => $now, 'updated_at' => $now, 'location_set_at' => $now],
             ];
         }
 
@@ -350,6 +350,11 @@ final class GitHub
         $lines[] = "{$fp}meta:";
         $lines[] = "{$dp}created_at: {$event['meta']['created_at']}";
         $lines[] = "{$dp}updated_at: {$event['meta']['updated_at']}";
+        // Only write location_set_at when the activity carries it (02-§120.8);
+        // events that have never changed room and predate the field stay untouched.
+        if (!empty($event['meta']['location_set_at'])) {
+            $lines[] = "{$dp}location_set_at: {$event['meta']['location_set_at']}";
+        }
 
         return $lines;
     }
@@ -432,6 +437,11 @@ final class GitHub
         $location  = array_key_exists('location', $updates) ? ($updates['location'] ?: $event['location']) : $event['location'];
         $relocated = self::resolveRelocated($event, (string) $location);
 
+        // Room-choice time (02-§120.8): renew it when the location actually
+        // changes, otherwise preserve whatever the activity already carried.
+        $prevLocationSetAt = $event['meta']['location_set_at'] ?? null;
+        $locationSetAt     = ($location !== $event['location']) ? $now : ($prevLocationSetAt ?: null);
+
         $patched = [
             'id'          => $event['id'],
             'title'       => array_key_exists('title', $updates) ? ($updates['title'] ?: $event['title']) : $event['title'],
@@ -449,6 +459,9 @@ final class GitHub
                 'updated_at' => $now,
             ],
         ];
+        if ($locationSetAt) {
+            $patched['meta']['location_set_at'] = $locationSetAt;
+        }
         if ($moved !== null) {
             $patched['moved'] = $moved;
         }

@@ -184,6 +184,15 @@ them for the client-rendered today view.
   (02-§119.17); the `is-ghost` class tells those classifiers never to mark it
   `is-now` — a ghost is only ever upcoming or past. The per-event page emits no
   ghost — it has no schedule slot to mark (02-§119.10).
+  A same-day move whose old and new slots are close together produces no ghost:
+  `buildGhosts()` (and the `events-today.js` mirror) skips a moved activity when
+  `from_date` equals the new date and at most `GHOST_MAX_ACTIVITIES_BETWEEN`
+  activities start strictly between the old and new start time on that day, since
+  the highlighted real row is already nearby (02-§119.19). A cross-day move always
+  keeps its ghost. The threshold lives once in
+  `source/assets/js/client/ghost-config.js` (a UMD module shared by the Node build
+  via `require` and the today view via the `SBGhostConfig` global), defaulting to
+  5 (02-§119.20).
 - **Location changes (`relocated`)** — `locationHtml()` renders the activity's
   location cell with the new location as usual, preceded by the previous
   location struck through in small text (`.ev-loc-old`) when the activity carries
@@ -203,13 +212,18 @@ visible at the old slot.
 `source/build/clashes.js` `markLocationClashes(events)` runs once in `build.js`
 right after the active camp's events are loaded, so every view sees the same
 flags. For each non-cancelled activity in a real room (the "Annat"/"[annat]"
-catch-all is excluded by `isRealLocation()`), it looks for an **earlier-created**
-activity on the same date in the same room whose time overlaps — reusing the
-shared `overlaps()` predicate from `conflict-check.js` (the same logic behind the
-per-event conflict banner and the locale overview). The later booking gets
-`_clash = true`; the earliest booking is left unmarked. Creation times are
-compared by epoch (`createdMs`) so a YAML Date-object timestamp and a string
-timestamp order correctly. Cancelled activities have freed the room, and the
+catch-all is excluded by `isRealLocation()`), it looks for an activity on the
+same date in the same room whose time overlaps and **chose that room earlier** —
+reusing the shared `overlaps()` predicate from `conflict-check.js` (the same logic
+behind the per-event conflict banner and the locale overview). The activity that
+chose the room later gets `_clash = true`; the one that has held it longest is
+left unmarked. The deciding time is `meta.location_set_at` — set on creation and
+renewed whenever an edit changes the location — so an activity moved *into* an
+already-booked room is the offender even though it was created first (02-§120.4).
+`locationSetMs()` reads `location_set_at`, falling back to `created_at` for an
+activity that predates the field (02-§120.9), and compares by epoch so a YAML
+Date-object timestamp and a string timestamp order correctly. Cancelled
+activities have freed the room, and the
 communal meals "Lunch"/"Middag" (`isIgnoredActivity`) are shared by everyone —
 both are skipped, so they neither clash nor are marked (02-§120.7).
 

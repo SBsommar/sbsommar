@@ -24,7 +24,7 @@ display mode. It is copied to `public/app.webmanifest` during the build.
 ### Service worker
 
 `source/static/sw.js` lives at the site root (`public/sw.js`) so its scope
-covers all pages. It uses a versioned cache name (currently `sb-sommar-v7`).
+covers all pages. It uses a versioned cache name (currently `sb-sommar-v8`).
 
 **Scheme guard:** The fetch handler returns early for any request whose
 URL scheme is not `http:` or `https:`. This prevents errors from

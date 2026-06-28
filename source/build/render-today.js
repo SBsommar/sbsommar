@@ -77,6 +77,7 @@ ${pwaHeadTags()}
   </div>
 </main>
   <script>window.__EVENTS__ = ${eventsJson}; window.__HEADING_PREFIX__ = ''; window.__EMPTY_CLASS__ = 'sidebar-text'; window.__SHOW_FOOTER__ = true; window.__BUILD_TIME__ = '${safeBuildTime}'; window.__VERSION__ = '${safeBuildTime}'; window.__SHOW_NEXT_DAY__ = true; window.__CAMP_END__ = '${safeCampEnd}'; window.__APP_VERSION__ = '${safeVersion}';</script>
+  <script src="ghost-config.js"></script>
   <script src="events-today.js"></script>
   <script src="sw-register.js" defer></script>
   <script src="pwa-install.js" defer></script>${goatcounterScript(goatcounterCode)}

@@ -218,6 +218,6 @@ Part of [the traceability index](./index.md).
 | DEDUP-01..09 | `tests/dedup-submission.test.js` | Duplicate pre-check (Node + PHP): `getFileMaybe` before any branch, 409 + Swedish message, awaited before `app.js`'s response, atomic batch reject (02-§111.1–111.5) |
 | DEDUP-M01..M02 | (manual) | Live 409 on a duplicate submission; a concurrent duplicate's redundant PR is auto-closed (02-§111.2, 111.6–111.9) |
 | DEDUPCLEAN-01..09 | `tests/dedup-cleanup.test.js` | `classifyEventPr` decision table: empty diff → close, fresh add → keep, same-id/different-body → log-manual, out-of-scope → ignore (02-§111.6–111.9) |
-| MOVED-01..44 | `tests/moved-activity.test.js` | Moved + relocated capture, serialisation, validation, helpers, schedule/event-page markup + ghost (02-§119) |
-| CLASH-01..15 | `tests/location-clash.test.js` | Location-clash marking: later-created flagged, Annat/cancelled/back-to-back excluded, `is-clash` markup (02-§120) |
+| MOVED-01..48 | `tests/moved-activity.test.js` | Moved + relocated capture, serialisation, validation, helpers, schedule/event-page markup + ghost, ghost suppression for nearby same-day moves (02-§119) |
+| CLASH-01..22 | `tests/location-clash.test.js` | Location-clash marking: later room-chooser flagged (by `location_set_at`, `created_at` fallback), Annat/cancelled/back-to-back excluded, `location_set_at` maintenance, `is-clash` markup (02-§120) |
 | (PHPUnit) | `api/tests/GitHubTest.php` | PHP mirror of the moved + relocated capture + serialisation: `patchEventObject`, `buildFragmentYaml` (02-§119) |

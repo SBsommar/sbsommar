@@ -680,6 +680,17 @@ are independent: an edit that changes both time and location records both
 `moved` and `relocated`. Unlike `moved`, `relocated` produces no ghost — it is
 shown only inline (see `03-architecture/rendering.md §5.7`).
 
+Alongside `relocated`, a location change also renews `meta.location_set_at` — the
+timestamp the location-clash logic uses to decide which of two activities sharing
+a room chose it later (02-§120.8). `patchEventObject()` stamps it with the edit
+time whenever the new `location` differs from the stored one and preserves it
+otherwise; `addEventToActiveCamp()` sets it to the creation time. Whereas
+`relocated` is dropped when the location returns to its recorded original,
+`location_set_at` still advances on that edit — the room genuinely changed at that
+moment. `eventBodyLines()` writes the `location_set_at` line only when the field
+is present, so events that have never changed room and predate the field stay
+untouched.
+
 ### 32.2 Persistence and deletion
 
 `eventBodyLines()` serialises the `moved` block into the fragment YAML only when
@@ -693,7 +704,7 @@ removes its marker automatically: there is no separate record to clean up
 
 | File | Change |
 | --- | --- |
-| `source/api/edit-event.js` | `resolveMoved()`/`resolveRelocated()` + `normalise*()`; `patchEventObject()` maintains `moved` and `relocated` |
-| `source/api/github.js` | `eventBodyLines()` serialises the `moved` and `relocated` blocks |
-| `api/src/GitHub.php` | PHP mirror of the same capture + serialisation |
+| `source/api/edit-event.js` | `resolveMoved()`/`resolveRelocated()` + `normalise*()`; `patchEventObject()` maintains `moved`, `relocated`, and `meta.location_set_at` |
+| `source/api/github.js` | `eventBodyLines()` serialises the `moved` and `relocated` blocks and the `location_set_at` line; `addEventToActiveCamp()` stamps `location_set_at` on creation |
+| `api/src/GitHub.php` | PHP mirror of the same capture + serialisation, including `location_set_at` |
 | `source/scripts/lint-yaml.js` | `moved` and `relocated` mapping type-checks in `validateEventObject()` |

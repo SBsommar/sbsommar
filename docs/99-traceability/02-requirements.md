@@ -1116,7 +1116,7 @@ its requirement rows together with the test-legend rows that evidence them.
 | `02-§83.12` | covered | PWA-05-*: all 8 pages include apple-touch-icon |
 | `02-§83.13` | covered | PWA-17: `source/static/sw.js` exists; `build.js` copies to public/ |
 | `02-§83.14` | covered | PWA-06-*: all 8 pages include sw-register.js |
-| `02-§83.15` | covered | PWA-18, PWA-31: sw.js CACHE_NAME is sb-sommar-v7 |
+| `02-§83.15` | covered | PWA-18, PWA-31: sw.js CACHE_NAME is sb-sommar-v8 |
 | `02-§83.16` | covered | PWA-19, PWA-19b: pre-cache excludes lagg-till.html, redigera.html; includes /index.html |
 | `02-§83.17` | implemented | Manual: verify network-first HTML, cache-first assets in browser DevTools |
 | `02-§83.18` | covered | PWA-20: sw.js activate handler deletes old caches |
@@ -1135,7 +1135,7 @@ its requirement rows together with the test-legend rows that evidence them.
 | `02-§83.31` | implemented | Manual: verify offline page uses shared nav/footer/CSS |
 | `02-§83.32` | covered | PWA-29: offline page contains Swedish offline text |
 | `02-§83.33` | covered | PWA-30: offline.html in PRE_CACHE_URLS |
-| `02-§83.34` | covered | PWA-31: CACHE_NAME is sb-sommar-v7 |
+| `02-§83.34` | covered | PWA-31: CACHE_NAME is sb-sommar-v8 |
 | `02-§83.35` | covered | PWA-32, PWA-33: offline page <main> does not link to lagg-till.html or redigera.html |
 
 ## Sections §84–§100
@@ -1389,7 +1389,7 @@ its requirement rows together with the test-legend rows that evidence them.
 
 | ID | Status | Notes |
 | --- | --- | --- |
-| `02-§96.1` | covered | OFF-02, PWA-31: `sw.js` declares `const CACHE_NAME = 'sb-sommar-v7'` |
+| `02-§96.1` | covered | OFF-02, PWA-31: `sw.js` declares `const CACHE_NAME = 'sb-sommar-v8'` |
 | `02-§96.2` | covered | SWH-01: `install` event handler contains `self.skipWaiting()` |
 | `02-§96.3` | covered | SWH-02: `install` handler wraps each URL as `new Request(u, { cache: 'reload' })` before `cache.addAll` |
 | `02-§96.4` | covered | SWH-03, SWH-04: `activate` handler deletes caches `!== CACHE_NAME` and calls `self.clients.claim()` |
@@ -1399,7 +1399,7 @@ its requirement rows together with the test-legend rows that evidence them.
 | `02-§96.7` | implemented | `source/build/build.js` pre-cache-manifest injection uses root-relative paths (no query strings); verified post-build by `public/sw.js` contents |
 | `02-§96.8` | implemented | `cacheFirstThenNetwork` catch branch calls `caches.match(request, { ignoreSearch: true })` so `/style.css` pre-cache entry still serves offline — manual browser verification |
 | `02-§96.9` | implemented | Manual browser verification: load SW v5, deploy v6, confirm next navigation upgrades without user action |
-| `02-§96.10` | implemented | Manual browser verification: confirm `sb-sommar-v6` is deleted on activate and `sb-sommar-v7` populated from fresh network responses |
+| `02-§96.10` | implemented | Manual browser verification: confirm `sb-sommar-v7` is deleted on activate and `sb-sommar-v8` populated from fresh network responses |
 | `02-§96.11` | implemented | Manual browser verification: confirm §94 registration-banner styling applies on second reload after deploy |
 | `02-§96.12` | implemented | Manual browser verification: no clear-site-data or unregister action required from the end user |
 | `02-§96.13` | covered | SWH-08: `sw.js` has no `import`, `require`, or `importScripts` |
@@ -1892,6 +1892,8 @@ changes); `05-DATA_CONTRACT.md §2`, §2.1, §3 (`moved` + `relocated` fields);
 | `02-§119.16` | covered | MOVED-39/-40/-41/-42: `locationHtml()` shows the struck old location (`.ev-loc-old`) before the new one in `renderEventRow()`/`renderEventPage()` and emits no ghost. The today/display view via `events-today.js` is a manual/browser checkpoint |
 | `02-§119.17` | covered | MOVED-44: the ghost row carries `data-event-date`/`-start`/`-end`; `schema-status.js` and `events-today.js` add `.is-past` (greying it) when that slot is past and the `is-ghost` guard blocks `.is-now`. CSS `.event-row.is-ghost.is-past` drops the amber for grey. The live/browser greying is a manual checkpoint |
 | `02-§119.18` | covered | CSS `.event-row.is-ghost .ev-time, .ev-title { text-decoration: line-through }` strikes the ghost's first line while `.ev-moved-to` stays un-struck. Visual appearance is a manual/browser checkpoint |
+| `02-§119.19` | covered | MOVED-45/-46/-47: `buildGhosts()` (`source/build/moved.js` `suppressGhost()`) drops the ghost for a same-day move with ≤ `GHOST_MAX_ACTIVITIES_BETWEEN` activities between old and new start and always keeps a cross-day move's ghost. The `events-today.js` mirror (`suppressGhost`) is a manual/browser checkpoint |
+| `02-§119.20` | covered | MOVED-48: the threshold lives once in `source/assets/js/client/ghost-config.js` (`GHOST_MAX_ACTIVITIES_BETWEEN`, default 5); the count is of starts strictly between the two times, excluding the moved activity. The boundary (exactly the threshold suppressed, one more kept) is asserted |
 
 ### §120 — Location-Clash Marking
 
@@ -1904,7 +1906,9 @@ Reuses the shared overlap predicate (`conflict-check.js`, §99).
 | `02-§120.1` | covered | CLASH-01/-07: `markLocationClashes()` uses the shared `overlaps()` predicate (same-date, same-room, overlapping); back-to-back is not a clash |
 | `02-§120.2` | covered | CLASH-03/-09: `isRealLocation()` excludes "Annat"/"[annat]" so they never clash; build-integration check confirmed only real rooms are flagged on the live schedule |
 | `02-§120.3` | covered | CLASH-06: a cancelled activity is skipped both as the marked and the conflicting event |
-| `02-§120.4` | covered | CLASH-01/-02/-08: the later-created booking is flagged regardless of array order; with three overlaps the two later ones are marked. CLASH-12: creation times are compared by epoch (`createdMs`) so a YAML Date-object timestamp and a string timestamp order correctly |
+| `02-§120.4` | covered | CLASH-16/-17/-18: `markLocationClashes()` (`locationSetMs`) flags the later room-chooser (by `meta.location_set_at`) regardless of array order; with three overlaps the two later choosers are marked, and an activity moved into an already-booked room is the offender even when created first. The `created_at` fallback keeps CLASH-01/-02/-08 holding for never-relocated data |
+| `02-§120.8` | covered | CLASH-19/-21/-22: `patchEventObject()` stamps `meta.location_set_at` when the location changes and preserves it otherwise; `buildFragmentYaml()` round-trips it and omits it when absent. PHP parity: `testPatchEventObjectStampsLocationSetAtOnLocationChange`/`...PreservesLocationSetAtOnTextEdit`/`testBuildFragmentYamlEmitsLocationSetAt`/`...OmitsLocationSetAtWhenAbsent`. `addEventToActiveCamp()` (Node + PHP) stamps it on creation — a build-integration/manual checkpoint |
+| `02-§120.9` | covered | CLASH-20: `locationSetMs()` reads `location_set_at`, falling back to `created_at` when absent, compared by epoch — an activity with no `location_set_at` clashes by creation order exactly as before |
 | `02-§120.5` | covered | CLASH-10/-11: `renderEventRow()` adds `is-clash`; `events-today.js` mirrors it via the `clash` JSON flag. CSS `.event-row.is-clash` uses `--color-error` (red wash + bar + title). The today/display view and visual appearance are manual/browser checkpoints |
 | `02-§120.6` | covered | CSS scopes the clash red with `:not(.is-past)` so a passed clash takes the grey `.is-past` treatment. Visual appearance is a manual/browser checkpoint |
 | `02-§120.7` | covered | CLASH-13/-14/-15: `isIgnoredActivity()` skips "Lunch"/"Middag" (case-insensitive) both as the marked and the conflicting event |

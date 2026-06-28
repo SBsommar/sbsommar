@@ -83,6 +83,26 @@
   function isMovedEvent(e) {
     return !!(e && e.moved && e.moved.from_date && e.moved.from_start);
   }
+  // Mirror of moved.js suppressGhost (02-§119.19): drop the previous-slot ghost
+  // for a same-day move whose old and new slots are close together — at most
+  // GHOST_MAX_ACTIVITIES_BETWEEN activities start strictly between the two times
+  // on that day. A cross-day move always keeps its ghost. The threshold has a
+  // single home in the shared ghost-config.js (SBGhostConfig), loaded before this
+  // script; if it is somehow missing we keep the ghost rather than invent a value.
+  function suppressGhost(e) {
+    if (e.moved.from_date !== e.date) return false;
+    if (!window.SBGhostConfig) return false;
+    var max = window.SBGhostConfig.GHOST_MAX_ACTIVITIES_BETWEEN;
+    var lo = e.moved.from_start < e.start ? e.moved.from_start : e.start;
+    var hi = e.moved.from_start < e.start ? e.start : e.moved.from_start;
+    var between = 0;
+    for (var i = 0; i < events.length; i++) {
+      var o = events[i];
+      if (o === e || o.date !== e.date) continue;
+      if (o.start > lo && o.start < hi) between += 1;
+    }
+    return between <= max;
+  }
   function isRelocated(e) {
     return !!(e && e.relocated && e.relocated.from_location);
   }
@@ -111,7 +131,7 @@
     var ghosts = [];
     for (var i = 0; i < events.length; i++) {
       var e = events[i];
-      if (isMovedEvent(e) && e.moved.from_date === dateStr) {
+      if (isMovedEvent(e) && e.moved.from_date === dateStr && !suppressGhost(e)) {
         ghosts.push({
           _ghost: true,
           title: e.title,

@@ -91,6 +91,13 @@ function patchEventObject(event, updates, now) {
   const location = 'location' in updates ? (updates.location || event.location) : event.location;
   const relocated = resolveRelocated(event, location);
 
+  // Room-choice time (02-§120.8): renew it whenever the location actually
+  // changes, otherwise preserve whatever the activity already carried. Unlike
+  // `relocated`, this advances even when the location returns to its original —
+  // the room genuinely changed at this moment.
+  const prevLocationSetAt = event.meta ? event.meta.location_set_at : null;
+  const locationSetAt = location !== event.location ? now : (prevLocationSetAt || null);
+
   const patched = {
     id:          event.id,
     title:       'title'       in updates ? (updates.title       || event.title)       : event.title,
@@ -108,6 +115,7 @@ function patchEventObject(event, updates, now) {
       updated_at: now,
     },
   };
+  if (locationSetAt) patched.meta.location_set_at = locationSetAt;
   if (moved) patched.moved = moved;
   if (relocated) patched.relocated = relocated;
   return patched;

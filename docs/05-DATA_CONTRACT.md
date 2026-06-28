@@ -91,6 +91,7 @@ events:
     meta:
       created_at: ISO-8601 | null
       updated_at: ISO-8601 | null
+      location_set_at: ISO-8601 | null
 ```
 
 How to read this schema:
@@ -144,6 +145,7 @@ event:
   meta:
     created_at: ISO-8601 | null
     updated_at: ISO-8601 | null
+    location_set_at: ISO-8601 | null
 ```
 
 - The file name without `.yaml` must equal `event.id`.
@@ -204,6 +206,15 @@ event:
 - `meta`
 
 The `owner` and `meta` fields are for internal use only and must never be displayed in any public view. <!-- 05-§3.3 -->
+
+The `meta` block carries the API-maintained timestamps. `created_at` and
+`updated_at` record when the activity was first written and last edited.
+`location_set_at` records when the activity's location was last set to its
+current room: the API sets it when the activity is created and renews it on any
+edit that changes the location, leaving it untouched otherwise. The
+location-clash logic (`02-requirements/schedule-and-detail.md §120`) uses it to
+decide which of two activities sharing a room chose it later; an activity that
+predates the field falls back to `created_at`. <!-- 05-§3.8 -->
 
 ---
 

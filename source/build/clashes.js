@@ -2,9 +2,10 @@
 
 // Flags the later-booked event in each same-location time clash so the schedule
 // can mark it (02-§120). A "lokalkrock" is two non-cancelled events on the same
-// date, in the same real room, whose times overlap; the one created later (by
-// meta.created_at) is the offender and gets `_clash = true`. The earlier booking
-// keeps the room and is left unmarked.
+// date, in the same real room, whose times overlap; the one that chose the room
+// later (by meta.location_set_at, falling back to meta.created_at) is the
+// offender and gets `_clash = true`. The activity that has held the room longest
+// keeps it and is left unmarked.
 //
 // The catch-all "Annat" / "[annat]" location is never a real room, so it can
 // never be in conflict.
@@ -27,31 +28,38 @@ function isIgnoredActivity(e) {
   return !!(e && e.title && IGNORED_TITLES.has(String(e.title).trim().toLowerCase()));
 }
 
-// Comparable creation time in epoch milliseconds. YAML parses an ISO timestamp
-// (`2026-02-27T09:12:59Z`) into a Date object but leaves a space-separated one
-// (`2026-06-27 00:40`) as a string, so the two must not be compared as raw text
-// — `new Date(...)` normalises both. A missing or unparseable created_at sorts
-// earliest, so it counts as the original booking and is never the one flagged.
-function createdMs(e) {
-  const v = e && e.meta ? e.meta.created_at : null;
+// Comparable room-choice time in epoch milliseconds (02-§120.4, §120.9): when
+// the activity's location was last set to its current room. `meta.location_set_at`
+// holds it; an activity that predates the field falls back to `meta.created_at`,
+// so one that has never changed room behaves exactly as if creation order decided
+// the clash. YAML parses an ISO timestamp (`2026-02-27T09:12:59Z`) into a Date
+// object but leaves a space-separated one (`2026-06-27 00:40`) as a string, so
+// the two must not be compared as raw text — `new Date(...)` normalises both. A
+// missing or unparseable value sorts earliest, so it counts as the original
+// booking and is never the one flagged.
+function locationSetMs(e) {
+  const meta = e && e.meta ? e.meta : null;
+  const v = (meta && meta.location_set_at) || (meta && meta.created_at) || null;
   if (!v) return -Infinity;
   const t = new Date(v).getTime();
   return Number.isNaN(t) ? -Infinity : t;
 }
 
-// Sets `_clash = true` on every event that overlaps an EARLIER-created event in
-// the same real room on the same date. Cancelled events have freed the room, so
-// they neither clash nor cause a clash. Mutates and returns `events`.
+// Sets `_clash = true` on every event that overlaps an activity which chose the
+// same real room EARLIER on the same date. The activity that has held the room
+// longest keeps it; an activity moved into an already-booked room is the
+// offender even if it was created first. Cancelled events have freed the room,
+// so they neither clash nor cause a clash. Mutates and returns `events`.
 function markLocationClashes(events) {
   for (const e of events) {
     if (e.cancelled || isIgnoredActivity(e) || !isRealLocation(e.location)) continue;
-    const ems = createdMs(e);
+    const ems = locationSetMs(e);
     for (const f of events) {
       if (f === e || f.cancelled || isIgnoredActivity(f)) continue;
       if (f.date !== e.date || f.location !== e.location) continue;
       if (!overlaps(e, f)) continue;
-      // `e` came after `f` (created later) and they share the room — mark `e`.
-      if (createdMs(f) < ems) {
+      // `f` chose the room before `e` did and they share it — mark `e`.
+      if (locationSetMs(f) < ems) {
         e._clash = true;
         break;
       }
