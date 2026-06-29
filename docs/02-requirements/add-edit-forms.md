@@ -314,18 +314,32 @@ definition and the typical default (`start_date − 7 days`). <!-- 02-§26.1 -->
 - A message is displayed above the form stating when it opens, e.g.
   "Formuläret öppnar den 15 februari 2026." <!-- 02-§26.5 -->
 
-### 26.3 UI behaviour — after the period closes
+### 26.3 UI behaviour — after the last camp day (add form)
 
-- When the current date is after `end_date + 1 day`, the add-activity form
-  is rendered but visually greyed out (reduced opacity on all form fields). <!-- 02-§26.6 -->
+Context: the add-activity day grid only offers camp days that are today or
+later (§80). Once the last camp day (`end_date`) has passed there is no day
+left to add an activity to. The add form therefore locks a day earlier than
+the server submission period (§26.1) closes — the extra `end_date + 1` grace
+day exists for the server and the edit form, not for adding new activities.
+Before this rule existed the add form stayed "open" on that grace day with an
+empty day grid and no explanation, which read as a broken form.
+
+- When the current date is after `end_date`, the add-activity form
+  (`/lagg-till.html`) is rendered but visually greyed out (reduced opacity on
+  all form fields). <!-- 02-§26.6 -->
 - The submit button is disabled. <!-- 02-§26.7 -->
-- A message is displayed above the form stating that the camp has ended, e.g.
-  "Lägret är avslutat." <!-- 02-§26.8 -->
+- A message is displayed above the form stating that the camp has ended:
+  "Lägret är avslutat. Det går inte längre att lägga till aktiviteter." <!-- 02-§26.8 -->
 
 ### 26.4 UI behaviour — edit form
 
-- The same time-gating rules apply to the edit-activity form
+- The before-opening rules (§26.2) apply identically to the edit-activity form
   (`/redigera.html`). <!-- 02-§26.9 -->
+- After the camp, the edit form follows the full server submission period
+  (§26.1): it locks and shows "Lägret är avslutat." when the current date is
+  after `end_date + 1 day`. The earlier add-form lock (§26.3) does not apply to
+  the edit form, which has no day grid and where editing a passed event is
+  already blocked separately (§27, §89). <!-- 02-§26.21 -->
 
 ### 26.5 API enforcement
 
@@ -338,9 +352,13 @@ definition and the typical default (`start_date − 7 days`). <!-- 02-§26.1 -->
 
 ### 26.6 Build-time data passing
 
-- The build must embed `opens_for_editing` and `end_date` as `data-` attributes
-  on the form element so client-side JavaScript can evaluate the period at page
-  load without an API call. <!-- 02-§26.13 -->
+- The build must embed the form's open date and lock date as `data-opens` and
+  `data-closes` attributes on the form element so client-side JavaScript can
+  evaluate the gating at page load without an API call. `data-opens` is
+  `opens_for_editing` for both forms. `data-closes` is the last date the form
+  accepts input: `end_date` for the add form (§26.3) and `end_date + 1 day` for
+  the edit form (§26.4). The form is locked when the current date is after
+  `data-closes`. <!-- 02-§26.13 -->
 
 ### 26.7 Admin bypass before the camp opens
 
@@ -723,8 +741,11 @@ submission.
   day/month format (e.g. "Mån 28/7"). <!-- 02-§80.2 -->
 - The grid contains exactly the days within the active camp's
   `start_date..end_date`. <!-- 02-§80.3 -->
-- When the current date falls within the camp period, only days from today
-  onward are shown. Before the camp period, all days are shown. <!-- 02-§80.4 -->
+- The grid never offers a day before the current date. Before the camp period
+  (current date before `start_date`) every camp day is in the future, so all
+  days are shown; from the first camp day onward, only days from today onward
+  are shown; after the last camp day, no days remain (the add form is locked,
+  §26.3). <!-- 02-§80.4 -->
 - The day grid is always multi-select. Clicking a day toggles it on or off
   independently. There is no single-select mode. <!-- 02-§80.5 -->
 
