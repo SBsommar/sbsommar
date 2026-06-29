@@ -11,9 +11,10 @@
 // messages) must be verified manually:
 //   1. Open lagg-till.html before opens_for_editing — confirm form is greyed
 //      out, submit disabled, message shows opening date.
-//   2. Open lagg-till.html after end_date + 1 — confirm form is greyed out,
-//      submit disabled, message says "Lägret är avslutat."
-//   3. Repeat for redigera.html.
+//   2. Open lagg-till.html after end_date — confirm form is greyed out,
+//      submit disabled, message says "Lägret är avslutat. Det går inte
+//      längre att lägga till aktiviteter." and the day grid is empty.
+//   3. Repeat for redigera.html, where the lock applies after end_date + 1.
 
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
@@ -52,11 +53,17 @@ describe('renderAddPage – time-gating data attributes (02-§26.13)', () => {
     );
   });
 
-  it('GATE-02: form has data-closes attribute set to end_date + 1 day', () => {
+  it('GATE-02: add form has data-closes attribute set to end_date itself (02-§26.6)', () => {
     const html = render();
+    // The add form locks once the last camp day passes — there is no day left
+    // in the day grid to add to — so data-closes is end_date, not end_date + 1.
     assert.ok(
-      html.includes('data-closes="2026-06-28"'),
-      'Form is missing data-closes="2026-06-28" (end_date + 1)',
+      html.includes('data-closes="2026-06-27"'),
+      'Add form is missing data-closes="2026-06-27" (end_date)',
+    );
+    assert.ok(
+      !html.includes('data-closes="2026-06-28"'),
+      'Add form must not extend to end_date + 1 (the server grace day)',
     );
   });
 });
