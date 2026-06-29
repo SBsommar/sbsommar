@@ -116,7 +116,7 @@ ID ranges.
 
 ---
 
-Audit date: 2026-02-24. Last updated: 2026-06-21 (duplicate submission hardening delivered, #480: 02-§111.1–111.9: 7 covered, 2 implemented; split-on-open delivered, #470: 02-§110.1–110.8 covered; fragment-only edit/delete delivered, #467: 02-§109.1–109.26: 22 covered, 4 implemented; config-file QA deploy trigger 02-§108.1–108.4 covered; location availability 02-§107.1–107.8 covered; countdown hidden during ongoing camp delivered, #521: 02-§30.26 covered; stranded-recovery auth + fail-loud 02-§112.12–112.15: 1 covered, 3 implemented; stranded-recovery check-suite trigger + single-flight 02-§112.16–112.17 covered; stranded-recovery rollup-based detection 02-§112.18 covered; weekly-schedule time status delivered: 02-§116.1–116.4 and 07-§6.134–6.135 covered).
+Audit date: 2026-02-24. Last updated: 2026-06-21 (duplicate submission hardening delivered, #480: 02-§111.1–111.9: 7 covered, 2 implemented; split-on-open delivered, #470: 02-§110.1–110.8 covered; fragment-only edit/delete delivered, #467: 02-§109.1–109.26: 22 covered, 4 implemented; config-file QA deploy trigger 02-§108.1–108.4 covered; location availability 02-§107.1–107.8 covered; countdown hidden during ongoing camp delivered, #521: 02-§30.26 covered; stranded-recovery auth + fail-loud 02-§112.12–112.15: 1 covered, 3 implemented; stranded-recovery check-suite trigger + single-flight 02-§112.16–112.17 covered; stranded-recovery rollup-based detection 02-§112.18 covered; weekly-schedule time status delivered: 02-§116.1–116.4 and 07-§6.134–6.135 covered; add-form lock after last camp day delivered, #791: 02-§26.6–26.8 and 02-§80.4 reworded, 02-§26.21 added — 1 implemented).
 
 ---
 
@@ -126,7 +126,7 @@ The matrix is split by ID family. Each file carries the rows for one family.
 
 | Family | Source | Rows | File |
 | --- | --- | --- | --- |
-| `02` | `docs/02-requirements/` | 1330 | [02-requirements](./02-requirements.md) |
+| `02` | `docs/02-requirements/` | 1331 | [02-requirements](./02-requirements.md) |
 | `03` | `docs/03-architecture/` | 0 | [03-architecture](./03-architecture.md) |
 | `05` | `docs/05-DATA_CONTRACT.md` | 19 | [05-data-contract](./05-data-contract.md) |
 | `07` | `docs/07-design/` | 93 | [07-design](./07-design.md) |
@@ -138,9 +138,9 @@ Test IDs referenced in the `Test(s)` column are defined in the
 ## Summary
 
 ```text
-Total requirements:            1432
+Total requirements:            1433
 Covered (implemented + tested): 773
-Implemented, not tested:        659
+Implemented, not tested:        660
 Gap (no implementation):          0
 Orphan tests (no requirement):    0
 
