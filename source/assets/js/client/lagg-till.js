@@ -101,15 +101,15 @@
   var visibleBtns = []; // buttons not filtered by past-day rule
   var currentPage = 0;
 
-  // Filter out past days when today is during camp (02-§80.4).
+  // Never offer a day before today (02-§80.4). Before the camp every day is in
+  // the future so all are shown; during the camp past days are hidden; after the
+  // last camp day none remain (and the form is locked, 02-§26.3).
   // Build visibleBtns array for pagination.
   if (dayGrid) {
     var today = new Date().toISOString().slice(0, 10);
-    var gridStart = dayGrid.dataset.start;
-    var gridEnd = dayGrid.dataset.end;
     var allDayBtns = dayGrid.querySelectorAll('.day-btn');
     for (var i = 0; i < allDayBtns.length; i++) {
-      if (today >= gridStart && today <= gridEnd && allDayBtns[i].dataset.date < today) {
+      if (allDayBtns[i].dataset.date < today) {
         allDayBtns[i].style.display = 'none';
       } else {
         visibleBtns.push(allDayBtns[i]);
@@ -468,10 +468,12 @@
         msg.parentNode.insertBefore(bypassBtn, msg.nextSibling);
       }
     } else if (todayGate > closesDate) {
-      // After closing — no admin bypass (02-§26.16, §26.18)
+      // After the last camp day — no admin bypass (02-§26.16, §26.18).
+      // closesDate is end_date for the add form (02-§26.6), so this fires the
+      // day after the camp ends, when the day grid has no days left to offer.
       var msg2 = document.createElement('div');
       msg2.className = 'form-gate-msg';
-      msg2.textContent = 'Lägret är avslutat.';
+      msg2.textContent = 'Lägret är avslutat. Det går inte längre att lägga till aktiviteter.';
       form.parentNode.insertBefore(msg2, form);
       fieldset.disabled = true;
       submitBtn.disabled = true;

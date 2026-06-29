@@ -194,9 +194,11 @@ describe('02-§26.13 — Time-gate data attributes on form', () => {
     assert.ok(html.includes('data-opens="2099-06-15"'), 'opens date set');
   });
 
-  it('RADD-23: form has data-closes attribute (end_date + 1 day)', () => {
+  it('RADD-23: add form has data-closes attribute set to end_date (02-§26.6)', () => {
     const html = render();
-    assert.ok(html.includes('data-closes="2099-07-08"'), 'closes date set (end + 1)');
+    // The add form locks once the last camp day passes, so data-closes is
+    // end_date itself — not the end_date + 1 server grace day.
+    assert.ok(html.includes('data-closes="2099-07-07"'), 'closes date set (end_date)');
   });
 
   it('RADD-24: form has data-api-url attribute', () => {

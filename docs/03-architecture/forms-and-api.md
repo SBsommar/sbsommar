@@ -394,21 +394,35 @@ timezone handling.
 ### 13.2 Build-time data passing
 
 At build time, `render-add.js` and `render-edit.js` read `opens_for_editing` and
-`end_date` from the active camp and embed them as `data-opens` and `data-closes`
-attributes on the `<form>` element. The closes date is computed as `end_date + 1 day`.
+`end_date` from the active camp and embed `data-opens` and `data-closes`
+attributes on the `<form>` element. `data-opens` is `opens_for_editing` for both
+forms. `data-closes` is the last date the form accepts input and differs by form
+(02-§26.13):
+
+- **Add form** (`render-add.js`): `data-closes` is `end_date` itself. Once the
+  last camp day has passed there is no day left in the day grid to add an
+  activity to, so the add form locks without the `end_date + 1` server grace day
+  (02-§26.6–26.8).
+- **Edit form** (`render-edit.js`): `data-closes` is `end_date + 1 day`, matching
+  the full server submission period (02-§26.21).
 
 ### 13.3 Client-side gating
 
 `lagg-till.js` and `redigera.js` read the `data-opens` and `data-closes` attributes
 at page load and compare against today's date (`new Date().toISOString().slice(0, 10)`).
 
-If outside the period:
+If today is before `data-opens` or after `data-closes`:
 
 1. All form fields receive reduced opacity via a CSS class.
 2. The submit button is disabled.
 3. A message is shown above the form:
    - Before opening: "Formuläret öppnar den {formatted date}."
-   - After closing: "Lägret är avslutat."
+   - After closing (add form): "Lägret är avslutat. Det går inte längre att lägga till aktiviteter."
+   - After closing (edit form): "Lägret är avslutat."
+
+The add-form day grid additionally hides every day button whose date is before
+today (`btn.dataset.date < today`), so past days are never selectable during the
+camp and none remain after it (02-§80.4).
 
 ### 13.4 Server-side gating
 

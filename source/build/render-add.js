@@ -2,7 +2,6 @@
 
 const { escapeHtml, toDateString, campDayButtons } = require('./utils');
 const { pageNav, pageFooter } = require('./layout');
-const { addOneDay } = require('../api/time-gate');
 const { goatcounterScript } = require('./analytics');
 const { pwaHeadTags } = require('./pwa');
 
@@ -13,7 +12,11 @@ function renderAddPage(camp, locations, apiUrl, footerHtml = '', navSections = [
   const startDate = toDateString(camp.start_date);
   const endDate = toDateString(camp.end_date);
   const opensDate = toDateString(camp.opens_for_editing || startDate);
-  const closesDate = addOneDay(endDate);
+  // The add form locks once the last camp day passes: with no future camp day
+  // left, the day grid is empty and there is nothing to add. So data-closes is
+  // end_date itself, not the end_date + 1 server grace day used by the edit
+  // form and the API (02-§26.6–26.8, §26.13).
+  const closesDate = endDate;
 
   // "Annat" always last; deduplicate
   const locList = [
