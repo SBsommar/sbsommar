@@ -95,111 +95,6 @@ events:
     meta:
       created_at: '2025-05-05 20:13:28'
       updated_at: '2025-05-05 20:13:28'
-  - id: sista-for-idag-2026-04-24-2359
-    title: Sista för idag
-    date: '2026-04-24'
-    start: '23:59'
-    end: '23:59'
-    location: Annat
-    responsible: myggorna
-    description: En "hållare" för att synliggöra på skärmen vid servicehuset att alla aktiviter för dagen syns.
-    link: null
-    owner:
-      name: ''
-      email: ''
-    meta:
-      created_at: '2025-05-05 20:17:14'
-      updated_at: '2025-05-05 20:17:14'
-  - id: sista-for-idag-2026-04-25-2359
-    title: Sista för idag
-    date: '2026-04-25'
-    start: '23:59'
-    end: '23:59'
-    location: Annat
-    responsible: myggorna
-    description: En "hållare" för att synliggöra på skärmen vid servicehuset att alla aktiviter för dagen syns.
-    link: null
-    owner:
-      name: ''
-      email: ''
-    meta:
-      created_at: '2025-05-05 20:17:14'
-      updated_at: '2025-05-05 20:17:14'
-  - id: sista-for-idag-2026-04-26-2359
-    title: Sista för idag
-    date: '2026-04-26'
-    start: '23:59'
-    end: '23:59'
-    location: Annat
-    responsible: myggorna
-    description: En "hållare" för att synliggöra på skärmen vid servicehuset att alla aktiviter för dagen syns.
-    link: null
-    owner:
-      name: ''
-      email: ''
-    meta:
-      created_at: '2025-05-05 20:17:14'
-      updated_at: '2025-05-05 20:17:14'
-  - id: sista-for-idag-2026-04-27-2359
-    title: Sista för idag
-    date: '2026-04-27'
-    start: '23:59'
-    end: '23:59'
-    location: Annat
-    responsible: myggorna
-    description: En "hållare" för att synliggöra på skärmen vid servicehuset att alla aktiviter för dagen syns.
-    link: null
-    owner:
-      name: ''
-      email: ''
-    meta:
-      created_at: '2025-05-05 20:17:14'
-      updated_at: '2025-05-05 20:17:14'
-  - id: sista-for-idag-2026-04-28-2359
-    title: Sista för idag
-    date: '2026-04-28'
-    start: '23:59'
-    end: '23:59'
-    location: Annat
-    responsible: myggorna
-    description: En "hållare" för att synliggöra på skärmen vid servicehuset att alla aktiviter för dagen syns.
-    link: null
-    owner:
-      name: ''
-      email: ''
-    meta:
-      created_at: '2025-05-05 20:17:14'
-      updated_at: '2025-05-05 20:17:14'
-  - id: sista-for-idag-2026-04-29-2359
-    title: Sista för idag
-    date: '2026-04-29'
-    start: '23:59'
-    end: '23:59'
-    location: Annat
-    responsible: myggorna
-    description: En "hållare" för att synliggöra på skärmen vid servicehuset att alla aktiviter för dagen syns.
-    link: null
-    owner:
-      name: ''
-      email: ''
-    meta:
-      created_at: '2025-05-05 20:17:14'
-      updated_at: '2025-05-05 20:17:14'
-  - id: sista-for-idag-2026-04-30-2359
-    title: Sista för idag
-    date: '2026-04-30'
-    start: '23:59'
-    end: '23:59'
-    location: Annat
-    responsible: myggorna
-    description: En "hållare" för att synliggöra på skärmen vid servicehuset att alla aktiviter för dagen syns.
-    link: null
-    owner:
-      name: ''
-      email: ''
-    meta:
-      created_at: '2025-05-05 20:17:14'
-      updated_at: '2025-05-05 20:17:14'
   - id: middag-2026-04-25-1700
     title: Middag
     date: '2026-04-25'
@@ -2707,7 +2602,7 @@ events:
     location: GA Idrott
     responsible: Niclas Nilsson
     description: |-
-      Anmälningslänk: [https://forms.gle/zLCAk919x57S6X7A8](https://l.facebook.com/l.php?u=https%3A%2F%2Fforms.gle%2FzLCAk919x57S6X7A8%3Ffbclid%3DIwZXh0bgNhZW0CMTAAYnJpZBExalh4WFJXcHpVdHZPVHo2OAEeQS282kf43ePaHYWnYw53maWxyBiPwuuMxsmJw1CRtpWSnzpCs2PepdXbb1c_aem_VeLti425Nxy8jFF_l6WLbg&h=AT1nPKH_M2O6SpxsnMpkh3ZIn8lI8U1xT0W_uc8UFoRZSk-CquW3Zdu1WFbFyWKwcNwzRgYwROGYfMLbDLIRVSx-mdmT6I_hCsSqsB_O1ds12vauXrJw49-e25c-d5cY9bZlnjfDKwtd9lIwl-F-j2cHCqBRzog4IrE&__tn__=-UK-R&c%5B0%5D=AT0Exww4-VfvwpPPz6GAGEUsfE2RH1Q7LJw-vdy9wTBNlu54vdn3o_yGljZjxr7IF2bUh8PaYuBUJVD51gUz295p2JM-bsJ_kZYti-RFSm-9KFkKBMPwECAEfWmHCW6vB-jfi_EwwuX4DUENfM5b2OpnoL5m-wu77MNBMl-jsp2qsqDpQ6_QLK4tGKiUxV4xQosWcyw05nqt8vVNKcLlfVsqNlAzVoQ)
+      Anmälningslänk: [https://forms.gle/zLCAk919x57S6X7A8](https://forms.gle/zLCAk919x57S6X7A8)
       Som förra året så kommer vi att sätta upp en scen i GA-hallen för ett event med Open Stage. På Open Stage får alla som vill chansen att stå på scen och uppträda inför publik, vare sig det är med sång, dans, musik, poesi, cirkustricks, stand-up comedy, buktaleri, ett kort teaterframträdande, eller något annat ni vill visa upp. Karaoken har ett separat block (men det har funnit exempel på sång med bakgrundsmusik som ändå passar bättre in på Open Stage, kom och fråga om du är osäker).
       Det krävs ingen föranmälan innan lägret – du kan bestämma på plats om du vill vara med, och det kommer dyka upp ett anmälningsformulär i veckan. På många läger där det finns Open Stage händer det också att man övar in något under lägret med några vänner och sedan uppträder tillsammans. Om det är första gången du uppträder är Open Stage på ett läger där du har lärt känna lite folk under veckan, ett utmärkt och tryggt tillfälle att prova dina vingar för första gången.
       Det kommer att finnas ljud- och ljusanläggning, mikrofoner, en cajón (trumlåda), och några gitarreffekter/förstärkarsimuleringar tillgängliga. Övrig rekvisita (instrument eller liknande) ordnar man själv. Det kommer också finnas möjlighet att ha inspelad bakgrundsmusik till sitt uppträdande, men större delen av karaoken tar vi vid ett separat tillfälle.
