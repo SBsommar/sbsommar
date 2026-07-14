@@ -133,6 +133,15 @@ A discreet install button in the site header helps users discover that the
 site can be installed as an app. The button appears alongside the existing
 header controls (hamburger menu, scroll-to-top, feedback).
 
+On mobile (`≤ 767px`) the button (`.pwa-install-btn`) shares the 42 × 42 px
+terracotta pill styling of the other floating action buttons and is positioned
+with `position: fixed; top: var(--space-xs); left: calc(var(--space-sm) + 42px +
+var(--space-xs))` — the slot immediately right of the menu (hamburger) toggle.
+Sitting on the left keeps it clear of both the centred scroll-to-top button and
+the right-aligned floating buttons (feedback, quick-add, edit-shortcut),
+regardless of how many of those are visible. On desktop the button is instead
+positioned near the top-right of the content container.
+
 **Platform detection and behaviour:**
 
 | Platform | Detection | Button action |

@@ -53,8 +53,8 @@ Part of [the design index](./index.md). Section IDs (`07-§N.M`) are stable and 
   white plus icon, `border-radius: var(--radius-md)` — matching the
   scroll-to-top and PWA-install buttons. Hidden on desktop. <!-- 07-§6.126 -->
 - Positioned between the centred scroll-to-top button and the right-aligned
-  feedback button; the PWA-install button shifts one slot left so the
-  buttons never overlap. <!-- 07-§6.127 -->
+  feedback button. The PWA-install button is not part of this right-side row —
+  it sits on the left beside the menu toggle. <!-- 07-§6.127 -->
 
 ### Edit-shortcut button (mobile)
 
@@ -63,8 +63,7 @@ Part of [the design index](./index.md). Section IDs (`07-§N.M`) are stable and 
   linking to the edit page. <!-- 07-§6.128 -->
 - Mobile only (`≤ 767px`): `42 × 42px`, `background: var(--color-terracotta)`,
   white pencil icon, `border-radius: var(--radius-md)` — matching the other
-  floating action buttons. The PWA-install button shifts one slot left so they
-  never overlap. Hidden on desktop. <!-- 07-§6.129 -->
+  floating action buttons. Hidden on desktop. <!-- 07-§6.129 -->
 - Hidden by default; revealed by `nav.js` only for visitors who own an upcoming
   activity. An admin token does not reveal it. <!-- 07-§6.130 -->
 
