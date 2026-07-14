@@ -1,4 +1,30 @@
 camps:
+  - id: 2027-07-syssleback
+    name: SB sommar 2027 juli
+    start_date: '2027-07-25'
+    end_date: '2027-08-01'
+    opens_for_editing: '2027-07-18'
+    registration_opens: '2027-04-15'
+    registration_closes: '2027-07-18'
+    location: Sysslebäck
+    link: https://www.facebook.com/groups/syssleback2027
+    information: |
+      2026 lät vi Claude Code bygga om allt från WordPress. 2027 räcker det att vi tänker på ett läger så står schemat redan färdigt. Vi väntar fortfarande på att den ska lära sig grilla korven. 🌭
+    file: 2027-07-syssleback.yaml
+    archived: false
+  - id: 2027-06-syssleback
+    name: SB sommar 2027 juni
+    start_date: '2027-06-20'
+    end_date: '2027-06-27'
+    opens_for_editing: '2027-06-13'
+    registration_opens: '2027-04-15'
+    registration_closes: '2027-06-13'
+    location: Sysslebäck
+    link: https://www.facebook.com/groups/syssleback2027
+    information: |
+      2026 lät vi Claude Code bygga om allt från WordPress. 2027 räcker det att vi tänker på ett läger så står schemat redan färdigt. Vi väntar fortfarande på att den ska lära sig grilla korven. 🌭
+    file: 2027-06-syssleback.yaml
+    archived: false
   - id: 2026-07-syssleback
     name: SB sommar 2026 juli
     start_date: '2026-07-26'

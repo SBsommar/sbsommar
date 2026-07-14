@@ -549,7 +549,7 @@ Part of [the traceability index](./index.md).
 | `02-§42.29` | Yearly update is manual one-line change, no automation | — | — | — | implemented |
 | `02-§42.31` | Two QA-only camps coexist: spring + autumn | 02-requirements/event-data.md §42.9, 03-architecture/data-layer.md §2 | QSEAS-01, QSEAS-03 | `source/data/camps.yaml` | covered |
 | `02-§42.32` | Spring QA camp `end_date` equals the next real camp's `opens_for_editing` | 02-requirements/event-data.md §42.9, 03-architecture/data-layer.md §2 | QSEAS-04 | `source/data/camps.yaml` | covered |
-| `02-§42.33` | No QA camp covers the real-camp season window | 02-requirements/event-data.md §42.9 | QSEAS-05 | `source/data/camps.yaml` | covered |
+| `02-§42.33` | No QA camp overlaps any real camp's active window | 02-requirements/event-data.md §42.9 | QSEAS-05 | `source/data/camps.yaml` | covered |
 | `02-§42.34` | Autumn QA camp runs Oct 1 – Dec 31 of current year | 02-requirements/event-data.md §42.9 | QSEAS-02 | `source/data/camps.yaml` | covered |
 | `02-§43.1` | QA event data deploy uses SCP over SSH instead of FTP | 08-ENVIRONMENTS.md | manual: trigger event PR, verify QA pages update via SCP | `.github/workflows/event-data-deploy.yml` – `deploy-qa` job | implemented |
 | `02-§43.2` | QA event data upload uses existing SSH secrets | 08-ENVIRONMENTS.md | manual: inspect workflow secrets references | `.github/workflows/event-data-deploy.yml` | implemented |
