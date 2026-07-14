@@ -539,20 +539,27 @@ an additional, more visible surface for the same destination.
 
 ### 121.3 Content
 
-- The banner title is "Gå med i vår EDQ Hub". <!-- 02-§121.5 -->
-- The banner sub line is "Här delar vi nyheter och håller kontakten före och
-  under lägret. Välkommen in!". <!-- 02-§121.6 -->
+- The banner title is "All info om lägret – på ett ställe". <!-- 02-§121.5 -->
+- The banner sub line is "Vi flyttar från Facebook till EDQ Hub. Här finns
+  schema, nyheter och kontakt före och under lägret.". It leads with the
+  concrete benefit and states the move from Facebook so participants understand
+  why they should join. <!-- 02-§121.6 -->
 - All banner text is in Swedish. <!-- 02-§121.7 -->
 
 ### 121.4 Appearance
 
 - The banner is a filled green card (background `--color-sage-dark`) with white
   text, visually distinct from the terracotta registration banners. <!-- 02-§121.8 -->
-- The banner carries the EDQ Hub hub-node icon and a trailing arrow signalling
-  that it leads onward to another site. <!-- 02-§121.9 -->
+- The banner carries the EDQ Hub hub-node icon and a "Gå med" call-to-action
+  button, so it reads clearly as an actionable link rather than a passive
+  notice. <!-- 02-§121.9 -->
 - The banner uses only the design tokens defined in
   `07-design/css-strategy.md §7`; no colours, spacing, or typography values are
   hardcoded. <!-- 02-§121.10 -->
+- The "Gå med" call-to-action is a visual element rendered inside the single
+  card link — a light pill with `--color-sage-dark` text on a `--color-white`
+  background, carrying a trailing arrow. It is not a nested interactive element,
+  so the whole card stays one valid, clickable link. <!-- 02-§121.14 -->
 
 ### 121.5 Analytics
 

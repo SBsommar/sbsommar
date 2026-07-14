@@ -883,7 +883,9 @@ visibility script — so it adds no client-side JavaScript.
   `<a class="hero-hub-banner" href="<edqhubUrl>" target="_blank"
   rel="noopener noreferrer" data-goatcounter-click="click-hub-banner">`
   containing an icon span, a text column (`.hero-hub-banner-title` +
-  `.hero-hub-banner-meta`), and a trailing arrow span.
+  `.hero-hub-banner-meta`), and a "Gå med" call-to-action pill span
+  (`.hero-hub-banner-btn`). The pill is a `<span>`, not a nested link/button, so
+  the card remains one valid, clickable anchor.
 - The banner is interpolated into the hero markup directly after the
   `hero-actions` block and **before** the registration banners, so it sits just
   under the hero image.
@@ -905,10 +907,13 @@ needed.
   `color-mix(in srgb, black 8%, var(--color-sage-dark))`, `200ms ease`.
 - `.hero-hub-banner:focus-visible` — the standard site outline
   (`2px solid var(--color-terracotta); outline-offset: 2px`).
-- `.hero-hub-banner-icon` and `.hero-hub-banner-arrow` — `flex-shrink: 0` so the
-  text column absorbs wrapping; the arrow is white and slightly larger.
+- `.hero-hub-banner-icon` and `.hero-hub-banner-btn` — `flex-shrink: 0` so the
+  text column absorbs wrapping.
 - `.hero-hub-banner-title` — `700` weight, `font-size: var(--font-size-base)`.
 - `.hero-hub-banner-meta` — `font-size: var(--font-size-small)`, on its own line.
+- `.hero-hub-banner-btn` — a light "Gå med" pill: white background, sage-dark
+  text, `700` weight, `border-radius: var(--radius-sm)`; dims slightly on card
+  hover.
 
 White text on `--color-sage-dark` yields ≈6:1 contrast (WCAG AA). All values
 come from existing tokens in `07-design/css-strategy.md §7`.
