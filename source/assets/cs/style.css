@@ -301,6 +301,74 @@ h3 {
   margin-top: 2px;
 }
 
+/* ── EDQ Hub community banner (02-§121, 07-§6.149–6.157) ── */
+
+.hero-hub-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  max-width: 750px;
+  margin: var(--space-sm) auto 0;
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-sage-dark);
+  color: var(--color-white);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  transition: background 200ms ease;
+}
+
+.hero-hub-banner:hover {
+  background: color-mix(in srgb, black 8%, var(--color-sage-dark));
+}
+
+.hero-hub-banner:focus-visible {
+  outline: 2px solid var(--color-terracotta);
+  outline-offset: 2px;
+}
+
+.hero-hub-banner-icon {
+  display: flex;
+  flex-shrink: 0;
+}
+
+.hero-hub-banner-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.hero-hub-banner-title {
+  display: block;
+  font-weight: 700;
+  font-size: var(--font-size-base);
+  color: var(--color-white);
+}
+
+.hero-hub-banner-meta {
+  display: block;
+  font-size: var(--font-size-small);
+  color: var(--color-white);
+  margin-top: 2px;
+}
+
+.hero-hub-banner-btn {
+  align-self: flex-start;
+  margin-top: var(--space-sm);
+  padding: var(--space-xs) var(--space-sm);
+  background: var(--color-white);
+  color: var(--color-sage-dark);
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  font-size: var(--font-size-small);
+  white-space: nowrap;
+  transition: background 200ms ease;
+}
+
+.hero-hub-banner:hover .hero-hub-banner-btn {
+  background: color-mix(in srgb, var(--color-sage-dark) 8%, var(--color-white));
+}
+
 /* ── Registration CTA in anmälan section (02-§94, 07-§6.98–6.102) ── */
 
 .registration-cta {

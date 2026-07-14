@@ -513,3 +513,63 @@ thin accent.
   (`--color-terracotta`) is used only to mark cancelled activities (§118). Site
   chrome shared with every page — navigation, footer, buttons, focus outlines —
   keeps its existing colours and is not part of the schedule colour scheme. <!-- 02-§117.7 -->
+
+## 121. EDQ Hub Community Banner
+
+### 121.1 Context
+
+The camp is moving its ongoing communication away from Facebook and onto the
+EDQ Hub community platform. Next season EDQ Hub becomes the primary place for
+news and contact before and during the camp. To lead participants there, the
+homepage carries a prominent banner inviting them to join the EDQ Hub. The
+EDQ Hub also appears as a small social icon in the hero header; the banner is
+an additional, more visible surface for the same destination.
+
+### 121.2 Banner presence and link
+
+- The homepage (`index.html`) shows a prominent banner in the hero area that
+  invites visitors to join the camp's EDQ Hub community. <!-- 02-§121.1 -->
+- The banner links to the EDQ Hub join address
+  `https://edqhub.com/join/sb-sommarlager-2026`, defined in build code, and
+  opens in a new tab with `target="_blank"` and
+  `rel="noopener noreferrer"`. <!-- 02-§121.2 -->
+- The banner sits directly below the hero image, above any registration
+  banners. <!-- 02-§121.3 -->
+- The banner is always visible. It is not gated by any date window. <!-- 02-§121.4 -->
+
+### 121.3 Content
+
+- The banner title is "All info om lägret – på ett ställe". <!-- 02-§121.5 -->
+- The banner sub line is "Vi flyttar från Facebook till EDQ Hub. Här finns
+  schema, nyheter och kontakt före och under lägret.". It leads with the
+  concrete benefit and states the move from Facebook so participants understand
+  why they should join. <!-- 02-§121.6 -->
+- All banner text is in Swedish. <!-- 02-§121.7 -->
+
+### 121.4 Appearance
+
+- The banner is a filled green card (background `--color-sage-dark`) with white
+  text, visually distinct from the terracotta registration banners. <!-- 02-§121.8 -->
+- The banner carries the EDQ Hub hub-node icon and a "Till EDQ Hub"
+  call-to-action button, so it reads clearly as an actionable link rather than
+  a passive notice. <!-- 02-§121.9 -->
+- The banner uses only the design tokens defined in
+  `07-design/css-strategy.md §7`; no colours, spacing, or typography values are
+  hardcoded. <!-- 02-§121.10 -->
+- The "Till EDQ Hub" call-to-action is a visual element rendered inside the
+  single card link — a light pill with `--color-sage-dark` text on a
+  `--color-white` background, carrying a trailing arrow. It is not a nested
+  interactive element, so the whole card stays one valid, clickable
+  link. <!-- 02-§121.14 -->
+
+### 121.5 Analytics
+
+- The banner carries `data-goatcounter-click="click-hub-banner"`, so its clicks
+  are counted separately from the hero EDQ Hub social icon
+  (`click-edqhub`). <!-- 02-§121.11 -->
+
+### 121.6 Constraints
+
+- The banner is static markup: it requires no new JavaScript file and no inline
+  script. <!-- 02-§121.12 -->
+- The banner introduces no new runtime dependencies. <!-- 02-§121.13 -->
