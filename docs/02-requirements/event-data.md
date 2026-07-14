@@ -576,7 +576,11 @@ requirements that flow from that design.
 The active QA camp stays open until the upcoming real camp opens for
 editing, then hands over to that real camp; a separate autumn QA camp
 reopens after the real-camp season ends. This keeps an open camp available
-for QA testing at all times except the real camp's own active window. See
+for QA testing at all times except the real camp's own active window.
+`camps.yaml` may hold real camps for more than one future season at a time
+(for example, next summer's camps staged a year ahead); the QA camps only
+need to stay clear of each real camp's own active window, so they may sit in
+the gaps between separate seasons. See
 `03-architecture/data-layer.md §2 "QA camp isolation"` for the spring/autumn
 camp descriptions and the off-season window.
 
@@ -589,9 +593,11 @@ camp descriptions and the off-season window.
   non-archived camp opens for editing (its `opens_for_editing`), so the QA
   camp stays open for testing right up until the real camp's pre-camp
   preparation period begins. <!-- 02-§42.32 -->
-- No QA-only camp's date range covers the period from the spring QA camp's
-  `end_date` (exclusive) until the autumn QA camp's `start_date` (exclusive),
-  so no QA camp is active in QA during the real-camp season. <!-- 02-§42.33 -->
+- No QA-only camp's date range overlaps the active window (`start_date`
+  through `end_date`, inclusive) of any non-QA, non-archived camp, so no QA
+  camp is active in QA while a real camp is running. This holds independently
+  for each real camp, so QA camps may sit in the gaps between separate
+  real-camp seasons. <!-- 02-§42.33 -->
 - The autumn QA camp's `start_date` is `YYYY-10-01` and its `end_date`
   is `YYYY-12-31`, where `YYYY` is the current calendar year. <!-- 02-§42.34 -->
 

@@ -4,8 +4,10 @@
 //
 // The site keeps two QA-only camps (qa: true): a "spring" camp that closes when
 // the next real camp opens for editing, and an "autumn" camp covering Oct 1
-// – Dec 31 of the current year. Together they leave the real-camp window
-// QA-free while ensuring continuous QA coverage outside that window.
+// – Dec 31 of the current year. Together they leave every real camp's active
+// window QA-free while ensuring continuous QA coverage outside those windows.
+// The isolation rule is evaluated per real camp, so camps.yaml may stage more
+// than one future season at a time and QA camps may sit in the gaps between them.
 
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
@@ -59,17 +61,18 @@ describe('camps.yaml – seasonal QA camp model (02-§42.31–42.34)', () => {
     );
   });
 
-  it('QSEAS-05 (02-§42.33): no QA camp covers any date during the real-camp season window', () => {
-    if (realCamps.length === 0) return;
-    const seasonStart = realCamps.reduce((min, c) => c.start_date < min ? c.start_date : min, realCamps[0].start_date);
-    const seasonEnd = realCamps.reduce((max, c) => c.end_date > max ? c.end_date : max, realCamps[0].end_date);
-
+  it("QSEAS-05 (02-§42.33): no QA camp overlaps any real camp's active window", () => {
+    // Evaluated per real camp rather than against a single min..max span, so
+    // camps.yaml may stage more than one future season while QA camps stay in
+    // the gaps between them.
     for (const qc of qaCamps) {
-      const overlaps = qc.start_date <= seasonEnd && qc.end_date >= seasonStart;
-      assert.ok(
-        !overlaps,
-        `QA camp "${qc.id}" (${qc.start_date}..${qc.end_date}) overlaps real-camp season (${seasonStart}..${seasonEnd})`,
-      );
+      for (const rc of realCamps) {
+        const overlaps = qc.start_date <= rc.end_date && qc.end_date >= rc.start_date;
+        assert.ok(
+          !overlaps,
+          `QA camp "${qc.id}" (${qc.start_date}..${qc.end_date}) overlaps real camp "${rc.id}" active window (${rc.start_date}..${rc.end_date})`,
+        );
+      }
     }
   });
 });

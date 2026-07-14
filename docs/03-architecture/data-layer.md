@@ -168,7 +168,7 @@ the `BUILD_ENV` environment variable:
   and normal derivation rules apply.
 
 Two QA-only camps coexist in `camps.yaml` to provide a continuous QA
-testing window without overlapping the real-camp season:
+testing window without overlapping any real camp's active window:
 
 - A spring QA camp (`qa-thisweek`) runs through the off-season and
   closes when the next real camp opens for editing (its
@@ -177,6 +177,12 @@ testing window without overlapping the real-camp season:
 - An autumn QA camp (`qa-testcamp`) covers October 1 through December
   31 of the current year, reopening QA testing once the real-camp
   season ends.
+
+`camps.yaml` may hold real camps for more than one future season at a time
+(next summer's camps can be staged a year ahead). Each QA camp only has to
+stay clear of every real camp's own active window (`start_date`..`end_date`),
+so it may sit in the gap between two separate seasons — the isolation rule is
+evaluated per real camp, not against a single span covering them all.
 
 See `02-requirements/event-data.md §42` for the full data model and seasonal rules.
 
