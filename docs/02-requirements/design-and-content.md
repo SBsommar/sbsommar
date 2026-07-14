@@ -539,11 +539,11 @@ an additional, more visible surface for the same destination.
 
 ### 121.3 Content
 
-- The banner title is "All info om lägret – på ett ställe". <!-- 02-§121.5 -->
-- The banner sub line is "Vi flyttar från Facebook till EDQ Hub. Här finns
-  schema, nyheter och kontakt före och under lägret.". It leads with the
-  concrete benefit and states the move from Facebook so participants understand
-  why they should join. <!-- 02-§121.6 -->
+- The banner title is "Vi migrerar Facebook mot EDQ Hub". <!-- 02-§121.5 -->
+- The banner sub line is "Lägrets kommunikation flyttar hit. Gå med för snabb
+  information och kontakt före och under lägret.". It concerns only the camp's
+  communication moving from the Facebook group — the website keeps the schedule
+  and all other information as before. <!-- 02-§121.6 -->
 - All banner text is in Swedish. <!-- 02-§121.7 -->
 
 ### 121.4 Appearance

@@ -92,19 +92,19 @@ describe('renderIndexPage – EDQ Hub community banner (02-§121)', () => {
     assert.ok(html.includes('data-goatcounter-click="click-hub-banner"'), 'Expected banner click event');
   });
 
-  it('HUBB-07: banner title leads with the benefit (02-§121.5)', () => {
+  it('HUBB-07: banner title names the move from Facebook (02-§121.5)', () => {
     const html = renderIndexPage(buildPage());
     assert.ok(
-      html.includes('All info om lägret – på ett ställe'),
-      'Expected the benefit-led Swedish banner title',
+      html.includes('Vi migrerar Facebook mot EDQ Hub'),
+      'Expected the Swedish banner title naming the Facebook move',
     );
   });
 
-  it('HUBB-08: banner sub line states the move from Facebook (02-§121.6)', () => {
+  it('HUBB-08: banner sub line says communication moves here (02-§121.6)', () => {
     const html = renderIndexPage(buildPage());
     assert.ok(
-      html.includes('Vi flyttar från Facebook till EDQ Hub. Här finns schema, nyheter och kontakt före och under lägret.'),
-      'Expected the Swedish banner sub line naming the Facebook move',
+      html.includes('Lägrets kommunikation flyttar hit. Gå med för snabb information och kontakt före och under lägret.'),
+      'Expected the Swedish banner sub line about moving communication',
     );
   });
 

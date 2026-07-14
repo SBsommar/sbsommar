@@ -489,8 +489,8 @@ function renderHubBannerHtml(edqhubUrl) {
   return `\n    <a href="${edqhubUrl}" class="hero-hub-banner" target="_blank" rel="noopener noreferrer" data-goatcounter-click="click-hub-banner">
       <span class="hero-hub-banner-icon">${EDQHUB_ICON}</span>
       <span class="hero-hub-banner-text">
-        <span class="hero-hub-banner-title">All info om lägret – på ett ställe</span>
-        <span class="hero-hub-banner-meta">Vi flyttar från Facebook till EDQ Hub. Här finns schema, nyheter och kontakt före och under lägret.</span>
+        <span class="hero-hub-banner-title">Vi migrerar Facebook mot EDQ Hub</span>
+        <span class="hero-hub-banner-meta">Lägrets kommunikation flyttar hit. Gå med för snabb information och kontakt före och under lägret.</span>
         <span class="hero-hub-banner-btn">Till EDQ Hub <span aria-hidden="true">→</span></span>
       </span>
     </a>`;
