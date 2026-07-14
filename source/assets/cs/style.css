@@ -2933,7 +2933,11 @@ body.modal-open {
     justify-content: center;
     position: fixed;
     top: var(--space-xs);
-    right: calc(var(--space-sm) + 3 * (42px + var(--space-xs)));
+
+    /* On the left beside the menu toggle (one 42px slot right of it), so the
+       install button never overlaps the right-side floating buttons or the
+       centred scroll-to-top arrow (#795). */
+    left: calc(var(--space-sm) + 42px + var(--space-xs));
     width: 42px;
     height: 42px;
     background: var(--color-terracotta);
@@ -3080,7 +3084,8 @@ body.modal-open {
   .pwa-install-tooltip {
     position: fixed;
     top: calc(var(--space-xs) + 42px + var(--space-xs));
-    right: var(--space-sm);
+    right: auto;
+    left: var(--space-sm);
     white-space: normal;
     max-width: 260px;
   }
