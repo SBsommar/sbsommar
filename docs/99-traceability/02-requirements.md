@@ -1921,16 +1921,16 @@ Doc ref: `02-requirements/design-and-content.md §121`;
 
 | ID | Status | Notes |
 | --- | --- | --- |
-| `02-§121.1` | gap | Prominent hero banner on the homepage inviting visitors to join the EDQ Hub |
-| `02-§121.2` | gap | Banner links to the EDQ Hub join URL (build-code constant), opens in a new tab |
-| `02-§121.3` | gap | Banner sits below the hero image, above the registration banners |
-| `02-§121.4` | gap | Banner is always visible, not date-gated |
-| `02-§121.5` | gap | Title "Gå med i vår EDQ Hub" |
-| `02-§121.6` | gap | Sub line "Här delar vi nyheter och håller kontakten före och under lägret. Välkommen in!" |
-| `02-§121.7` | gap | All banner text in Swedish |
-| `02-§121.8` | gap | Filled green card (`--color-sage-dark`) with white text |
-| `02-§121.9` | gap | Banner carries the EDQ Hub hub-node icon and a trailing arrow |
-| `02-§121.10` | gap | Only design tokens; nothing hardcoded |
-| `02-§121.11` | gap | `data-goatcounter-click="click-hub-banner"`, separate from `click-edqhub` |
-| `02-§121.12` | gap | Static markup — no new JS file, no inline script |
-| `02-§121.13` | gap | No new runtime dependencies |
+| `02-§121.1` | covered | HUBB-02, HUBB-10: `renderHubBannerHtml()` emits a `.hero-hub-banner` anchor rendered inside the hero area |
+| `02-§121.2` | covered | HUBB-03, HUBB-04: anchor `href` is the `edqhubUrl` (defined in `source/build/build.js`), with `target="_blank"` + `rel="noopener noreferrer"` |
+| `02-§121.3` | covered | HUBB-11: hub banner is interpolated before `renderRegistrationBannersHtml` output; placement below the hero image is a manual/browser checkpoint (verified at 390 px) |
+| `02-§121.4` | covered | HUBB-09, HUBB-12: anchor has no `hidden` attribute and no `data-opens`; no date-gating script is emitted |
+| `02-§121.5` | covered | HUBB-07: title is "Gå med i vår EDQ Hub" |
+| `02-§121.6` | covered | HUBB-08: sub line is "Här delar vi nyheter och håller kontakten före och under lägret. Välkommen in!" |
+| `02-§121.7` | covered | HUBB-07, HUBB-08 assert the Swedish title and sub line strings |
+| `02-§121.8` | implemented | `source/assets/cs/style.css` `.hero-hub-banner { background: var(--color-sage-dark); color: var(--color-white) }` — white on sage-dark ≈6:1; visual appearance is a manual/browser checkpoint (verified at 390 px) |
+| `02-§121.9` | implemented | `renderHubBannerHtml()` includes `.hero-hub-banner-icon` (shared `EDQHUB_ICON`) and `.hero-hub-banner-arrow` (`→`); visual appearance is a manual/browser checkpoint |
+| `02-§121.10` | implemented | `.hero-hub-banner*` rules use only `07-design/css-strategy.md §7` tokens; `stylelint` (`lint:css`) passes — token-only usage is a manual/review checkpoint |
+| `02-§121.11` | covered | HUBB-05, HUBB-06: banner carries `data-goatcounter-click="click-hub-banner"`, distinct from the hero social icon's `click-edqhub` |
+| `02-§121.12` | covered | HUBB-12: no inline `.hero-hub-banner[data-opens]` script; the banner is static markup with no new JS file |
+| `02-§121.13` | implemented | No dependency added to `package.json`; the icon is inline SVG and reuses the existing `EDQHUB_ICON` constant — review checkpoint |
