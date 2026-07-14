@@ -1913,3 +1913,25 @@ Reuses the shared overlap predicate (`conflict-check.js`, §99).
 | `02-§120.5` | covered | CLASH-10/-11: `renderEventRow()` adds `is-clash`; `events-today.js` mirrors it via the `clash` JSON flag. CSS `.event-row.is-clash` uses `--color-error` (red wash + bar + title). The today/display view and visual appearance are manual/browser checkpoints |
 | `02-§120.6` | covered | CSS scopes the clash red with `:not(.is-past)` so a passed clash takes the grey `.is-past` treatment. Visual appearance is a manual/browser checkpoint |
 | `02-§120.7` | covered | CLASH-13/-14/-15: `isIgnoredActivity()` skips "Lunch"/"Middag" (case-insensitive) both as the marked and the conflicting event |
+
+### §121 — EDQ Hub Community Banner
+
+Doc ref: `02-requirements/design-and-content.md §121`;
+`03-architecture/pages-and-content.md §33`; `07-design/components.md §6.149–6.157`.
+
+| ID | Status | Notes |
+| --- | --- | --- |
+| `02-§121.1` | covered | HUBB-02, HUBB-10: `renderHubBannerHtml()` emits a `.hero-hub-banner` anchor rendered inside the hero area |
+| `02-§121.2` | covered | HUBB-03, HUBB-04: anchor `href` is the `edqhubUrl` (defined in `source/build/build.js`), with `target="_blank"` + `rel="noopener noreferrer"` |
+| `02-§121.3` | covered | HUBB-11: hub banner is interpolated before `renderRegistrationBannersHtml` output; placement below the hero image is a manual/browser checkpoint (verified at 390 px) |
+| `02-§121.4` | covered | HUBB-09, HUBB-12: anchor has no `hidden` attribute and no `data-opens`; no date-gating script is emitted |
+| `02-§121.5` | covered | HUBB-07: title is "Vi migrerar Facebook mot EDQ Hub" |
+| `02-§121.6` | covered | HUBB-08: sub line is "Lägrets kommunikation flyttar hit. Gå med för snabb information och kontakt före och under lägret." |
+| `02-§121.7` | covered | HUBB-07, HUBB-08 assert the Swedish title and sub line strings |
+| `02-§121.8` | implemented | `source/assets/cs/style.css` `.hero-hub-banner { background: var(--color-sage-dark); color: var(--color-white) }` — white on sage-dark ≈6:1; visual appearance is a manual/browser checkpoint (verified at 390 px) |
+| `02-§121.9` | covered | HUBB-13, HUBB-14: `renderHubBannerHtml()` includes `.hero-hub-banner-icon` (shared `EDQHUB_ICON`) and a `.hero-hub-banner-btn` "Till EDQ Hub" pill; visual appearance is a manual/browser checkpoint |
+| `02-§121.10` | implemented | `.hero-hub-banner*` rules use only `07-design/css-strategy.md §7` tokens; `stylelint` (`lint:css`) passes — token-only usage is a manual/review checkpoint |
+| `02-§121.11` | covered | HUBB-05, HUBB-06: banner carries `data-goatcounter-click="click-hub-banner"`, distinct from the hero social icon's `click-edqhub` |
+| `02-§121.12` | covered | HUBB-12: no inline `.hero-hub-banner[data-opens]` script; the banner is static markup with no new JS file |
+| `02-§121.13` | implemented | No dependency added to `package.json`; the icon is inline SVG and reuses the existing `EDQHUB_ICON` constant — review checkpoint |
+| `02-§121.14` | covered | HUBB-14, HUBB-15: the "Till EDQ Hub" call-to-action is a `<span class="hero-hub-banner-btn">` inside the single card anchor (no nested link/button); `html-validate` (`lint:html`) passes on the built page |

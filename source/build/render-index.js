@@ -8,6 +8,17 @@ const { goatcounterScript } = require('./analytics');
 const { pwaHeadTags } = require('./pwa');
 const { getImageDimensions } = require('./image-dimensions');
 
+// EDQ Hub has no brand image asset in the repo, so its icon is an inline SVG:
+// a circular navy badge with a white "hub" glyph (central node linked to three
+// satellite nodes) signalling a community hub. Sized and shaped to match the
+// raster Discord/Facebook icons in the hero header. Shared by the hero social
+// icon and the community banner so the markup is defined once.
+const EDQHUB_ICON = '<svg viewBox="0 0 32 32" width="32" height="32" fill="none" aria-hidden="true">'
+  + '<circle cx="16" cy="16" r="16" fill="#192A3D"/>'
+  + '<g stroke="#FFFFFF" stroke-width="1.6"><line x1="16" y1="16" x2="16" y2="8"/><line x1="16" y1="16" x2="9" y2="22"/><line x1="16" y1="16" x2="23" y2="22"/></g>'
+  + '<g fill="#FFFFFF"><circle cx="16" cy="16" r="3.2"/><circle cx="16" cy="8" r="2.4"/><circle cx="9" cy="22" r="2.4"/><circle cx="23" cy="22" r="2.4"/></g>'
+  + '</svg>';
+
 /**
  * marked link renderer override. External http(s) links open in a new tab
  * with rel="noopener noreferrer", matching how the hero, registration CTA,
@@ -173,23 +184,13 @@ function renderIndexPage({ heroSrc, heroAlt, heroDims, sections, discordUrl, fac
     ? `<div class="hero-countdown" data-target="${countdownTarget}">\n        <span class="hero-countdown-number">00</span>\n        <span class="hero-countdown-label">Dagar kvar</span>\n      </div>`
     : '';
 
-  // EDQ Hub has no brand image asset in the repo, so its icon is an inline SVG:
-  // a circular navy badge with a white "hub" glyph (central node linked to three
-  // satellite nodes) signalling a community hub. Sized and shaped to match the
-  // raster Discord/Facebook icons beside it.
-  const edqhubIcon = '<svg viewBox="0 0 32 32" width="32" height="32" fill="none" aria-hidden="true">'
-    + '<circle cx="16" cy="16" r="16" fill="#192A3D"/>'
-    + '<g stroke="#FFFFFF" stroke-width="1.6"><line x1="16" y1="16" x2="16" y2="8"/><line x1="16" y1="16" x2="9" y2="22"/><line x1="16" y1="16" x2="23" y2="22"/></g>'
-    + '<g fill="#FFFFFF"><circle cx="16" cy="16" r="3.2"/><circle cx="16" cy="8" r="2.4"/><circle cx="9" cy="22" r="2.4"/><circle cx="23" cy="22" r="2.4"/></g>'
-    + '</svg>';
-
   const socialLinks = (discordUrl || facebookUrl || edqhubUrl)
     ? `\n    <div class="hero-social">${
       discordUrl ? `\n      <a href="${discordUrl}" class="hero-social-link" target="_blank" rel="noopener noreferrer" data-goatcounter-click="click-discord">\n        <img src="images/discord-ikon.webp" alt="Discord" width="32" height="32">\n      </a>` : ''
     }${
       facebookUrl ? `\n      <a href="${facebookUrl}" class="hero-social-link" target="_blank" rel="noopener noreferrer" data-goatcounter-click="click-facebook">\n        <img src="images/facebook-ikon.webp" alt="Facebook" width="32" height="32">\n      </a>` : ''
     }${
-      edqhubUrl ? `\n      <a href="${edqhubUrl}" class="hero-social-link" target="_blank" rel="noopener noreferrer" aria-label="EDQ Hub" data-goatcounter-click="click-edqhub">\n        ${edqhubIcon}\n      </a>` : ''
+      edqhubUrl ? `\n      <a href="${edqhubUrl}" class="hero-social-link" target="_blank" rel="noopener noreferrer" aria-label="EDQ Hub" data-goatcounter-click="click-edqhub">\n        ${EDQHUB_ICON}\n      </a>` : ''
     }\n    </div>`
     : '';
 
@@ -199,10 +200,11 @@ function renderIndexPage({ heroSrc, heroAlt, heroDims, sections, discordUrl, fac
     ? `\n    <div class="hero-actions" hidden data-opens="${opensForEditing}" data-closes="${editingCloses}">\n      <a href="idag.html" class="hero-actions-btn">Idag</a>\n      <a href="schema.html" class="hero-actions-btn">Schema</a>\n      <a href="lagg-till.html" class="hero-actions-btn">Lägg till</a>\n    </div>`
     : '';
 
+  const hubBannerHtml = renderHubBannerHtml(edqhubUrl);
   const registrationBannersHtml = renderRegistrationBannersHtml(registrationCamps);
 
   const heroHtml = heroSrc
-    ? `\n  <div class="hero">\n    <div class="hero-header">\n      <h1 class="hero-title">Sommarläger i Sysslebäck</h1>${socialLinks}\n    </div>\n    <img src="${heroSrc}" alt="${heroAlt || ''}" class="hero-img"${heroDimAttrs} fetchpriority="high">${actionButtonsHtml}${registrationBannersHtml}\n  </div>`
+    ? `\n  <div class="hero">\n    <div class="hero-header">\n      <h1 class="hero-title">Sommarläger i Sysslebäck</h1>${socialLinks}\n    </div>\n    <img src="${heroSrc}" alt="${heroAlt || ''}" class="hero-img"${heroDimAttrs} fetchpriority="high">${actionButtonsHtml}${hubBannerHtml}${registrationBannersHtml}\n  </div>`
     : '';
 
   const contentSections = sections
@@ -467,6 +469,31 @@ function wrapTestimonialCards(html) {
 
     return `<div class="testimonial-card">\n${header}\n${body.trim()}\n</div>`;
   }).join('\n');
+}
+
+// ── EDQ Hub community banner (02-§121) ──────────────────────────────────────
+
+/**
+ * Renders the EDQ Hub community banner — a single, always-visible filled green
+ * card in the hero inviting visitors to join the camp's EDQ Hub. Returns an
+ * empty string when `edqhubUrl` is absent so no banner is emitted. Unlike the
+ * registration banners it is not date-gated, so no `hidden` attribute and no
+ * inline visibility script are involved.
+ *
+ * @param {string} edqhubUrl - the EDQ Hub join URL (defined in build code)
+ * @returns {string} the banner anchor markup, or '' when no URL is given
+ */
+function renderHubBannerHtml(edqhubUrl) {
+  if (!edqhubUrl) return '';
+
+  return `\n    <a href="${edqhubUrl}" class="hero-hub-banner" target="_blank" rel="noopener noreferrer" data-goatcounter-click="click-hub-banner">
+      <span class="hero-hub-banner-icon">${EDQHUB_ICON}</span>
+      <span class="hero-hub-banner-text">
+        <span class="hero-hub-banner-title">Vi migrerar Facebook mot EDQ Hub</span>
+        <span class="hero-hub-banner-meta">Lägrets kommunikation flyttar hit. Gå med för snabb information och kontakt före och under lägret.</span>
+        <span class="hero-hub-banner-btn">Till EDQ Hub <span aria-hidden="true">→</span></span>
+      </span>
+    </a>`;
 }
 
 // ── Registration banner and CTA (02-§94) ────────────────────────────────────
