@@ -24,8 +24,9 @@ const CONCURRENCY_GROUP = 'stranded-recovery';
 describe('merge-queue-recovery triggers (02-§112.16)', () => {
   const on = triggersOf(recovery);
 
-  it('RECTRIG-01: keeps schedule and workflow_dispatch triggers', () => {
+  it('RECTRIG-01: keeps schedule (120-minute backstop) and workflow_dispatch triggers', () => {
     assert.ok(on.schedule, 'schedule trigger must remain as the backstop');
+    assert.equal(on.schedule[0].cron, '0 */2 * * *', 'schedule is the 120-minute backstop');
     assert.ok('workflow_dispatch' in on, 'workflow_dispatch must remain');
   });
 
