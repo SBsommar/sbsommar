@@ -1925,8 +1925,8 @@ Doc ref: `02-requirements/design-and-content.md §121`;
 | `02-§121.2` | covered | HUBB-03, HUBB-04: anchor `href` is the `edqhubUrl` (defined in `source/build/build.js`), with `target="_blank"` + `rel="noopener noreferrer"` |
 | `02-§121.3` | covered | HUBB-11: hub banner is interpolated before `renderRegistrationBannersHtml` output; placement below the hero image is a manual/browser checkpoint (verified at 390 px) |
 | `02-§121.4` | covered | HUBB-09, HUBB-12: anchor has no `hidden` attribute and no `data-opens`; no date-gating script is emitted |
-| `02-§121.5` | covered | HUBB-07: title is "All info om lägret – på ett ställe" |
-| `02-§121.6` | covered | HUBB-08: sub line is "Vi flyttar från Facebook till EDQ Hub. Här finns schema, nyheter och kontakt före och under lägret." |
+| `02-§121.5` | covered | HUBB-07: title is "Vi migrerar Facebook mot EDQ Hub" |
+| `02-§121.6` | covered | HUBB-08: sub line is "Lägrets kommunikation flyttar hit. Gå med för snabb information och kontakt före och under lägret." |
 | `02-§121.7` | covered | HUBB-07, HUBB-08 assert the Swedish title and sub line strings |
 | `02-§121.8` | implemented | `source/assets/cs/style.css` `.hero-hub-banner { background: var(--color-sage-dark); color: var(--color-white) }` — white on sage-dark ≈6:1; visual appearance is a manual/browser checkpoint (verified at 390 px) |
 | `02-§121.9` | covered | HUBB-13, HUBB-14: `renderHubBannerHtml()` includes `.hero-hub-banner-icon` (shared `EDQHUB_ICON`) and a `.hero-hub-banner-btn` "Till EDQ Hub" pill; visual appearance is a manual/browser checkpoint |
