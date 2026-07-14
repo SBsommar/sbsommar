@@ -563,10 +563,11 @@ All pull requests to `main` merge through a required merge queue. Enabling
 auto-merge is not the same as being in the queue: GitHub only adds a pull request
 to the queue once its required checks pass, and during a burst of submissions a
 pull request can hang with auto-merge enabled but no queue entry (02-§112). The
-reactive recovery repairs that, but only on its next sweep — in the worst case
-~15 minutes. Calling `enqueuePullRequest` at submission time puts the pull request
-in the queue right away, so a submitted activity merges in roughly the queue's
-normal cycle (~50 s) instead of waiting for a sweep (02-§113.1).
+reactive recovery repairs that by re-queuing the pull request with the same
+`enqueuePullRequest` mutation (02-§112.2), but only once a recovery trigger fires.
+Calling `enqueuePullRequest` at submission time puts the pull request in the queue
+right away, so a submitted activity merges in roughly the queue's normal cycle
+(~50 s) instead of waiting for a recovery trigger (02-§113.1).
 
 ### The enqueue call
 

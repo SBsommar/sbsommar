@@ -177,14 +177,13 @@ Note: §113 (Proactive Merge-Queue Enqueue) adds 9 requirements
   confirmed against production (#481).
 
 Note: §112 (Stranded Auto-Merge Recovery) adds 18 requirements
-  (02-§112.1–112.18): 9 covered (STRAND-01..25 and RECTRIG-01..05 in
+  (02-§112.1–112.18): 10 covered (STRAND-01..29 and RECTRIG-01..05 in
   tests/stranded-recovery.test.js and tests/recovery-trigger-workflow.test.js)
-  and 9 implemented (the GraphQL
-  disable→enable toggle, the per-PR isolation and early-exit in main(), the two
-  workflow entry points, the EVENT_AUTOMERGE_TOKEN auth, and the deploy-trigger
-  identity, STRAND-M01 manual). A third trigger runs the sweep on check_suite
-  completion — the moment a PR turns mergeable — so recovery no longer depends on
-  GitHub's unreliable schedule delivery; all triggers share one single-flight
+  and 8 implemented (the enqueue-and-verify recovery, the per-PR isolation and
+  early-exit in main(), the two workflow entry points, the EVENT_AUTOMERGE_TOKEN
+  auth, and the deploy-trigger identity, STRAND-M01 manual). A trigger runs the sweep
+  on check_suite completion — the moment a PR turns mergeable — so recovery does not
+  depend on GitHub's unreliable schedule delivery; all triggers share one single-flight
   concurrency group (02-§112.16–112.17). Recovery keys off the status-check rollup
   rather than the mergeable-state status, which GitHub recomputes minutes later, so a
   checks-passed PR is recovered at check-suite time even while its mergeable state
@@ -192,11 +191,12 @@ Note: §112 (Stranded Auto-Merge Recovery) adds 18 requirements
   required merge queue; when main advances between auto-merge enablement and
   queue entry, a sibling event PR can strand (auto-merge on, mergeStateStatus
   CLEAN, no mergeQueueEntry) and never merge. recover-stranded-event-prs.js
-  detects that signature and toggles auto-merge off then on to register a fresh
-  queue entry, running after each event merge and on a 15-minute safety-net
-  schedule (#495). The toggle uses EVENT_AUTOMERGE_TOKEN because the default
-  GITHUB_TOKEN cannot run the auto-merge mutations, and the sweep exits non-zero
-  when any stranded PR could not be recovered (#496-followup).
+  detects that signature and re-queues the PR with the enqueuePullRequest mutation,
+  verifying a mergeQueueEntry results, running after each event merge, on check_suite
+  completion, and on a 120-minute backstop schedule (#495). Recovery uses
+  EVENT_AUTOMERGE_TOKEN because the default GITHUB_TOKEN cannot run the
+  enqueue/auto-merge mutations, and the sweep exits non-zero when any stranded PR
+  could not be recovered (#496-followup).
 
 Note: §111 (Duplicate Submission Hardening) adds 9 requirements
   (02-§111.1–111.9): 7 covered (DEDUP-01..09, DEDUPCLEAN-01..09,

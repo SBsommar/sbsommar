@@ -169,11 +169,12 @@ event submissions arrive in a burst and one merges, `main` advances; a sibling P
 whose auto-merge was enabled against the previous tip can be left stranded —
 auto-merge enabled, checks green, `mergeable_state: clean`, but with **no
 merge-queue entry**, so it never merges. Re-enabling auto-merge is a no-op (GitHub
-sees it as already on); only disabling and re-enabling it registers a fresh queue
-entry. This is recovered automatically: a sweep
-(`source/scripts/recover-stranded-event-prs.js`) runs after every event-data merge
-and on a 15-minute schedule (`merge-queue-recovery.yml`), finds stranded `event/*`,
-`event-edit/*`, and `event-delete/*` PRs, and toggles their auto-merge off then on
+only enqueues at the moment checks pass, which has already gone by); the PR merges
+only once it is placed back in the queue explicitly. This is recovered automatically:
+a sweep (`source/scripts/recover-stranded-event-prs.js`) runs after every event-data
+merge, on `check_suite` completion, and on a 120-minute backstop schedule
+(`merge-queue-recovery.yml`), finds stranded `event/*`, `event-edit/*`, and
+`event-delete/*` PRs, and re-queues them with the `enqueuePullRequest` mutation
 (02-§112, issue #495).
 
 ### Environment Variables

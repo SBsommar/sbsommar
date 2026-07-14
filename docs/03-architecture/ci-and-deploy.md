@@ -103,7 +103,7 @@ their `source/data/**.yaml` path filter matches files nested one level under
 | `ci.yml` | All branches + PRs | Lint, test, build for code changes; pass-through for data-only |
 | `event-data-deploy.yml` | PRs from `event/**`, `event-edit/**` | No-op branch protection gate |
 | `event-data-deploy-post-merge.yml` | Push to `main` (data YAMLs only) | setup-node + npm ci + build + deploy to QA, Production; plus write-scoped jobs that close duplicate event PRs made redundant by the merge (02-§111.7) and recover event PRs stranded in the merge queue by the base move (02-§112.7) |
-| `merge-queue-recovery.yml` | 15-minute `schedule` cron | Write-scoped safety-net sweep that recovers event PRs stranded in the merge queue (02-§112.8) |
+| `merge-queue-recovery.yml` | `check_suite` completed + 120-minute `schedule` cron | Write-scoped sweep that recovers event PRs stranded in the merge queue by re-queuing them (02-§112.8, 112.16) |
 | `deploy-qa.yml` | Push to `main` (ignores per-camp event YAMLs) | Full build + SCP/SSH swap (QA) |
 | `deploy-prod.yml` | Manual `workflow_dispatch` | Full build + SCP/SSH swap (Production) |
 | `deploy-reusable.yml` | Called by `deploy-qa.yml` / `deploy-prod.yml` | Shared build-and-deploy logic |
@@ -240,9 +240,9 @@ queue. If one merges and advances `main` while a sibling's auto-merge was enable
 against the previous tip, GitHub can leave that sibling **stranded**: auto-merge
 stays enabled, the required checks are green and the mergeable state is clean, but
 the pull request never enters the queue (it has no `mergeQueueEntry`). Because
-GitHub already considers auto-merge enabled, re-enabling it is a no-op; only
-disabling and re-enabling auto-merge registers a fresh queue entry against the
-current `main` (02-§112.2).
+GitHub only enqueues a pull request at the moment its checks pass — a moment that has
+already gone by — re-enabling auto-merge is a no-op. The pull request merges only once
+it is placed back in the queue explicitly (02-§112.2).
 
 The form API also enqueues each event pull request proactively at submission
 (`enqueuePullRequest`, 02-§113, see `forms-and-api.md §30`), which puts most pull
@@ -270,13 +270,16 @@ unit-tested classifier (`classifyStrandedPr`) decides:
   pending or failing (02-§112.5); a real conflict (`mergeStateStatus` `DIRTY`); or
   auto-merge is not enabled.
 
-For a `recover` verdict the script calls `disablePullRequestAutoMerge` then
-`enablePullRequestAutoMerge` (mergeMethod `SQUASH`, matching the form API, 02-§112.3).
-The re-enable is wrapped in `withRetry` (exponential backoff) because once auto-merge
-has been disabled, a transient failure to re-enable it would leave the pull request
-with auto-merge off — worse than stranded; the disable is a single attempt, since a
-failed disable leaves the pull request unchanged for the next sweep to retry
-(02-§112.11). Each pull request is processed inside its own `try`/`catch`, so one
+For a `recover` verdict the script places the pull request back in the queue with the
+`enqueuePullRequest` GraphQL mutation — the same mutation the form API uses at
+submission (02-§113) — and leaves auto-merge enabled as a complement (02-§112.3). It
+then re-reads the pull request and confirms a `mergeQueueEntry` now exists; the
+enqueue-and-verify is wrapped in `withRetry` (exponential backoff), so a transient
+enqueue that does not take effect is retried until a queue entry is confirmed or the
+attempts are exhausted (02-§112.11). Enqueuing is imperative — it does not wait for
+`main` to advance or for another mergeability event — so a single sweep durably
+re-queues a stranded pull request. Each pull request is processed inside its own
+`try`/`catch`, so one
 failed read or mutation does not abort the sweep (02-§112.6), mirroring the
 redundant-PR cleanup.
 The classifier never recovers a pull request that is not stranded, so repeated runs
@@ -292,12 +295,13 @@ invoking the same `recover-stranded-event-prs.js`:
 - `merge-queue-recovery.yml` on a `check_suite` `completed` trigger — a pull request
   becomes stranded the instant its required checks finish and it turns mergeable, so
   the sweep runs at that moment instead of waiting (02-§112.16). This is the primary
-  fast path: GitHub does not reliably deliver scheduled runs at the configured 15-minute
-  interval, so the schedule alone leaves a stranded pull request waiting until the next
-  (sporadic) cron delivery.
-- The same `merge-queue-recovery.yml` on a 15-minute `schedule` cron (plus
-  `workflow_dispatch`), as a slow backstop for strandings that neither an event-data
-  merge nor a check-suite completion happens to cover (02-§112.8). The sweep lists the
+  fast path, and it recovers a stranded pull request within about a minute.
+- The same `merge-queue-recovery.yml` on a 120-minute `schedule` cron (plus
+  `workflow_dispatch`), as a last-resort backstop for the rare stranding that neither
+  an event-data merge nor a check-suite completion happens to cover (02-§112.8). GitHub
+  throttles high-frequency scheduled workflows and does not reliably deliver runs at
+  their configured interval, so the schedule is only a backstop, not the fast path; a
+  long interval matches what it delivers and keeps the load low. The sweep lists the
   open event pull requests first and exits cheaply when none are stranded (02-§112.9).
 
 **Single-flight (02-§112.17).** `merge-queue-recovery.yml` (workflow-level) and the
@@ -305,19 +309,19 @@ post-merge `recover-stranded-event-prs` job both declare the same
 `concurrency: stranded-recovery` group with `cancel-in-progress: false`. Check-suite
 completions arrive in bursts, so the group coalesces them — at most one run executes
 while one waits, and superseded pending runs are dropped. `cancel-in-progress: false`
-is deliberate: a run that has disabled auto-merge but not yet re-enabled it must finish,
-or the pull request would be left with auto-merge off — worse than stranded (02-§112.11).
+is deliberate: a run must finish its enqueue-and-verify pass without a concurrent run
+racing it on the same pull request (02-§112.17).
 
 **Authentication (02-§112.12, 112.14, 112.15).** The default Actions workflow token
-(`secrets.GITHUB_TOKEN`) cannot run the `enablePullRequestAutoMerge` /
-`disablePullRequestAutoMerge` GraphQL mutations even with `pull-requests: write` — it
+(`secrets.GITHUB_TOKEN`) cannot run the `enqueuePullRequest` /
+`enablePullRequestAutoMerge` GraphQL mutations even with `pull-requests: write` — it
 fails with `Resource not accessible by integration`. Both recovery jobs therefore pass
 the repository-level secret `EVENT_AUTOMERGE_TOKEN` (a credential with pull-request and
 contents write access) to the script as `GITHUB_TOKEN`, which `gh` uses for its API
 calls. The secret is repository-level because the recovery jobs run without a GitHub
-Environment and so see only repository- and organisation-level secrets. Re-enabling
-auto-merge under this identity — rather than the Actions bot — also means the eventual
-merge to `main` triggers the push-driven `event-data-deploy-post-merge.yml` deploy
+Environment and so see only repository- and organisation-level secrets. Re-queuing
+under this identity — rather than the Actions bot — also means the eventual merge to
+`main` triggers the push-driven `event-data-deploy-post-merge.yml` deploy
 (02-§112.15).
 
 **Failure handling (02-§112.13).** Each pull request is still processed in its own
