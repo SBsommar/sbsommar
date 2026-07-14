@@ -89,7 +89,7 @@ the secrets.
 | Secret     | Used by    | Purpose                                           |
 | ---------- | ---------- | ------------------------------------------------- |
 | `SITE_URL` | `ci.yml`   | Any valid URL — just needs to pass the build step |
-| `EVENT_AUTOMERGE_TOKEN` | `merge-queue-recovery.yml`, `event-data-deploy-post-merge.yml` (`recover-stranded-event-prs` job) | Token used by the stranded-PR recovery sweep to toggle auto-merge (§112). The default `GITHUB_TOKEN` cannot run the auto-merge GraphQL mutations, so a separate credential is required. Use a fine-grained PAT scoped to this repository with **Pull requests: Read and write** and **Contents: Read and write**, or a GitHub App installation token with the same access. Must be **repository-level** (the recovery jobs run without a GitHub Environment and cannot read environment-scoped secrets). |
+| `EVENT_AUTOMERGE_TOKEN` | `merge-queue-recovery.yml`, `event-data-deploy-post-merge.yml` (`recover-stranded-event-prs` job) | Token used by the stranded-PR recovery sweep to re-queue stranded PRs via the `enqueuePullRequest` GraphQL mutation (§112). The default `GITHUB_TOKEN` cannot run the enqueue/auto-merge GraphQL mutations, so a separate credential is required. Use a fine-grained PAT scoped to this repository with **Pull requests: Read and write** and **Contents: Read and write**, or a GitHub App installation token with the same access. Must be **repository-level** (the recovery jobs run without a GitHub Environment and cannot read environment-scoped secrets). |
 
 ### GitHub Environment: `qa` (PHP on Loopia)
 

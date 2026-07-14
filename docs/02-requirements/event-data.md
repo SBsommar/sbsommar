@@ -917,10 +917,10 @@ Event submissions arrive in bursts (§109.1), so several event pull requests oft
 compete for the queue at once. When one pull request merges, `main` advances. A
 sibling pull request whose auto-merge was enabled against the previous `main` tip
 can then be left **stranded**: it has auto-merge enabled, all required checks green,
-and a clean mergeable state, yet it never reaches the queue and never merges. GitHub
-treats auto-merge as already enabled, so a second enable request changes nothing; the
-pull request only re-enters the queue when auto-merge is disabled and then enabled
-again, which registers a fresh queue entry against the current `main`.
+and a clean mergeable state, yet it never reaches the queue and never merges. Enabling
+auto-merge again changes nothing, because GitHub only enqueues a pull request at the
+moment its checks pass, and that moment has already gone by. The pull request merges
+only once it is placed back in the merge queue explicitly.
 
 The observable signature of a stranded pull request is precise: auto-merge enabled,
 required checks passing, mergeable state clean, and **no merge-queue entry**. A
@@ -946,26 +946,38 @@ stuck in the queue handoff.
   checks have all passed and that is not in the queue as stranded even while its
   mergeable state still reports `BLOCKED` or `UNKNOWN`; a mergeable state of clean
   also qualifies. A pull request whose mergeable state reports a real conflict
-  (`DIRTY`) is not recovered, because re-enabling auto-merge cannot resolve a
+  (`DIRTY`) is not recovered, because re-queuing cannot resolve a
   conflict. <!-- 02-§112.18 -->
-- A stranded event pull request is recovered by disabling and then re-enabling
-  auto-merge, which registers a fresh merge-queue entry against the current `main`
-  so the pull request merges. Re-enabling auto-merge without first disabling it is a
-  no-op and does not recover the pull request. <!-- 02-§112.2 -->
-- Recovery re-enables auto-merge with the squash merge method, matching how the form
-  API enables auto-merge at submission. <!-- 02-§112.3 -->
+- A stranded event pull request is recovered primarily by placing it back in the merge
+  queue with the GraphQL `enqueuePullRequest` mutation, using the pull request's node
+  id. This is the same mutation the form API uses to enqueue a pull request at
+  submission (§113). Enqueuing places the pull request in the queue directly, so
+  recovery does not depend on `main` advancing or on any further mergeability event.
+  If the enqueue cannot be confirmed — the pull request's checks have passed but its
+  mergeable state is still catching up (§112.18), so the queue declines to enqueue it
+  — recovery falls back to re-arming auto-merge (see §112.3) so the pull request
+  enqueues once its mergeable state converges. <!-- 02-§112.2 -->
+- Recovery keeps auto-merge enabled as a complement to the enqueue call, matching how
+  the form API keeps squash auto-merge enabled alongside the proactive enqueue at
+  submission (§113.2). In the fallback case only — when the pull request cannot be
+  enqueued yet — recovery disables and then re-enables auto-merge (squash) to re-arm
+  it, which registers a fresh queue entry against the current `main` at the moment the
+  mergeable state becomes clean. <!-- 02-§112.3 -->
 - An event pull request that already has a merge-queue entry is left untouched: it is
-  progressing through the queue normally and disabling its auto-merge would remove it
-  from the queue. <!-- 02-§112.4 -->
+  progressing through the queue normally and does not need to be re-queued. <!-- 02-§112.4 -->
 - An event pull request whose required checks are still pending, or have failed, is
   left untouched: it is not yet eligible to merge, so there is nothing to
   recover. <!-- 02-§112.5 -->
-- The re-enable step is retried with backoff. Once auto-merge has been disabled, a
-  transient failure to re-enable it would leave the pull request with auto-merge off
-  — worse than stranded — so re-enabling is retried until it succeeds or the
-  attempts are exhausted, in which case the failure is logged. The disable step is
-  not retried: if it fails the pull request is unchanged and the next recovery pass
-  retries the whole recovery. <!-- 02-§112.11 -->
+- Recovery confirms the enqueue took effect: after enqueuing, it re-reads the pull
+  request and checks that a merge-queue entry now exists. If none does, it enqueues
+  again with exponential backoff, until a merge-queue entry is confirmed or the
+  attempts are exhausted. When they are exhausted, recovery re-arms auto-merge as the
+  fallback (§112.3); its re-enable step is likewise retried with backoff, because once
+  auto-merge has been disabled a transient failure to re-enable it would leave the pull
+  request with auto-merge off — worse than stranded. The disable step is a single
+  attempt: a failed disable leaves the pull request unchanged for the next pass. Only
+  when both the enqueue and the fallback re-arm fail is the recovery of that pull
+  request treated as failed. <!-- 02-§112.11 -->
 - Each event pull request is evaluated in isolation, so a failure to read or recover
   one pull request does not abort the recovery of the others. <!-- 02-§112.6 -->
 - When one or more stranded pull requests could not be recovered during a pass, the
@@ -979,11 +991,12 @@ stuck in the queue handoff.
   pipeline as the concurrent-duplicate cleanup (§111.8). That merge is what advances
   the base and can strand a sibling pull request, so recovery happens immediately
   when stranding is most likely. <!-- 02-§112.7 -->
-- Recovery also runs on a fixed schedule, every 15 minutes, as a safety net. A
-  pull request can be stranded by a merge that is not itself an event-data merge, or
-  by a stranding that no subsequent event merge follows to trigger the post-merge
-  pass; the scheduled pass bounds how long such a pull request waits before it is
-  recovered. <!-- 02-§112.8 -->
+- Recovery also runs on a fixed schedule, every 120 minutes, as a last-resort
+  backstop. The check-suite trigger (§112.16) recovers a stranded pull request within
+  about a minute, so the schedule exists only for the rare pull request that no
+  check-suite completion or event merge follows. GitHub throttles high-frequency
+  scheduled workflows, so a long interval matches what it reliably delivers and keeps
+  the load low. <!-- 02-§112.8 -->
 - The scheduled safety-net pass is inexpensive when there are no open event pull
   requests: it lists the open event pull requests and exits without further work when
   none are stranded. <!-- 02-§112.9 -->
@@ -994,18 +1007,21 @@ stuck in the queue handoff.
   configured interval. <!-- 02-§112.16 -->
 - Recovery runs are single-flight: all recovery triggers (post-merge, scheduled,
   check-suite, manual) share one concurrency group, and an in-progress run is never
-  cancelled. This coalesces bursts of check-suite completions into few runs and
-  guarantees a run that is mid-toggle (auto-merge disabled, not yet re-enabled) is
-  allowed to finish, so a pull request is never left with auto-merge off. <!-- 02-§112.17 -->
+  cancelled. This coalesces bursts of check-suite completions into few runs, lets each
+  run finish its enqueue-and-verify pass without a concurrent run racing it on the same
+  pull request, and guarantees a run that has entered the fallback re-arm (auto-merge
+  disabled, not yet re-enabled) is allowed to finish, so a pull request is never left
+  with auto-merge off. <!-- 02-§112.17 -->
 - Recovery is idempotent. A pull request that is not stranded is left unchanged on
   every pass, so running recovery repeatedly is safe. <!-- 02-§112.10 -->
 
 ### 112.4 Recovery job authentication (site requirements)
 
 - The recovery job authenticates to the GitHub API with a token that is permitted to
-  enable and disable auto-merge on pull requests. The default GitHub Actions workflow
-  token (`secrets.GITHUB_TOKEN`) cannot perform the auto-merge GraphQL mutations even
-  when granted `pull-requests: write`, so recovery uses a separate token. <!-- 02-§112.12 -->
+  place pull requests in the merge queue and manage auto-merge. The default GitHub
+  Actions workflow token (`secrets.GITHUB_TOKEN`) cannot perform these GraphQL
+  mutations even when granted `pull-requests: write`, so recovery uses a separate
+  token. <!-- 02-§112.12 -->
 - The token is supplied through the repository-level Actions secret
   `EVENT_AUTOMERGE_TOKEN`, which holds a credential with pull-request and contents
   write access to the repository. The secret is repository-level (not environment
@@ -1025,9 +1041,8 @@ auto-merge (squash) enabled at creation (§109, §110, §111). Enabling auto-mer
 not the same as being placed in the merge queue: GitHub only adds a pull request to
 the queue once its required checks pass, and during bursts a pull request can fail to
 enter the queue at all and hang with auto-merge enabled but no queue entry (§112).
-The reactive recovery in §112 repairs such a pull request, but it is reactive — a
-stranded pull request can in the worst case wait up to the recovery sweep's interval
-(~15 minutes) before it is detected and re-queued.
+The reactive recovery in §112 repairs such a pull request, but it is reactive — the
+pull request waits until a recovery trigger fires before it is detected and re-queued.
 
 To keep submission latency low, the form API places each newly opened event pull
 request in the merge queue immediately at submission, via the GraphQL
@@ -1069,9 +1084,10 @@ for them: auto-merge stays enabled as a complement, and the reactive recovery in
 
 ### 113.4 Unchanged guarantees (site requirements)
 
-- The reactive stranded-recovery automation (§112) is unchanged and remains the safety
-  net for any event pull request that falls out of the merge queue, including one whose
-  proactive enqueue failed at submission. <!-- 02-§113.8 -->
+- The reactive stranded-recovery automation (§112) remains the safety net for any
+  event pull request that falls out of the merge queue, including one whose proactive
+  enqueue failed at submission. Recovery re-queues a stranded pull request with the
+  same `enqueuePullRequest` mutation used here. <!-- 02-§113.8 -->
 - The event-data validation gate is unchanged by proactive enqueue: the `event-data
   check` (the hard `check-yaml-security.js` block and `lint-yaml.js`) and the API-layer
   validation remain required and run exactly as before. Enqueuing a pull request places

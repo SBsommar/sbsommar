@@ -1740,20 +1740,20 @@ Doc ref: `02-requirements/event-data.md §112`;
 | ID | Status | Notes |
 | --- | --- | --- |
 | `02-§112.1` | covered | STRAND-01/-02/-03: `classifyStrandedPr` returns `recover` only for an `event/`/`event-edit/`/`event-delete/` branch with auto-merge enabled, `mergeStateStatus === CLEAN`, and no `mergeQueueEntry` |
-| `02-§112.2` | implemented | `recoverPr()` calls `disablePullRequestAutoMerge` then `enablePullRequestAutoMerge`; the live "disable→enable creates a fresh queue entry, re-enable alone is a no-op" premise is manual checkpoint STRAND-M01 |
-| `02-§112.3` | implemented | `recoverPr()` re-enables with mergeMethod `SQUASH`, matching `enableAutoMerge` in the form API; live behaviour is STRAND-M01 |
+| `02-§112.2` | covered | `recoverPr()` runs `enqueueAndVerify()` (primary: `enqueuePullRequest` via `ENQUEUE_MUTATION` + confirm `mergeQueueEntry`) and falls back to `reArmAutoMerge()` when no queue entry is confirmed; STRAND-30/31 cover the two paths, STRAND-29 the mutation shape; live behaviour is manual checkpoint STRAND-M01 |
+| `02-§112.3` | covered | `recoverPr()` keeps auto-merge enabled; only in the fallback does `reArmAutoMerge()` disable→re-enable (SQUASH) to re-arm it (STRAND-31); live behaviour is STRAND-M01 |
 | `02-§112.4` | covered | STRAND-04, STRAND-10: `classifyStrandedPr` returns `skip` when a `mergeQueueEntry` is present (already progressing) |
 | `02-§112.5` | covered | STRAND-05, STRAND-06: `classifyStrandedPr` returns `skip` when `mergeStateStatus` is not `CLEAN` (checks pending/failing or not mergeable) |
 | `02-§112.6` | implemented | Per-PR `try`/`catch` in `main()` isolates a failed read or mutation from the rest of the sweep; exercised live (STRAND-M01) |
 | `02-§112.7` | implemented | `recover-stranded-event-prs` job in `event-data-deploy-post-merge.yml` runs on push to `main` (`source/data/**`); CI/manual checkpoint STRAND-M01 |
-| `02-§112.8` | implemented | `merge-queue-recovery.yml` runs the sweep on a 15-minute `schedule` cron (plus `workflow_dispatch`); CI/manual checkpoint STRAND-M01 |
+| `02-§112.8` | covered | RECTRIG-01: `merge-queue-recovery.yml` runs the sweep on a 120-minute `schedule` cron (`0 */2 * * *`, plus `workflow_dispatch`); CI/manual checkpoint STRAND-M01 |
 | `02-§112.9` | implemented | `main()` filters to open event PRs and returns early with "nothing to recover" when none exist; live behaviour is STRAND-M01 |
 | `02-§112.10` | covered | STRAND-10: `classifyStrandedPr` is pure and returns `skip` for any non-stranded PR, so repeated sweeps are no-ops |
-| `02-§112.11` | covered | STRAND-11/-12/-13: `recoverPr()` wraps the re-enable in `withRetry` (exponential backoff); disable is a single attempt; live toggle is STRAND-M01 |
-| `02-§112.12` | implemented | Both recovery jobs pass `secrets.EVENT_AUTOMERGE_TOKEN` as `GITHUB_TOKEN` (not the default token, which fails auto-merge mutations); live behaviour is manual checkpoint STRAND-M01 |
+| `02-§112.11` | covered | STRAND-26/-27/-28: `enqueueAndVerify()` wraps enqueue-and-verify in `withRetry` (exponential backoff), retrying until a `mergeQueueEntry` is confirmed or attempts exhaust; STRAND-32: `recoverPr()` treats both enqueue and fallback re-arm failing as `failed` (fail-loud); `reArmAutoMerge()` retries the re-enable with `withRetry`; STRAND-11/-12/-13 cover `withRetry` itself |
+| `02-§112.12` | implemented | Both recovery jobs pass `secrets.EVENT_AUTOMERGE_TOKEN` as `GITHUB_TOKEN` (not the default token, which fails the enqueue/auto-merge mutations); live behaviour is manual checkpoint STRAND-M01 |
 | `02-§112.13` | covered | STRAND-16/-17 (`processPr` returns `'failed'` on fetch/recover error), STRAND-18/-19 (`runSweep` counts failures and keeps going); `main()` throws when the count is non-zero |
 | `02-§112.14` | implemented | `EVENT_AUTOMERGE_TOKEN` documented as a repository-level secret in 08-ENVIRONMENTS; recovery jobs declare no `environment:` so only repo-level secrets resolve |
-| `02-§112.15` | implemented | Re-enable runs under the PAT identity so the merge triggers `event-data-deploy-post-merge.yml`; manual checkpoint STRAND-M01 |
+| `02-§112.15` | implemented | Enqueue runs under the PAT identity so the merge triggers `event-data-deploy-post-merge.yml`; manual checkpoint STRAND-M01 |
 | `02-§112.16` | covered | RECTRIG-02: `merge-queue-recovery.yml` declares a `check_suite: [completed]` trigger (schedule + workflow_dispatch retained, RECTRIG-01) |
 | `02-§112.17` | covered | RECTRIG-03/-04: scheduled workflow and post-merge job share `concurrency: stranded-recovery` with `cancel-in-progress: false` |
 | `02-§112.18` | covered | STRAND-20/-21 (recover on checksPassed + BLOCKED/UNKNOWN), STRAND-22/-23 (skip pending and DIRTY), STRAND-25 (CLEAN still recovers); `fetchPrState` reads `statusCheckRollup.state` |
@@ -1773,7 +1773,7 @@ Doc ref: `02-requirements/event-data.md §113`;
 | `02-§113.5` | covered | ENQ-09: a "checks still running" failure is swallowed and reported as not enqueued; the queue actually declining an unmergeable PR is live checkpoint ENQ-M01 |
 | `02-§113.6` | covered | ENQ-08: exactly one warning is logged on failure and nothing else; no GitHub issue is created (the best-effort wrapper only calls `log`) |
 | `02-§113.7` | covered | ENQ-07: the enqueue step is contained so the submission outcome is unchanged whether enqueue succeeds or fails |
-| `02-§113.8` | covered | Recovery (`recover-stranded-event-prs.js`, §112) is untouched; STRAND-01..13 still pass. A proactively enqueued PR has a `mergeQueueEntry`, so `classifyStrandedPr` returns `skip` (STRAND-04) and recovery still catches any PR that later falls out of the queue |
+| `02-§113.8` | covered | Recovery (`recover-stranded-event-prs.js`, §112) remains the safety net and re-queues a stranded PR with the same `enqueuePullRequest` mutation used at submission. A proactively enqueued PR has a `mergeQueueEntry`, so `classifyStrandedPr` returns `skip` (STRAND-04) and recovery catches any PR that later falls out of the queue |
 | `02-§113.9` | covered | The event-data validation gate (`check-yaml-security.js`, `lint-yaml.js`) and API-layer validation are unchanged; YSEC/validation tests still pass. Enqueue only changes when a PR enters the queue, not whether its required checks run |
 
 ### §114 — Quick-Add Activity Button in Sticky Navigation

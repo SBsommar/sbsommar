@@ -6,8 +6,10 @@ name: Merge Queue Recovery
 # primary trigger is check_suite: completed — recovery runs right then (02-§112.16),
 # rather than waiting for GitHub's unreliable schedule delivery. The post-merge sweep
 # in event-data-deploy-post-merge.yml covers the burst case; the schedule below is a
-# slow backstop (02-§112.8). The sweep is cheap when idle: it lists open event PRs and
-# exits when none are stranded (02-§112.9).
+# last-resort backstop (02-§112.8). Recovery re-queues a stranded PR with the imperative
+# enqueuePullRequest mutation and verifies a merge-queue entry results (02-§112.2). The
+# sweep is cheap when idle: it lists open event PRs and exits when none are stranded
+# (02-§112.9).
 
 permissions:
   contents: read
@@ -16,8 +18,10 @@ on:
   check_suite:
     types: [completed]
   schedule:
-    # Every 15 minutes — slow backstop; GitHub does not guarantee this cadence.
-    - cron: '*/15 * * * *'
+    # Every 120 minutes — last-resort backstop only. check_suite recovers within about
+    # a minute; GitHub throttles high-frequency schedules, so a long interval matches
+    # what it reliably delivers and keeps the load low (02-§112.8).
+    - cron: '0 */2 * * *'
   workflow_dispatch:
 
 # All recovery triggers (here plus the post-merge job) share one group so bursts of
