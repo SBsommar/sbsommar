@@ -278,7 +278,19 @@ enqueue-and-verify is wrapped in `withRetry` (exponential backoff), so a transie
 enqueue that does not take effect is retried until a queue entry is confirmed or the
 attempts are exhausted (02-§112.11). Enqueuing is imperative — it does not wait for
 `main` to advance or for another mergeability event — so a single sweep durably
-re-queues a stranded pull request. Each pull request is processed inside its own
+re-queues a stranded pull request.
+
+When the enqueue cannot be confirmed after its retries, the script falls back to
+re-arming auto-merge: `disablePullRequestAutoMerge` then `enablePullRequestAutoMerge`
+(mergeMethod `SQUASH`), the re-enable wrapped in `withRetry`. This covers the
+checks-passed-but-`BLOCKED`/`UNKNOWN` case (02-§112.18), where GitHub's mergeable-state
+recompute lags and the queue declines an immediate enqueue: re-arming auto-merge makes
+it enqueue at the `BLOCKED`→`CLEAN` transition. The two mechanisms are complementary —
+enqueue for the clean-at-rest case the toggle alone misses, the re-arm for the laggy
+case the enqueue alone misses (02-§112.2, 112.3). Only when both fail is the pull
+request's recovery treated as failed.
+
+Each pull request is processed inside its own
 `try`/`catch`, so one
 failed read or mutation does not abort the sweep (02-§112.6), mirroring the
 redundant-PR cleanup.

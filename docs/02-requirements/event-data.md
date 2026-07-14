@@ -948,15 +948,21 @@ stuck in the queue handoff.
   also qualifies. A pull request whose mergeable state reports a real conflict
   (`DIRTY`) is not recovered, because re-queuing cannot resolve a
   conflict. <!-- 02-§112.18 -->
-- A stranded event pull request is recovered by placing it back in the merge queue
-  with the GraphQL `enqueuePullRequest` mutation, using the pull request's node id.
-  This is the same mutation the form API uses to enqueue a pull request at submission
-  (§113). Enqueuing places the pull request in the queue directly, so recovery does
-  not depend on `main` advancing or on any further mergeability event. <!-- 02-§112.2 -->
-- Recovery leaves auto-merge enabled on the pull request; it does not disable it.
-  Auto-merge remains as a complement to the enqueue call, matching how the form API
-  keeps squash auto-merge enabled alongside the proactive enqueue at submission
-  (§113.2). <!-- 02-§112.3 -->
+- A stranded event pull request is recovered primarily by placing it back in the merge
+  queue with the GraphQL `enqueuePullRequest` mutation, using the pull request's node
+  id. This is the same mutation the form API uses to enqueue a pull request at
+  submission (§113). Enqueuing places the pull request in the queue directly, so
+  recovery does not depend on `main` advancing or on any further mergeability event.
+  If the enqueue cannot be confirmed — the pull request's checks have passed but its
+  mergeable state is still catching up (§112.18), so the queue declines to enqueue it
+  — recovery falls back to re-arming auto-merge (see §112.3) so the pull request
+  enqueues once its mergeable state converges. <!-- 02-§112.2 -->
+- Recovery keeps auto-merge enabled as a complement to the enqueue call, matching how
+  the form API keeps squash auto-merge enabled alongside the proactive enqueue at
+  submission (§113.2). In the fallback case only — when the pull request cannot be
+  enqueued yet — recovery disables and then re-enables auto-merge (squash) to re-arm
+  it, which registers a fresh queue entry against the current `main` at the moment the
+  mergeable state becomes clean. <!-- 02-§112.3 -->
 - An event pull request that already has a merge-queue entry is left untouched: it is
   progressing through the queue normally and does not need to be re-queued. <!-- 02-§112.4 -->
 - An event pull request whose required checks are still pending, or have failed, is
@@ -965,9 +971,13 @@ stuck in the queue handoff.
 - Recovery confirms the enqueue took effect: after enqueuing, it re-reads the pull
   request and checks that a merge-queue entry now exists. If none does, it enqueues
   again with exponential backoff, until a merge-queue entry is confirmed or the
-  attempts are exhausted, in which case the failure is logged. Auto-merge is left
-  enabled throughout, so a failed enqueue never leaves the pull request worse off than
-  stranded and the next recovery pass retries. <!-- 02-§112.11 -->
+  attempts are exhausted. When they are exhausted, recovery re-arms auto-merge as the
+  fallback (§112.3); its re-enable step is likewise retried with backoff, because once
+  auto-merge has been disabled a transient failure to re-enable it would leave the pull
+  request with auto-merge off — worse than stranded. The disable step is a single
+  attempt: a failed disable leaves the pull request unchanged for the next pass. Only
+  when both the enqueue and the fallback re-arm fail is the recovery of that pull
+  request treated as failed. <!-- 02-§112.11 -->
 - Each event pull request is evaluated in isolation, so a failure to read or recover
   one pull request does not abort the recovery of the others. <!-- 02-§112.6 -->
 - When one or more stranded pull requests could not be recovered during a pass, the
@@ -997,9 +1007,11 @@ stuck in the queue handoff.
   configured interval. <!-- 02-§112.16 -->
 - Recovery runs are single-flight: all recovery triggers (post-merge, scheduled,
   check-suite, manual) share one concurrency group, and an in-progress run is never
-  cancelled. This coalesces bursts of check-suite completions into few runs and lets
-  each run finish its enqueue-and-verify pass without a concurrent run racing it on
-  the same pull request. <!-- 02-§112.17 -->
+  cancelled. This coalesces bursts of check-suite completions into few runs, lets each
+  run finish its enqueue-and-verify pass without a concurrent run racing it on the same
+  pull request, and guarantees a run that has entered the fallback re-arm (auto-merge
+  disabled, not yet re-enabled) is allowed to finish, so a pull request is never left
+  with auto-merge off. <!-- 02-§112.17 -->
 - Recovery is idempotent. A pull request that is not stranded is left unchanged on
   every pass, so running recovery repeatedly is safe. <!-- 02-§112.10 -->
 

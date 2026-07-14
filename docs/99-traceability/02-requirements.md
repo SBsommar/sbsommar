@@ -1740,8 +1740,8 @@ Doc ref: `02-requirements/event-data.md §112`;
 | ID | Status | Notes |
 | --- | --- | --- |
 | `02-§112.1` | covered | STRAND-01/-02/-03: `classifyStrandedPr` returns `recover` only for an `event/`/`event-edit/`/`event-delete/` branch with auto-merge enabled, `mergeStateStatus === CLEAN`, and no `mergeQueueEntry` |
-| `02-§112.2` | implemented | `enqueueAndVerify()` runs the `enqueuePullRequest` mutation (`ENQUEUE_MUTATION`, mirroring `buildEnqueueMutation`) and confirms a `mergeQueueEntry` results; STRAND-29 checks the mutation shape; the live "enqueue durably re-queues a stranded PR against an idle `main`" behaviour is manual checkpoint STRAND-M01 |
-| `02-§112.3` | implemented | `enqueueAndVerify()` leaves auto-merge enabled (never disables it), so submission's squash auto-merge stays as a complement; live behaviour is STRAND-M01 |
+| `02-§112.2` | covered | `recoverPr()` runs `enqueueAndVerify()` (primary: `enqueuePullRequest` via `ENQUEUE_MUTATION` + confirm `mergeQueueEntry`) and falls back to `reArmAutoMerge()` when no queue entry is confirmed; STRAND-30/31 cover the two paths, STRAND-29 the mutation shape; live behaviour is manual checkpoint STRAND-M01 |
+| `02-§112.3` | covered | `recoverPr()` keeps auto-merge enabled; only in the fallback does `reArmAutoMerge()` disable→re-enable (SQUASH) to re-arm it (STRAND-31); live behaviour is STRAND-M01 |
 | `02-§112.4` | covered | STRAND-04, STRAND-10: `classifyStrandedPr` returns `skip` when a `mergeQueueEntry` is present (already progressing) |
 | `02-§112.5` | covered | STRAND-05, STRAND-06: `classifyStrandedPr` returns `skip` when `mergeStateStatus` is not `CLEAN` (checks pending/failing or not mergeable) |
 | `02-§112.6` | implemented | Per-PR `try`/`catch` in `main()` isolates a failed read or mutation from the rest of the sweep; exercised live (STRAND-M01) |
@@ -1749,7 +1749,7 @@ Doc ref: `02-requirements/event-data.md §112`;
 | `02-§112.8` | covered | RECTRIG-01: `merge-queue-recovery.yml` runs the sweep on a 120-minute `schedule` cron (`0 */2 * * *`, plus `workflow_dispatch`); CI/manual checkpoint STRAND-M01 |
 | `02-§112.9` | implemented | `main()` filters to open event PRs and returns early with "nothing to recover" when none exist; live behaviour is STRAND-M01 |
 | `02-§112.10` | covered | STRAND-10: `classifyStrandedPr` is pure and returns `skip` for any non-stranded PR, so repeated sweeps are no-ops |
-| `02-§112.11` | covered | STRAND-26/-27/-28: `enqueueAndVerify()` wraps enqueue-and-verify in `withRetry` (exponential backoff), retrying until a `mergeQueueEntry` is confirmed or attempts exhaust (then throws → fail-loud); STRAND-11/-12/-13 cover `withRetry` itself |
+| `02-§112.11` | covered | STRAND-26/-27/-28: `enqueueAndVerify()` wraps enqueue-and-verify in `withRetry` (exponential backoff), retrying until a `mergeQueueEntry` is confirmed or attempts exhaust; STRAND-32: `recoverPr()` treats both enqueue and fallback re-arm failing as `failed` (fail-loud); `reArmAutoMerge()` retries the re-enable with `withRetry`; STRAND-11/-12/-13 cover `withRetry` itself |
 | `02-§112.12` | implemented | Both recovery jobs pass `secrets.EVENT_AUTOMERGE_TOKEN` as `GITHUB_TOKEN` (not the default token, which fails the enqueue/auto-merge mutations); live behaviour is manual checkpoint STRAND-M01 |
 | `02-§112.13` | covered | STRAND-16/-17 (`processPr` returns `'failed'` on fetch/recover error), STRAND-18/-19 (`runSweep` counts failures and keeps going); `main()` throws when the count is non-zero |
 | `02-§112.14` | implemented | `EVENT_AUTOMERGE_TOKEN` documented as a repository-level secret in 08-ENVIRONMENTS; recovery jobs declare no `environment:` so only repo-level secrets resolve |
