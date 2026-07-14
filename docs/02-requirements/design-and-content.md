@@ -550,16 +550,17 @@ an additional, more visible surface for the same destination.
 
 - The banner is a filled green card (background `--color-sage-dark`) with white
   text, visually distinct from the terracotta registration banners. <!-- 02-§121.8 -->
-- The banner carries the EDQ Hub hub-node icon and a "Gå med" call-to-action
-  button, so it reads clearly as an actionable link rather than a passive
-  notice. <!-- 02-§121.9 -->
+- The banner carries the EDQ Hub hub-node icon and a "Till EDQ Hub"
+  call-to-action button, so it reads clearly as an actionable link rather than
+  a passive notice. <!-- 02-§121.9 -->
 - The banner uses only the design tokens defined in
   `07-design/css-strategy.md §7`; no colours, spacing, or typography values are
   hardcoded. <!-- 02-§121.10 -->
-- The "Gå med" call-to-action is a visual element rendered inside the single
-  card link — a light pill with `--color-sage-dark` text on a `--color-white`
-  background, carrying a trailing arrow. It is not a nested interactive element,
-  so the whole card stays one valid, clickable link. <!-- 02-§121.14 -->
+- The "Till EDQ Hub" call-to-action is a visual element rendered inside the
+  single card link — a light pill with `--color-sage-dark` text on a
+  `--color-white` background, carrying a trailing arrow. It is not a nested
+  interactive element, so the whole card stays one valid, clickable
+  link. <!-- 02-§121.14 -->
 
 ### 121.5 Analytics
 

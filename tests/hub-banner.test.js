@@ -149,11 +149,11 @@ describe('renderIndexPage – EDQ Hub community banner (02-§121)', () => {
     assert.ok(/<span class="hero-hub-banner-icon">\s*<svg/.test(html), 'Expected the SVG badge inside the icon span');
   });
 
-  it('HUBB-14: banner shows a "Gå med" call-to-action pill (02-§121.9, §121.14)', () => {
+  it('HUBB-14: banner shows a "Till EDQ Hub" call-to-action pill (02-§121.9, §121.14)', () => {
     const html = renderIndexPage(buildPage());
     const btn = html.match(/<span class="hero-hub-banner-btn"[^>]*>([\s\S]*?)<\/span>/);
     assert.ok(btn, 'Expected a .hero-hub-banner-btn element');
-    assert.ok(/Gå med/.test(btn[1]), `Expected the "Gå med" label, got: ${btn[1]}`);
+    assert.ok(/Till EDQ Hub/.test(btn[1]), `Expected the "Till EDQ Hub" label, got: ${btn[1]}`);
   });
 
   it('HUBB-15: the call-to-action is a span, not a nested link/button (02-§121.14)', () => {

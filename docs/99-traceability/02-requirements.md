@@ -1929,9 +1929,9 @@ Doc ref: `02-requirements/design-and-content.md §121`;
 | `02-§121.6` | covered | HUBB-08: sub line is "Vi flyttar från Facebook till EDQ Hub. Här finns schema, nyheter och kontakt före och under lägret." |
 | `02-§121.7` | covered | HUBB-07, HUBB-08 assert the Swedish title and sub line strings |
 | `02-§121.8` | implemented | `source/assets/cs/style.css` `.hero-hub-banner { background: var(--color-sage-dark); color: var(--color-white) }` — white on sage-dark ≈6:1; visual appearance is a manual/browser checkpoint (verified at 390 px) |
-| `02-§121.9` | covered | HUBB-13, HUBB-14: `renderHubBannerHtml()` includes `.hero-hub-banner-icon` (shared `EDQHUB_ICON`) and a `.hero-hub-banner-btn` "Gå med" pill; visual appearance is a manual/browser checkpoint |
+| `02-§121.9` | covered | HUBB-13, HUBB-14: `renderHubBannerHtml()` includes `.hero-hub-banner-icon` (shared `EDQHUB_ICON`) and a `.hero-hub-banner-btn` "Till EDQ Hub" pill; visual appearance is a manual/browser checkpoint |
 | `02-§121.10` | implemented | `.hero-hub-banner*` rules use only `07-design/css-strategy.md §7` tokens; `stylelint` (`lint:css`) passes — token-only usage is a manual/review checkpoint |
 | `02-§121.11` | covered | HUBB-05, HUBB-06: banner carries `data-goatcounter-click="click-hub-banner"`, distinct from the hero social icon's `click-edqhub` |
 | `02-§121.12` | covered | HUBB-12: no inline `.hero-hub-banner[data-opens]` script; the banner is static markup with no new JS file |
 | `02-§121.13` | implemented | No dependency added to `package.json`; the icon is inline SVG and reuses the existing `EDQHUB_ICON` constant — review checkpoint |
-| `02-§121.14` | covered | HUBB-14, HUBB-15: the "Gå med" call-to-action is a `<span class="hero-hub-banner-btn">` inside the single card anchor (no nested link/button); `html-validate` (`lint:html`) passes on the built page |
+| `02-§121.14` | covered | HUBB-14, HUBB-15: the "Till EDQ Hub" call-to-action is a `<span class="hero-hub-banner-btn">` inside the single card anchor (no nested link/button); `html-validate` (`lint:html`) passes on the built page |

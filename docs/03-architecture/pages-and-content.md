@@ -884,7 +884,8 @@ visibility script — so it adds no client-side JavaScript.
   rel="noopener noreferrer" data-goatcounter-click="click-hub-banner">`
   containing an icon span and a text column. The text column holds the title
   (`.hero-hub-banner-title`), the sub line (`.hero-hub-banner-meta`), and a
-  "Gå med" call-to-action pill span (`.hero-hub-banner-btn`) stacked below it.
+  "Till EDQ Hub" call-to-action pill span (`.hero-hub-banner-btn`) stacked
+  below it.
   The pill is a `<span>`, not a nested link/button, so the card remains one
   valid, clickable anchor.
 - The banner is interpolated into the hero markup directly after the
@@ -914,7 +915,7 @@ needed.
   flex-start`) holding the title, sub line, and button.
 - `.hero-hub-banner-title` — `700` weight, `font-size: var(--font-size-base)`.
 - `.hero-hub-banner-meta` — `font-size: var(--font-size-small)`, on its own line.
-- `.hero-hub-banner-btn` — a light "Gå med" pill below the sub line
+- `.hero-hub-banner-btn` — a light "Till EDQ Hub" pill below the sub line
   (`align-self: flex-start; margin-top: var(--space-sm)`): white background,
   sage-dark text, `700` weight, `border-radius: var(--radius-sm)`; dims slightly
   on card hover.

@@ -157,7 +157,7 @@ Part of [the design index](./index.md). Section IDs (`07-§N.M`) are stable and 
 - Layout (mobile-first, one layout at every width): a flex row of the EDQ Hub
   hub-node icon (`flex-shrink: 0`) and a text column (`flex: 1`), with
   `gap: var(--space-sm)` and `align-items: flex-start`. Inside the text column
-  the title, sub line, and "Gå med" pill stack vertically, the pill
+  the title, sub line, and "Till EDQ Hub" pill stack vertically, the pill
   left-aligned below the sub line. Stacking the button keeps the sub line at
   full width on phones instead of squeezing it beside the button. <!-- 07-§6.151 -->
 - Banner title (`.hero-hub-banner-title`): `700` weight,
@@ -179,7 +179,7 @@ Part of [the design index](./index.md). Section IDs (`07-§N.M`) are stable and 
   sub line (`margin-top: var(--space-sm)`), styled as a light pill —
   `background: var(--color-white)`, `color: var(--color-sage-dark)`, `700`
   weight, `border-radius: var(--radius-sm)`, `padding: var(--space-xs)
-  var(--space-sm)`, with the label "Gå med" and a trailing arrow. On card
+  var(--space-sm)`, with the label "Till EDQ Hub" and a trailing arrow. On card
   hover it dims slightly
   (`color-mix(in srgb, var(--color-sage-dark) 8%, var(--color-white))`). Sage-dark
   text on white meets WCAG AA. <!-- 07-§6.158 -->
