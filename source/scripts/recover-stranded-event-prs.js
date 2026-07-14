@@ -17,6 +17,13 @@
 // (the same one the form API uses at submission, 02-§113), then confirms a
 // mergeQueueEntry resulted. Enqueuing does not wait for main to advance, so a single
 // sweep durably re-queues a stranded PR.
+//
+// Defense-in-depth (02-§112.2, §112.18): if the enqueue cannot be confirmed — the
+// checks have passed but GitHub's mergeable-state recompute lags (BLOCKED/UNKNOWN), so
+// the queue declines an immediate enqueue — recovery falls back to re-arming auto-merge
+// (disable then re-enable), which makes the PR enqueue at the BLOCKED→CLEAN transition.
+// The two mechanisms are complementary: enqueue covers the clean-at-rest case the
+// toggle alone misses; the re-arm covers the laggy case the enqueue alone misses.
 
 const { execFileSync } = require('node:child_process');
 
@@ -153,6 +160,41 @@ function enqueueAndVerify(nodeId, { enqueueFn = enqueue, isQueued, retryOpts } =
   }, retryOpts);
 }
 
+// Fallback recovery for the checks-passed-but-laggy case (02-§112.18): when the
+// mergeable state still reads BLOCKED/UNKNOWN the queue declines an enqueue, so
+// disabling then re-enabling auto-merge (squash) re-arms it to enqueue at the
+// BLOCKED→CLEAN transition. The re-enable is retried, because once auto-merge is
+// disabled a transient failure to re-enable it would leave the PR with auto-merge off
+// — worse than stranded; the disable is a single attempt (02-§112.11).
+function reArmAutoMerge(nodeId, retryOpts) {
+  gh([
+    'api', 'graphql',
+    '-f', 'query=mutation($id:ID!){disablePullRequestAutoMerge(input:{pullRequestId:$id}){pullRequest{number}}}',
+    '-f', `id=${nodeId}`,
+  ]);
+  withRetry(() => gh([
+    'api', 'graphql',
+    '-f', 'query=mutation($id:ID!){enablePullRequestAutoMerge(input:{pullRequestId:$id,mergeMethod:SQUASH}){pullRequest{number}}}',
+    '-f', `id=${nodeId}`,
+  ]), retryOpts);
+}
+
+// Recover a stranded PR, defense-in-depth (02-§112.2): enqueue imperatively as the
+// primary (fixes the clean-at-rest tail), and if that cannot confirm a merge-queue
+// entry, fall back to re-arming auto-merge (fixes the laggy BLOCKED case, 02-§112.18).
+// A throw from both surfaces upward and is reported as a failed recovery (02-§112.13).
+// enqueueFn/isQueued/reArmFn/log injectable so the outcome logic is unit-testable.
+function recoverPr(nodeId, { enqueueFn = enqueue, isQueued, reArmFn = reArmAutoMerge, retryOpts, log = console.log } = {}) {
+  try {
+    enqueueAndVerify(nodeId, { enqueueFn, isQueued, retryOpts });
+  } catch (err) {
+    // Enqueue could not confirm a queue entry — likely the mergeable state still
+    // catching up. Re-arm auto-merge so it enqueues once the state converges.
+    log(`Enqueue did not confirm a queue entry for ${nodeId} (${err.message}); re-arming auto-merge`);
+    reArmFn(nodeId, retryOpts);
+  }
+}
+
 /**
  * Process one event pull request: read its state, classify it, and recover it if
  * stranded. Side effects (network reads, auto-merge toggles) are injected via
@@ -218,8 +260,9 @@ function main() {
 
   const failures = runSweep(eventPrs, {
     fetchState: (number) => fetchPrState(owner, repo, number),
-    // Enqueue the PR, then re-read it to confirm a merge-queue entry resulted.
-    recover: (nodeId, number) => enqueueAndVerify(nodeId, {
+    // Enqueue the PR and confirm a merge-queue entry resulted; fall back to re-arming
+    // auto-merge when the enqueue cannot be confirmed (02-§112.2, §112.18).
+    recover: (nodeId, number) => recoverPr(nodeId, {
       isQueued: () => fetchPrState(owner, repo, number).inMergeQueue,
     }),
   });
@@ -241,5 +284,6 @@ if (require.main === module) {
 }
 
 module.exports = {
-  classifyStrandedPr, withRetry, processPr, runSweep, enqueueAndVerify, ENQUEUE_MUTATION,
+  classifyStrandedPr, withRetry, processPr, runSweep,
+  enqueueAndVerify, reArmAutoMerge, recoverPr, ENQUEUE_MUTATION,
 };
