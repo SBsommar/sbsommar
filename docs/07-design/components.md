@@ -154,10 +154,12 @@ Part of [the design index](./index.md). Section IDs (`07-§N.M`) are stable and 
   `color: var(--color-white)`, `border-radius: var(--radius-md)`,
   `padding: var(--space-sm) var(--space-md)`, centred within the hero at
   `max-width: 750px`. <!-- 07-§6.150 -->
-- Layout is a horizontal flex row: the EDQ Hub hub-node icon, a text column,
-  and a "Gå med" call-to-action pill, with `gap: var(--space-sm)` and
-  `align-items: center`. The icon and pill set `flex-shrink: 0` so the text
-  column absorbs wrapping on narrow (mobile) screens. <!-- 07-§6.151 -->
+- Layout (mobile-first, one layout at every width): a flex row of the EDQ Hub
+  hub-node icon (`flex-shrink: 0`) and a text column (`flex: 1`), with
+  `gap: var(--space-sm)` and `align-items: flex-start`. Inside the text column
+  the title, sub line, and "Gå med" pill stack vertically, the pill
+  left-aligned below the sub line. Stacking the button keeps the sub line at
+  full width on phones instead of squeezing it beside the button. <!-- 07-§6.151 -->
 - Banner title (`.hero-hub-banner-title`): `700` weight,
   `font-size: var(--font-size-base)`, white. <!-- 07-§6.152 -->
 - Banner meta line (`.hero-hub-banner-meta`):
@@ -173,7 +175,8 @@ Part of [the design index](./index.md). Section IDs (`07-§N.M`) are stable and 
   no date-gating script. <!-- 07-§6.156 -->
 - White text on `--color-sage-dark` meets WCAG AA contrast (≈6:1). <!-- 07-§6.157 -->
 - Call-to-action pill (`.hero-hub-banner-btn`): a `<span>` (not a nested link
-  or button, so the card stays one valid anchor) styled as a light pill —
+  or button, so the card stays one valid anchor) sitting left-aligned below the
+  sub line (`margin-top: var(--space-sm)`), styled as a light pill —
   `background: var(--color-white)`, `color: var(--color-sage-dark)`, `700`
   weight, `border-radius: var(--radius-sm)`, `padding: var(--space-xs)
   var(--space-sm)`, with the label "Gå med" and a trailing arrow. On card

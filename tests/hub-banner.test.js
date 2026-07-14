@@ -92,19 +92,19 @@ describe('renderIndexPage – EDQ Hub community banner (02-§121)', () => {
     assert.ok(html.includes('data-goatcounter-click="click-hub-banner"'), 'Expected banner click event');
   });
 
-  it('HUBB-07: banner title is "Gå med i vår EDQ Hub" (02-§121.5)', () => {
+  it('HUBB-07: banner title leads with the benefit (02-§121.5)', () => {
     const html = renderIndexPage(buildPage());
     assert.ok(
-      html.includes('Gå med i vår EDQ Hub'),
-      'Expected the Swedish banner title',
+      html.includes('All info om lägret – på ett ställe'),
+      'Expected the benefit-led Swedish banner title',
     );
   });
 
-  it('HUBB-08: banner sub line invites participants to stay in touch (02-§121.6)', () => {
+  it('HUBB-08: banner sub line states the move from Facebook (02-§121.6)', () => {
     const html = renderIndexPage(buildPage());
     assert.ok(
-      html.includes('Här delar vi nyheter och håller kontakten före och under lägret. Välkommen in!'),
-      'Expected the Swedish banner sub line',
+      html.includes('Vi flyttar från Facebook till EDQ Hub. Här finns schema, nyheter och kontakt före och under lägret.'),
+      'Expected the Swedish banner sub line naming the Facebook move',
     );
   });
 
@@ -140,5 +140,31 @@ describe('renderIndexPage – EDQ Hub community banner (02-§121)', () => {
       !html.includes('.hero-hub-banner[data-opens]'),
       'Hub banner must not emit any date-gating script',
     );
+  });
+
+  it('HUBB-13: banner carries the EDQ Hub icon (02-§121.9)', () => {
+    const html = renderIndexPage(buildPage());
+    assert.ok(html.includes('class="hero-hub-banner-icon"'), 'Expected the banner icon span');
+    // The icon is the shared inline EDQ Hub badge SVG.
+    assert.ok(/<span class="hero-hub-banner-icon">\s*<svg/.test(html), 'Expected the SVG badge inside the icon span');
+  });
+
+  it('HUBB-14: banner shows a "Gå med" call-to-action pill (02-§121.9, §121.14)', () => {
+    const html = renderIndexPage(buildPage());
+    const btn = html.match(/<span class="hero-hub-banner-btn"[^>]*>([\s\S]*?)<\/span>/);
+    assert.ok(btn, 'Expected a .hero-hub-banner-btn element');
+    assert.ok(/Gå med/.test(btn[1]), `Expected the "Gå med" label, got: ${btn[1]}`);
+  });
+
+  it('HUBB-15: the call-to-action is a span, not a nested link/button (02-§121.14)', () => {
+    const html = renderIndexPage(buildPage());
+    // Isolate the banner anchor and confirm it contains no nested <a> or <button>,
+    // which would be invalid inside an <a> and break the single-target link.
+    const banner = html.match(/<a[^>]*class="hero-hub-banner"[\s\S]*?<\/a>/);
+    assert.ok(banner, 'Expected the hub banner anchor');
+    assert.ok(!/<button/.test(banner[0]), 'Banner must not nest a <button>');
+    // Exactly one <a> (the card itself), no inner anchors.
+    const anchorOpens = banner[0].match(/<a\b/g) || [];
+    assert.equal(anchorOpens.length, 1, 'Banner must be a single anchor with no nested links');
   });
 });

@@ -305,7 +305,7 @@ h3 {
 
 .hero-hub-banner {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--space-sm);
   max-width: 750px;
   margin: var(--space-sm) auto 0;
@@ -333,6 +333,9 @@ h3 {
 
 .hero-hub-banner-text {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .hero-hub-banner-title {
@@ -349,11 +352,21 @@ h3 {
   margin-top: 2px;
 }
 
-.hero-hub-banner-arrow {
-  flex-shrink: 0;
-  font-size: var(--font-size-h3);
-  line-height: 1;
-  color: var(--color-white);
+.hero-hub-banner-btn {
+  align-self: flex-start;
+  margin-top: var(--space-sm);
+  padding: var(--space-xs) var(--space-sm);
+  background: var(--color-white);
+  color: var(--color-sage-dark);
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  font-size: var(--font-size-small);
+  white-space: nowrap;
+  transition: background 200ms ease;
+}
+
+.hero-hub-banner:hover .hero-hub-banner-btn {
+  background: color-mix(in srgb, var(--color-sage-dark) 8%, var(--color-white));
 }
 
 /* ── Registration CTA in anmälan section (02-§94, 07-§6.98–6.102) ── */
