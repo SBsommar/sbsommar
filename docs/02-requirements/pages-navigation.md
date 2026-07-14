@@ -497,8 +497,10 @@ activity from anywhere on the site without opening the menu.
   (42 × 42 px), terracotta background, white icon, and
   `var(--radius-md)` border-radius. <!-- 02-§114.7 -->
 - The quick-add button displays a plus (+) icon. <!-- 02-§114.8 -->
-- The PWA-install button is positioned to the left of the quick-add button so
-  the two buttons never overlap. <!-- 02-§114.9 -->
+- The PWA-install button sits on the left side of the mobile navigation, beside
+  the menu (hamburger) button, so it never overlaps the quick-add button, the
+  other right-aligned floating buttons, or the centred scroll-to-top
+  button. <!-- 02-§114.9 -->
 
 ---
 

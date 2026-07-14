@@ -116,16 +116,10 @@ It shares the 42 × 42 px terracotta pill styling of the other floating action
 buttons and is positioned with `position: fixed; top: var(--space-xs)` in the
 slot between the centred scroll-to-top button and the right-aligned feedback
 button (`right: calc(var(--space-sm) + 42px + var(--space-xs))`). The
-`.pwa-install-btn` moves one slot further left
-(`right: calc(var(--space-sm) + 2 * (42px + var(--space-xs)))`) so the two
-never overlap. The button needs no client-side script — it is a plain link.
-
-The install button keeps that fixed slot on `lagg-till.html` even though the
-quick-add button is absent there, so an empty slot can sit between it and the
-feedback button. This is intentional: the install button is hidden unless the
-browser fires `beforeinstallprompt`, so the gap is only ever visible in the
-rare case the app is installable while the user is on the add page — not worth
-page-specific positioning rules.
+`.pwa-install-btn` is not part of this right-side row — it sits on the left
+beside the menu toggle (see `03-architecture/platform-and-security.md §28.7`) —
+so no right-side slot arithmetic has to account for it. The button needs no
+client-side script — it is a plain link.
 
 ### 12.8 Edit-shortcut button (02-§115)
 
@@ -166,11 +160,11 @@ It shares the 42 × 42 px terracotta pill styling of the other floating action
 buttons and is positioned with `position: fixed; top: var(--space-xs)` in the
 slot immediately left of the quick-add button
 (`right: calc(var(--space-sm) + 2 * (42px + var(--space-xs)))`). The
-`.pwa-install-btn` moves one slot further left
-(`right: calc(var(--space-sm) + 3 * (42px + var(--space-xs)))`) so the buttons
-never overlap. Because both the edit-shortcut and install buttons are usually
-hidden, the row collapses to just the feedback and quick-add buttons for most
-visitors, with no visible gaps.
+`.pwa-install-btn` is not part of this right-side row — it sits on the left
+beside the menu toggle (see `03-architecture/platform-and-security.md §28.7`) —
+so the edit-shortcut never has to yield a slot to it. Because the edit-shortcut
+is usually hidden, the right-side row collapses to just the feedback and
+quick-add buttons for most visitors, with no visible gaps.
 
 ---
 

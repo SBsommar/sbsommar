@@ -1792,7 +1792,7 @@ Doc ref: `02-requirements/pages-navigation.md §114`;
 | `02-§114.6` | covered | QADD-12: `right: calc(var(--space-sm) + 42px + var(--space-xs))` between scroll-top and feedback; `source/assets/cs/style.css`. Visual placement is manual checkpoint |
 | `02-§114.7` | covered | QADD-11: 42 × 42 px, `var(--color-terracotta)`, white icon, `var(--radius-md)`; `source/assets/cs/style.css` |
 | `02-§114.8` | covered | QADD-04: inline SVG plus icon inside the anchor; `source/build/layout.js` |
-| `02-§114.9` | covered | QADD-13: `.pwa-install-btn` mobile rule uses `right: calc(var(--space-sm) + 3 * (42px + var(--space-xs)))` (one slot left of the edit-shortcut button, which took the slot beside quick-add); `source/assets/cs/style.css` |
+| `02-§114.9` | covered | QADD-13: `.pwa-install-btn` mobile rule uses `left: calc(var(--space-sm) + 42px + var(--space-xs))` (left side, beside the menu toggle) so it never overlaps the right-side buttons or the centred scroll-top; `source/assets/cs/style.css`. Visual non-overlap is manual checkpoint |
 
 ### §115 — Edit-Shortcut Button in Sticky Navigation
 

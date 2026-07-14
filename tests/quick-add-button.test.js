@@ -149,12 +149,13 @@ describe('quick-add button – CSS rules (02-§114.5, §114.6, §114.7, §114.9)
     );
   });
 
-  it('QADD-13: PWA-install button shifts left of quick-add so they never overlap', () => {
-    // The edit-shortcut button (02-§115) sits in the slot immediately left of
-    // quick-add, so the PWA-install button moves one slot further still.
+  it('QADD-13: PWA-install button sits on the left beside the menu, not in the right-side row', () => {
+    // The PWA-install button is placed on the left of the mobile nav, one slot
+    // right of the 42px menu (hamburger) toggle, so it never overlaps the
+    // right-side floating buttons or the centred scroll-to-top arrow (#795).
     assert.ok(
-      CSS.includes('right: calc(var(--space-sm) + 3 * (42px + var(--space-xs)))'),
-      'PWA-install button should sit two slots left of quick-add',
+      CSS.includes('left: calc(var(--space-sm) + 42px + var(--space-xs))'),
+      'PWA-install button should be positioned on the left beside the menu toggle',
     );
   });
 });
