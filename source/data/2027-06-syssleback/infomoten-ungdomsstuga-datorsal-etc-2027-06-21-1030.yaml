@@ -1,0 +1,18 @@
+event:
+  id: infomoten-ungdomsstuga-datorsal-etc-2027-06-21-1030
+  title: 'Infomöten, ungdomsstuga, datorsal, etc.'
+  date: '2027-06-21'
+  start: '10:30'
+  end: '11:30'
+  location: GA Idrott
+  responsible: Lite olika
+  description: |
+    Efter det gemensamma mötet delas det in i mindre grupper för lite olika saker.
+  link: null
+  owner:
+    name: ''
+    email: ''
+  meta:
+    created_at: 2026-07-01 18:33
+    updated_at: 2026-07-01 18:33
+    location_set_at: 2026-07-01 18:33

@@ -1,0 +1,18 @@
+event:
+  id: välkommen-2027-07-25-1200
+  title: Välkommen
+  date: '2027-07-25'
+  start: '12:00'
+  end: '23:30'
+  location: Annat
+  responsible: Alla
+  description: |
+    Första dagen. Besökare kommer vid olika tider. På eftermiddagen och kvällen hjälps vi åt att bygga tält, rigga datorsal, GA-hall med mera och komma iordning inför lägret.
+    Ta hand om varandra och tänk lite extra om ni ser nya ansikten. Ta kontakt!
+  link: null
+  owner:
+    name: ''
+    email: ''
+  meta:
+    created_at: 2026-02-27 09:16:57
+    updated_at: 2026-02-27 09:16:57

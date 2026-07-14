@@ -1,0 +1,20 @@
+event:
+  id: glass-på-chokladfabriken-2027-08-01-1200
+  title: Glass på chokladfabriken
+  date: '2027-08-01'
+  start: '12:00'
+  end: '15:00'
+  location: Annat
+  responsible: Alla
+  description: |
+    Många brukar besöka Chokladfabriken för att äta lite glass som avrundning och hej då.
+    Det finns parkering för de som vill vara redo för “hemfärd”.
+    Annars är det en lagom promenad på vägen bakom receptionen.
+    Tiden är för det brukar vara lite “drop-in”.
+  link: null
+  owner:
+    name: ''
+    email: ''
+  meta:
+    created_at: 2026-02-27 09:16:57
+    updated_at: 2026-02-27 09:16:57

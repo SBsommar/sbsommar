@@ -1,0 +1,17 @@
+event:
+  id: middag-2027-07-31-1700
+  title: Middag
+  date: '2027-07-31'
+  start: '17:00'
+  end: '18:00'
+  location: Servicehus
+  responsible: Alla
+  description: |
+    Se tiden som en riktlinje då vi försöker att inte ha några aktiviteter igång. Man får givetvis äta precis när man vill.
+  link: null
+  owner:
+    name: ''
+    email: ''
+  meta:
+    created_at: 2026-02-27 09:16:57
+    updated_at: 2026-02-27 09:16:57
