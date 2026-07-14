@@ -854,3 +854,79 @@ All values come from existing tokens in `07-design/css-strategy.md §7`.
 | `source/assets/cs/style.css`          | New classes for banner and CTA wrapper                                   |
 
 ---
+
+## 33. EDQ Hub Community Banner
+
+### 33.1 Overview
+
+The homepage carries a single, always-visible banner in the hero area that
+invites visitors to join the camp's EDQ Hub community
+(`https://edqhub.com/join/sb-sommarlager-2026`). It exists to move ongoing
+communication away from Facebook and onto EDQ Hub, which becomes the primary
+platform next season. The same URL already appears as a small hero social icon
+(`click-edqhub`); this banner is a second, more prominent surface for it and
+tracks its own click event.
+
+Unlike the registration banners (§32), the EDQ Hub banner is **not**
+date-gated. It is plain static markup — no `hidden` attribute, no inline
+visibility script — so it adds no client-side JavaScript.
+
+### 33.2 Build-time rendering
+
+`source/build/render-index.js`:
+
+- The EDQ Hub badge SVG (a navy circle with a white hub-node glyph) is a
+  module-level constant, reused by both the hero social icon and the banner so
+  the markup is defined once.
+- `renderHubBannerHtml(edqhubUrl)` mirrors `renderRegistrationBannersHtml`: it
+  returns `''` when `edqhubUrl` is absent, otherwise a single
+  `<a class="hero-hub-banner" href="<edqhubUrl>" target="_blank"
+  rel="noopener noreferrer" data-goatcounter-click="click-hub-banner">`
+  containing an icon span, a text column (`.hero-hub-banner-title` +
+  `.hero-hub-banner-meta`), and a trailing arrow span.
+- The banner is interpolated into the hero markup directly after the
+  `hero-actions` block and **before** the registration banners, so it sits just
+  under the hero image.
+
+`edqhubUrl` is already passed into `renderIndexPage(...)` from
+`source/build/build.js` (defined there as `edqhubUrl`); no build change is
+needed.
+
+### 33.3 Styling
+
+`source/assets/cs/style.css` gains a `.hero-hub-banner*` block:
+
+- `.hero-hub-banner` — a filled green card (`background: var(--color-sage-dark)`,
+  `color: var(--color-white)`), `display: flex; align-items: center; gap:
+  var(--space-sm)`, `padding: var(--space-sm) var(--space-md)`,
+  `border-radius: var(--radius-md)`, centred within the hero at
+  `max-width: 750px`.
+- `.hero-hub-banner:hover` — background darkens via
+  `color-mix(in srgb, black 8%, var(--color-sage-dark))`, `200ms ease`.
+- `.hero-hub-banner:focus-visible` — the standard site outline
+  (`2px solid var(--color-terracotta); outline-offset: 2px`).
+- `.hero-hub-banner-icon` and `.hero-hub-banner-arrow` — `flex-shrink: 0` so the
+  text column absorbs wrapping; the arrow is white and slightly larger.
+- `.hero-hub-banner-title` — `700` weight, `font-size: var(--font-size-base)`.
+- `.hero-hub-banner-meta` — `font-size: var(--font-size-small)`, on its own line.
+
+White text on `--color-sage-dark` yields ≈6:1 contrast (WCAG AA). All values
+come from existing tokens in `07-design/css-strategy.md §7`.
+
+### 33.4 Accessibility
+
+- The banner is a single `<a>` element, reachable in the tab sequence and
+  clickable as one target.
+- The icon and arrow spans are decorative (`aria-hidden` on the arrow; the SVG
+  badge already carries `aria-hidden`); screen readers read the title and meta
+  text.
+- Contrast of white text on the filled green background meets WCAG AA.
+
+### 33.5 Files changed
+
+| File                             | Change                                                                 |
+| -------------------------------- | ---------------------------------------------------------------------- |
+| `source/build/render-index.js`   | Promote EDQ Hub badge to a module constant; add `renderHubBannerHtml`; interpolate banner into hero |
+| `source/assets/cs/style.css`     | New `.hero-hub-banner*` classes (filled green card)                    |
+
+---

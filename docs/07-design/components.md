@@ -144,6 +144,35 @@ Part of [the design index](./index.md). Section IDs (`07-§N.M`) are stable and 
 - The CTA opens the external registration service in a new tab
   (`target="_blank"`, `rel="noopener noreferrer"`). <!-- 07-§6.102 -->
 
+### EDQ Hub Banner
+
+- A single, always-visible banner in the hero area (directly below the hero
+  image, above any registration banners) invites visitors to join the camp's
+  EDQ Hub community. It is filled green, not the terracotta-accented style of
+  the registration banners, so it reads as a distinct announcement. <!-- 07-§6.149 -->
+- The banner is a full-width `<a>` card: `background: var(--color-sage-dark)`,
+  `color: var(--color-white)`, `border-radius: var(--radius-md)`,
+  `padding: var(--space-sm) var(--space-md)`, centred within the hero at
+  `max-width: 750px`. <!-- 07-§6.150 -->
+- Layout is a horizontal flex row: the EDQ Hub hub-node icon, a text column,
+  and a trailing arrow, with `gap: var(--space-sm)` and `align-items:
+  center`. The icon and arrow set `flex-shrink: 0` so the text column absorbs
+  wrapping on narrow (mobile) screens. <!-- 07-§6.151 -->
+- Banner title (`.hero-hub-banner-title`): `700` weight,
+  `font-size: var(--font-size-base)`, white. <!-- 07-§6.152 -->
+- Banner meta line (`.hero-hub-banner-meta`):
+  `font-size: var(--font-size-small)`, white, on its own line beneath the
+  title. <!-- 07-§6.153 -->
+- Hover: background darkens to
+  `color-mix(in srgb, black 8%, var(--color-sage-dark))`, `200ms ease`, no
+  scale transform. <!-- 07-§6.154 -->
+- Focus-visible: standard outline
+  (`2px solid var(--color-terracotta); outline-offset: 2px`). <!-- 07-§6.155 -->
+- The banner opens EDQ Hub in a new tab (`target="_blank"`,
+  `rel="noopener noreferrer"`) and is static markup — no `hidden` attribute and
+  no date-gating script. <!-- 07-§6.156 -->
+- White text on `--color-sage-dark` meets WCAG AA contrast (≈6:1). <!-- 07-§6.157 -->
+
 ### Buttons
 
 - Min height: `40px`. <!-- 07-§6.12 -->

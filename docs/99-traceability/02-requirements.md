@@ -1913,3 +1913,24 @@ Reuses the shared overlap predicate (`conflict-check.js`, §99).
 | `02-§120.5` | covered | CLASH-10/-11: `renderEventRow()` adds `is-clash`; `events-today.js` mirrors it via the `clash` JSON flag. CSS `.event-row.is-clash` uses `--color-error` (red wash + bar + title). The today/display view and visual appearance are manual/browser checkpoints |
 | `02-§120.6` | covered | CSS scopes the clash red with `:not(.is-past)` so a passed clash takes the grey `.is-past` treatment. Visual appearance is a manual/browser checkpoint |
 | `02-§120.7` | covered | CLASH-13/-14/-15: `isIgnoredActivity()` skips "Lunch"/"Middag" (case-insensitive) both as the marked and the conflicting event |
+
+### §121 — EDQ Hub Community Banner
+
+Doc ref: `02-requirements/design-and-content.md §121`;
+`03-architecture/pages-and-content.md §33`; `07-design/components.md §6.149–6.157`.
+
+| ID | Status | Notes |
+| --- | --- | --- |
+| `02-§121.1` | gap | Prominent hero banner on the homepage inviting visitors to join the EDQ Hub |
+| `02-§121.2` | gap | Banner links to the EDQ Hub join URL (build-code constant), opens in a new tab |
+| `02-§121.3` | gap | Banner sits below the hero image, above the registration banners |
+| `02-§121.4` | gap | Banner is always visible, not date-gated |
+| `02-§121.5` | gap | Title "Gå med i vår EDQ Hub" |
+| `02-§121.6` | gap | Sub line "Här delar vi nyheter och håller kontakten före och under lägret. Välkommen in!" |
+| `02-§121.7` | gap | All banner text in Swedish |
+| `02-§121.8` | gap | Filled green card (`--color-sage-dark`) with white text |
+| `02-§121.9` | gap | Banner carries the EDQ Hub hub-node icon and a trailing arrow |
+| `02-§121.10` | gap | Only design tokens; nothing hardcoded |
+| `02-§121.11` | gap | `data-goatcounter-click="click-hub-banner"`, separate from `click-edqhub` |
+| `02-§121.12` | gap | Static markup — no new JS file, no inline script |
+| `02-§121.13` | gap | No new runtime dependencies |
