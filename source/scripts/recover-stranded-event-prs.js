@@ -2,7 +2,8 @@
 
 // Recovers event-submission pull requests that have stranded in the merge-queue
 // handoff (02-§112). Runs in event-data-deploy-post-merge.yml after each event
-// merge, and on a 15-minute schedule in merge-queue-recovery.yml.
+// merge, on check_suite completion, and on a 120-minute backstop schedule in
+// merge-queue-recovery.yml.
 //
 // All pull requests to main merge through a merge queue. The form API enables
 // auto-merge (squash) on each event PR; GitHub places it in the queue once its
@@ -10,9 +11,12 @@
 // main advances — and a sibling whose auto-merge was enabled against the previous
 // tip can be left stranded: auto-merge enabled, checks green (mergeStateStatus
 // CLEAN), mergeable, but with no mergeQueueEntry, so it never merges. Re-enabling
-// auto-merge is a no-op; only disabling and re-enabling it registers a fresh queue
-// entry against the current main. This script detects that exact signature and
-// toggles auto-merge off then on to recover the PR.
+// auto-merge is a no-op — GitHub only enqueues a PR at the moment its checks pass,
+// and that moment has already gone by. This script detects that exact signature and
+// places the PR back in the queue with the imperative enqueuePullRequest mutation
+// (the same one the form API uses at submission, 02-§113), then confirms a
+// mergeQueueEntry resulted. Enqueuing does not wait for main to advance, so a single
+// sweep durably re-queues a stranded PR.
 
 const { execFileSync } = require('node:child_process');
 
@@ -39,8 +43,8 @@ function isEventBranch(branch) {
  * minutes to recompute mergeStateStatus to CLEAN after checks finish and fires no
  * further check-suite event in that window (02-§112.18). So a checks-passed PR that
  * is not queued is treated as stranded even while mergeStateStatus still reads
- * BLOCKED/UNKNOWN. A real conflict (DIRTY) is left alone — re-enabling auto-merge
- * cannot resolve it.
+ * BLOCKED/UNKNOWN. A real conflict (DIRTY) is left alone — re-queuing cannot
+ * resolve it.
  *
  * Returns:
  *   'ignore'  – not an event-submission PR
@@ -119,22 +123,34 @@ function fetchPrState(owner, repo, number) {
   };
 }
 
-// Disable then re-enable auto-merge (squash) to register a fresh queue entry.
-// Disable runs once: if it fails the PR is left untouched (auto-merge still on)
-// and the next sweep retries the whole recovery. Enable is retried, because once
-// disable has succeeded a transient enable failure would otherwise leave the PR
-// with auto-merge off — worse than stranded (02-§112.11).
-function recoverPr(nodeId) {
-  gh([
-    'api', 'graphql',
-    '-f', 'query=mutation($id:ID!){disablePullRequestAutoMerge(input:{pullRequestId:$id}){pullRequest{number}}}',
-    '-f', `id=${nodeId}`,
-  ]);
-  withRetry(() => gh([
-    'api', 'graphql',
-    '-f', 'query=mutation($id:ID!){enablePullRequestAutoMerge(input:{pullRequestId:$id,mergeMethod:SQUASH}){pullRequest{number}}}',
-    '-f', `id=${nodeId}`,
-  ]));
+// The imperative enqueue mutation: it places a pull request directly in the merge
+// queue, unlike auto-merge, which only enqueues at the checks-pass edge. Mirrors
+// buildEnqueueMutation() in source/api/github.js so submission and recovery use the
+// same call (02-§112.2, §113.1); STRAND-29 pins the shape.
+const ENQUEUE_MUTATION =
+  'mutation($id:ID!){enqueuePullRequest(input:{pullRequestId:$id}){mergeQueueEntry{id}}}';
+
+function enqueue(nodeId) {
+  gh(['api', 'graphql', '-f', `query=${ENQUEUE_MUTATION}`, '-f', `id=${nodeId}`]);
+}
+
+// Recover a stranded PR by placing it back in the merge queue and confirming a
+// queue entry resulted. Auto-merge is left enabled throughout (never disabled), so a
+// failed enqueue never leaves the PR worse off than stranded (02-§112.3, §112.11).
+//
+// The enqueue-and-verify is wrapped in withRetry: after enqueuing, it re-reads the
+// PR and, if no mergeQueueEntry appeared yet (GitHub can lag), throws so the step is
+// retried with backoff. Each attempt checks the queue first, so a prior attempt that
+// took effect after a lag is recognised instead of enqueuing an already-queued PR.
+// enqueueFn/isQueued/retryOpts are injectable so the outcome logic is unit-testable.
+function enqueueAndVerify(nodeId, { enqueueFn = enqueue, isQueued, retryOpts } = {}) {
+  withRetry(() => {
+    if (isQueued()) return; // already in the queue (e.g. a prior attempt took effect)
+    enqueueFn(nodeId);
+    if (!isQueued()) {
+      throw new Error(`enqueue did not register a merge-queue entry for ${nodeId}`);
+    }
+  }, retryOpts);
 }
 
 /**
@@ -144,7 +160,7 @@ function recoverPr(nodeId) {
  *
  *   pr.number, pr.headRefName – the open pull request to consider
  *   fetchState(number)        – returns { nodeId, autoMergeEnabled, mergeStateStatus, inMergeQueue }
- *   recover(nodeId)           – toggles auto-merge off then on
+ *   recover(nodeId, number)   – places the PR back in the queue and verifies it
  *
  * Per-PR errors are caught here so one bad fetch or mutation does not abort the
  * sweep (02-§112.6). Returns one of: 'recovered', 'skipped', 'ignored', 'failed'.
@@ -155,8 +171,8 @@ function processPr(pr, { fetchState, recover, log = console.log }) {
     const verdict = classifyStrandedPr({ branch: pr.headRefName, ...state });
 
     if (verdict === 'recover') {
-      log(`Recovering stranded PR #${pr.number} (${pr.headRefName}) — auto-merge on, CLEAN, no queue entry; toggling auto-merge`);
-      recover(state.nodeId);
+      log(`Recovering stranded PR #${pr.number} (${pr.headRefName}) — auto-merge on, CLEAN, no queue entry; re-queuing`);
+      recover(state.nodeId, pr.number);
       return 'recovered';
     }
     log(`Skipping PR #${pr.number} (${pr.headRefName}) — ${verdict} (mergeStateStatus=${state.mergeStateStatus}, inQueue=${state.inMergeQueue}, autoMerge=${state.autoMergeEnabled})`);
@@ -202,7 +218,10 @@ function main() {
 
   const failures = runSweep(eventPrs, {
     fetchState: (number) => fetchPrState(owner, repo, number),
-    recover: recoverPr,
+    // Enqueue the PR, then re-read it to confirm a merge-queue entry resulted.
+    recover: (nodeId, number) => enqueueAndVerify(nodeId, {
+      isQueued: () => fetchPrState(owner, repo, number).inMergeQueue,
+    }),
   });
 
   // Fail the job loudly when any stranded PR could not be recovered, rather than
@@ -221,4 +240,6 @@ if (require.main === module) {
   }
 }
 
-module.exports = { classifyStrandedPr, withRetry, processPr, runSweep };
+module.exports = {
+  classifyStrandedPr, withRetry, processPr, runSweep, enqueueAndVerify, ENQUEUE_MUTATION,
+};
