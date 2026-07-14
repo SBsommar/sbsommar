@@ -15,6 +15,7 @@ const {
   processPr,
   runSweep,
   enqueueAndVerify,
+  recoverPr,
   ENQUEUE_MUTATION,
 } = require('../source/scripts/recover-stranded-event-prs');
 
@@ -206,6 +207,46 @@ describe('enqueueAndVerify — imperative re-queue with confirmation (02-§112.2
     assert.match(ENQUEUE_MUTATION, /mergeQueueEntry/);
     assert.doesNotMatch(ENQUEUE_MUTATION, /enablePullRequestAutoMerge/);
     assert.doesNotMatch(ENQUEUE_MUTATION, /disablePullRequestAutoMerge/);
+  });
+});
+
+describe('recoverPr — defense-in-depth: enqueue primary, re-arm fallback (02-§112.2, 112.18)', () => {
+  it('STRAND-30: enqueue confirms a queue entry — recovers without the fallback', () => {
+    let reArmCalled = false;
+    let queued = false;
+    recoverPr('PR_1', {
+      enqueueFn: () => { queued = true; },
+      isQueued: () => queued,
+      reArmFn: () => { reArmCalled = true; },
+      retryOpts: { baseMs: 0 },
+      log: quiet,
+    });
+    assert.equal(reArmCalled, false);
+  });
+
+  it('STRAND-31: enqueue cannot confirm (laggy state) — falls back to re-arming auto-merge', () => {
+    let reArmed = null;
+    recoverPr('PR_1', {
+      enqueueFn: () => {},    // no-op enqueue: a queue entry never appears
+      isQueued: () => false,
+      reArmFn: (id) => { reArmed = id; },
+      retryOpts: { attempts: 2, baseMs: 0 },
+      log: quiet,
+    });
+    assert.equal(reArmed, 'PR_1');
+  });
+
+  it('STRAND-32: both enqueue and the fallback re-arm fail — recovery throws (fail-loud)', () => {
+    assert.throws(
+      () => recoverPr('PR_1', {
+        enqueueFn: () => {},
+        isQueued: () => false,
+        reArmFn: () => { throw new Error('Resource not accessible by integration'); },
+        retryOpts: { attempts: 2, baseMs: 0 },
+        log: quiet,
+      }),
+      /Resource not accessible/,
+    );
   });
 });
 
