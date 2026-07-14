@@ -512,7 +512,8 @@ discover this without being intrusive.
 ### 88.1 Install button in navigation (user requirements)
 
 - The header bar must include an install button alongside the existing
-  controls (hamburger menu, scroll-to-top, feedback). <!-- 02-§88.1 -->
+  controls (hamburger menu, scroll-to-top, feedback). On mobile it sits on the
+  left side of the navigation, beside the menu (hamburger) button. <!-- 02-§88.1 -->
 - The button must use a recognisable install/download icon, styled
   consistently with the other header buttons. <!-- 02-§88.2 -->
 - The button label/tooltip must be in Swedish
