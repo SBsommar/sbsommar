@@ -68,6 +68,11 @@ locations:
       En del av GA hallen brukar användas för att spela spel, pussla, pyssla,
       bygga lego, med mera.
     image_path: "images/ga-lego.webp"
+  - id: ga-scen
+    name: GA Scen
+    information: >
+      Det finns ofta en scen inne i GA hallen som kan användas för olika ändamål.
+    image_path: ""
   - id: ga-stilla-hyllan
     name: GA Stilla hyllan
     information: >
@@ -76,11 +81,6 @@ locations:
     image_path:
       - "images/ga-stilla-hyllan.webp"
       - "images/ga-laktare.webp"
-   - id: ga-scen
-    name: GA Scen
-    information: >
-       Det finns ofta en scen inne i GA hallen som kan användas för olika ändåmål.
-    image_path: ""     
   - id: grillplats
     name: Grillplats
     information: >
