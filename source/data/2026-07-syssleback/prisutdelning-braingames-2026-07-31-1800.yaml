@@ -1,0 +1,17 @@
+event:
+  id: prisutdelning-braingames-2026-07-31-1800
+  title: Prisutdelning Braingames
+  date: '2026-07-31'
+  start: '18:00'
+  end: '18:20'
+  location: GA Idrott
+  responsible: 'Martina Sjöström & Christina Falk'
+  description: null
+  link: null
+  owner:
+    name: ''
+    email: ''
+  meta:
+    created_at: 2026-07-18 11:08
+    updated_at: 2026-07-18 11:08
+    location_set_at: 2026-07-18 11:08
