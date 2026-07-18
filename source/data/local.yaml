@@ -68,6 +68,11 @@ locations:
       En del av GA hallen brukar användas för att spela spel, pussla, pyssla,
       bygga lego, med mera.
     image_path: "images/ga-lego.webp"
+  - id: ga-scen
+    name: GA Scen
+    information: >
+      Det finns ofta en scen inne i GA hallen som kan användas för olika ändamål.
+    image_path: ""
   - id: ga-stilla-hyllan
     name: GA Stilla hyllan
     information: >
@@ -150,10 +155,6 @@ locations:
   - id: talt-2
     name: Tält2
     information: "Tält 2 är det vi ser mest av på bilden. I mitten. Känns igen på sin orange färgmarkering."
-    image_path: "images/talt-1-och-2.webp"
-  - id: talt-3
-    name: Tält3
-    information: "Tält 3 inte med på bilden. Längst ut."
     image_path: "images/talt-1-och-2.webp"
   - id: tonarsstugan
     name: Tonårsstugan
