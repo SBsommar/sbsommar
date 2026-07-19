@@ -1,6 +1,6 @@
 event:
   id: intervalllopning-2026-07-28-1000
-  title: Intervalllöpning
+  title: Intervallöpning
   date: '2026-07-28'
   start: '10:00'
   end: '11:00'
@@ -12,11 +12,12 @@ event:
     Ingen föranmälan.
     
     Hög puls garanteras. Ta gärna med vattenflaska.
+    
   link: null
   owner:
     name: ''
     email: ''
   meta:
     created_at: 2026-07-19 20:16
-    updated_at: 2026-07-19 20:16
+    updated_at: 2026-07-19 21:25
     location_set_at: 2026-07-19 20:16
