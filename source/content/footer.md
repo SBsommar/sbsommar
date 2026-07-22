@@ -1,3 +1,3 @@
-Epost: info@sbsommar.se
+Epost: info@edq.se
 
-Diskussioner: [Facebook - SB sommarläger 2026 i Sysslebäck](https://www.facebook.com/groups/syssleback2026)
+Diskussioner: [EDQ Hub](https://edqhub.com/join/sb-sommarlager-2026)
