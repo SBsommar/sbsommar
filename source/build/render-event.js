@@ -25,8 +25,17 @@ const { findConflicts } = require('../assets/js/client/conflict-check.js');
 // contains legacy data with longer titles — render-time truncation means we
 // never emit an over-long <title> regardless of how a title ended up in YAML.
 function truncateForTitleTag(text, maxLen = 80) {
-  if (text.length <= maxLen) return text;
-  return text.slice(0, maxLen - 1).trimEnd() + '…';
+  // The caller HTML-escapes the return value, and escaping can lengthen the
+  // string (e.g. " → &quot;, & → &amp;). Measure the *escaped* length so the
+  // emitted <title> respects the maxLen budget (.htmlvalidate.json long-title)
+  // even when a title packs several special characters into ≤ maxLen raw chars.
+  if (escapeHtml(text).length <= maxLen) return text;
+  // Reserve one character for the ellipsis, which escaping leaves unchanged.
+  let truncated = text;
+  while (truncated.length > 0 && escapeHtml(truncated).length > maxLen - 1) {
+    truncated = truncated.slice(0, -1);
+  }
+  return truncated.trimEnd() + '…';
 }
 
 // Build the conflict-warning banner HTML for a per-event page. Returns ''

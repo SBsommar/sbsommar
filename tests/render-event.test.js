@@ -171,6 +171,33 @@ describe('renderEventPage (02-§36)', () => {
     assert.ok(titleMatch[1].includes('Fotboll'), 'title should include event name');
   });
 
+  it('EVT-26: <title> stays within 80 chars after escaping when the raw title is short but escapes long', () => {
+    // A 75-char title whose two quote characters each expand to &quot; (6 chars)
+    // produces an 85-char escaped <title> — over the long-title limit of 80.
+    // The truncation guard must measure the escaped length, not the raw length.
+    const longEvent = {
+      ...fullEvent,
+      title: 'Rollspel, Johans Kampanj 1 "Natten som aldrig vill ta slut" GÖRA KARAKTÄRER',
+    };
+    const html = renderEventPage(longEvent, camp, siteUrl);
+    const titleMatch = html.match(/<title>([\s\S]*?)<\/title>/);
+    assert.ok(titleMatch, 'should have title element');
+    assert.ok(
+      titleMatch[1].length <= 80,
+      `escaped <title> should be ≤ 80 chars, got ${titleMatch[1].length}: ${titleMatch[1]}`,
+    );
+    assert.ok(titleMatch[1].endsWith('…'), 'a truncated title should end with an ellipsis');
+  });
+
+  it('EVT-27: a title that fits within 80 chars after escaping is left untouched', () => {
+    const okEvent = { ...fullEvent, title: 'Rollspel, Johans kampanj 1 – göra karaktärer' };
+    const html = renderEventPage(okEvent, camp, siteUrl);
+    const titleMatch = html.match(/<title>([\s\S]*?)<\/title>/);
+    assert.ok(titleMatch, 'should have title element');
+    assert.strictEqual(titleMatch[1], 'Rollspel, Johans kampanj 1 – göra karaktärer');
+    assert.ok(!titleMatch[1].endsWith('…'), 'a short title should not be truncated');
+  });
+
   it('EVT-21 (02-§45.8): page includes iCal download link', () => {
     const html = renderEventPage(fullEvent, camp, siteUrl);
     assert.ok(html.includes('event.ics'), 'should link to event.ics');
