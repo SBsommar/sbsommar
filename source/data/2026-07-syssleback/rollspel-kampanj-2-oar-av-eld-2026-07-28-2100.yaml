@@ -1,0 +1,17 @@
+event:
+  id: rollspel-kampanj-2-oar-av-eld-2026-07-28-2100
+  title: Rollspel kampanj 2 "Öar av eld"
+  date: '2026-07-28'
+  start: '21:00'
+  end: '22:00'
+  location: Tält2
+  responsible: Johan Eellend
+  description: null
+  link: null
+  owner:
+    name: ''
+    email: ''
+  meta:
+    created_at: 2026-07-24 16:32
+    updated_at: 2026-07-24 16:32
+    location_set_at: 2026-07-24 16:32
