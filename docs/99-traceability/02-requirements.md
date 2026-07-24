@@ -181,6 +181,7 @@ Part of [the traceability index](./index.md).
 | `02-§19.9` | The page behind the modal is not scrollable while the modal is open | 03-architecture/forms-and-api.md §8 | — (manual: confirm body does not scroll when modal is open) | `lagg-till.js` – `document.body.classList.add('modal-open')`; CSS – `body.modal-open { overflow: hidden }` | implemented |
 | `02-§19.10` | On success, the modal shows the title, confirmation text, "Gå till schemat →" link, and "Lägg till en till" button | 03-architecture/forms-and-api.md §8 | — (manual: submit a valid form and confirm modal success content) | `lagg-till.js` – `setModalSuccess()` builds the content with title, intro text, and two action elements | implemented |
 | `02-§19.11` | If the user declined cookie consent, the success modal shows a Swedish note about editing not being possible | 03-architecture/forms-and-api.md §8 | — (manual: decline consent, submit, and confirm note appears in modal) | `lagg-till.js` – `setModalSuccess(title, consentGiven)` conditionally inserts `.result-note` paragraph | implemented |
+| `02-§19.18` | Add success modal notes the activity is editable once published | 02-requirements/add-edit-forms.md §19.4 | — (manual: submit and confirm the note appears in the modal) | `source/assets/js/client/lagg-till.js` – `setModalSuccess()` adds a `.result-note` line | gap |
 | `02-§19.12` | "Lägg till en till" closes the modal, resets the form, and re-enables all fields | 03-architecture/forms-and-api.md §8 | — (manual: click "Lägg till en till" and confirm form is blank and enabled) | `lagg-till.js` – `modal-new-btn` click calls `closeModal()`, `form.reset()`, `unlock()`, `scrollTo(0,0)` | implemented |
 | `02-§19.13` | On error, the modal shows the error message and a "Försök igen" button | 03-architecture/forms-and-api.md §8 | — (manual: simulate a server error and confirm modal error content) | `lagg-till.js` – `setModalError()` sets heading to "Något gick fel" and inserts error message + retry button | implemented |
 | `02-§19.14` | "Försök igen" closes the modal and re-enables all form fields (input data preserved) | 03-architecture/forms-and-api.md §8 | — (manual: click "Försök igen" and confirm form is enabled with data intact) | `lagg-till.js` – `modal-retry-btn` click calls `closeModal()`, `unlock()`, `submitBtn.focus()` without resetting the form | implemented |
@@ -666,6 +667,14 @@ Part of [the traceability index](./index.md).
 | `02-§48.16` | Edit form hidden until specific event selected | 02-requirements/add-edit-forms.md §48.5 | manual: visit /redigera.html with cookie | `source/assets/js/client/redigera.js` | implemented |
 | `02-§48.17` | Existing edit behaviour preserved with id param | 02-requirements/add-edit-forms.md §48.6 | existing REDT tests | `source/assets/js/client/redigera.js` | covered |
 | `02-§48.18` | Event list shown above edit form when editing | 02-requirements/add-edit-forms.md §48.6 | CEH-05 | `source/build/render-edit.js`, `source/assets/js/client/redigera.js` | covered |
+| `02-§48.19` | Owned id missing from events.json shows publishing panel, not the error | 02-requirements/add-edit-forms.md §48.7; 03-architecture/forms-and-api.md §7 | REDT-PUB-01 | `source/assets/js/client/redigera.js` – `decidePending()`, `showPending()`; `source/build/render-edit.js` – `#edit-pending` | gap |
+| `02-§48.20` | Publishing panel is non-error and states up-to-15-min publish time (Swedish) | 02-requirements/add-edit-forms.md §48.7 | — (manual: open redigera.html for an owned, undeployed id; confirm calm panel) | `source/build/render-edit.js` – `#edit-pending` copy | gap |
+| `02-§48.21` | Publishing panel re-checks events.json every 20 s up to 15 min | 02-requirements/add-edit-forms.md §48.7 | — (manual: watch Network for 20 s cache-busted polls) | `source/assets/js/client/redigera.js` – poll loop | gap |
+| `02-§48.22` | Activity appearing during re-check auto-populates and reveals the form | 02-requirements/add-edit-forms.md §48.7 | REDT-PUB-02 | `source/assets/js/client/redigera.js` – `showEditForm()` shared path | gap |
+| `02-§48.23` | Publishing panel has "Uppdatera nu" and an aria-live status line | 02-requirements/add-edit-forms.md §48.7 | — (manual: click Uppdatera nu; confirm immediate re-check) | `source/build/render-edit.js` – `#edit-pending-retry`, `#edit-pending-status`; `redigera.js` | gap |
+| `02-§48.24` | After 15 min without appearing, panel advises reload and polling stops | 02-requirements/add-edit-forms.md §48.7 | — (manual: simulate ceiling; confirm polling stops) | `source/assets/js/client/redigera.js` – poll ceiling | gap |
+| `02-§48.25` | Unowned + not-found still shows the existing not-found error | 02-requirements/add-edit-forms.md §48.7 | REDT-PUB-03 | `source/assets/js/client/redigera.js` – `decidePending()` false branch | gap |
+| `02-§48.26` | Edit page fetches events.json cache-busted (`?t=`, no-store) | 02-requirements/add-edit-forms.md §48.7 | REDT-PUB-04 | `source/assets/js/client/redigera.js` – `fetchEvents()` | gap |
 | `02-§49.1` | API validates free-text fields for injection patterns before accepting the request | 03-architecture/ci-and-deploy.md §11.6 | ASEC-01..07 | `source/api/validate.js` – `scanForInjection()` in `validateFields()` | covered |
 | `02-§49.2` | Injection patterns rejected: `<script`, `javascript:`, `on*=`, `<iframe`, `<object`, `<embed`, `data:text/html` | 03-architecture/ci-and-deploy.md §11.6 | ASEC-01..07 | `source/api/validate.js` – `INJECTION_PATTERNS` array | covered |
 | `02-§49.3` | Error message identifies offending field and pattern category | 03-architecture/ci-and-deploy.md §11.6 | ASEC-01..07 | `source/api/validate.js` – error string includes field name and pattern label | covered |
@@ -932,6 +941,7 @@ its requirement rows together with the test-legend rows that evidence them.
 | CACHE-05 | `tests/cache-headers.test.js` | `02-§67.5 — Build copies .htaccess to public/` |
 | `02-§67.6` | covered | `build.js` uses `fs.copyFileSync()` — CACHE-05 verifies reference |
 | CACHE-06 | `tests/cache-headers.test.js` | `02-§67.7 — api/.htaccess not modified` |
+| CACHE-07 | `tests/cache-headers.test.js` | `02-§67.8 — JSON (events.json) set to no-cache` (gap) |
 | | | **§68 — Descriptive Image Filenames** |
 | FNM-01 | `tests/image-filenames.test.js` | `02-§68.1 — All lowercase filenames` |
 | FNM-02 | `tests/image-filenames.test.js` | `02-§68.2 — No Swedish characters in filenames` |
@@ -1068,6 +1078,7 @@ its requirement rows together with the test-legend rows that evidence them.
 | `02-§80.21` | manual | Success message states number of created activities (browser-only) |
 | `02-§80.22` | manual | Error displays message; no partial state (browser-only) |
 | `02-§80.23` | manual | "Lägg till en till" resets form including day grid (browser-only) |
+| `02-§80.31` | manual | Batch success note: activities editable once published (browser-only) (gap) |
 | `02-§80.24` | DG-12 | Edit form not affected; single day selector remains |
 | `02-§80.25` | done | Day grid implemented in vanilla JavaScript |
 | `02-§80.26` | done | Day grid uses CSS custom properties from 07-design/ |

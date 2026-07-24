@@ -76,6 +76,34 @@ array of all public event fields for the active camp. The edit page
 (`/redigera.html`) fetches this file client-side to pre-populate the edit
 form with current event data.
 
+`events.json` is served with `Cache-Control: no-cache` (see
+`caching-performance.md §67`, `02-§67.8`), so the browser always revalidates it.
+All client fetches of it use the same cache-busting shape the display view uses —
+`fetch('/events.json?t=' + Date.now(), { cache: 'no-store' })` (mirrors
+`events-today.js`'s `pollVersion`) — so a reload or automatic re-check can never
+be served a stale copy.
+
+### Publishing window on the edit page (02-§48.7)
+
+A newly submitted activity is not in `events.json` until the post-merge build and
+deploy finish (typically minutes, up to ~15). Its **signed ownership entry is in
+the cookie immediately**, though, so `redigera.js` can tell the two "missing"
+cases apart:
+
+- **Owned but not yet in `events.json`** → the activity is still publishing.
+  Instead of the red "not found" error, the page shows a calm `#edit-pending`
+  panel ("Din aktivitet håller på att publiceras…") and starts an automatic
+  re-check: it re-fetches `events.json` every 20 s (cache-busted) up to a 15-minute
+  ceiling. When the activity appears, the edit form is populated and revealed
+  automatically via the shared `showEditForm()` path — no user action needed. An
+  "Uppdatera nu" button forces an immediate re-check; the status line uses
+  `aria-live="polite"`. If the ceiling is reached, the panel advises reloading
+  shortly and polling stops.
+- **Not owned and not found** → the existing "not found" error is shown unchanged.
+
+This reuses the wording the cookie debug panel already applies to the same state
+("hittades inte i schemat (kan vara under publicering)", `02-§90.2`).
+
 ### Edit endpoint
 
 `POST /edit-event` handles edit submissions:
