@@ -1,0 +1,20 @@
+event:
+  id: presentation-live-demo-av-klar-2026-07-29-1400
+  title: 'Presentation & Live-demo av Klar'
+  date: '2026-07-29'
+  start: '14:00'
+  end: '14:45'
+  location: GA Scen
+  responsible: Jessica Malmberg
+  description: |
+    Klar är byggt av tre unga grundare i Uppsala som själva upplevde hur svårt det kan vara att plugga effektivt. Nu kommer de och visar hur AI-verktyget fungerar i praktiken, genom en kort presentation och en live-demo.
+    
+    Inga förkunskaper krävs, bara nyfikenhet.
+  link: null
+  owner:
+    name: ''
+    email: ''
+  meta:
+    created_at: 2026-07-24 08:01
+    updated_at: 2026-07-24 08:01
+    location_set_at: 2026-07-24 08:01
