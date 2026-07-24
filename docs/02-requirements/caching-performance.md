@@ -175,6 +175,9 @@ to reduce repeat-visit load times. Cache rules are delivered via an Apache
   (1 year). <!-- 02-§67.1 -->
 - CSS and JS files: `Cache-Control: max-age=604800` (1 week). <!-- 02-§67.2 -->
 - HTML files: `Cache-Control: no-cache` (always revalidate). <!-- 02-§67.3 -->
+- JSON files (`.json`, e.g. `events.json`): `Cache-Control: no-cache` (always
+  revalidate). Event data changes between deploys, so a stale cached copy would
+  hide freshly published activities from the schedule and edit pages. <!-- 02-§67.8 -->
 
 ### 67.2 Build integration
 
