@@ -6,6 +6,9 @@
   var loadingEl    = document.getElementById('edit-loading');
   var errorEl      = document.getElementById('edit-error');
   var errorMsg     = document.getElementById('edit-error-msg');
+  var pendingEl      = document.getElementById('edit-pending');
+  var pendingStatusEl = document.getElementById('edit-pending-status');
+  var pendingRetryEl  = document.getElementById('edit-pending-retry');
   var sectionEl    = document.getElementById('edit-section');
   var noSessionEl  = document.getElementById('edit-no-session');
   var myEventsEl   = document.getElementById('edit-my-events');
@@ -284,12 +287,38 @@
   // server re-verifies the role either way.
   var hasAdminRole = tokenRole(adminToken) === 'admin' || tokenRole(adminToken) === 'superadmin';
 
+  // ── Fresh events.json fetch (02-§48.26) ──────────────────────────────────────
+
+  // Always fetch events.json cache-busted, mirroring the display view's
+  // version poll (events-today.js). Without this, a reload or an automatic
+  // re-check could be served a stale copy that still lacks a freshly published
+  // activity — the exact symptom behind the "kan ej redigera" bug report.
+  function fetchEvents() {
+    return fetch('/events.json?t=' + Date.now(), { cache: 'no-store' });
+  }
+
+  function findEvent(events, id) {
+    for (var i = 0; i < events.length; i++) {
+      if (events[i].id === id) return events[i];
+    }
+    return null;
+  }
+
   // ── Error display ────────────────────────────────────────────────────────────
 
   function showError(msg) {
     loadingEl.hidden = true;
+    if (pendingEl) pendingEl.hidden = true;
     errorMsg.textContent = msg || 'Aktiviteten kunde inte laddas.';
     errorEl.hidden = false;
+  }
+
+  // ── Publishing state (02-§48.7) ──────────────────────────────────────────────
+
+  function showPending() {
+    loadingEl.hidden = true;
+    if (errorEl) errorEl.hidden = true;
+    if (pendingEl) pendingEl.hidden = false;
   }
 
   // ── URL param helper ─────────────────────────────────────────────────────────
@@ -433,7 +462,7 @@
         }
 
         // Still render cookie debug panel even while gated.
-        fetch('/events.json')
+        fetchEvents()
           .then(function (r) { return r.json(); })
           .then(function (events) { renderDebugPanel(events); })
           .catch(function () { renderDebugPanel(null); });
@@ -473,6 +502,90 @@
     return editable;
   }
 
+  // ── Show the edit form (shared by first load and publishing re-check) ────────
+
+  // Reveal and populate the edit form. Both the initial load and the automatic
+  // publishing re-check funnel through here so they behave identically
+  // (02-§48.22).
+  function showEditForm(event, events, ownedIds, today) {
+    // Show event list above form if the user has other events (02-§48.18)
+    if (myEventsEl) {
+      var editable = renderMyEvents(events, ownedIds, today);
+      if (editable.length > 0) myEventsEl.hidden = false;
+    }
+    populate(event);
+    loadingEl.hidden = true;
+    if (pendingEl) pendingEl.hidden = true;
+    if (errorEl) errorEl.hidden = true;
+    sectionEl.hidden = false;
+    renderDebugPanel(events);
+    eventsCache = events;
+    scheduleConflictCheck();
+  }
+
+  // ── Publishing re-check loop (02-§48.21, §48.24) ─────────────────────────────
+
+  var POLL_INTERVAL_MS = 20 * 1000;      // re-check every 20 seconds
+  var POLL_MAX_MS      = 15 * 60 * 1000; // give up after 15 minutes
+  var pollTimer = null;
+  var pollStart = 0;
+  var pollCtx   = null;
+
+  function stopPolling() {
+    if (pollTimer) { clearTimeout(pollTimer); pollTimer = null; }
+  }
+
+  function pollOnce() {
+    if (!pollCtx) return;
+    var ctx = pollCtx;
+    fetchEvents()
+      .then(function (r) { return r.json(); })
+      .then(function (events) {
+        var event = findEvent(events, ctx.eventId);
+        if (event) {
+          stopPolling();
+          showEditForm(event, events, ctx.ownedIds, ctx.today);
+          return;
+        }
+        renderDebugPanel(events);
+        scheduleNextPoll();
+      })
+      .catch(function () { scheduleNextPoll(); });
+  }
+
+  function scheduleNextPoll() {
+    stopPolling();
+    if (Date.now() - pollStart >= POLL_MAX_MS) {
+      if (pendingStatusEl) {
+        pendingStatusEl.textContent =
+          'Det tar längre tid än väntat. Ladda om sidan om en liten stund.';
+      }
+      return;
+    }
+    if (pendingStatusEl) pendingStatusEl.textContent = 'Kontrollerar igen om 20 sekunder…';
+    pollTimer = setTimeout(function () {
+      if (pendingStatusEl) pendingStatusEl.textContent = 'Kontrollerar…';
+      pollOnce();
+    }, POLL_INTERVAL_MS);
+  }
+
+  function startPolling(eventId, ownedIds, today) {
+    pollCtx = { eventId: eventId, ownedIds: ownedIds, today: today };
+    pollStart = Date.now();
+    scheduleNextPoll();
+  }
+
+  // "Uppdatera nu" — force an immediate re-check without waiting for the timer
+  // (02-§48.23). The 15-minute ceiling still applies (relative to pollStart).
+  if (pendingRetryEl) {
+    pendingRetryEl.addEventListener('click', function () {
+      if (!pollCtx) return;
+      stopPolling();
+      if (pendingStatusEl) pendingStatusEl.textContent = 'Kontrollerar…';
+      pollOnce();
+    });
+  }
+
   // ── Init ─────────────────────────────────────────────────────────────────────
 
   function runInit() {
@@ -488,7 +601,7 @@
         // No cookie — show explanation (02-§48.8)
         if (noSessionEl) noSessionEl.hidden = false;
         // Still render debug panel (shows "no cookie" state).
-        fetch('/events.json')
+        fetchEvents()
           .then(function (r) { return r.json(); })
           .then(function (events) { renderDebugPanel(events); })
           .catch(function () { renderDebugPanel(null); });
@@ -497,7 +610,7 @@
 
       // Has cookie — fetch events and show list (02-§48.13)
       if (myEventsEl) myEventsEl.hidden = false;
-      fetch('/events.json')
+      fetchEvents()
         .then(function (r) { return r.json(); })
         .then(function (events) {
           renderMyEvents(events, ownedIds, today);
@@ -516,7 +629,7 @@
     // 02-§105.9).
     if (ownedIds.indexOf(eventId) === -1 && !hasAdminRole) {
       showError('Du har inte rättighet att redigera denna aktivitet.');
-      fetch('/events.json')
+      fetchEvents()
         .then(function (r) { return r.json(); })
         .then(function (events) { renderDebugPanel(events); })
         .catch(function () { renderDebugPanel(null); });
@@ -524,17 +637,25 @@
     }
 
     // Fetch events.json to verify the event exists and hasn't passed.
-    fetch('/events.json')
+    fetchEvents()
       .then(function (r) { return r.json(); })
       .then(function (events) {
-        var event = null;
-        for (var i = 0; i < events.length; i++) {
-          if (events[i].id === eventId) { event = events[i]; break; }
-        }
+        var event = findEvent(events, eventId);
 
         if (!event) {
-          showError('Aktiviteten hittades inte i det aktuella schemat.');
           renderDebugPanel(events);
+          // Missing from the current schedule. If the user owns this ID (its
+          // signed entry is in the cookie), it was almost certainly just added
+          // and is still being published — show the calm publishing panel and
+          // re-check automatically rather than a scary "not found" error
+          // (02-§48.19). Anyone else (e.g. an admin opening a stale link) still
+          // gets the plain not-found error (02-§48.25).
+          if (ownedIds.indexOf(eventId) !== -1) {
+            showPending();
+            startPolling(eventId, ownedIds, today);
+          } else {
+            showError('Aktiviteten hittades inte i det aktuella schemat.');
+          }
           return;
         }
 
@@ -544,18 +665,7 @@
           return;
         }
 
-        // Show event list above form if user has other events (02-§48.18)
-        if (myEventsEl) {
-          var editable = renderMyEvents(events, ownedIds, today);
-          if (editable.length > 0) myEventsEl.hidden = false;
-        }
-
-        populate(event);
-        loadingEl.hidden = true;
-        sectionEl.hidden = false;
-        renderDebugPanel(events);
-        eventsCache = events;
-        scheduleConflictCheck();
+        showEditForm(event, events, ownedIds, today);
       })
       .catch(function () {
         showError('Kunde inte hämta schemadata. Kontrollera din internetanslutning.');

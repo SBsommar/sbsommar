@@ -626,6 +626,9 @@
       ' syns i schemat inom någon minut, men ibland kan det ta upp till 15 minuter.</p>' +
       '<p class="result-note">Dyker den inte upp? Ladda om sidan –' +
       ' webbläsaren kan visa en sparad version.</p>' +
+      '<p class="result-note">Aktiviteten går att redigera så snart den har' +
+      ' publicerats – öppnar du redigeringssidan innan dess uppdateras den' +
+      ' automatiskt när aktiviteten är klar.</p>' +
       noEditNote +
       '<div class="success-actions">' +
         '<a href="schema.html" class="btn-primary">Gå till schemat →</a>' +
@@ -655,6 +658,9 @@
       ' men ibland kan det ta upp till 15 minuter.</p>' +
       '<p class="result-note">Dyker de inte upp? Ladda om sidan –' +
       ' webbläsaren kan visa en sparad version.</p>' +
+      '<p class="result-note">Aktiviteterna går att redigera så snart de har' +
+      ' publicerats – öppnar du redigeringssidan innan dess uppdateras den' +
+      ' automatiskt när aktiviteten är klar.</p>' +
       noEditNote +
       '<div class="success-actions">' +
         '<a href="schema.html" class="btn-primary">Gå till schemat →</a>' +

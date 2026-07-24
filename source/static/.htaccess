@@ -39,6 +39,13 @@
     Header set Cache-Control "no-cache"
   </FilesMatch>
 
+  # JSON (events.json) — always revalidate. Event data changes between deploys,
+  # so a stale cached copy would hide freshly published activities from the
+  # schedule and edit pages (02-§67.8).
+  <FilesMatch "\.json$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+
   # ── Security headers (#384) ───────────────────────────────────────────────
   # Defence-in-depth on top of the output encoding and Markdown sanitiser.
   #
