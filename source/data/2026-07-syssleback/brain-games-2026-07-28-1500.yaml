@@ -7,7 +7,7 @@ event:
   location: GA Idrott
   responsible: 'Martina Sjöström & Christina Falk'
   description: |
-    Ett väldigt uppskattat evenemang där man i lag löser klurigheter. Finns barn (max 13) och mix- klass. Lagen bestäms på plats, 4-5st. Om ni är nya är det definitivt värt att testa.
+    Ett väldigt uppskattat evenemang där man i lag löser klurigheter. Finns barn (max 13) och mix- klass. Lagen bestäms på plats, 3-5st. Om ni är nya är det definitivt värt att testa.
     
   link: null
   owner:
@@ -15,5 +15,5 @@ event:
     email: ''
   meta:
     created_at: 2026-07-18 09:18
-    updated_at: 2026-07-18 09:23
+    updated_at: 2026-07-25 09:34
     location_set_at: 2026-07-18 09:18
