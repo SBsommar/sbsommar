@@ -116,6 +116,35 @@ describe('02-§96.6 — network-first strategies keep ignoreSearch', () => {
   });
 });
 
+// ── §96.17 — events.json cache key normalised (no per-poll accumulation) ─────
+
+describe('02-§96.17 — networkFirstThenCache normalises the events.json cache key', () => {
+  it('SWH-20: networkFirstThenCache does not cache.put the raw request', () => {
+    // A per-request cache-buster (events.json?t=<n>) must not create one cache
+    // entry per poll. The store side must use a query-stripped key instead of
+    // putting the raw (cache-busted) request.
+    const body = extractFunctionBody(SW_SRC, 'function networkFirstThenCache');
+    assert.ok(
+      !/cache\.put\(\s*request\b/.test(body),
+      'networkFirstThenCache must not cache.put(request, …) — it would accumulate one entry per cache-busted poll',
+    );
+  });
+
+  it('SWH-21: networkFirstThenCache stores under a query-stripped key', () => {
+    const body = extractFunctionBody(SW_SRC, 'function networkFirstThenCache');
+    assert.ok(
+      body.includes('pathname'),
+      'networkFirstThenCache must normalise the cache key to the URL pathname',
+    );
+    // The normalised key is both stored and looked up.
+    assert.match(
+      body,
+      /cache\.put\(\s*cacheKey/,
+      'networkFirstThenCache must cache.put the normalised key',
+    );
+  });
+});
+
 // ── §96.16 — version.json is never cached ───────────────────────────────────
 
 describe('02-§96.16 — fetch handler bypasses version.json', () => {

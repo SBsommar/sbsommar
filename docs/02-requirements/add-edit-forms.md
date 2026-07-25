@@ -212,6 +212,10 @@ progress modal → result.
   upp? Ladda om sidan – webbläsaren kan visa en sparad version.", a primary link
   "Gå till schemat →" to `schema.html`, and a secondary button "Lägg till en till".
   <!-- 02-§19.10 -->
+- The success state also notes, in Swedish, that the activity can be edited as
+  soon as it has been published (the same up-to-15-minutes expectation), so a user
+  who opens the edit page immediately understands why it may not be there yet.
+  <!-- 02-§19.18 -->
 - If the user declined cookie consent, the success state also shows a Swedish note
   explaining they cannot edit the activity from this browser, and that they can
   resubmit with consent next time. <!-- 02-§19.11 -->
@@ -507,6 +511,36 @@ without requiring the user to navigate from the schedule.
 - If the user also has other editable events, the event list from §48.5
   is shown above the edit form so the user can switch between events. <!-- 02-§48.18 -->
 
+### 48.7 Publishing state for an owned, not-yet-published event
+
+A freshly submitted activity is not present in `/events.json` until the
+post-merge build and deploy finish (up to ~15 minutes), even though its signed
+ownership entry is in the cookie immediately. During that window the edit page
+distinguishes "you own this, it is being published" from "this does not exist".
+
+- When `/redigera.html` is loaded with an `id` the user owns via a valid signed
+  ownership entry, but that `id` is not yet present in `/events.json`, the page
+  shows a calm "under publicering" panel instead of the "not found" error.
+  <!-- 02-§48.19 -->
+- The publishing panel is visually distinct from the error panel and states, in
+  Swedish, that the activity is being published and that this can take up to 15
+  minutes. <!-- 02-§48.20 -->
+- While the publishing panel is shown, the page re-checks `/events.json` every 20
+  seconds until the activity appears or 15 minutes have elapsed. <!-- 02-§48.21 -->
+- When the activity appears during re-checking, the edit form is populated and
+  revealed automatically, with no further action from the user. <!-- 02-§48.22 -->
+- The publishing panel includes an "Uppdatera nu" control that triggers an
+  immediate re-check, and a status line announced via `aria-live="polite"`.
+  <!-- 02-§48.23 -->
+- When 15 minutes elapse without the activity appearing, the panel advises
+  reloading the page shortly and automatic re-checking stops. <!-- 02-§48.24 -->
+- When the requested `id` is not owned via a signed ownership entry and is not
+  found in `/events.json`, the existing "not found" error is shown unchanged.
+  <!-- 02-§48.25 -->
+- The edit page fetches `/events.json` with a cache-busting query string and
+  `cache: 'no-store'`, matching the display view (§4.17), so a re-check or reload
+  always retrieves fresh data. <!-- 02-§48.26 -->
+
 ---
 
 ---
@@ -795,6 +829,8 @@ submission.
 - The progress modal (§53.2) displays the same stages as single submit. The
   final success message states the number of created activities
   (e.g. "5 aktiviteter tillagda!"). <!-- 02-§80.21 -->
+- The batch success message carries the same note as single submit (§19.18):
+  the activities can be edited as soon as they have been published. <!-- 02-§80.31 -->
 - On error, the modal displays the error message. Since the batch is
   all-or-nothing, no partial state needs to be communicated. <!-- 02-§80.22 -->
 - "Lägg till en till" resets the form including the day grid. <!-- 02-§80.23 -->

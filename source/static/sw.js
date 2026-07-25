@@ -94,15 +94,26 @@ self.addEventListener('fetch', (event) => {
 // ── Strategy helpers ────────────────────────────────────────────────────────
 
 async function networkFirstThenCache(request) {
+  // Store under the query-stripped path so a per-request cache-buster
+  // (events.json?t=<n>, sent by the edit page's publishing re-check) overwrites
+  // a single entry instead of accumulating one cache entry per poll. version.json
+  // avoids the same problem by being bypassed entirely (02-§96.16); events.json
+  // must stay cached for offline schedule viewing, so it normalises the key
+  // instead (02-§96.17).
+  const cacheKey = new URL(request.url).origin + new URL(request.url).pathname;
   try {
     const response = await fetch(request);
     if (response.ok) {
       const cache = await caches.open(CACHE_NAME);
-      cache.put(request, response.clone());
+      cache.put(cacheKey, response.clone());
     }
     return response;
   } catch {
-    const cached = await caches.match(request, { ignoreSearch: true });
+    // Match the normalised key first, then fall back to an ignoreSearch match so
+    // an entry stored under a different (older) query string still serves offline.
+    const cached =
+      (await caches.match(cacheKey)) ||
+      (await caches.match(request, { ignoreSearch: true }));
     return cached || new Response('Offline', { status: 503, statusText: 'Offline' });
   }
 }

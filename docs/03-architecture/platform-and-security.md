@@ -46,6 +46,15 @@ cache-first strategy for static assets does **not** use `ignoreSearch`
 — a request for `style.css?v=<newHash>` must not satisfy from a cache
 entry keyed at `style.css?v=<oldHash>` (§96.5).
 
+`networkFirstThenCache` (the `events.json` strategy) **stores** under a
+query-stripped key (origin + pathname), not the raw request. The edit page's
+publishing re-check fetches `events.json?t=<n>` with a fresh timestamp every
+20 s (02-§48.26); putting the raw request would add one cache entry per poll.
+Normalising the store key means every cache-busted fetch overwrites the single
+`events.json` entry, keeping offline support without unbounded growth
+(§96.17). `version.json` sidesteps the same issue differently — it is never
+cached at all (§96.16) — because it needs no offline copy.
+
 **Offline fallback:** When a navigation request fails and the requested
 page is not in the cache, the service worker responds with
 `/offline.html` — a pre-cached page that tells the user they are offline.

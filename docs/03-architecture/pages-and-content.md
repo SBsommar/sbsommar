@@ -640,6 +640,9 @@ the build. It sets Apache `Cache-Control` headers:
 - Images: 1 year (`max-age=31536000`)
 - CSS/JS: 1 week (`max-age=604800`)
 - HTML: no caching (`no-cache`)
+- JSON (`events.json`): no caching (`no-cache`) — event data changes between
+  deploys, so a stale cached copy would hide freshly published activities from
+  the schedule and edit pages (`02-§67.8`)
 
 ### 25.3 Build copy step
 

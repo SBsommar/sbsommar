@@ -47,6 +47,23 @@ describe('02-§67.3 — HTML no-cache', () => {
   });
 });
 
+// ── 02-§67.8 — JSON no-cache rule ──────────────────────────────────────────
+
+describe('02-§67.8 — JSON no-cache', () => {
+  it('CACHE-07: .htaccess sets no-cache for .json files', () => {
+    const content = fs.readFileSync(HTACCESS_PATH, 'utf8');
+    // A FilesMatch block covering .json must carry a no-cache Cache-Control so
+    // events.json is always revalidated and cannot hide freshly published
+    // activities.
+    const jsonBlock = content.match(/<FilesMatch[^>]*json[^>]*>[\s\S]*?<\/FilesMatch>/i);
+    assert.ok(jsonBlock, 'Expected a <FilesMatch> block matching .json files');
+    assert.ok(
+      /no-cache/i.test(jsonBlock[0]),
+      'Expected the .json FilesMatch block to set Cache-Control: no-cache',
+    );
+  });
+});
+
 // ── 02-§67.5 — Build copies .htaccess ──────────────────────────────────────
 
 describe('02-§67.5 — Build copies .htaccess to public/', () => {

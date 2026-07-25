@@ -75,6 +75,22 @@ ${pageNav('redigera.html', navSections)}
     <a href="schema.html">Tillbaka till schemat</a>
   </div>
 
+  <!-- Publishing state (02-§48.7): shown when the user owns the activity (its
+       signed ownership entry is in the cookie) but it is not yet in events.json
+       because the deploy is still in progress. This is a calm, non-error panel
+       that re-checks automatically — see redigera.js. -->
+  <div id="edit-pending" hidden>
+    <h1>Aktiviteten publiceras</h1>
+    <p class="intro">Din aktivitet håller på att publiceras. Det brukar ta någon
+      minut, men ibland upp till 15 minuter. Sidan uppdateras automatiskt så
+      snart den är klar – du behöver inte göra något.</p>
+    <p class="result-note" id="edit-pending-status" role="status" aria-live="polite">Kontrollerar…</p>
+    <div class="success-actions">
+      <button type="button" id="edit-pending-retry" class="btn-primary">Uppdatera nu</button>
+      <a href="schema.html">Tillbaka till schemat</a>
+    </div>
+  </div>
+
   <section id="edit-section" hidden>
     <div class="edit-header">
       <h1>Redigera aktivitet</h1>
