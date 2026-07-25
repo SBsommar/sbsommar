@@ -15,10 +15,11 @@ event:
     För er som kommer sent kommer det finnas möjlighet att göra karaktärer innan spelet drar i gång på måndag kväll. Att göra karaktärer till Drakar och Demoner går rätt fort, och inlevelse slår alltid siffror. 
     
   link: null
+  cancelled: true
   owner:
     name: ''
     email: ''
   meta:
     created_at: 2026-07-23 19:36
-    updated_at: 2026-07-25 05:22
+    updated_at: 2026-07-25 07:54
     location_set_at: 2026-07-23 19:36
