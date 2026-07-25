@@ -998,6 +998,13 @@ from a stale cache.
   display view (`/live.html`) polls this file frequently to detect new
   deploys and must always reach the network; caching it would either
   serve a stale version or accumulate one cache entry per poll. <!-- 02-§96.16 -->
+- The `networkFirstThenCache` strategy stores `events.json` under a
+  query-stripped cache key (origin + pathname). The edit page's publishing
+  re-check fetches `events.json` with a per-request cache-buster
+  (`events.json?t=<n>`, 02-§48.26); without normalisation each poll would add a
+  new cache entry. `events.json` still needs offline caching, so — unlike
+  `version.json` — it is not bypassed but normalised, so repeated cache-busted
+  fetches overwrite a single entry. <!-- 02-§96.17 -->
 
 ### 96.3 Pre-cache URL list (site requirements)
 
