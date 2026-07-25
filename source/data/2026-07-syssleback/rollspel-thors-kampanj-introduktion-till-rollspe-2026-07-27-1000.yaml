@@ -2,16 +2,22 @@ event:
   id: rollspel-thors-kampanj-introduktion-till-rollspe-2026-07-27-1000
   title: 'Rollspel Thors kampanj, Introduktion till rollspel'
   date: '2026-07-27'
-  start: '10:00'
-  end: '11:00'
-  location: Rollspelstält1
+  start: '11:00'
+  end: '12:00'
+  location: Rollspelstält2
   responsible: Johan Eellend
   description: null
   link: null
+  moved:
+    from_date: '2026-07-27'
+    from_start: '10:00'
+    from_end: '11:00'
+  relocated:
+    from_location: Rollspelstält1
   owner:
     name: ''
     email: ''
   meta:
     created_at: 2026-07-23 19:24
-    updated_at: 2026-07-23 19:24
-    location_set_at: 2026-07-23 19:24
+    updated_at: 2026-07-25 07:57
+    location_set_at: 2026-07-25 07:57
