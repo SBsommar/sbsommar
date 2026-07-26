@@ -4,7 +4,7 @@ event:
   date: '2026-07-30'
   start: '15:00'
   end: '15:45'
-  location: Tält2
+  location: Tält1
   responsible: Lisa Lautrup
   description: |
     Välkommen till denna prova på klass i Frigörande dans på temat ”Det kommer bli bra”! 💕
@@ -14,11 +14,14 @@ event:
     Vi dansar barfota i mjuka kläder. Ta gärna med en matta, filt eller varm tröja till den avslutande avslappningen. 🧘🏻‍♀️
     
     Hoppas att vi ses! 🙂
+    
   link: null
+  relocated:
+    from_location: Tält2
   owner:
     name: ''
     email: ''
   meta:
     created_at: 2026-07-23 20:45
-    updated_at: 2026-07-23 20:45
-    location_set_at: 2026-07-23 20:45
+    updated_at: 2026-07-26 22:44
+    location_set_at: 2026-07-26 22:44
