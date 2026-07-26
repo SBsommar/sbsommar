@@ -1,6 +1,6 @@
 event:
   id: omrades-distriktsforeningstraff-for-alla-som-int-2026-07-27-1330
-  title: 'Områdes-/ Distriktsföreningsträff för ALLA som inte är Väst, Syd, Sthlm, Öst'
+  title: 'Områdes-/ Distriktsföreningsträff för ALLA utom Väst, Syd, Sthlm, Öst, Dal/Gävle'
   date: '2026-07-27'
   start: '13:30'
   end: '14:30'
@@ -13,12 +13,13 @@ event:
     
     Hitta nya och gamla bekanta. Fundera på vilka aktiviteter som kan göras lokalt. Och bara ha trevligt!
     
-    Vi träffas vid scenen, vid den långsidan mittemot entren.
+    Vi träffas vid t-shirtsen, vid långsidan i GA-hallen mittemot entren.
+    
   link: null
   owner:
     name: ''
     email: ''
   meta:
     created_at: 2026-07-26 20:23
-    updated_at: 2026-07-26 20:23
+    updated_at: 2026-07-26 23:08
     location_set_at: 2026-07-26 20:23
