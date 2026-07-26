@@ -1,0 +1,21 @@
+event:
+  id: musikquiz-sing-along-2026-07-29-1900
+  title: 'Musikquiz, sing along!'
+  date: '2026-07-29'
+  start: '19:00'
+  end: '21:30'
+  location: Servicehus
+  responsible: Malin Isenfors
+  description: |
+    Välkomna till Malins mysiga, mysko, maffiga musikquiz med DJ Becca. 
+    Här belönas inte bara musikkunskap med poäng.
+    Här blandas allsång och gamla godingar med lite nyare musik och en inte alltid helt logisk upptäcktsfärd i Malins tankebanor.
+    Kom själv eller dra ihop ett gäng. Åldersnoja kan vara en fördel. Ta med en varm filt, något att dricka och ditt bästa humör och dela ett par roliga timmar ihop!
+  link: null
+  owner:
+    name: ''
+    email: ''
+  meta:
+    created_at: 2026-07-26 19:19
+    updated_at: 2026-07-26 19:19
+    location_set_at: 2026-07-26 19:19
