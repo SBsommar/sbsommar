@@ -4,17 +4,20 @@ event:
   date: '2026-07-27'
   start: '13:30'
   end: '14:30'
-  location: Tält2
+  location: GA Kreativ hörna
   responsible: Helena Ilke
   description: |
     Passa på att träffa andra på lägret från samma geografiska område 🎉
     
     Hitta nya och gamla bekanta. Fundera på vilka aktiviteter som kan göras lokalt. Och bara ha trevligt!
+    
   link: null
+  relocated:
+    from_location: Tält2
   owner:
     name: ''
     email: ''
   meta:
     created_at: 2026-07-26 20:11
-    updated_at: 2026-07-26 20:11
-    location_set_at: 2026-07-26 20:11
+    updated_at: 2026-07-26 23:08
+    location_set_at: 2026-07-26 23:08
