@@ -10,7 +10,7 @@ const { addEventToActiveCamp, updateEventInActiveCamp, removeEventFromActiveCamp
 const { validateEventRequest, validateEditRequest }              = require('./source/api/validate');
 const { isEventPast }                                            = require('./source/api/edit-event');
 const {
-  parseVerifiedSessionIds,
+  parseHealableSessionIds,
   createOwnershipEntry,
   buildSetCookieHeader,
   mergeOwnershipEntries,
@@ -181,8 +181,11 @@ app.post('/add-event', addEventLimiter, async (req, res) => {
   const eventId = `${slugify(title)}-${date}-${start.replace(':', '')}`;
 
   // If the client signalled cookie consent, update the session cookie.
+  // Re-sign every authentic entry the browser already holds — including any
+  // whose horizon has passed — so submitting an activity renews and self-heals
+  // the whole cookie (02-§18.3, §18.51).
   if (consentGiven) {
-    const existing = parseVerifiedSessionIds(req.headers.cookie || '', sessionSecret)
+    const existing = parseHealableSessionIds(req.headers.cookie || '', sessionSecret)
       .map((id) => createOwnershipEntry(id, sessionSecret));
     const updated  = mergeOwnershipEntries(existing, createOwnershipEntry(eventId, sessionSecret));
     res.setHeader('Set-Cookie', buildSetCookieHeader(updated, process.env.COOKIE_DOMAIN));
@@ -218,10 +221,12 @@ app.post('/edit-event', editEventLimiter, (req, res) => {
 
   const eventId = String(req.body.id).trim();
 
-  // Verify ownership: event ID must have signed session ownership OR the
-  // request must carry an admin-role token — the early role does not bypass
-  // ownership (02-§7.3, §18.31, 02-§105.2).
-  const ownedIds = parseVerifiedSessionIds(req.headers.cookie || '', sessionSecret);
+  // Verify ownership: event ID must have an authentic session ownership entry
+  // OR the request must carry an admin-role token — the early role does not
+  // bypass ownership (02-§7.3, §18.31, 02-§105.2). An authentic entry whose
+  // horizon has passed still counts (self-healing); the past-event check below
+  // keeps this grace bounded to events that have not happened yet (02-§18.51).
+  const ownedIds = parseHealableSessionIds(req.headers.cookie || '', sessionSecret);
   if (!ownedIds.includes(eventId) && !isAdmin) {
     return res.status(403).json({ success: false, error: 'Ej behörig att redigera denna aktivitet.' });
   }
@@ -229,6 +234,15 @@ app.post('/edit-event', editEventLimiter, (req, res) => {
   // Reject past events.
   if (isEventPast(String(req.body.date).trim())) {
     return res.status(400).json({ success: false, error: 'Aktiviteten har redan ägt rum och kan inte redigeras.' });
+  }
+
+  // Renew (and self-heal) the participant's own ownership entries so a
+  // successful edit refreshes their horizon (02-§18.3, §18.51). Admins editing
+  // an activity they do not own gain no ownership — only entries already in the
+  // cookie are re-signed.
+  if (sessionSecret && ownedIds.length) {
+    const renewed = ownedIds.map((id) => createOwnershipEntry(id, sessionSecret));
+    res.setHeader('Set-Cookie', buildSetCookieHeader(renewed, process.env.COOKIE_DOMAIN));
   }
 
   res.json({ success: true });
@@ -259,10 +273,12 @@ app.post('/delete-event', deleteEventLimiter, (req, res) => {
     return res.status(400).json({ success: false, error: 'Aktivitets-ID saknas.' });
   }
 
-  // Verify ownership: event ID must have signed session ownership OR the
-  // request must carry an admin-role token — the early role does not bypass
-  // ownership (02-§7.3, §89.13, 02-§105.2).
-  const ownedIds = parseVerifiedSessionIds(req.headers.cookie || '', sessionSecret);
+  // Verify ownership: event ID must have an authentic session ownership entry
+  // OR the request must carry an admin-role token — the early role does not
+  // bypass ownership (02-§7.3, §89.13, 02-§105.2). An authentic entry whose
+  // horizon has passed still counts (self-healing); the past-event check below
+  // keeps this grace bounded to events that have not happened yet (02-§18.51).
+  const ownedIds = parseHealableSessionIds(req.headers.cookie || '', sessionSecret);
   if (!ownedIds.includes(eventId) && !isAdmin) {
     return res.status(403).json({ success: false, error: 'Ej behörig att radera denna aktivitet.' });
   }

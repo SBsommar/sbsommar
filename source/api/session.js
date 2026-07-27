@@ -3,7 +3,12 @@
 const crypto = require('node:crypto');
 
 const COOKIE_NAME    = 'sb_session';
-const MAX_AGE_SECONDS = 7 * 24 * 60 * 60; // 7 days
+// Ownership horizon: how long a signed ownership entry stays fresh, and the
+// cookie's Max-Age. Set well beyond a single camp so a participant who submits
+// an activity weeks before it happens can still edit it during the camp
+// (02-§18.3). Renewed on every activity (add/edit) and self-healed when an
+// authentic signature has passed its horizon (02-§18.51, §101.8).
+const MAX_AGE_SECONDS = 180 * 24 * 60 * 60; // 180 days
 
 // ── ownership entries ─────────────────────────────────────────────────────────
 
@@ -42,17 +47,24 @@ function isOwnershipEntry(entry) {
   );
 }
 
-function verifyOwnershipEntry(entry, secret, now = Date.now()) {
+// True when the entry is server-signed and authentic, regardless of its expiry
+// horizon. Authenticity alone proves the server once granted ownership; the
+// horizon only governs renewal, not trust. Used for self-healing: an authentic
+// but expired entry is re-signed on the next activity rather than rejected
+// (02-§18.51, §101.8).
+function verifyOwnershipSignature(entry, secret) {
   if (!secret || typeof secret !== 'string' || !isOwnershipEntry(entry)) {
-    return false;
-  }
-  if (entry.exp < Math.floor(now / 1000)) {
     return false;
   }
   const expected = signatureForEntry(entry.id, entry.exp, secret);
   const actual = entry.sig;
   if (actual.length !== expected.length) return false;
   return crypto.timingSafeEqual(Buffer.from(actual, 'utf8'), Buffer.from(expected, 'utf8'));
+}
+
+function verifyOwnershipEntry(entry, secret, now = Date.now()) {
+  if (!verifyOwnershipSignature(entry, secret)) return false;
+  return entry.exp >= Math.floor(now / 1000);
 }
 
 function parseSessionPayload(cookieHeader) {
@@ -96,6 +108,18 @@ function parseVerifiedSessionIds(cookieHeader, secret, now = Date.now()) {
     .map((entry) => entry.id);
 }
 
+// Like parseVerifiedSessionIds but accepts authentic entries whose horizon has
+// passed. Used for edit/delete authorization and for reissuing the cookie, so a
+// participant whose signature expired can still act on a future event and have
+// their ownership re-signed (self-healing). Editing a past event is still
+// blocked by the handlers' own date check, which bounds this grace to events
+// that have not happened yet (02-§18.51, §101.8).
+function parseHealableSessionIds(cookieHeader, secret) {
+  return parseSessionPayload(cookieHeader)
+    .filter((entry) => verifyOwnershipSignature(entry, secret))
+    .map((entry) => entry.id);
+}
+
 // ── buildSetCookieHeader ──────────────────────────────────────────────────────
 
 // Build the Set-Cookie response header value for the session cookie.
@@ -125,6 +149,8 @@ module.exports = {
   createOwnershipEntry,
   parseSessionIds,
   parseVerifiedSessionIds,
+  parseHealableSessionIds,
+  verifyOwnershipSignature,
   buildSetCookieHeader,
   mergeOwnershipEntries,
 };

@@ -1151,7 +1151,7 @@ problems difficult to diagnose.
 
 - The `removeIdFromCookie` function in `redigera.js` must write the
   cookie with the same attributes as `session.js`: `Path=/`,
-  `Max-Age=604800`, `Secure`, `SameSite=Strict`, and `Domain` when
+  `Max-Age=15552000`, `Secure`, `SameSite=Strict`, and `Domain` when
   `data-cookie-domain` is set on `<body>`. <!-- 02-§90.12 -->
 - This fixes a violation of 02-§44.16 (cookie attributes must match
   across all write paths). <!-- 02-§90.13 -->
@@ -1289,7 +1289,7 @@ but not for server-side authorization.
   pages can show edit links for events owned in the current browser.
   <!-- 02-§101.3 -->
 - The cookie must keep the existing security attributes: `Path=/`,
-  `Max-Age=604800`, `Secure`, `SameSite=Strict`, and `Domain` when configured.
+  `Max-Age=15552000`, `Secure`, `SameSite=Strict`, and `Domain` when configured.
   <!-- 02-§101.4 -->
 
 ### 101.3 Server-side authorization
@@ -1300,10 +1300,17 @@ but not for server-side authorization.
   includes a valid ownership entry for the target event ID. <!-- 02-§101.6 -->
 - A manually constructed cookie containing only a public event ID must not grant
   edit or delete permission. <!-- 02-§101.7 -->
-- Invalid, malformed, expired, or unverifiable ownership entries must be ignored
-  for authorization. <!-- 02-§101.8 -->
+- Invalid, malformed, or unverifiable ownership entries — including entries
+  signed with a different secret — must be ignored for authorization. An entry
+  whose signature is authentic but whose horizon has passed is not treated as
+  invalid: it authorizes editing and deleting a future event and is re-signed on
+  the next activity (self-healing). The independent past-event check keeps this
+  grace bounded to events that have not yet happened. <!-- 02-§101.8 -->
 - Administrators with a valid admin token must retain the existing ability to
   edit or delete any activity. <!-- 02-§101.9 -->
+- A successful edit re-signs every authentic ownership entry the browser holds
+  and returns a refreshed cookie, so any activity renews ownership for a further
+  full horizon. <!-- 02-§101.14 -->
 
 ### 101.4 Cookie lifecycle and compatibility
 

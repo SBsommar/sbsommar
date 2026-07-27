@@ -298,9 +298,12 @@ function handleAddEvent(?array $activeCamp, string $adminTokenSecret, string $se
     // Session cookie (only if consent given) — set AFTER successful GitHub
     // commit so the browser never stores an ID for an event that failed to save.
     if ($consentGiven) {
+        // Re-sign every authentic entry the browser already holds — including
+        // any whose horizon has passed — so submitting renews and self-heals the
+        // whole cookie (02-§18.3, §18.51).
         $existing = array_map(
             static fn(string $id): array => Session::createOwnershipEntry($id, $sessionSecret),
-            Session::parseVerifiedSessionIds($_SERVER['HTTP_COOKIE'] ?? '', $sessionSecret),
+            Session::parseHealableSessionIds($_SERVER['HTTP_COOKIE'] ?? '', $sessionSecret),
         );
         $updated  = Session::mergeOwnershipEntries(
             $existing,
@@ -385,9 +388,11 @@ function handleAddEvents(?array $activeCamp, string $adminTokenSecret, string $s
 
     // Session cookie — add all event IDs (only if consent given)
     if ($consentGiven) {
+        // Re-sign every authentic entry (including any past its horizon) so a
+        // batch submit renews and self-heals the whole cookie (02-§18.3, §18.51).
         $existing = array_map(
             static fn(string $id): array => Session::createOwnershipEntry($id, $sessionSecret),
-            Session::parseVerifiedSessionIds($_SERVER['HTTP_COOKIE'] ?? '', $sessionSecret),
+            Session::parseHealableSessionIds($_SERVER['HTTP_COOKIE'] ?? '', $sessionSecret),
         );
         $updated  = $existing;
         foreach ($eventIds as $eid) {
@@ -449,9 +454,12 @@ function handleEditEvent(?array $activeCamp, string $adminTokenSecret, string $s
 
     $eventId = trim((string) ($body['id'] ?? ''));
 
-    // Verify ownership: signed session ownership OR an admin-role token —
-    // the early role does not bypass ownership (02-§7.3, §18.31, 02-§105.2).
-    $ownedIds = Session::parseVerifiedSessionIds($_SERVER['HTTP_COOKIE'] ?? '', $sessionSecret);
+    // Verify ownership: an authentic session ownership entry OR an admin-role
+    // token — the early role does not bypass ownership (02-§7.3, §18.31,
+    // 02-§105.2). An authentic entry whose horizon has passed still counts
+    // (self-healing); the past-event check below keeps this grace bounded to
+    // events that have not happened yet (02-§18.51).
+    $ownedIds = Session::parseHealableSessionIds($_SERVER['HTTP_COOKIE'] ?? '', $sessionSecret);
     if (!in_array($eventId, $ownedIds, true) && !$isAdmin) {
         jsonResponse([
             'success' => false,
@@ -481,6 +489,19 @@ function handleEditEvent(?array $activeCamp, string $adminTokenSecret, string $s
         jsonResponse(['success' => false, 'error' => GitHub::classifyGitHubError($e)], 500);
 
         return;
+    }
+
+    // Renew (and self-heal) the participant's own ownership entries so a
+    // successful edit refreshes their horizon (02-§18.3, §18.51). Admins editing
+    // an activity they do not own gain no ownership — only entries already in the
+    // cookie are re-signed.
+    if ($sessionSecret !== '' && $ownedIds !== []) {
+        $renewed = array_map(
+            static fn(string $id): array => Session::createOwnershipEntry($id, $sessionSecret),
+            $ownedIds,
+        );
+        $cookieDomain = !empty($_ENV['COOKIE_DOMAIN']) ? $_ENV['COOKIE_DOMAIN'] : null;
+        header('Set-Cookie: ' . Session::buildSetCookieHeader($renewed, $cookieDomain));
     }
 
     jsonResponse(['success' => true]);
@@ -530,9 +551,12 @@ function handleDeleteEvent(?array $activeCamp, string $adminTokenSecret, string 
         return;
     }
 
-    // Verify ownership: signed session ownership OR an admin-role token —
-    // the early role does not bypass ownership (02-§7.3, §89.13, 02-§105.2).
-    $ownedIds = Session::parseVerifiedSessionIds($_SERVER['HTTP_COOKIE'] ?? '', $sessionSecret);
+    // Verify ownership: an authentic session ownership entry OR an admin-role
+    // token — the early role does not bypass ownership (02-§7.3, §89.13,
+    // 02-§105.2). An authentic entry whose horizon has passed still counts
+    // (self-healing); the past-event check below keeps this grace bounded to
+    // events that have not happened yet (02-§18.51).
+    $ownedIds = Session::parseHealableSessionIds($_SERVER['HTTP_COOKIE'] ?? '', $sessionSecret);
     if (!in_array($eventId, $ownedIds, true) && !$isAdmin) {
         jsonResponse([
             'success' => false,

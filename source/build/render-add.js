@@ -50,7 +50,7 @@ ${pageNav('lagg-till.html', navSections)}
   <h1>Lägg till aktivitet</h1>
   <p class="intro">Kolla <a href="lokaler.html">lokalöversikten</a> för lediga tider (eller <a href="schema.html">hela schemat</a> för detaljer) innan du lägger till din aktivitet.</p>
   <p class="intro">Behöver du material eller ingredienser till din aktivitet? Kontakta Andreas i förväg så ordnar han det.</p>
-  <p class="intro" id="cookie-info">När du skickat in kan du redigera din aktivitet efteråt – vi frågar om lov att spara ett tillfälligt ID i webbläsaren så att vi vet att aktiviteten är din. ID:t försvinner automatiskt efter 7 dagar.</p>
+  <p class="intro" id="cookie-info">När du skickat in kan du redigera din aktivitet efteråt – vi frågar om lov att spara ett tillfälligt ID i webbläsaren så att vi vet att aktiviteten är din. ID:t försvinner automatiskt efter ett halvår.</p>
 
   <form id="event-form" class="event-form" novalidate data-api-url="${escapeHtml(apiUrl || '/add-event')}" data-opens="${opensDate}" data-closes="${closesDate}">
 

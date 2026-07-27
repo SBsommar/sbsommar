@@ -215,7 +215,12 @@
     return normalizeEntries(entries).map(entryId);
   }
 
-  function isSignedEntry(entry) {
+  // Ownership-shaped entry: an object carrying id, exp and sig. The horizon
+  // (exp) is deliberately NOT checked — an entry past its horizon is still
+  // treated as owned so the participant can open and save the edit that
+  // re-signs it (self-healing, 02-§18.51). The server verifies the signature and
+  // renews it on save. The debug panel below reports the horizon separately.
+  function isOwnershipEntry(entry) {
     return Boolean(
       entry &&
       typeof entry === 'object' &&
@@ -223,7 +228,6 @@
       entry.id.length > 0 &&
       typeof entry.exp === 'number' &&
       isFinite(entry.exp) &&
-      entry.exp >= Math.floor(Date.now() / 1000) &&
       typeof entry.sig === 'string' &&
       entry.sig.length > 0,
     );
@@ -231,7 +235,7 @@
 
   function signedEntryIds(entries) {
     return normalizeEntries(entries)
-      .filter(isSignedEntry)
+      .filter(isOwnershipEntry)
       .map(entryId);
   }
 
@@ -959,7 +963,7 @@
     if (entries.length) {
       var encoded = encodeURIComponent(JSON.stringify(entries));
       document.cookie = COOKIE_NAME + '=' + encoded +
-        '; Path=/; Max-Age=604800; Secure; SameSite=Strict' + domainPart;
+        '; Path=/; Max-Age=15552000; Secure; SameSite=Strict' + domainPart;
     }
   }
 
@@ -1054,7 +1058,7 @@
         if (isLegacy) {
           status = '<span class="cookie-status-unknown">gammal cookie – behöver läggas till igen för redigering</span>';
         } else if (isExpiredOwnership) {
-          status = '<span class="cookie-status-expired">signaturen har gått ut</span>';
+          status = '<span class="cookie-status-expired">signaturen har gått ut – förnyas automatiskt när du sparar en ändring</span>';
         } else if (!ev) {
           status = '<span class="cookie-status-unknown">hittades inte i schemat (kan vara under publicering)</span>';
         } else if (ev.date < debugToday) {

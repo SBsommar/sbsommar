@@ -6,12 +6,15 @@ const assert = require('node:assert/strict');
 const {
   parseSessionIds,
   parseVerifiedSessionIds,
+  parseHealableSessionIds,
+  verifyOwnershipSignature,
   createOwnershipEntry,
   buildSetCookieHeader,
   mergeOwnershipEntries,
 } = require('../source/api/session');
 
 const SECRET = 'test-session-secret';
+const HORIZON_MS = 180 * 24 * 60 * 60 * 1000; // matches MAX_AGE_SECONDS
 
 // ── parseSessionIds ───────────────────────────────────────────────────────────
 
@@ -81,9 +84,51 @@ describe('signed ownership entries', () => {
   it('SES-21: parseVerifiedSessionIds rejects expired ownership entries', () => {
     const now = Date.UTC(2026, 0, 1, 12, 0, 0);
     const entry = createOwnershipEntry('event-a', SECRET, now);
-    const afterExpiry = now + (7 * 24 * 60 * 60 * 1000) + 1000;
+    const afterExpiry = now + HORIZON_MS + 1000;
     const cookieHeader = `sb_session=${encodeURIComponent(JSON.stringify([entry]))}`;
     assert.deepStrictEqual(parseVerifiedSessionIds(cookieHeader, SECRET, afterExpiry), []);
+  });
+});
+
+// ── self-healing: authentic-but-expired ownership (02-§18.51, §101.9) ─────────
+
+describe('parseHealableSessionIds & verifyOwnershipSignature', () => {
+  it('SES-22: verifyOwnershipSignature accepts an authentic entry regardless of horizon', () => {
+    const now = Date.UTC(2026, 0, 1, 12, 0, 0);
+    const entry = createOwnershipEntry('event-a', SECRET, now);
+    // Authentic signature — no time argument, no expiry consideration.
+    assert.strictEqual(verifyOwnershipSignature(entry, SECRET), true);
+  });
+
+  it('SES-23: verifyOwnershipSignature rejects a foreign or tampered signature', () => {
+    const foreign = createOwnershipEntry('event-a', 'other-secret');
+    assert.strictEqual(verifyOwnershipSignature(foreign, SECRET), false);
+    const authentic = createOwnershipEntry('event-a', SECRET);
+    assert.strictEqual(verifyOwnershipSignature({ ...authentic, id: 'event-b' }, SECRET), false);
+  });
+
+  it('SES-24: parseHealableSessionIds accepts an authentic entry past its horizon', () => {
+    const now = Date.UTC(2026, 0, 1, 12, 0, 0);
+    const entry = createOwnershipEntry('event-a', SECRET, now);
+    const cookieHeader = `sb_session=${encodeURIComponent(JSON.stringify([entry]))}`;
+    // parseVerifiedSessionIds would reject this after the horizon; the healable
+    // parse still returns it so the cookie can be re-signed on the next activity.
+    const afterExpiry = now + HORIZON_MS + 1000;
+    assert.deepStrictEqual(parseVerifiedSessionIds(cookieHeader, SECRET, afterExpiry), []);
+    assert.deepStrictEqual(parseHealableSessionIds(cookieHeader, SECRET), ['event-a']);
+  });
+
+  it('SES-25: parseHealableSessionIds still rejects foreign, legacy, and unsigned entries', () => {
+    const foreign = createOwnershipEntry('foreign', 'other-secret');
+    const authentic = createOwnershipEntry('mine', SECRET);
+    const cookieHeader = `sb_session=${encodeURIComponent(JSON.stringify([foreign, 'legacy-id', authentic]))}`;
+    assert.deepStrictEqual(parseHealableSessionIds(cookieHeader, SECRET), ['mine']);
+  });
+
+  it('SES-26: parseHealableSessionIds returns [] when the secret is empty', () => {
+    const authentic = createOwnershipEntry('mine', SECRET);
+    const cookieHeader = `sb_session=${encodeURIComponent(JSON.stringify([authentic]))}`;
+    assert.deepStrictEqual(parseHealableSessionIds(cookieHeader, ''), []);
   });
 });
 
@@ -98,9 +143,9 @@ describe('buildSetCookieHeader', () => {
     assert.ok(header.includes('sig'));
   });
 
-  it('SES-07: includes Max-Age of 604800 (7 days)', () => { // SES-07
+  it('SES-07: includes Max-Age of 15552000 (180 days)', () => { // SES-07
     const header = buildSetCookieHeader([]);
-    assert.ok(header.includes('Max-Age=604800'), `Missing Max-Age=604800 in: ${header}`);
+    assert.ok(header.includes('Max-Age=15552000'), `Missing Max-Age=15552000 in: ${header}`);
   });
 
   it('SES-08: includes the Secure flag', () => { // SES-08

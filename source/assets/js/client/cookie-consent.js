@@ -19,7 +19,7 @@
   function showConsentModal(callback, modalApi) {
     modalApi.setHeading('Sessionscookie');
     modalApi.setContent(
-      '<p>För att du ska kunna redigera din aktivitet senare behöver vi spara ett <strong>sessionscookie</strong> i din webbläsare. Det innehåller bara ett ID för din aktivitet och försvinner automatiskt efter 7 dagar.</p>' +
+      '<p>För att du ska kunna redigera din aktivitet senare behöver vi spara ett <strong>sessionscookie</strong> i din webbläsare. Det innehåller bara ett ID för din aktivitet och försvinner automatiskt efter ett halvår.</p>' +
       '<div class="cookie-consent-actions">' +
         '<button class="btn-primary" id="consent-accept">Ja, det är okej</button>' +
         '<button class="btn-secondary" id="consent-decline">Nej tack</button>' +
