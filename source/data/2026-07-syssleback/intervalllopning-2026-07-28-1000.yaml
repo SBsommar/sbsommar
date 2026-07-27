@@ -2,8 +2,8 @@ event:
   id: intervalllopning-2026-07-28-1000
   title: Intervallöpning
   date: '2026-07-28'
-  start: '10:00'
-  end: '11:00'
+  start: '11:15'
+  end: '12:00'
   location: Fotbollsplan
   responsible: David Erenger
   description: |
@@ -14,6 +14,10 @@ event:
     Hög puls garanteras. Ta gärna med vattenflaska.
     
   link: null
+  moved:
+    from_date: '2026-07-28'
+    from_start: '10:00'
+    from_end: '11:00'
   relocated:
     from_location: Servicehus
   owner:
@@ -21,5 +25,5 @@ event:
     email: ''
   meta:
     created_at: 2026-07-19 20:16
-    updated_at: 2026-07-26 14:23
+    updated_at: 2026-07-27 09:34
     location_set_at: 2026-07-26 14:23
