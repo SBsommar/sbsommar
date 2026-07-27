@@ -16,15 +16,19 @@ describe('PHP signed session ownership parity (02-§44.15, §44.17, §101)', () 
     const src = read('api/src/Session.php');
     assert.match(src, /function\s+createOwnershipEntry\b/);
     assert.match(src, /function\s+parseVerifiedSessionIds\b/);
+    assert.match(src, /function\s+parseHealableSessionIds\b/);
+    assert.match(src, /function\s+verifyOwnershipSignature\b/);
     assert.match(src, /hash_hmac\s*\(\s*['"]sha256['"]/);
     assert.match(src, /hash_equals\s*\(/);
     assert.match(src, /'exp'\s*=>/);
     assert.match(src, /time\s*\(\s*\)\s*\+\s*self::MAX_AGE_SECONDS/);
   });
 
-  it('PSES-02: edit/delete handlers use verified ownership, not display IDs', () => {
+  it('PSES-02: edit/delete handlers use authentic ownership, not display IDs', () => {
     const src = read('api/index.php');
-    assert.match(src, /Session::parseVerifiedSessionIds/);
+    // Authorization accepts authentic entries even past their horizon so an
+    // expired signature self-heals on the next activity (02-§18.51).
+    assert.match(src, /Session::parseHealableSessionIds/);
     assert.doesNotMatch(src, /ownedIds\s*=\s*Session::parseSessionIds/);
   });
 

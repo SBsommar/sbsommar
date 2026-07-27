@@ -10,7 +10,11 @@ namespace SBSommar;
 final class Session
 {
     public const COOKIE_NAME     = 'sb_session';
-    public const MAX_AGE_SECONDS = 604800; // 7 days
+    // Ownership horizon and cookie Max-Age. Set well beyond a single camp so a
+    // participant who submits an activity weeks in advance can still edit it
+    // during the camp. Renewed on every activity and self-healed when an
+    // authentic signature has passed its horizon (02-§18.3, §18.51, §101.14).
+    public const MAX_AGE_SECONDS = 15552000; // 180 days
 
     /**
      * Parse the sb_session cookie from the raw Cookie header.
@@ -71,6 +75,33 @@ final class Session
         return $ids;
     }
 
+    /**
+     * Parse entries with an authentic ownership signature, regardless of expiry.
+     *
+     * Used for edit/delete authorization and cookie reissue so a participant
+     * whose signature has passed its horizon can still act on a future event and
+     * have their ownership re-signed (self-healing). Editing a past event is
+     * still blocked by the handlers' own date check, which bounds this grace to
+     * events that have not happened yet (02-§18.51, §101.8).
+     *
+     * @return string[]
+     */
+    public static function parseHealableSessionIds(string $cookieHeader, string $secret): array
+    {
+        if ($secret === '') {
+            return [];
+        }
+
+        $ids = [];
+        foreach (self::parseSessionPayload($cookieHeader) as $entry) {
+            if (self::verifyOwnershipSignature($entry, $secret)) {
+                $ids[] = $entry['id'];
+            }
+        }
+
+        return $ids;
+    }
+
     /** @return array<int,mixed> */
     private static function parseSessionPayload(string $cookieHeader): array
     {
@@ -114,17 +145,28 @@ final class Session
             && $entry['sig'] !== '';
     }
 
-    private static function verifyOwnershipEntry(mixed $entry, string $secret): bool
+    /**
+     * True when the entry is server-signed and authentic, regardless of its
+     * expiry horizon. Authenticity alone proves the server once granted
+     * ownership; the horizon only governs renewal, not trust (02-§18.51,
+     * §101.8).
+     */
+    private static function verifyOwnershipSignature(mixed $entry, string $secret): bool
     {
         if ($secret === '' || !self::isOwnershipEntry($entry)) {
             return false;
         }
 
-        if ($entry['exp'] < time()) {
+        return hash_equals(self::signatureForEntry($entry['id'], $entry['exp'], $secret), $entry['sig']);
+    }
+
+    private static function verifyOwnershipEntry(mixed $entry, string $secret): bool
+    {
+        if (!self::verifyOwnershipSignature($entry, $secret)) {
             return false;
         }
 
-        return hash_equals(self::signatureForEntry($entry['id'], $entry['exp'], $secret), $entry['sig']);
+        return $entry['exp'] >= time();
     }
 
     /**

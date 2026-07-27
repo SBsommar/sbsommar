@@ -165,8 +165,8 @@ describe('02-§18.4 / 02-§18.7 — Session cookie properties', () => {
     assert.strictEqual(COOKIE_NAME, 'sb_session');
   });
 
-  it('EEC-19: max age is 7 days', () => {
-    assert.strictEqual(MAX_AGE_SECONDS, 7 * 24 * 60 * 60);
+  it('EEC-19: max age is 180 days', () => {
+    assert.strictEqual(MAX_AGE_SECONDS, 180 * 24 * 60 * 60);
   });
 
   it('EEC-20: cookie header includes Secure flag', () => {

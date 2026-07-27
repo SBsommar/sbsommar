@@ -63,7 +63,11 @@
 
   var COOKIE_NAME = 'sb_session';
 
-  // Read sb_session and keep only valid, non-expired signed ownership IDs.
+  // Read sb_session and keep ownership-shaped IDs. The horizon (exp) is not
+  // checked: an entry whose signature has passed its horizon still reveals the
+  // shortcut so the owner can reach the edit that re-signs it (self-healing,
+  // 02-§18.51). The upcoming-activity date check below still gates by date, and
+  // the server verifies the signature on submit.
   function readSignedIds() {
     var pairs = document.cookie.split(';');
     for (var i = 0; i < pairs.length; i++) {
@@ -72,12 +76,11 @@
       try {
         var parsed = JSON.parse(decodeURIComponent(pair.slice(COOKIE_NAME.length + 1)));
         if (!Array.isArray(parsed)) return [];
-        var now = Math.floor(Date.now() / 1000);
         return parsed
           .filter(function (e) {
             return e && typeof e === 'object' &&
               typeof e.id === 'string' && e.id.length > 0 &&
-              typeof e.exp === 'number' && isFinite(e.exp) && e.exp >= now &&
+              typeof e.exp === 'number' && isFinite(e.exp) &&
               typeof e.sig === 'string' && e.sig.length > 0;
           })
           .map(function (e) { return e.id; });

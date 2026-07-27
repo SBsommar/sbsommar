@@ -24,7 +24,7 @@ date passes. No server-side session store is used.
 | --- | --- |
 | Name | `sb_session` |
 | Content | JSON array of ownership entries (`{ id, exp, sig }`) |
-| Max-Age | 7 days (604 800 s) |
+| Max-Age | 180 days (15 552 000 s) |
 | Secure | Yes (HTTPS only) |
 | SameSite | Strict |
 | HttpOnly | **No** — see note below |
@@ -38,7 +38,12 @@ Security is maintained through server-side validation: edit and delete endpoints
 verify that the cookie contains a signed ownership entry for the target event.
 The signature uses a server-side `SESSION_SECRET` and covers both `id` and
 `exp`, so a caller can read the event ID for UI purposes without being able to
-mint ownership for public IDs or extend an expired ownership entry.
+forge ownership for a public ID. Note that the `exp` horizon is a renewal marker,
+not a hard boundary: an entry whose signature is authentic but whose horizon has
+passed is still honoured for editing a future event and is re-signed on the next
+activity (self-healing, §7.1 below). Because the past-event check independently
+blocks edits to events that have already happened, this grace only ever applies
+to events a participant could still legitimately change.
 
 Legacy cookies that contain plain event ID strings may be read by the client for
 display or cleanup, but the server treats them as unauthorised for edit/delete.
@@ -47,27 +52,62 @@ display or cleanup, but the server treats them as unauthorised for edit/delete.
 
 1. User submits the add-activity form and accepts cookie consent.
 2. Server validates the event, responds with `Set-Cookie: sb_session=…`.
-3. The cookie contains the event's signed ownership entry merged with any
-   existing valid ownership entries. Existing valid entries are reissued so
-   their signed expiry matches the refreshed cookie lifetime.
-4. On every page load, `source/assets/js/client/session.js` reads the
+3. The cookie contains the event's signed ownership entry merged with every
+   authentic ownership entry the request already carried. All of them are
+   re-signed with a fresh 180-day horizon — including any whose horizon had
+   already passed (self-healing) — so their signed expiry matches the refreshed
+   cookie lifetime.
+4. A successful edit (`POST /edit-event`) does the same for the entries the
+   browser already owns: it re-signs them all and returns a refreshed
+   `Set-Cookie`. Any activity therefore renews ownership for a further full
+   horizon. Admins editing an activity they do not own gain no ownership — only
+   entries already present in the cookie are renewed.
+5. On every page load, `source/assets/js/client/session.js` reads the
    cookie, removes entries for events whose dates have passed, and writes the
-   cleaned cookie back (or deletes it if the array becomes empty). The client
+   cleaned cookie back (or deletes it if the array becomes empty). Entries whose
+   signature horizon has passed but whose event is still in the future are
+   **kept**, so the owner can reach the edit that re-signs them. The client
    preserves each entry's signature; it never creates new signatures.
    The write-back must include the same `Domain` attribute the server used,
    read from a `data-cookie-domain` attribute injected on `<body>` at build time.
-5. Before the expiry cleanup, `session.js` detects duplicate `sb_session`
+6. Before the expiry cleanup, `session.js` detects duplicate `sb_session`
    cookies (e.g. one with `Domain` and one without, caused by a historical
    bug in `removeIdFromCookie`). If duplicates are found, all ownership entries
    are merged and deduplicated, both cookie variants are deleted, and a single
    correct cookie is written back. This repair is transparent to the user.
-6. Schedule pages read the cookie and attach "Redigera" links to matching
-   event rows.
-7. The edit page (`redigera.html`) includes a collapsible "Om din cookie"
+7. Schedule pages read the cookie and attach "Redigera" links to matching
+   event rows, including rows the user owns through an entry whose horizon has
+   passed — the server re-signs it when the edit is saved.
+8. The edit page (`redigera.html`) includes a collapsible "Om din cookie"
    section that displays the cookie contents: protocol, cookie domain,
-   stored event ownership entries with their status (active / expired / not
-   found in schema / legacy-unverifiable), and whether automatic repair was
-   performed.
+   stored event ownership entries with their status (active / expired but
+   self-healing / not found in schema / legacy-unverifiable), and whether
+   automatic repair was performed.
+
+### 7.1 Renewal and self-healing
+
+The signed `exp` on each ownership entry is a **180-day renewal horizon**, not a
+hard session timeout. Two mechanisms keep a participant from ever losing the
+ability to edit an activity they legitimately submitted:
+
+- **Renewal on activity.** Adding an event or saving an edit re-signs every
+  authentic entry the browser holds and returns a fresh cookie
+  (`parseHealableSessionIds` → `createOwnershipEntry` → `buildSetCookieHeader`).
+  A participant who keeps using the site never approaches the horizon.
+- **Self-healing.** Authorization (`parseHealableSessionIds`) accepts an entry
+  whose signature is authentic even if its horizon has passed. A participant who
+  registered an activity long before the camp — and whose horizon lapsed in the
+  meantime — can still open and save the edit, which re-signs the cookie. The
+  handlers' independent past-event check blocks edits to events that have already
+  happened, so this grace is bounded to future events. `parseVerifiedSessionIds`
+  (the strict, horizon-checking parse) is retained for contexts that need it, but
+  edit/delete authorization and cookie reissue use the healable parse.
+
+The trade-off is explicit: because an authentic signature is honoured past its
+horizon, a copied cookie could edit the owner's still-future activities until the
+browser drops the cookie or the event passes — the same window the legitimate
+owner has. For low-stakes camp-activity edits this is an accepted cost of never
+locking a real participant out of their own event.
 
 ### /events.json
 

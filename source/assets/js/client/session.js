@@ -2,7 +2,7 @@
   'use strict';
 
   var COOKIE_NAME = 'sb_session';
-  var MAX_AGE_SECONDS = 7 * 24 * 60 * 60; // 7 days
+  var MAX_AGE_SECONDS = 180 * 24 * 60 * 60; // 180 days (mirrors source/api/session.js)
 
   // Read the cookie domain injected at build time (02-§18.47).
   // Must match the Domain the server uses when setting the cookie.
@@ -24,7 +24,12 @@
     return entries.filter(function (entry) { return entryId(entry); });
   }
 
-  function isSignedEntry(entry) {
+  // An ownership-shaped entry: an object carrying id, exp and sig. The horizon
+  // (exp) is deliberately NOT checked here — an entry whose horizon has passed
+  // is still treated as owned so the participant can reach the edit that
+  // re-signs it (self-healing, 02-§18.51). The server verifies the signature and
+  // renews it; the client only decides which rows get an edit affordance.
+  function isOwnershipEntry(entry) {
     return Boolean(
       entry &&
       typeof entry === 'object' &&
@@ -32,15 +37,14 @@
       entry.id.length > 0 &&
       typeof entry.exp === 'number' &&
       isFinite(entry.exp) &&
-      entry.exp >= Math.floor(Date.now() / 1000) &&
       typeof entry.sig === 'string' &&
       entry.sig.length > 0,
     );
   }
 
-  function signedEntryIds(entries) {
+  function ownedEntryIds(entries) {
     return normalizeEntries(entries)
-      .filter(isSignedEntry)
+      .filter(isOwnershipEntry)
       .map(entryId);
   }
 
@@ -82,7 +86,7 @@
   function removeExpiredEntries(entries, events) {
     var today = new Date().toISOString().slice(0, 10);
     return normalizeEntries(entries).filter(function (entry) {
-      if (typeof entry !== 'string' && !isSignedEntry(entry)) return false;
+      if (typeof entry !== 'string' && !isOwnershipEntry(entry)) return false;
       var id = entryId(entry);
       var ev = events[id];
       if (!ev) return true; // unknown — keep (deploy may be in progress)
@@ -205,9 +209,9 @@
         if (!seen[id]) {
           seen[id] = true;
           merged.push(entry);
-        } else if (isSignedEntry(entry)) {
+        } else if (isOwnershipEntry(entry)) {
           for (var m = 0; m < merged.length; m++) {
-            if (entryId(merged[m]) === id && !isSignedEntry(merged[m])) {
+            if (entryId(merged[m]) === id && !isOwnershipEntry(merged[m])) {
               merged[m] = entry;
               break;
             }
@@ -232,7 +236,7 @@
   // Repair duplicates first (before expiry cleanup).
   var repair = repairDuplicateCookies();
   var entries = repair.repaired ? repair.entries : readSessionEntries();
-  var ids = signedEntryIds(entries);
+  var ids = ownedEntryIds(entries);
   var isAdmin = hasValidAdminToken();
 
   // If no cookie IDs and not admin, nothing to do.
@@ -248,7 +252,7 @@
       // Persist the cleaned list back.
       writeSessionEntries(active);
 
-      injectEditLinks(signedEntryIds(active), isAdmin);
+      injectEditLinks(ownedEntryIds(active), isAdmin);
     })
     .catch(function () {
       // If events.json is unavailable, still inject links for what we have.

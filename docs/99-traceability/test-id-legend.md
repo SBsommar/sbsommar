@@ -38,6 +38,7 @@ Part of [the traceability index](./index.md).
 | SES-10..13 | `tests/session.test.js` | `mergeOwnershipEntries` |
 | SES-14..15 | `tests/session.test.js` | `buildSetCookieHeader – domain` |
 | SES-16..21 | `tests/session.test.js` | `signed ownership entries` |
+| SES-22..26 | `tests/session.test.js` | `parseHealableSessionIds & verifyOwnershipSignature` |
 | ADED-01..08 | `tests/admin-edit-delete.test.js` | `edit/delete authorisation OR condition (02-§7.3, §18.31, §89.13)` |
 | PSES-01..03 | `tests/php-session-ownership.test.js` | `PHP signed session ownership parity (02-§44.15, §44.17, §101)` |
 | SNP-01..06 | `tests/snapshot.test.js` | `renderSchedulePage` |

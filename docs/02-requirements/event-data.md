@@ -35,9 +35,18 @@ that requires no login.
   cookie in the response containing an ownership entry for the event. <!-- 02-§18.1 -->
 - The session cookie stores a JSON array of ownership entries for events the
   current browser owns; see §101 for the signed authorization format. <!-- 02-§18.2 -->
-- The cookie has a `Max-Age` of 7 days; each ownership entry carries the same
-  signed expiry horizon, and submitting another event refreshes both the cookie
-  lifetime and existing valid ownership entries. <!-- 02-§18.3 -->
+- The cookie has a `Max-Age` of 180 days; each ownership entry carries the same
+  signed expiry horizon. Every activity a participant performs — submitting a new
+  event or saving an edit — re-signs all ownership entries the browser holds and
+  refreshes the cookie lifetime, so ownership stays fresh for as long as the
+  participant keeps using the site. <!-- 02-§18.3 -->
+- Ownership self-heals: an ownership entry whose signature is authentic (signed
+  by this server's `SESSION_SECRET`) but whose horizon has passed is still
+  honoured for editing and deleting a future event, and is re-signed on the next
+  activity. Editing or deleting a past event remains blocked, which bounds the
+  grace to events that have not yet happened. A participant who submitted an
+  event long before it takes place therefore never loses the ability to edit it.
+  <!-- 02-§18.51 -->
 - The cookie uses the `Secure` flag (HTTPS only) and `SameSite=Strict` to prevent
   cross-site misuse. <!-- 02-§18.4 -->
 - **The session cookie is intentionally JavaScript-readable (not `httpOnly`).**
