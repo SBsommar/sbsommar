@@ -1,7 +1,7 @@
 event:
   id: musikquiz-sing-along-2026-07-29-1900
   title: 'Musikquiz, sing along!'
-  date: '2026-07-29'
+  date: '2026-07-30'
   start: '19:00'
   end: '21:30'
   location: Servicehus
@@ -13,11 +13,14 @@ event:
     Kom själv eller dra ihop ett gäng. Ålderblandning kan vara en fördel. Ta med en varm filt, något att dricka och ditt bästa humör och dela ett par roliga timmar ihop!
     
   link: null
-  cancelled: true
+  moved:
+    from_date: '2026-07-29'
+    from_start: '19:00'
+    from_end: '21:30'
   owner:
     name: ''
     email: ''
   meta:
     created_at: 2026-07-26 19:19
-    updated_at: 2026-07-28 09:50
+    updated_at: 2026-07-28 09:51
     location_set_at: 2026-07-26 19:19
