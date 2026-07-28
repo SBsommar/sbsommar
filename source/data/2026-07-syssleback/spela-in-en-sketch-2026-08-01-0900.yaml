@@ -1,6 +1,6 @@
 event:
   id: spela-in-en-sketch-2026-08-01-0900
-  title: Spela in en sketch
+  title: 'Spela in en sketch: redigering'
   date: '2026-08-01'
   start: '09:00'
   end: '11:30'
@@ -8,11 +8,12 @@ event:
   responsible: 'Milo, Naxy, Becca och Willow'
   description: |
     Vi hjälps åt att redigera filmmaterialet. Klockan 11.00 tittar vi på film/erna tillsammans.
+    
   link: null
   owner:
     name: ''
     email: ''
   meta:
     created_at: 2026-07-28 09:45
-    updated_at: 2026-07-28 09:45
+    updated_at: 2026-07-28 10:04
     location_set_at: 2026-07-28 09:45
