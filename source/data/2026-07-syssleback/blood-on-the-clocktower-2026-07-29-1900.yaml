@@ -1,7 +1,7 @@
 event:
   id: blood-on-the-clocktower-2026-07-29-1900
   title: Blood On The Clocktower
-  date: '2026-07-29'
+  date: '2026-07-30'
   start: '19:00'
   end: '22:00'
   location: Tält1
@@ -19,11 +19,16 @@ event:
     Spelet lämpar sig bäst på grupper mellan 8 och 15 personer.
     
     ANMÄLAN: https://forms.gle/xPX1wRhYseQtJySQA
+    
   link: 'https://forms.gle/xPX1wRhYseQtJySQA'
+  moved:
+    from_date: '2026-07-29'
+    from_start: '19:00'
+    from_end: '22:00'
   owner:
     name: ''
     email: ''
   meta:
     created_at: 2026-07-27 10:55
-    updated_at: 2026-07-27 10:55
+    updated_at: 2026-07-28 15:51
     location_set_at: 2026-07-27 10:55
