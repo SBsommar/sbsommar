@@ -1,0 +1,18 @@
+event:
+  id: mtg-commander-traff-2026-07-28-1955
+  title: MTG Commander-träff
+  date: '2026-07-28'
+  start: '19:55'
+  end: '00:00'
+  location: GA Stilla hyllan
+  responsible: Elias E
+  description: |
+    Kom och spela Magic the Gathering Commander ikväll. Obs inte cedh
+  link: null
+  owner:
+    name: ''
+    email: ''
+  meta:
+    created_at: 2026-07-28 17:15
+    updated_at: 2026-07-28 17:15
+    location_set_at: 2026-07-28 17:15
