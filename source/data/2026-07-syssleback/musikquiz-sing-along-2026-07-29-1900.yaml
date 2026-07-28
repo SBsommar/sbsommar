@@ -13,10 +13,11 @@ event:
     Kom själv eller dra ihop ett gäng. Ålderblandning kan vara en fördel. Ta med en varm filt, något att dricka och ditt bästa humör och dela ett par roliga timmar ihop!
     
   link: null
+  cancelled: true
   owner:
     name: ''
     email: ''
   meta:
     created_at: 2026-07-26 19:19
-    updated_at: 2026-07-26 19:24
+    updated_at: 2026-07-28 09:50
     location_set_at: 2026-07-26 19:19
