@@ -1,7 +1,7 @@
 event:
   id: pappa-pub-restaurang-nedergarden-2026-07-30-2000
-  title: Pappa-pub restaurang Nedergården
-  date: '2026-07-30'
+  title: Pappa-pub restaurang Nedergården FLYTTAD TILL FREDAG
+  date: '2026-07-31'
   start: '20:00'
   end: '23:00'
   location: Annat
@@ -10,10 +10,14 @@ event:
     Pappa-pub! På junilägret hade vi en pappa-pub på restaurang Nedergården, väldigt trevligt! Jag bokar in denna vecka också. Går att äta om man vill.
     
   link: null
+  moved:
+    from_date: '2026-07-30'
+    from_start: '20:00'
+    from_end: '23:00'
   owner:
     name: ''
     email: ''
   meta:
     created_at: 2026-07-27 08:42
-    updated_at: 2026-07-27 08:59
+    updated_at: 2026-07-28 08:43
     location_set_at: 2026-07-27 08:42
