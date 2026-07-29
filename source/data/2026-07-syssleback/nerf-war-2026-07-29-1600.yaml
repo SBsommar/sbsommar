@@ -1,0 +1,19 @@
+event:
+  id: nerf-war-2026-07-29-1600
+  title: Nerf War
+  date: '2026-07-29'
+  start: '16:00'
+  end: '17:00'
+  location: Nerf-arena
+  responsible: Francisco Penayo
+  description: |
+    Nerf War!!
+    Vi samlas vid servicehuset för att gå igenom regler.
+  link: null
+  owner:
+    name: ''
+    email: ''
+  meta:
+    created_at: 2026-07-29 13:10
+    updated_at: 2026-07-29 13:10
+    location_set_at: 2026-07-29 13:10
