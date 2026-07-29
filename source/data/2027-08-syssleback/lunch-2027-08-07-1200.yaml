@@ -1,9 +1,9 @@
 event:
-  id: middag-2027-07-27-1700
-  title: Middag
-  date: '2027-07-27'
-  start: '17:00'
-  end: '18:00'
+  id: lunch-2027-08-07-1200
+  title: Lunch
+  date: '2027-08-07'
+  start: '12:00'
+  end: '13:00'
   location: Servicehus
   responsible: Alla
   description: |

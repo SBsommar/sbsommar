@@ -1,7 +1,7 @@
 event:
-  id: lunch-2027-07-30-1200
+  id: lunch-2027-08-04-1200
   title: Lunch
-  date: '2027-07-30'
+  date: '2027-08-04'
   start: '12:00'
   end: '13:00'
   location: Servicehus
