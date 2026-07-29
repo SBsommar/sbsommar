@@ -1,12 +1,15 @@
 'use strict';
 
 // Tests for the moved-activity marking (02-§119): the edit API records the slot
-// a rescheduled activity left, the renderers show the previous time struck
-// through next to the highlighted new time, and a minimal ghost marker is left
-// at the previous slot.
+// a rescheduled activity left, the renderers show the new (correct) time in the
+// ordinary schedule style with the previous time struck through as a small amber
+// marker directly below it, and a minimal ghost marker is left at the previous
+// slot.
 
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
+const fs = require('fs');
+const path = require('path');
 const yaml = require('js-yaml');
 
 const { patchEventObject, resolveMoved, normaliseMoved, resolveRelocated } = require('../source/api/edit-event');
@@ -214,7 +217,7 @@ describe('buildGhosts – ghost suppression for nearby same-day moves (02-§119.
 describe('renderEventRow / renderSchedulePage – moved markup (02-§119.6, §119.8)', () => {
   const moved = baseEvent({ date: '2026-06-24', start: '16:00', end: '17:00', moved: { from_date: '2026-06-22', from_start: '08:00', from_end: '09:00' } });
 
-  it('MOVED-23: a moved row carries is-moved with struck old + amber new time', () => {
+  it('MOVED-23: a moved row carries is-moved with a plain new time and a struck old time', () => {
     const html = renderEventRow(moved);
     assert.ok(html.includes('is-moved'));
     assert.ok(html.includes('<span class="ev-time-old">22 juni 08:00–09:00</span>'));
@@ -257,7 +260,7 @@ describe('renderEventRow / renderSchedulePage – moved markup (02-§119.6, §11
 });
 
 describe('renderEventPage – moved time, no ghost (02-§119.6, §119.10)', () => {
-  it('MOVED-27: the event page shows struck old time and highlighted new time', () => {
+  it('MOVED-27: the event page shows a plain new time and a struck old time', () => {
     const moved = baseEvent({ date: '2026-06-24', start: '16:00', end: '17:00', moved: { from_date: '2026-06-22', from_start: '08:00', from_end: '09:00' } });
     const html = renderEventPage(moved, { name: 'Test' }, '');
     assert.ok(html.includes('ev-time-old'));
@@ -361,5 +364,40 @@ describe('moved.js – location markup (02-§119.16)', () => {
     const ev = baseEvent({ location: 'Nya salen', relocated: { from_location: 'Matsalen' } });
     const html = renderEventPage(ev, { name: 'Test' }, '');
     assert.ok(html.includes('<span class="ev-loc-old">Matsalen</span> Nya salen'));
+  });
+});
+
+// ── Desired-state styling (02-§119.6, §119.8; 07-§6.142, §6.144) ──────────────
+// The markup is shared by every moved row, so the "new time is plain, old time
+// is the small amber marker, ghost is smaller than a real row" decision lives
+// entirely in CSS. These assertions lock that desired state in against
+// regression. (Colour/size rendering itself remains a manual/browser checkpoint;
+// here we only verify the rules exist as specified.)
+describe('moved-activity styling (02-§119.6, §119.8)', () => {
+  const CSS = fs.readFileSync(path.join(__dirname, '..', 'source', 'assets', 'cs', 'style.css'), 'utf8');
+
+  // Extract the declaration block for an exact selector, e.g. `.ev-time-old`.
+  function ruleBlock(selector) {
+    const re = new RegExp(selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\s*\\{([^}]*)\\}');
+    const m = CSS.match(re);
+    return m ? m[1] : null;
+  }
+
+  it('MOVED-49: the amber marker sits on the OLD time (.ev-time-old has an amber background)', () => {
+    const block = ruleBlock('.ev-time-old');
+    assert.ok(block, '.ev-time-old rule exists');
+    assert.match(block, /background:\s*color-mix\([^;]*--color-amber/);
+  });
+
+  it('MOVED-50: the new time has no highlight of its own (no .ev-time-new rule)', () => {
+    // The new (correct) time inherits the ordinary .ev-time style, so there is no
+    // dedicated .ev-time-new selector giving it a badge — in either colour mode.
+    assert.ok(!/\.ev-time-new\s*\{/.test(CSS), 'no .ev-time-new rule');
+  });
+
+  it('MOVED-51: the ghost marker is smaller than a real row (.event-row.is-ghost uses --font-size-nav)', () => {
+    const block = ruleBlock('.event-row.is-ghost');
+    assert.ok(block, '.event-row.is-ghost rule exists');
+    assert.match(block, /font-size:\s*var\(--font-size-nav\)/);
   });
 });
