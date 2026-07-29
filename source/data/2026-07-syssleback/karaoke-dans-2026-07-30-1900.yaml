@@ -10,7 +10,6 @@ event:
     För dig som vill uppträda för publik. Anmäl er via länken och berätta vilken låt och om det är karaoke, dans eller valfritt uppträdande. Dock tidsgräns på 5 minuter.
     
   link: 'https://forms.gle/aYFhHArHmtMorWEGA'
-  cancelled: true
   moved:
     from_date: '2026-07-30'
     from_start: '19:00'
@@ -20,5 +19,5 @@ event:
     email: ''
   meta:
     created_at: 2026-07-27 15:08
-    updated_at: 2026-07-28 14:04
+    updated_at: 2026-07-29 10:12
     location_set_at: 2026-07-27 15:08
