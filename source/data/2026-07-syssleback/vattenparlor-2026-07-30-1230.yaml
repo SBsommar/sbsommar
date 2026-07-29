@@ -1,0 +1,18 @@
+event:
+  id: vattenparlor-2026-07-30-1230
+  title: Vattenpärlor
+  date: '2026-07-30'
+  start: '12:30'
+  end: '14:00'
+  location: GA Stilla hyllan
+  responsible: Eila och Jonas Colling
+  description: |
+    Eila bjuder in till att göra vattenpärlor (aqua beeds/water beeds). Vi har plattor och pärlor så att det räcker till fem personer samtidigt. Välkommen!
+  link: null
+  owner:
+    name: ''
+    email: ''
+  meta:
+    created_at: 2026-07-29 16:29
+    updated_at: 2026-07-29 16:29
+    location_set_at: 2026-07-29 16:29
