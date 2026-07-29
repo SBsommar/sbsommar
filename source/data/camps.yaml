@@ -14,11 +14,11 @@ camps:
     archived: false
   - id: 2027-06-syssleback
     name: SB sommar 2027 juni
-    start_date: '2027-06-20'
-    end_date: '2027-06-27'
-    opens_for_editing: '2027-06-13'
+    start_date: '2027-06-27'
+    end_date: '2027-07-04'
+    opens_for_editing: '2027-06-20'
     registration_opens: '2027-04-15'
-    registration_closes: '2027-06-13'
+    registration_closes: '2027-06-20'
     location: Sysslebäck
     link: https://www.facebook.com/groups/syssleback2027
     information: |
