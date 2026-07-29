@@ -1894,9 +1894,9 @@ changes); `05-DATA_CONTRACT.md §2`, §2.1, §3 (`moved` + `relocated` fields);
 | `02-§119.3` | covered | MOVED-01/-02/-03: an edit that changes start/end/date records the previous slot. PHP `testPatchEventObjectRecordsMovedOnStartChange`/`...OnDateChange` parity |
 | `02-§119.4` | covered | MOVED-04/-05: a text-only edit leaves an existing marker untouched and adds none. PHP `testPatchEventObjectPreservesMovedOnTextOnlyEdit` |
 | `02-§119.5` | covered | MOVED-06: returning to the recorded original slot clears the marker. PHP `testPatchEventObjectClearsMovedWhenReturnedToOriginalSlot` |
-| `02-§119.6` | covered | MOVED-23/-27: `renderEventRow()` and `renderEventPage()` emit `is-moved` with `.ev-time-new` (new time, ordinary style) + `.ev-time-old` (struck, small amber marker). The today/display view via `events-today.js` `buildRowHtml()` is a manual/browser checkpoint |
+| `02-§119.6` | covered | MOVED-23/-27: `renderEventRow()` and `renderEventPage()` emit `is-moved` with `.ev-time-new` (new time, ordinary style) + `.ev-time-old` (struck, small amber marker). MOVED-49/-50: the amber highlight sits on `.ev-time-old` and there is no dedicated `.ev-time-new` rule. The today/display view via `events-today.js` `buildRowHtml()` is a manual/browser checkpoint |
 | `02-§119.7` | covered | MOVED-18/-19/-20/-21: `movedFromText()`/`movedToText()` include the date only for a cross-day move |
-| `02-§119.8` | covered | MOVED-22/-24/-25: `buildGhosts()` emits one ghost per moved activity at its old slot; `renderSchedulePage()` places it on the old day. The client ghost on idag/live is a manual/browser checkpoint |
+| `02-§119.8` | covered | MOVED-22/-24/-25: `buildGhosts()` emits one ghost per moved activity at its old slot; `renderSchedulePage()` places it on the old day. MOVED-51: `.event-row.is-ghost` uses `--font-size-nav`, smaller than a real row. The client ghost on idag/live is a manual/browser checkpoint |
 | `02-§119.9` | covered | MOVED-24: the ghost shows only title + `Flyttad till …` (`.ev-moved-to`) and no detail/iCal |
 | `02-§119.10` | covered | MOVED-27: `renderEventPage()` shows the marked time but emits no ghost (`ev-moved-to` absent) |
 | `02-§119.11` | covered | MOVED-07/-14: a second move records the immediately-prior slot; the block is dropped when the activity returns home. Camp-end clearing follows from the camp lifecycle |
