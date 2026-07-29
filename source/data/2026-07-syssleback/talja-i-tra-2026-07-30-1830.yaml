@@ -1,6 +1,6 @@
 event:
   id: talja-i-tra-2026-07-30-1830
-  title: TÄLJA i trä
+  title: TÄLJA  trä
   date: '2026-07-30'
   start: '18:30'
   end: '20:00'
@@ -18,5 +18,5 @@ event:
     email: ''
   meta:
     created_at: 2026-07-29 13:44
-    updated_at: 2026-07-29 13:47
+    updated_at: 2026-07-29 13:48
     location_set_at: 2026-07-29 13:44
