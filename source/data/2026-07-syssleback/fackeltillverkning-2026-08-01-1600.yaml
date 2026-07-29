@@ -1,0 +1,21 @@
+event:
+  id: fackeltillverkning-2026-08-01-1600
+  title: FACKELTILLVERKNING
+  date: '2026-08-01'
+  start: '16:00'
+  end: '17:00'
+  location: Grillplats
+  responsible: 'Petter Zonabend  König & Tova'
+  description: |
+    Kom och gör facklor ! 
+    Vi tänder dem sen lördag kväll vid Klarälvens kant som en stämningsfull avslutning på lägret. 
+    Eld och flytande stearin - vuxennärvaro behövs. 
+    Du som tagit med stearin eller lakan kan lämna det på altanen Stuga 1.
+  link: null
+  owner:
+    name: ''
+    email: ''
+  meta:
+    created_at: 2026-07-29 13:58
+    updated_at: 2026-07-29 13:58
+    location_set_at: 2026-07-29 13:58
