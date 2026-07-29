@@ -7,7 +7,7 @@ event:
   location: GA Scen
   responsible: Milo Friberg Svensson
   description: |
-    För dig som vill uppträda för publik. Anmäl er via länken och berätta vilken låt och om det är karaoke, dans eller valfritt uppträdande. Dock tidsgräns på 5 minuter.
+    För dig som vill uppträda för publik. Anmäl er via länken eller på plats och berätta vilken låt och om det är karaoke, dans eller valfritt uppträdande. Dock tidsgräns på 5 minuter.
     
   link: 'https://forms.gle/aYFhHArHmtMorWEGA'
   moved:
@@ -19,5 +19,5 @@ event:
     email: ''
   meta:
     created_at: 2026-07-27 15:08
-    updated_at: 2026-07-29 10:12
+    updated_at: 2026-07-29 10:13
     location_set_at: 2026-07-27 15:08
