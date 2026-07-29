@@ -561,9 +561,10 @@ pointer at the slot it used to occupy. This is feedback from a camp organiser
 ### 119.3 Marked time on the activity itself
 
 - In the weekly schedule, the today view, and the per-event page, a moved
-  activity keeps its place at its current (new) time. The new time is shown on
-  top, highlighted in amber (`--color-amber`), and the previous time is shown
-  struck through in smaller text directly below it. <!-- 02-§119.6 -->
+  activity keeps its place at its current (new) time. The new (correct) time uses
+  the ordinary time style shared by every other time in the schedule; the
+  previous time is shown directly below it as a small struck-through marker
+  highlighted in amber (`--color-amber`). <!-- 02-§119.6 -->
 - When the activity has moved to a different day, the struck-through previous
   time includes the previous date; when it has only changed time within the same
   day, only the previous time is shown. <!-- 02-§119.7 -->
@@ -573,7 +574,9 @@ pointer at the slot it used to occupy. This is feedback from a camp organiser
 - In the weekly schedule and the today view, a moved activity also appears as a
   minimal marker at the slot it used to occupy (its `from_date` and
   `from_start`), sorted into that day at its previous start time. The marker is
-  shown in an amber tone so it reads as a "moved away" pointer. <!-- 02-§119.8 -->
+  smaller than a real activity row and shown in a soft, toned-down amber tone, so
+  it reads as a quiet "moved away" pointer rather than competing with real
+  activities. <!-- 02-§119.8 -->
 - The marker shows only the activity's title and the label "Flyttad till" (moved
   to) followed by the new day and time, or only the new time when the move is
   within the same day. The marker shows no description, location, responsible,
