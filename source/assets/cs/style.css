@@ -870,31 +870,44 @@ body.display-mode .event-row.is-clash:not(.is-past) {
 }
 
 /* ── Moved activities (02-§119) ───────────────────────────────────────────────
-   A rescheduled activity keeps its place at the new time: the new time sits on
-   top (where the time normally is) and the previous time is struck through in
-   smaller text directly below it. A minimal ghost marker (.is-ghost) is left at
-   the slot it used to occupy, in a soft amber tone, showing only the title and a
-   "Flyttad till …" pointer to where it went. A relocated activity shows its new
+   A rescheduled activity keeps its place at the new time: the new (correct) time
+   sits on top styled exactly like every other time in the schedule, and the
+   previous time is struck through directly below it as a small amber marker. A
+   minimal ghost marker (.is-ghost) is left at the slot it used to occupy — a
+   small, toned-down amber pointer showing only the title and a "Flyttad till …"
+   note, kept lighter than a real activity. A relocated activity shows its new
    location as usual with the previous location struck through in small text
    (.ev-loc-old) — no ghost. */
 .ev-time-old,
 .ev-loc-old {
   text-decoration: line-through;
-  font-size: var(--font-size-small);
   font-weight: 400;
-  opacity: 0.7;
 }
 
 .ev-loc-old {
+  font-size: var(--font-size-small);
+  opacity: 0.7;
   margin-right: 0.25em;
 }
 
-/* Stack the moved time: the new time on top, the struck-through previous time
-   on its own line directly below. The cell's first baseline (the new time)
-   aligns with the activity title. */
+/* The previous time is a small struck-through amber marker. The new (correct)
+   time carries no special styling, so it reads identically to every other time
+   in the schedule — the amber highlight now sits on the OLD time instead. */
+.ev-time-old {
+  font-size: var(--font-size-nav);
+  background: color-mix(in srgb, var(--color-amber) 30%, transparent);
+  border-radius: var(--radius-sm);
+  padding: 0 0.25em;
+}
+
+/* Stack the moved time: the new time on top, the small struck-through previous
+   time on its own line directly below. align-items keeps the amber marker
+   hugging its text instead of stretching across the cell. The cell's first
+   baseline (the new time) aligns with the activity title. */
 .event-row.is-moved .ev-time {
   display: inline-flex;
   flex-direction: column;
+  align-items: flex-start;
   line-height: 1.2;
 }
 
@@ -902,19 +915,15 @@ body.display-mode .event-row.is-clash:not(.is-past) {
   display: block;
 }
 
-.ev-time-new {
-  background: rgba(232, 162, 61, 0.30); /* var(--color-amber) tint */
-  border-radius: 3px;
-  padding: 0 0.25em;
-  font-weight: 700;
-}
-
-/* The previous-slot ghost marker carries a soft amber tone and an amber accent
-   bar, marking it clearly as a "moved away" pointer. */
+/* The previous-slot ghost marker is deliberately quiet: smaller than a real
+   activity, in a soft amber tone with a thin accent bar, so it reads as a
+   footnote pointing to where the activity went — not as an activity itself. */
 .event-row.is-ghost {
   font-style: italic;
-  background: rgba(232, 162, 61, 0.15); /* var(--color-amber) tint */
-  box-shadow: inset 4px 0 0 var(--color-amber);
+  font-size: var(--font-size-nav);
+  opacity: 0.85;
+  background: color-mix(in srgb, var(--color-amber) 10%, transparent);
+  box-shadow: inset 3px 0 0 color-mix(in srgb, var(--color-amber) 55%, transparent);
 }
 
 /* The ghost's first line (its old time and title) is struck through — that slot
@@ -927,7 +936,7 @@ body.display-mode .event-row.is-clash:not(.is-past) {
 
 .ev-moved-to {
   color: var(--color-amber-dark);
-  font-size: var(--font-size-small);
+  font-size: var(--font-size-nav);
   font-style: normal;
   font-weight: 600;
   margin-left: 0.5em;
@@ -947,15 +956,15 @@ body:not(.display-mode) .event-row.is-ghost.is-past .ev-moved-to {
   opacity: 0.5;
 }
 
-/* Display mode (live.html): amber reads brighter against the dark board. */
-body.display-mode .ev-time-new {
-  background: rgba(232, 162, 61, 0.28);
-  color: var(--color-white);
+/* Display mode (live.html): amber reads brighter against the dark board. The
+   marker sits on the OLD time (matching light mode); the new time stays plain. */
+body.display-mode .ev-time-old {
+  background: color-mix(in srgb, var(--color-amber) 28%, transparent);
 }
 
 body.display-mode .event-row.is-ghost {
-  background: rgba(232, 162, 61, 0.18);
-  box-shadow: inset 3px 0 0 var(--color-amber);
+  background: color-mix(in srgb, var(--color-amber) 14%, transparent);
+  box-shadow: inset 3px 0 0 color-mix(in srgb, var(--color-amber) 70%, transparent);
 }
 
 body.display-mode .ev-moved-to {
