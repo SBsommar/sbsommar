@@ -1,0 +1,18 @@
+event:
+  id: improvisationsteater-ovningar-igen-2026-07-31-1400
+  title: 'Improvisationsteater - övningar igen!'
+  date: '2026-07-31'
+  start: '14:00'
+  end: '15:00'
+  location: GA Stilla hyllan
+  responsible: Åsa Steinsvik
+  description: |
+    Små roliga lekar kopplat till teater som man kommer på vartefter. Inga förkunskaper krävs
+  link: null
+  owner:
+    name: ''
+    email: ''
+  meta:
+    created_at: 2026-07-30 23:17
+    updated_at: 2026-07-30 23:17
+    location_set_at: 2026-07-30 23:17
