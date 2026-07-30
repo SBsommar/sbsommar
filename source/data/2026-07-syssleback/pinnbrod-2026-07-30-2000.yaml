@@ -1,0 +1,18 @@
+event:
+  id: pinnbrod-2026-07-30-2000
+  title: 'Pinnbröd!'
+  date: '2026-07-30'
+  start: '20:00'
+  end: '21:00'
+  location: AndreasTältet
+  responsible: William VM
+  description: |
+    Vi gör pinnbröd tillsammans. Vi har degen och elden, du kommer med pinnen. Vi bakar och äter tills degen är slut eller vi får ont i magen!
+  link: null
+  owner:
+    name: ''
+    email: ''
+  meta:
+    created_at: 2026-07-30 15:47
+    updated_at: 2026-07-30 15:47
+    location_set_at: 2026-07-30 15:47
