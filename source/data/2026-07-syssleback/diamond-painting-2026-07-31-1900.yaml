@@ -1,0 +1,18 @@
+event:
+  id: diamond-painting-2026-07-31-1900
+  title: Diamond painting
+  date: '2026-07-31'
+  start: '19:00'
+  end: '21:00'
+  location: GA Stilla hyllan
+  responsible: Martina Sjöström
+  description: |
+    Barn under 10år ta med en vuxen. Behöver hjälp för att köra aktiviteten
+  link: null
+  owner:
+    name: ''
+    email: ''
+  meta:
+    created_at: 2026-07-31 08:44
+    updated_at: 2026-07-31 08:44
+    location_set_at: 2026-07-31 08:44
