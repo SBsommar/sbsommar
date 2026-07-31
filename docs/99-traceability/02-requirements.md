@@ -964,10 +964,11 @@ its requirement rows together with the test-legend rows that evidence them.
 | CACHE-09 | `tests/cache-headers.test.js` | `02-§69.3 — Hash is deterministic` |
 | `02-§69.4` | implemented | No render functions changed — post-processing in `build.js` `findHtmlFiles()` |
 | `02-§69.5` | covered | All existing tests pass — STR-CSS, EVT-13 still match |
-| CSSPLIT-01..06 | `tests/css-split.test.js` | `02-§69.6/69.7 — style.css split into live + site bundles; bundles = source, no loss` |
-| CSSPLIT-07 | `tests/css-split.test.js` | `02-§69.8 — live.html links only the live bundle (style.css)` |
-| CSSPLIT-08 | `tests/css-split.test.js` | `02-§69.9 — chrome pages link both bundles (style.css + site.css)` |
-| `02-§69.10` | covered | Both bundles cache-busted — CACHE-08 (`build.js` loops `['style.css','site.css']`); `source/build/split-css.js`, `source/build/build.js` |
+| `02-§69.6` | covered | Two delivered bundles: live (`style.css`, base + schedule/display) + site (`site.css`, rest) — CSSPLIT-01..05; `source/build/split-css.js`, `source/build/build.js` |
+| `02-§69.7` | covered | One source stylesheet; the two bundles together equal it (no loss) — CSSPLIT-01, CSSPLIT-06; `source/build/split-css.js` `splitCss()` |
+| `02-§69.8` | covered | `live.html` links only the live bundle — CSSPLIT-07; `source/build/render-today.js` |
+| `02-§69.9` | covered | Chrome pages link both bundles (live first) — CSSPLIT-08; 11 page renderers add `<link href="site.css">` |
+| `02-§69.10` | covered | Both bundles content-hash cache-busted — CACHE-08; `source/build/build.js` loops `['style.css','site.css']` |
 | | | **§70 — Main Landmark Element** |
 | MAIN-01-* | `tests/main-landmark.test.js` | `02-§70.1 — Every page has exactly one <main>` |
 | `02-§70.2` | covered | `<main>` wraps content between nav and footer (MAIN-01/02/03 verify placement) |
