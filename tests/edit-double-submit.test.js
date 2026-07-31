@@ -32,6 +32,11 @@ const EDIT_SRC = fs.readFileSync(
   'utf8',
 );
 
+const CSS_SRC = fs.readFileSync(
+  path.join(__dirname, '..', 'source', 'assets', 'cs', 'style.css'),
+  'utf8',
+);
+
 // Extract a named function's body (from its opening brace to the matching
 // close), so a guard/disable assertion is scoped to the right function rather
 // than matching anywhere in the file.
@@ -120,5 +125,18 @@ describe('02-§122.5 — delete flow parity (EDS-08)', () => {
     const body = funcBody(EDIT_SRC, 'setDeleteModalError');
     assert.ok(body, 'setDeleteModalError() found');
     assert.match(body, /\bunlock\(\);/, 'delete retry calls unlock()');
+  });
+});
+
+describe('02-§122.1 — disabled header pills are visually dimmed (EDS-10)', () => {
+  it('EDS-10: the cancel toggle and delete pill have a :disabled dim rule', () => {
+    // The header pills sit outside the <fieldset>, so they need their own
+    // disabled styling to match the dimmed fieldset (02-§19.2) rather than
+    // reading as clickable while locked.
+    assert.match(
+      CSS_SRC,
+      /\.btn-cancel-activity:disabled\s*,\s*\.btn-delete-pill:disabled\s*\{[^}]*opacity:\s*0\.5/,
+      ':disabled rule dims both header pills',
+    );
   });
 });

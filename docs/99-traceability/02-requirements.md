@@ -1966,7 +1966,7 @@ protection).
 
 | ID | Status | Notes |
 | --- | --- | --- |
-| `02-§122.1` | covered | EDS-01/-02: `redigera.js` `lock()` disables `submitBtn`, `cancelBtn`, and `deleteBtn` in addition to `fieldset`; the header toggle/delete buttons sit outside the `<fieldset>`. Visual disabled appearance is a manual/browser checkpoint |
+| `02-§122.1` | covered | EDS-01: `redigera.js` `lock()` disables `submitBtn`, `cancelBtn`, and `deleteBtn` in addition to `fieldset`; the header toggle/delete buttons sit outside the `<fieldset>`. EDS-10: `.btn-cancel-activity:disabled`/`.btn-delete-pill:disabled` dim to `opacity: 0.5` (matching the disabled fieldset, §19.2). Live appearance is a manual/browser checkpoint |
 | `02-§122.2` | covered | EDS-03: `unlock()` re-enables all four controls (fieldset, submit, cancel toggle, delete) |
 | `02-§122.3` | covered | EDS-04/-05/-06: a module-level `submitting` flag guards re-entry — the submit handler, `submitCancelToggle()`, and `performDelete()` return early when a write is already in progress |
 | `02-§122.4` | covered | EDS-07: `submitting` is set in `lock()` and cleared in `unlock()`; the error "Försök igen" paths call `unlock()` so a retry is possible, while the success modal is terminal (controls stay disabled). Manual/browser checkpoint |
