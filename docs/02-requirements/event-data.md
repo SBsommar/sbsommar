@@ -947,8 +947,11 @@ pull request.
 - When the patched event is identical to the current state on `main` apart from
   `meta.updated_at`, the edit is a no-op: no branch and no pull request are
   created, and the API returns success. <!-- 02-§122.2 -->
-- The no-op check runs synchronously before the success response is sent, in
-  both the PHP runtime and the Node runtime. <!-- 02-§122.3 -->
+- The no-op check is part of the edit operation itself and runs before any
+  branch or pull request is created, so no redundant pull request is ever
+  opened. This holds in both runtimes regardless of when the HTTP response is
+  sent (the PHP edit is synchronous with the response; the Node edit runs in a
+  background task, as the edit write already does). <!-- 02-§122.3 -->
 
 ### 122.3 At most one open edit pull request per activity (site requirements)
 

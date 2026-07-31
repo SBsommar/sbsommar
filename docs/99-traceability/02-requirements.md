@@ -1967,7 +1967,7 @@ Doc ref: `02-requirements/event-data.md §122`;
 | --- | --- | --- |
 | `02-§122.1` | covered | DEDUPE-01/-02/-03 + PHP `testFragmentEqualsIgnoringUpdatedAt*`: `fragmentEqualsIgnoringUpdatedAt()` (pure, both runtimes) is true only when fragments differ solely in the `updated_at:` line |
 | `02-§122.2` | covered | DEDUPE-06: `updateEventInActiveCamp` runs the no-op comparison before `createBranch`/`createPullRequest` and returns early; manual DEDUPE-M01 (re-apply same edit → success, no second PR) |
-| `02-§122.3` | implemented | The no-op check is an awaited step inside `updateEventInActiveCamp` before the response in both runtimes (PHP synchronous; Node awaited before `res.json`, mirroring §53.2/§111.3). Review/manual checkpoint |
+| `02-§122.3` | implemented | The no-op check runs inside `updateEventInActiveCamp` before any branch/PR is created, so no redundant PR is opened regardless of response timing. PHP (`index.php`) is synchronous with the response; Node (`app.js`) runs the edit in a fire-and-forget background task (`res.json` then `updateEventInActiveCamp(...).catch`), so the check runs there rather than before the response. Review/manual checkpoint |
 | `02-§122.4` | covered | DEDUPE-04 (deterministic `event-edit/<id>` branch, no `Date.now()`/`time()` suffix) + DEDUPE-05/-10/-11 (`findOpenPrForBranch` before `createPullRequest`) → at most one open edit PR per activity |
 | `02-§122.5` | covered | DEDUPE-07: the open-PR path reads the fragment from the PR branch (`getFileMaybe(fragPath, branchName)`) and commits on that branch, accumulating onto earlier unmerged edits instead of overwriting |
 | `02-§122.6` | covered | DEDUPE-06: with no open PR the edit is built on `main` and a PR opened; the no-op guard precedes creation |

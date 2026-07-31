@@ -254,9 +254,15 @@ one edit branch per activity. Before creating anything, the flow calls
   handler (never pre-emptively) avoids clobbering a branch a concurrent request is
   mid-way through creating (02-§122.7).
 
-Both mechanisms run synchronously before the response in both runtimes (02-§122.8),
-so the eventual-consistency window can no longer turn an impatient re-save into a
-second, stuck pull request (observed as #990/#991 and #1010/#1011). A residual
+Both mechanisms live inside `updateEventInActiveCamp` and run before any branch or
+pull request is created, so the eventual-consistency window can no longer turn an
+impatient re-save into a second, stuck pull request (observed as #990/#991 and
+#1010/#1011). This holds in both runtimes (02-§122.8) regardless of response
+timing: the PHP edit is synchronous with the response, while the Node edit runs in
+the same fire-and-forget background task as the existing edit write (`app.js`
+sends `res.json` then calls `updateEventInActiveCamp(...).catch(...)`), so — unlike
+the add flow's 409 duplicate pre-check (§111.3) — an edit always answers success
+and the dedup happens in the background. A residual
 sub-second window remains only for two *different* edits submitted within the few
 milliseconds between one request's `createBranch` and its `createPullRequest`;
 a human's separate edits are always seconds apart, by which point the first PR is
