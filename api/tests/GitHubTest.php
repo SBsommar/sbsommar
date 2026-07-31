@@ -467,4 +467,27 @@ final class GitHubTest extends TestCase
     {
         $this->assertStringNotContainsString('location_set_at:', GitHub::buildFragmentYaml(self::baseEvent()));
     }
+
+    // ── 02-§122 — no-op comparison parity (mirrors DEDUPE-01..03) ─────────────
+
+    public function testFragmentEqualsIgnoringUpdatedAtTrueWhenOnlyTimestampDiffers(): void
+    {
+        $a = "event:\n  title: Foo\n  cancelled: false\n  meta:\n    updated_at: 2026-08-01 09:00\n";
+        $b = "event:\n  title: Foo\n  cancelled: false\n  meta:\n    updated_at: 2026-08-01 12:34\n";
+        $this->assertTrue(GitHub::fragmentEqualsIgnoringUpdatedAt($a, $b));
+    }
+
+    public function testFragmentEqualsIgnoringUpdatedAtFalseWhenRealFieldDiffers(): void
+    {
+        $a = "event:\n  title: Foo\n  meta:\n    updated_at: 2026-08-01 09:00\n";
+        $b = "event:\n  title: Bar\n  meta:\n    updated_at: 2026-08-01 12:00\n";
+        $this->assertFalse(GitHub::fragmentEqualsIgnoringUpdatedAt($a, $b));
+    }
+
+    public function testFragmentEqualsIgnoringUpdatedAtFalseWhenCancelledFlips(): void
+    {
+        $a = "event:\n  title: Foo\n  cancelled: false\n  meta:\n    updated_at: 2026-08-01 09:00\n";
+        $b = "event:\n  title: Foo\n  cancelled: true\n  meta:\n    updated_at: 2026-08-01 12:00\n";
+        $this->assertFalse(GitHub::fragmentEqualsIgnoringUpdatedAt($a, $b));
+    }
 }
