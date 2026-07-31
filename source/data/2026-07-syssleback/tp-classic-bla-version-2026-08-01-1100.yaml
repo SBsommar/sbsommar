@@ -1,0 +1,18 @@
+event:
+  id: tp-classic-bla-version-2026-08-01-1100
+  title: TP Classic blå version
+  date: '2026-08-01'
+  start: '11:00'
+  end: '12:00'
+  location: Kaffetält
+  responsible: Johanna Rexgård
+  description: |
+    Blå Tp. Lag om 2-3 personer. Tidsbegränsning. Bara roligt och tårtinsamling😀.
+  link: null
+  owner:
+    name: ''
+    email: ''
+  meta:
+    created_at: 2026-07-31 22:30
+    updated_at: 2026-07-31 22:30
+    location_set_at: 2026-07-31 22:30
