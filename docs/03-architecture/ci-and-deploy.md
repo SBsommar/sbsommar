@@ -217,6 +217,44 @@ identical content. A post-merge cleanup — a job in/alongside
 non-empty diff; it is left open and logged for manual attention rather than closed
 silently (02-§111.9).
 
+#### Edit duplicate hardening (02-§122)
+
+The §111 defences are add-only: the empty-diff cleanup matches `event/*` branches
+(`close-redundant-event-prs.js` ignores `event-edit/*` and `event-delete/*`), and
+because every edit bumps `meta.updated_at`, an edit pull request's net diff
+against `main` is never empty — so a redundant edit could never be auto-closed.
+Edits therefore dedupe at creation time in `updateEventInActiveCamp`
+(`source/api/github.js` and `GitHub::updateEventInActiveCamp()` in PHP), with two
+mechanisms.
+
+**No-op guard (02-§122.1–122.3).** The flow builds the patched fragment and
+compares it to the base it is applied on top of, ignoring the `updated_at:` line
+(`fragmentEqualsIgnoringUpdatedAt`, a pure exported/`public static` helper mirrored
+in both runtimes). When nothing but the timestamp would change, the edit is a
+no-op: it returns success and creates no branch and no pull request. This is the
+common case behind the observed duplicates — a user re-saving because the change
+has not yet appeared on the live site (deploy + PWA cache lag).
+
+**One open pull request per activity (02-§122.4–122.7).** The edit branch is
+deterministic — `event-edit/<id>`, with no timestamp suffix — so there is at most
+one edit branch per activity. Before creating anything, the flow calls
+`findOpenPrForBranch(event-edit/<id>)`:
+
+- **An edit PR is already open** → the new change is applied on top of *that
+  branch's* current fragment (`getFileMaybe(fragPath, branchName)`), so an earlier
+  unmerged edit is preserved rather than overwritten, and the commit lands on the
+  existing branch — updating the open PR instead of opening a rival (02-§122.5).
+  A no-op relative to the branch content adds no commit.
+- **No edit PR is open** → the edit is built on top of `main`. If a branch of that
+  name lingers from an already-merged edit PR (auto-delete off), it is reset onto
+  `main` with `updateRef(..., force)` rather than treated as open; otherwise a
+  fresh branch is created (`getRefMaybe` distinguishes the two, 02-§122.7). Then
+  the PR is opened with auto-merge as before.
+
+Both mechanisms run synchronously before the response in both runtimes (02-§122.8),
+so the eventual-consistency window can no longer turn an impatient re-save into a
+second, stuck pull request (observed as #990/#991 and #1010/#1011).
+
 ### 11.7 Required repository settings
 
 - **"Allow auto-merge"** must be enabled in Settings > General > Pull Requests.
