@@ -603,6 +603,49 @@ before the backup step runs.
 
 ---
 
+## 122. Double-Submit Protection on the Edit Form
+
+Context: the edit form (`redigera.html`) exposes three controls that write to
+the event data: the "Spara ändringar" submit button inside the form's
+`<fieldset>`, and — in the header actions area **outside** the `<fieldset>` —
+the "Ställ in aktiviteten" / "Återställ aktiviteten" toggle and the
+"Radera aktivitet" button. Each write goes through the edit-event API, which
+opens and auto-merges a pull request. When a control can be activated a second
+time before the first request resolves, the API produces a second, identical
+pull request. Because the cancel/restore toggle only flips its remembered state
+on success, two quick activations both send the same `cancelled` value, so one
+activity ends up with two duplicate edit pull requests — one of which is left
+open and un-mergeable.
+
+### 122.1 In-flight lock covers every mutating control (site requirements)
+
+- While an edit-form write (save, cancel/restore toggle, or delete) is in
+  progress, the fieldset, the "Spara ändringar" submit button, the
+  "Ställ in aktiviteten" / "Återställ aktiviteten" toggle button, and the
+  "Radera aktivitet" button are all disabled. <!-- 02-§122.1 -->
+- The edit form's `lock()` disables all four controls and `unlock()` re-enables
+  all four; disabling the `<fieldset>` alone is not sufficient because the
+  toggle and delete buttons sit outside it. <!-- 02-§122.2 -->
+
+### 122.2 Re-entry guard (site requirements)
+
+- The edit form tracks whether a write is in progress. While one is in
+  progress, activating the submit handler, the cancel/restore toggle, or the
+  delete action starts no second request. <!-- 02-§122.3 -->
+- The in-progress flag is cleared when the form is unlocked after an error, so
+  the user can retry; a successful write leaves the controls disabled behind the
+  terminal success modal. <!-- 02-§122.4 -->
+
+### 122.3 Delete flow parity (site requirements)
+
+- Confirming a deletion locks the form for the duration of the request — the
+  same lock used by saving and by the cancel/restore toggle — and the delete
+  error-retry path unlocks it again. <!-- 02-§122.5 -->
+
+---
+
+---
+
 ## 54. Midnight-Crossing Events
 
 Events at a summer camp can legitimately cross midnight (e.g. an evening party

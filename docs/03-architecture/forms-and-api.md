@@ -419,6 +419,28 @@ form). Setting `fieldset.disabled = true` disables all child inputs and the
 submit button atomically. CSS communicates the locked state visually via
 `opacity` and `cursor: not-allowed` on `fieldset:disabled`.
 
+### Double-submit protection across all mutating controls (02-§122)
+
+The edit form has three controls that each trigger an edit-event API write:
+the "Spara ändringar" submit button (inside the `<fieldset>`), the
+"Ställ in aktiviteten" / "Återställ aktiviteten" toggle (`#btn-cancel`), and the
+"Radera aktivitet" button (`#btn-delete`). The toggle and delete buttons live in
+the header actions area, **outside** the `<fieldset>`, so `fieldset.disabled`
+does not reach them — leaving them clickable while a request is in flight. A
+second activation before the first request resolves makes the API open a second,
+identical pull request (the duplicate/stuck-PR failure mode).
+
+`lock()` therefore disables the fieldset, the submit button, `#btn-cancel`, and
+`#btn-delete`; `unlock()` re-enables all four. A module-level `submitting` flag
+guards re-entry: the submit handler, `submitCancelToggle()`, and
+`performDelete()` return early when a write is already in progress, so even a
+click that slips past the disabled state before the browser applies it starts no
+second request. `submitting` is set in `lock()` and cleared in `unlock()`, so a
+successful write leaves the controls disabled behind the terminal success modal,
+while an error's "Försök igen" path unlocks and clears the flag for a retry. The
+delete flow calls `lock()` when the deletion is confirmed and unlocks on its own
+error-retry path, giving it the same protection as saving and the toggle.
+
 ### Edit progress modal
 
 The modal uses the same `#submit-modal` HTML skeleton and CSS as the add form —

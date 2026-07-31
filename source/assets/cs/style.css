@@ -1431,6 +1431,17 @@ h1.is-cancelled {
   outline-offset: 2px;
 }
 
+/* While an edit-form write is in flight the whole form is locked (02-§122).
+   These pills sit outside the <fieldset>, so JS disables them directly; give
+   them the same dimmed, inert look the disabled fieldset gets (02-§19.2), so a
+   locked button never reads as clickable. pointer-events:none also suppresses
+   the hover recolor while disabled. */
+.btn-cancel-activity:disabled,
+.btn-delete-pill:disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
 
 .delete-actions {
   display: flex;
