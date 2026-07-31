@@ -1957,3 +1957,17 @@ Doc ref: `02-requirements/design-and-content.md §121`;
 | `02-§121.12` | covered | HUBB-12: no inline `.hero-hub-banner[data-opens]` script; the banner is static markup with no new JS file |
 | `02-§121.13` | implemented | No dependency added to `package.json`; the icon is inline SVG and reuses the existing `EDQHUB_ICON` constant — review checkpoint |
 | `02-§121.14` | covered | HUBB-14, HUBB-15: the "Till EDQ Hub" call-to-action is a `<span class="hero-hub-banner-btn">` inside the single card anchor (no nested link/button); `html-validate` (`lint:html`) passes on the built page |
+
+### §122 — Double-Submit Protection on the Edit Form
+
+Doc ref: `02-requirements/add-edit-forms.md §122`;
+`03-architecture/forms-and-api.md §31` (edit form field locking, double-submit
+protection).
+
+| ID | Status | Notes |
+| --- | --- | --- |
+| `02-§122.1` | gap | EDS-01/-02: `redigera.js` `lock()` disables `submitBtn`, `cancelBtn`, and `deleteBtn` in addition to `fieldset`; the header toggle/delete buttons sit outside the `<fieldset>`. Visual disabled appearance is a manual/browser checkpoint |
+| `02-§122.2` | gap | EDS-03: `unlock()` re-enables all four controls (fieldset, submit, cancel toggle, delete) |
+| `02-§122.3` | gap | EDS-04/-05/-06: a module-level `submitting` flag guards re-entry — the submit handler, `submitCancelToggle()`, and `performDelete()` return early when a write is already in progress |
+| `02-§122.4` | gap | EDS-07: `submitting` is set in `lock()` and cleared in `unlock()`; the error "Försök igen" paths call `unlock()` so a retry is possible, while the success modal is terminal (controls stay disabled). Manual/browser checkpoint |
+| `02-§122.5` | gap | EDS-08: `performDelete()` calls `lock()` on confirm and the delete error-retry path calls `unlock()`, matching the save and cancel/restore toggle flows |
