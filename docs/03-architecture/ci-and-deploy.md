@@ -256,8 +256,8 @@ one edit branch per activity. Before creating anything, the flow calls
 
 Both mechanisms live inside `updateEventInActiveCamp` and run before any branch or
 pull request is created, so the eventual-consistency window can no longer turn an
-impatient re-save into a second, stuck pull request (observed as #990/#991 and
-#1010/#1011). This holds in both runtimes (02-§122.8) regardless of response
+impatient re-save into a second, stuck pull request (observed as #990/#991
+and #1010/#1011). This holds in both runtimes (02-§122.8) regardless of response
 timing: the PHP edit is synchronous with the response, while the Node edit runs in
 the same fire-and-forget background task as the existing edit write (`app.js`
 sends `res.json` then calls `updateEventInActiveCamp(...).catch(...)`), so — unlike
