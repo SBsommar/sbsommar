@@ -225,13 +225,18 @@ function githubRequest(method, path, body, token) {
 }
 
 // Fetch a file from the repo. Returns { content: string, sha: string }.
-async function getFile(filePath) {
+// `ref` defaults to the configured main branch; pass an edit branch name to read
+// that branch's version of the file (02-§122.5).
+async function getFile(filePath, ref) {
   const owner  = env('GITHUB_OWNER');
   const repo   = env('GITHUB_REPO');
-  const branch = env('GITHUB_BRANCH');
   const token  = env('GITHUB_TOKEN');
+  const useRef = ref || env('GITHUB_BRANCH');
 
-  const apiPath = `/repos/${owner}/${repo}/contents/${filePath}?ref=${branch}`;
+  // `useRef` is a controlled slug (main, or event-edit/<event-id>). Its slash is
+  // left raw: GitHub's `ref` query accepts branch names with `/` literally, and
+  // percent-encoding the slash (%2F) can 404.
+  const apiPath = `/repos/${owner}/${repo}/contents/${filePath}?ref=${useRef}`;
   const { data } = await githubRequest('GET', apiPath, null, token);
 
   const content = Buffer.from(data.content, 'base64').toString('utf8');
@@ -241,9 +246,9 @@ async function getFile(filePath) {
 // Like getFile, but returns null when the file does not exist (HTTP 404) instead
 // of throwing — used to decide whether an event lives in a fragment file
 // (02-§109.9).
-async function getFileMaybe(filePath) {
+async function getFileMaybe(filePath, ref) {
   try {
-    return await getFile(filePath);
+    return await getFile(filePath, ref);
   } catch (e) {
     if (e.status === 404) return null;
     throw e;
@@ -298,6 +303,40 @@ async function createBranch(name, sha) {
     ref: `refs/heads/${name}`,
     sha,
   }, token);
+}
+
+// Force a branch ref to point at a new commit SHA. Used to reset a stale edit
+// branch (left by an already-merged pull request) back onto main before
+// reusing its name (02-§122.7).
+async function updateRef(branch, sha) {
+  const owner = env('GITHUB_OWNER');
+  const repo  = env('GITHUB_REPO');
+  const token = env('GITHUB_TOKEN');
+  await githubRequest('PATCH', `/repos/${owner}/${repo}/git/refs/heads/${branch}`, { sha, force: true }, token);
+}
+
+// Return the open pull request whose head is `branch`, or null when none is open.
+// With one deterministic branch per event there is at most one (02-§122.4).
+async function findOpenPrForBranch(branch) {
+  const owner = env('GITHUB_OWNER');
+  const repo  = env('GITHUB_REPO');
+  const token = env('GITHUB_TOKEN');
+  // owner and branch are controlled slugs; `:` and `/` are valid raw in a query
+  // value and are what GitHub's `head` filter (user:ref) expects.
+  const head  = `${owner}:${branch}`;
+  const { data } = await githubRequest('GET', `/repos/${owner}/${repo}/pulls?head=${head}&state=open&per_page=1`, null, token);
+  if (Array.isArray(data) && data.length > 0) {
+    return { number: data[0].number, node_id: data[0].node_id };
+  }
+  return null;
+}
+
+// Compare two fragment YAML strings ignoring the `updated_at:` line. Pure (no
+// network) so it can be unit-tested. An edit that changes nothing but the
+// timestamp is a no-op and must not open a pull request (02-§122.1, §122.2).
+function fragmentEqualsIgnoringUpdatedAt(a, b) {
+  const strip = (s) => String(s).replace(/^[ \t]*updated_at:.*$/m, '').trim();
+  return strip(a) === strip(b);
 }
 
 // Open a pull request from head into the configured main branch.
@@ -486,20 +525,59 @@ async function updateEventInActiveCamp(eventId, updates) {
   const camp       = await resolveActiveCampFromGitHub();
   const now        = new Date().toISOString().replace('T', ' ').slice(0, 16);
   const commitMsg  = `Edit event in ${camp.name}: ${eventId}`;
-  const mainSha    = await getMainSha();
-  const branchName = `event-edit/${eventId}-${Date.now()}`;
+  // One deterministic branch per event, so a repeated or concurrent edit reuses
+  // the same open pull request instead of opening a rival one (02-§122.4).
+  const branchName = `event-edit/${eventId}`;
 
   const fragPath = fragmentPath(camp.file, eventId);
-  const frag     = await getFileMaybe(fragPath);
-  if (!frag) throw new Error(`Event not found: ${eventId}`);
+  const mainFrag = await getFileMaybe(fragPath);
+  if (!mainFrag) throw new Error(`Event not found: ${eventId}`);
+  const mainDoc = yaml.load(mainFrag.content) || {};
+  if (!mainDoc.event) throw new Error(`Event not found: ${eventId}`);
 
-  const doc = yaml.load(frag.content) || {};
-  if (!doc.event) throw new Error(`Event not found: ${eventId}`);
-  const patched = patchEventObject(doc.event, updates, now);
+  // Apply the edit on top of the open PR's own branch content, so an earlier
+  // unmerged edit is preserved, not overwritten (02-§122.5). A change that adds
+  // nothing to what the branch already carries makes no commit.
+  async function accumulateOnto(pr) {
+    const branchFrag = (await getFileMaybe(fragPath, branchName)) || mainFrag;
+    const baseDoc    = yaml.load(branchFrag.content) || {};
+    const patched    = patchEventObject(baseDoc.event || mainDoc.event, updates, now);
+    const content    = buildFragmentYaml(patched) + '\n';
+    assertFragmentYamlValid(content, eventId);
+    if (fragmentEqualsIgnoringUpdatedAt(branchFrag.content, content)) return;
+    await putFile(fragPath, content, branchFrag.sha, commitMsg, branchName);
+    // Re-nudge the merge queue; best-effort (02-§113.1, §113.4).
+    await enqueueBestEffort(pr.node_id);
+  }
+
+  // If an edit pull request for this event is already open, accumulate onto it
+  // rather than opening a rival (02-§122.4, §122.5).
+  const openPr = await findOpenPrForBranch(branchName);
+  if (openPr) { await accumulateOnto(openPr); return; }
+
+  // No open pull request: build the edit on top of main.
+  const patched = patchEventObject(mainDoc.event, updates, now);
   const content = buildFragmentYaml(patched) + '\n';
   assertFragmentYamlValid(content, eventId);
-  await createBranch(branchName, mainSha);
-  await putFile(fragPath, content, frag.sha, commitMsg, branchName);
+  // No-op edit (only updated_at would change) → create no branch or PR
+  // (02-§122.1, §122.2).
+  if (fragmentEqualsIgnoringUpdatedAt(mainFrag.content, content)) return;
+
+  const mainSha = await getMainSha();
+  // Create the deterministic branch. If it already exists, another edit raced us
+  // or a stale branch lingers from an already-merged PR (auto-delete off). Only
+  // then do we look closer — this avoids resetting a branch a concurrent request
+  // is mid-way through creating.
+  try {
+    await createBranch(branchName, mainSha);
+  } catch {
+    const racePr = await findOpenPrForBranch(branchName);
+    if (racePr) { await accumulateOnto(racePr); return; }
+    // No open PR → stale branch from an already-merged edit: reset onto main and
+    // reuse it (02-§122.7).
+    await updateRef(branchName, mainSha);
+  }
+  await putFile(fragPath, content, mainFrag.sha, commitMsg, branchName);
   const pr = await createPullRequest(commitMsg, branchName, 'Automatically created by the SB Sommar edit-event API.');
   await enableAutoMerge(pr.node_id);
   // Proactive merge-queue enqueue, best-effort (02-§113.1, §113.4).
@@ -527,4 +605,4 @@ async function removeEventFromActiveCamp(eventId) {
   await enqueueBestEffort(pr.node_id);
 }
 
-module.exports = { addEventToActiveCamp, updateEventInActiveCamp, removeEventFromActiveCamp, isDuplicateEvent, DUPLICATE_EVENT_MESSAGE, slugify, yamlScalar, buildEventYaml, buildFragmentYaml, fragmentDir, fragmentPath, assertFragmentYamlValid, detectEventIndent, assertEventYamlValid, buildEnqueueMutation, enqueuePullRequest, enqueueBestEffort, githubRequest, env };
+module.exports = { addEventToActiveCamp, updateEventInActiveCamp, removeEventFromActiveCamp, isDuplicateEvent, DUPLICATE_EVENT_MESSAGE, slugify, yamlScalar, buildEventYaml, buildFragmentYaml, fragmentEqualsIgnoringUpdatedAt, fragmentDir, fragmentPath, assertFragmentYamlValid, detectEventIndent, assertEventYamlValid, buildEnqueueMutation, enqueuePullRequest, enqueueBestEffort, githubRequest, env };

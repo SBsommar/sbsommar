@@ -1957,3 +1957,19 @@ Doc ref: `02-requirements/design-and-content.md §121`;
 | `02-§121.12` | covered | HUBB-12: no inline `.hero-hub-banner[data-opens]` script; the banner is static markup with no new JS file |
 | `02-§121.13` | implemented | No dependency added to `package.json`; the icon is inline SVG and reuses the existing `EDQHUB_ICON` constant — review checkpoint |
 | `02-§121.14` | covered | HUBB-14, HUBB-15: the "Till EDQ Hub" call-to-action is a `<span class="hero-hub-banner-btn">` inside the single card anchor (no nested link/button); `html-validate` (`lint:html`) passes on the built page |
+
+### §122 — Edit Duplicate Hardening
+
+Doc ref: `02-requirements/event-data.md §122`;
+`03-architecture/ci-and-deploy.md §11.6` (edit duplicate hardening).
+
+| ID | Status | Notes |
+| --- | --- | --- |
+| `02-§122.1` | covered | DEDUPE-01/-02/-03 + PHP `testFragmentEqualsIgnoringUpdatedAt*`: `fragmentEqualsIgnoringUpdatedAt()` (pure, both runtimes) is true only when fragments differ solely in the `updated_at:` line |
+| `02-§122.2` | covered | DEDUPE-06: `updateEventInActiveCamp` runs the no-op comparison before `createBranch`/`createPullRequest` and returns early; manual DEDUPE-M01 (re-apply same edit → success, no second PR) |
+| `02-§122.3` | implemented | The no-op check runs inside `updateEventInActiveCamp` before any branch/PR is created, so no redundant PR is opened regardless of response timing. PHP (`index.php`) is synchronous with the response; Node (`app.js`) runs the edit in a fire-and-forget background task (`res.json` then `updateEventInActiveCamp(...).catch`), so the check runs there rather than before the response. Review/manual checkpoint |
+| `02-§122.4` | covered | DEDUPE-04 (deterministic `event-edit/<id>` branch, no `Date.now()`/`time()` suffix) + DEDUPE-05/-10/-11 (`findOpenPrForBranch` before `createPullRequest`) → at most one open edit PR per activity |
+| `02-§122.5` | covered | DEDUPE-07: the open-PR path reads the fragment from the PR branch (`getFileMaybe(fragPath, branchName)`) and commits on that branch, accumulating onto earlier unmerged edits instead of overwriting |
+| `02-§122.6` | covered | DEDUPE-06: with no open PR the edit is built on `main` and a PR opened; the no-op guard precedes creation |
+| `02-§122.7` | covered | DEDUPE-08/-13: a stale merged edit branch is reset onto `main` with `updateRef`, but only inside the `createBranch` failure handler (never pre-emptively), so a branch a concurrent request is mid-creating is adopted via its open PR rather than clobbered |
+| `02-§122.8` | covered | DEDUPE-10..13: `GitHub.php` mirrors the deterministic branch, open-PR lookup, no-op guard, and stale-branch reset; PHP `testFragmentEqualsIgnoringUpdatedAt*` mirrors the pure helper |

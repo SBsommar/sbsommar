@@ -917,6 +917,62 @@ error.
   it is logged for manual attention rather than closed silently, so the residual
   edge stays visible. <!-- 02-§111.9 -->
 
+## 122. Edit Duplicate Hardening
+
+### 122.1 Context
+
+The edit-event API (`POST /edit-event`) rewrites an activity's fragment file on
+a fresh branch and opens an auto-merging pull request (§109.4). Each call names
+its branch `event-edit/<id>-<timestamp>`, so every save opens a separate pull
+request — including when a user repeats a save because the previous one has not
+yet appeared on the live site (an edit takes up to a few minutes to deploy, and
+a cached page can show the old state even longer). When two edit pull requests
+for the same activity are open at once, the first merges and the second is left
+behind: redundant when it carried the same change, or un-mergeable (`dirty`) and
+needing a maintainer to close it by hand when the two carried different changes
+from the same base (observed as #990/#991 and #1010/#1011).
+
+The empty-diff cleanup of §111.7 does not help here: it covers only `event/*`
+add branches, and because every edit bumps `meta.updated_at`, an edit pull
+request's net diff against `main` is never empty. The id formula and the
+fragment-per-event model (§109) are unchanged. The desired state is that
+repeated or concurrent edits of one activity never leave a stuck or redundant
+pull request.
+
+### 122.2 No-op edits create no pull request (site requirements)
+
+- Before any branch or pull request is created, the edit flow compares the
+  patched event to the activity's current state on `main`, ignoring
+  `meta.updated_at`. <!-- 02-§122.1 -->
+- When the patched event is identical to the current state on `main` apart from
+  `meta.updated_at`, the edit is a no-op: no branch and no pull request are
+  created, and the API returns success. <!-- 02-§122.2 -->
+- The no-op check is part of the edit operation itself and runs before any
+  branch or pull request is created, so no redundant pull request is ever
+  opened. This holds in both runtimes regardless of when the HTTP response is
+  sent (the PHP edit is synchronous with the response; the Node edit runs in a
+  background task, as the edit write already does). <!-- 02-§122.3 -->
+
+### 122.3 At most one open edit pull request per activity (site requirements)
+
+- At any time there is at most one open edit pull request per
+  activity. <!-- 02-§122.4 -->
+- When an activity already has an open edit pull request, a further edit updates
+  that pull request in place rather than opening a second one; the further edit
+  is applied on top of the pull request's current content, so changes from
+  earlier unmerged edits are preserved, not overwritten. <!-- 02-§122.5 -->
+- When an activity has no open edit pull request, an edit opens a new one from
+  the current `main`. <!-- 02-§122.6 -->
+- A stale edit branch left behind by an already-merged or closed edit pull
+  request is not treated as an open pull request; an edit that finds such a
+  branch bases its change on the current `main`. <!-- 02-§122.7 -->
+
+### 122.4 Runtime parity (site requirements)
+
+- The no-op check and the single-open-pull-request behaviour hold identically in
+  the PHP runtime (`api/src/GitHub.php`) and the Node runtime
+  (`source/api/github.js`). <!-- 02-§122.8 -->
+
 ## 112. Stranded Auto-Merge Recovery
 
 ### 112.1 Context

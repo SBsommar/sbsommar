@@ -193,29 +193,89 @@ final class GitHub
         $camp       = $this->resolveActiveCamp();
         $now        = (new \DateTimeImmutable('now', new \DateTimeZone('UTC')))->format('Y-m-d H:i');
         $commitMsg  = "Edit event in {$camp['name']}: {$eventId}";
-        $mainSha    = $this->getMainSha();
-        $branchName = "event-edit/{$eventId}-" . time();
+        // One deterministic branch per event, so a repeated or concurrent edit
+        // reuses the same open pull request instead of opening a rival (02-§122.4).
+        $branchName = "event-edit/{$eventId}";
 
         // Edit operates only on the event's fragment file; no fragment → no
         // change, error raised (02-§109.12).
         $fragPath = self::fragmentPath($camp['file'], $eventId);
-        $frag     = $this->getFileMaybe($fragPath);
-        if ($frag === null) {
+        $mainFrag = $this->getFileMaybe($fragPath);
+        if ($mainFrag === null) {
             throw new \RuntimeException("Event not found: {$eventId}");
         }
-        [$fragContent, $fragSha] = $frag;
-        $doc = Yaml::parse($fragContent);
-        if (!is_array($doc) || !is_array($doc['event'] ?? null)) {
+        [$mainContent, $mainSha0] = $mainFrag;
+        $mainDoc = Yaml::parse($mainContent);
+        if (!is_array($mainDoc) || !is_array($mainDoc['event'] ?? null)) {
             throw new \RuntimeException("Event not found: {$eventId}");
         }
-        $patched = self::patchEventObject($doc['event'], $updates, $now);
+
+        // If an edit pull request for this event is already open, accumulate onto
+        // it rather than opening a rival (02-§122.4, §122.5).
+        $openPr = $this->findOpenPrForBranch($branchName);
+        if ($openPr !== null) {
+            $this->accumulateEditOnto($openPr, $eventId, $fragPath, $branchName, $updates, $now, $commitMsg, $mainFrag, $mainDoc);
+            return;
+        }
+
+        // No open pull request: build the edit on top of main.
+        $patched = self::patchEventObject($mainDoc['event'], $updates, $now);
         $content = self::buildFragmentYaml($patched) . "\n";
         self::assertFragmentYamlValid($content, $eventId);
-        $this->createBranch($branchName, $mainSha);
-        $this->putFile($fragPath, $content, $fragSha, $commitMsg, $branchName);
+        // No-op edit (only updated_at would change) → create no branch or PR
+        // (02-§122.1, §122.2).
+        if (self::fragmentEqualsIgnoringUpdatedAt($mainContent, $content)) {
+            return;
+        }
+
+        $mainSha = $this->getMainSha();
+        // Create the deterministic branch. If it already exists, another edit
+        // raced us or a stale branch lingers from an already-merged PR
+        // (auto-delete off). Only then look closer — this avoids resetting a
+        // branch a concurrent request is mid-way through creating.
+        try {
+            $this->createBranch($branchName, $mainSha);
+        } catch (\RuntimeException) {
+            $racePr = $this->findOpenPrForBranch($branchName);
+            if ($racePr !== null) {
+                $this->accumulateEditOnto($racePr, $eventId, $fragPath, $branchName, $updates, $now, $commitMsg, $mainFrag, $mainDoc);
+                return;
+            }
+            // No open PR → stale branch from an already-merged edit: reset onto
+            // main and reuse it (02-§122.7).
+            $this->updateRef($branchName, $mainSha);
+        }
+        $this->putFile($fragPath, $content, $mainSha0, $commitMsg, $branchName);
         $pr = $this->createPullRequest($commitMsg, $branchName, 'Automatically created by the SB Sommar edit-event API.');
         $this->enableAutoMerge($pr['node_id']);
         // Proactive merge-queue enqueue, best-effort (02-§113.1, §113.4).
+        $this->enqueueBestEffort($pr['node_id']);
+    }
+
+    /**
+     * Apply an edit on top of an open edit PR's own branch content, so an earlier
+     * unmerged edit is preserved, not overwritten (02-§122.5). A change that adds
+     * nothing to what the branch already carries makes no commit.
+     *
+     * @param array{number:int,node_id:string} $pr
+     * @param array<string,mixed>              $updates
+     * @param array{string,string}             $mainFrag
+     * @param array<string,mixed>              $mainDoc
+     */
+    private function accumulateEditOnto(array $pr, string $eventId, string $fragPath, string $branchName, array $updates, string $now, string $commitMsg, array $mainFrag, array $mainDoc): void
+    {
+        $branchFrag = $this->getFileMaybe($fragPath, $branchName) ?? $mainFrag;
+        [$baseContent, $baseSha] = $branchFrag;
+        $baseDoc   = Yaml::parse($baseContent);
+        $baseEvent = (is_array($baseDoc) && is_array($baseDoc['event'] ?? null)) ? $baseDoc['event'] : $mainDoc['event'];
+        $patched   = self::patchEventObject($baseEvent, $updates, $now);
+        $content   = self::buildFragmentYaml($patched) . "\n";
+        self::assertFragmentYamlValid($content, $eventId);
+        if (self::fragmentEqualsIgnoringUpdatedAt($baseContent, $content)) {
+            return;
+        }
+        $this->putFile($fragPath, $content, $baseSha, $commitMsg, $branchName);
+        // Re-nudge the merge queue; best-effort (02-§113.1, §113.4).
         $this->enqueueBestEffort($pr['node_id']);
     }
 
@@ -665,9 +725,13 @@ final class GitHub
     /**
      * @return array{string,string} [content, sha]
      */
-    private function getFile(string $filePath): array
+    private function getFile(string $filePath, ?string $ref = null): array
     {
-        $apiPath = "/repos/{$this->owner}/{$this->repo}/contents/{$filePath}?ref={$this->branch}";
+        // $useRef is a controlled slug (main, or event-edit/<event-id>); its
+        // slash stays raw — GitHub's `ref` query accepts `/` literally and a
+        // percent-encoded slash can 404.
+        $useRef  = $ref ?? $this->branch;
+        $apiPath = "/repos/{$this->owner}/{$this->repo}/contents/{$filePath}?ref={$useRef}";
         $data = $this->githubRequest('GET', $apiPath);
 
         $content = base64_decode($data['content'], true);
@@ -678,14 +742,15 @@ final class GitHub
     /**
      * Like getFile, but returns null when the file does not exist (HTTP 404)
      * instead of throwing — used to decide whether an event lives in a fragment
-     * file (02-§109.9).
+     * file (02-§109.9). `$ref` defaults to main; pass an edit branch to read that
+     * branch's version of the file (02-§122.5).
      *
      * @return array{string,string}|null [content, sha] or null
      */
-    private function getFileMaybe(string $filePath): ?array
+    private function getFileMaybe(string $filePath, ?string $ref = null): ?array
     {
         try {
-            return $this->getFile($filePath);
+            return $this->getFile($filePath, $ref);
         } catch (\RuntimeException $e) {
             if (str_starts_with($e->getMessage(), 'GitHub API 404')) {
                 return null;
@@ -738,6 +803,45 @@ final class GitHub
             'ref' => "refs/heads/{$name}",
             'sha' => $sha,
         ]);
+    }
+
+    /** Force a branch ref onto a new commit SHA — resets a stale edit branch (02-§122.7). */
+    private function updateRef(string $branch, string $sha): void
+    {
+        $this->githubRequest('PATCH', "/repos/{$this->owner}/{$this->repo}/git/refs/heads/{$branch}", [
+            'sha'   => $sha,
+            'force' => true,
+        ]);
+    }
+
+    /**
+     * Return the open pull request whose head is $branch, or null when none is
+     * open. With one deterministic branch per event there is at most one
+     * (02-§122.4).
+     *
+     * @return array{number:int,node_id:string}|null
+     */
+    private function findOpenPrForBranch(string $branch): ?array
+    {
+        // owner and branch are controlled slugs; `:` and `/` are valid raw in a
+        // query value and are what GitHub's `head` filter (user:ref) expects.
+        $head = "{$this->owner}:{$branch}";
+        $data = $this->githubRequest('GET', "/repos/{$this->owner}/{$this->repo}/pulls?head={$head}&state=open&per_page=1");
+        if (is_array($data) && count($data) > 0) {
+            return ['number' => $data[0]['number'], 'node_id' => $data[0]['node_id']];
+        }
+        return null;
+    }
+
+    /**
+     * Compare two fragment YAML strings ignoring the `updated_at:` line. Pure so
+     * it can be unit-tested. An edit that changes nothing but the timestamp is a
+     * no-op and must not open a pull request (02-§122.1, §122.2).
+     */
+    public static function fragmentEqualsIgnoringUpdatedAt(string $a, string $b): bool
+    {
+        $strip = static fn (string $s): string => trim(preg_replace('/^[ \t]*updated_at:.*$/m', '', $s));
+        return $strip($a) === $strip($b);
     }
 
     /**
