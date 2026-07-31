@@ -109,9 +109,12 @@ describe('02-§122 — github.js updateEventInActiveCamp (DEDUPE-04..09)', () =>
     assert.ok(body.includes('getFileMaybe(fragPath, branchName)'), 'reads branch content to accumulate');
   });
 
-  it('DEDUPE-08: a stale merged branch is reset onto main, not treated as open', () => {
-    assert.ok(body.includes('getRefMaybe'), 'checks for a lingering branch');
-    assert.ok(body.includes('updateRef'), 'resets the lingering branch onto main');
+  it('DEDUPE-08: a stale/raced branch is reset only after createBranch reports it exists', () => {
+    assert.ok(body.includes('updateRef'), 'resets a lingering branch onto main');
+    const createIdx = body.indexOf('createBranch');
+    const updateIdx = body.indexOf('updateRef');
+    assert.ok(createIdx > 0, 'attempts createBranch');
+    assert.ok(updateIdx > createIdx, 'updateRef runs after the createBranch attempt (in its catch), not pre-emptively');
   });
 });
 
@@ -138,8 +141,10 @@ describe('02-§122.8 — GitHub.php parity (DEDUPE-10..13)', () => {
     assert.ok(noopIdx > 0 && noopIdx < branchIdx, 'no-op check precedes createBranch');
   });
 
-  it('DEDUPE-13: PHP resets a stale edit branch onto main', () => {
-    assert.ok(body.includes('getRefMaybe'), 'checks for a lingering branch');
-    assert.ok(body.includes('updateRef'), 'resets the lingering branch');
+  it('DEDUPE-13: PHP resets a stale edit branch only after createBranch reports it exists', () => {
+    assert.ok(body.includes('updateRef'), 'resets a lingering branch');
+    const createIdx = body.indexOf('createBranch');
+    const updateIdx = body.indexOf('updateRef');
+    assert.ok(createIdx > 0 && updateIdx > createIdx, 'updateRef runs after the createBranch attempt (in its catch)');
   });
 });

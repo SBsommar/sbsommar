@@ -245,15 +245,23 @@ one edit branch per activity. Before creating anything, the flow calls
   unmerged edit is preserved rather than overwritten, and the commit lands on the
   existing branch — updating the open PR instead of opening a rival (02-§122.5).
   A no-op relative to the branch content adds no commit.
-- **No edit PR is open** → the edit is built on top of `main`. If a branch of that
-  name lingers from an already-merged edit PR (auto-delete off), it is reset onto
-  `main` with `updateRef(..., force)` rather than treated as open; otherwise a
-  fresh branch is created (`getRefMaybe` distinguishes the two, 02-§122.7). Then
-  the PR is opened with auto-merge as before.
+- **No edit PR is open** → the edit is built on top of `main` and the branch is
+  created. If `createBranch` reports the branch already exists — a stale branch
+  left by an already-merged PR (auto-delete off), or a concurrent request that
+  raced us — the flow re-checks for an open PR: if one now exists it accumulates
+  onto it, otherwise it resets the stale branch onto `main` with
+  `updateRef(..., force)` and opens the PR. Doing the reset only in this failure
+  handler (never pre-emptively) avoids clobbering a branch a concurrent request is
+  mid-way through creating (02-§122.7).
 
 Both mechanisms run synchronously before the response in both runtimes (02-§122.8),
 so the eventual-consistency window can no longer turn an impatient re-save into a
-second, stuck pull request (observed as #990/#991 and #1010/#1011).
+second, stuck pull request (observed as #990/#991 and #1010/#1011). A residual
+sub-second window remains only for two *different* edits submitted within the few
+milliseconds between one request's `createBranch` and its `createPullRequest`;
+a human's separate edits are always seconds apart, by which point the first PR is
+open and the second accumulates onto it. True double-click resubmits of the *same*
+edit are collapsed by the no-op guard.
 
 ### 11.7 Required repository settings
 

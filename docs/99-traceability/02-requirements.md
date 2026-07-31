@@ -1971,5 +1971,5 @@ Doc ref: `02-requirements/event-data.md §122`;
 | `02-§122.4` | covered | DEDUPE-04 (deterministic `event-edit/<id>` branch, no `Date.now()`/`time()` suffix) + DEDUPE-05/-10/-11 (`findOpenPrForBranch` before `createPullRequest`) → at most one open edit PR per activity |
 | `02-§122.5` | covered | DEDUPE-07: the open-PR path reads the fragment from the PR branch (`getFileMaybe(fragPath, branchName)`) and commits on that branch, accumulating onto earlier unmerged edits instead of overwriting |
 | `02-§122.6` | covered | DEDUPE-06: with no open PR the edit is built on `main` and a PR opened; the no-op guard precedes creation |
-| `02-§122.7` | covered | DEDUPE-08/-13: `getRefMaybe`/`updateRef` reset a stale merged edit branch onto `main` rather than reusing it as if open |
+| `02-§122.7` | covered | DEDUPE-08/-13: a stale merged edit branch is reset onto `main` with `updateRef`, but only inside the `createBranch` failure handler (never pre-emptively), so a branch a concurrent request is mid-creating is adopted via its open PR rather than clobbered |
 | `02-§122.8` | covered | DEDUPE-10..13: `GitHub.php` mirrors the deterministic branch, open-PR lookup, no-op guard, and stale-branch reset; PHP `testFragmentEqualsIgnoringUpdatedAt*` mirrors the pure helper |

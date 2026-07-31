@@ -210,25 +210,11 @@ final class GitHub
             throw new \RuntimeException("Event not found: {$eventId}");
         }
 
-        // If an edit pull request for this event is already open, accumulate the
-        // new change on top of ITS current content so earlier unmerged edits are
-        // preserved, not overwritten (02-§122.5).
+        // If an edit pull request for this event is already open, accumulate onto
+        // it rather than opening a rival (02-§122.4, §122.5).
         $openPr = $this->findOpenPrForBranch($branchName);
         if ($openPr !== null) {
-            $branchFrag = $this->getFileMaybe($fragPath, $branchName) ?? $mainFrag;
-            [$baseContent, $baseSha] = $branchFrag;
-            $baseDoc = Yaml::parse($baseContent);
-            $baseEvent = (is_array($baseDoc) && is_array($baseDoc['event'] ?? null)) ? $baseDoc['event'] : $mainDoc['event'];
-            $patched = self::patchEventObject($baseEvent, $updates, $now);
-            $content = self::buildFragmentYaml($patched) . "\n";
-            self::assertFragmentYamlValid($content, $eventId);
-            // Nothing new relative to what the open PR already carries → no commit.
-            if (self::fragmentEqualsIgnoringUpdatedAt($baseContent, $content)) {
-                return;
-            }
-            $this->putFile($fragPath, $content, $baseSha, $commitMsg, $branchName);
-            // Re-nudge the merge queue; best-effort (02-§113.1, §113.4).
-            $this->enqueueBestEffort($openPr['node_id']);
+            $this->accumulateEditOnto($openPr, $eventId, $fragPath, $branchName, $updates, $now, $commitMsg, $mainFrag, $mainDoc);
             return;
         }
 
@@ -243,17 +229,53 @@ final class GitHub
         }
 
         $mainSha = $this->getMainSha();
-        // A branch may linger from an already-merged edit PR (auto-delete off);
-        // reset it onto main rather than treating it as open (02-§122.7).
-        if ($this->getRefMaybe($branchName) !== null) {
-            $this->updateRef($branchName, $mainSha);
-        } else {
+        // Create the deterministic branch. If it already exists, another edit
+        // raced us or a stale branch lingers from an already-merged PR
+        // (auto-delete off). Only then look closer — this avoids resetting a
+        // branch a concurrent request is mid-way through creating.
+        try {
             $this->createBranch($branchName, $mainSha);
+        } catch (\RuntimeException) {
+            $racePr = $this->findOpenPrForBranch($branchName);
+            if ($racePr !== null) {
+                $this->accumulateEditOnto($racePr, $eventId, $fragPath, $branchName, $updates, $now, $commitMsg, $mainFrag, $mainDoc);
+                return;
+            }
+            // No open PR → stale branch from an already-merged edit: reset onto
+            // main and reuse it (02-§122.7).
+            $this->updateRef($branchName, $mainSha);
         }
         $this->putFile($fragPath, $content, $mainSha0, $commitMsg, $branchName);
         $pr = $this->createPullRequest($commitMsg, $branchName, 'Automatically created by the SB Sommar edit-event API.');
         $this->enableAutoMerge($pr['node_id']);
         // Proactive merge-queue enqueue, best-effort (02-§113.1, §113.4).
+        $this->enqueueBestEffort($pr['node_id']);
+    }
+
+    /**
+     * Apply an edit on top of an open edit PR's own branch content, so an earlier
+     * unmerged edit is preserved, not overwritten (02-§122.5). A change that adds
+     * nothing to what the branch already carries makes no commit.
+     *
+     * @param array{number:int,node_id:string} $pr
+     * @param array<string,mixed>              $updates
+     * @param array{string,string}             $mainFrag
+     * @param array<string,mixed>              $mainDoc
+     */
+    private function accumulateEditOnto(array $pr, string $eventId, string $fragPath, string $branchName, array $updates, string $now, string $commitMsg, array $mainFrag, array $mainDoc): void
+    {
+        $branchFrag = $this->getFileMaybe($fragPath, $branchName) ?? $mainFrag;
+        [$baseContent, $baseSha] = $branchFrag;
+        $baseDoc   = Yaml::parse($baseContent);
+        $baseEvent = (is_array($baseDoc) && is_array($baseDoc['event'] ?? null)) ? $baseDoc['event'] : $mainDoc['event'];
+        $patched   = self::patchEventObject($baseEvent, $updates, $now);
+        $content   = self::buildFragmentYaml($patched) . "\n";
+        self::assertFragmentYamlValid($content, $eventId);
+        if (self::fragmentEqualsIgnoringUpdatedAt($baseContent, $content)) {
+            return;
+        }
+        $this->putFile($fragPath, $content, $baseSha, $commitMsg, $branchName);
+        // Re-nudge the merge queue; best-effort (02-§113.1, §113.4).
         $this->enqueueBestEffort($pr['node_id']);
     }
 
@@ -705,8 +727,11 @@ final class GitHub
      */
     private function getFile(string $filePath, ?string $ref = null): array
     {
+        // $useRef is a controlled slug (main, or event-edit/<event-id>); its
+        // slash stays raw — GitHub's `ref` query accepts `/` literally and a
+        // percent-encoded slash can 404.
         $useRef  = $ref ?? $this->branch;
-        $apiPath = "/repos/{$this->owner}/{$this->repo}/contents/{$filePath}?ref=" . rawurlencode($useRef);
+        $apiPath = "/repos/{$this->owner}/{$this->repo}/contents/{$filePath}?ref={$useRef}";
         $data = $this->githubRequest('GET', $apiPath);
 
         $content = base64_decode($data['content'], true);
@@ -780,23 +805,6 @@ final class GitHub
         ]);
     }
 
-    /**
-     * Return the SHA a branch ref points at, or null when the branch does not
-     * exist (HTTP 404) — tells a live edit branch from a stale one (02-§122.7).
-     */
-    private function getRefMaybe(string $branch): ?string
-    {
-        try {
-            $data = $this->githubRequest('GET', "/repos/{$this->owner}/{$this->repo}/git/refs/heads/{$branch}");
-            return $data['object']['sha'];
-        } catch (\RuntimeException $e) {
-            if (str_starts_with($e->getMessage(), 'GitHub API 404')) {
-                return null;
-            }
-            throw $e;
-        }
-    }
-
     /** Force a branch ref onto a new commit SHA — resets a stale edit branch (02-§122.7). */
     private function updateRef(string $branch, string $sha): void
     {
@@ -815,7 +823,9 @@ final class GitHub
      */
     private function findOpenPrForBranch(string $branch): ?array
     {
-        $head = rawurlencode("{$this->owner}:{$branch}");
+        // owner and branch are controlled slugs; `:` and `/` are valid raw in a
+        // query value and are what GitHub's `head` filter (user:ref) expects.
+        $head = "{$this->owner}:{$branch}";
         $data = $this->githubRequest('GET', "/repos/{$this->owner}/{$this->repo}/pulls?head={$head}&state=open&per_page=1");
         if (is_array($data) && count($data) > 0) {
             return ['number' => $data[0]['number'], 'node_id' => $data[0]['node_id']];
