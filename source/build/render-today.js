@@ -1,7 +1,6 @@
 'use strict';
 
 const { escapeHtml, toDateString } = require('./render');
-const { renderDescriptionHtml } = require('./markdown');
 const { goatcounterScript } = require('./analytics');
 const { pwaHeadTags } = require('./pwa');
 
@@ -25,6 +24,11 @@ function renderTodayPage(camp, events, qrSvg, siteUrl = '', buildTime = '', goat
   // display view shows it on the "Schema uppdaterat" line since it has no footer.
   const safeVersion = escapeHtml(versionString || '');
 
+  // The display view is a passive board read at a distance: it never expands an
+  // activity's detail, so its embedded data deliberately omits `description` and
+  // its pre-rendered `descriptionHtml` (02-§4.26, 02-§56.3). Dropping them keeps
+  // the JSON payload small so low-power display hardware (e.g. a Raspberry Pi
+  // Zero) parses it quickly and holds less in memory.
   const eventsJson = JSON.stringify(
     events.map((e) => ({
       title: e.title,
@@ -33,8 +37,6 @@ function renderTodayPage(camp, events, qrSvg, siteUrl = '', buildTime = '', goat
       end: e.end ? String(e.end) : null,
       location: e.location || null,
       responsible: e.responsible || null,
-      description: e.description || null,
-      descriptionHtml: e.description ? renderDescriptionHtml(e.description) : null,
       link: e.link || null,
       cancelled: e.cancelled === true,
       moved: e.moved && e.moved.from_date ? e.moved : null,
@@ -66,7 +68,7 @@ ${pwaHeadTags()}
     <aside class="dagens-sidebar">
       <h1 id="today-heading" class="sidebar-heading"></h1>
       <div class="status-bar">
-        <span class="status-clock" id="live-clock"></span>
+        <span class="status-clock" id="live-clock"><span class="clock-hm" id="clock-hm"></span><span class="clock-sec" id="clock-sec"></span></span>
         <span class="status-updated" id="build-info"></span>
       </div>
       <p class="status-offline" id="connection-warning" role="status" hidden></p>

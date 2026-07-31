@@ -286,12 +286,28 @@
 
   if (window.__BUILD_TIME__) {
 
-    // Live clock — advances exactly once per wall-clock second.
-    var clockEl = document.getElementById('live-clock');
+    // Live clock — advances exactly once per wall-clock second (02-§4.15).
+    // The hour:minute part and the seconds live in separate elements
+    // (#clock-hm / #clock-sec) so a tick only rewrites the two seconds digits,
+    // never the whole clock. The seconds element is isolated with CSS `contain`
+    // (see style.css .clock-sec), so the browser knows its per-second repaint
+    // cannot affect layout or paint anywhere else on the page. Combined with the
+    // tabular-nums font on .status-clock (fixed digit width, so no reflow), the
+    // ticking stays confined to a tiny fixed box in the sidebar — cheap enough
+    // for low-power display hardware such as a Raspberry Pi Zero.
+    var hmEl = document.getElementById('clock-hm');
+    var secEl = document.getElementById('clock-sec');
+    // Remember the last minute rendered so the hour:minute text is rewritten
+    // only when it actually changes, not 60 times a minute.
+    var lastHm = '';
     function updateClock() {
-      if (!clockEl) return;
       var t = new Date();
-      clockEl.textContent = pad(t.getHours()) + ':' + pad(t.getMinutes()) + ':' + pad(t.getSeconds());
+      var hm = pad(t.getHours()) + ':' + pad(t.getMinutes());
+      if (hmEl && hm !== lastHm) {
+        hmEl.textContent = hm;
+        lastHm = hm;
+      }
+      if (secEl) secEl.textContent = ':' + pad(t.getSeconds());
     }
     // Self-correcting tick: a fixed setInterval(…, 1000) drifts a few ms per
     // tick, slips out of phase with the wall clock, and roughly once a minute

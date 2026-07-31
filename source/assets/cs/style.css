@@ -485,6 +485,11 @@ body.display-mode {
 body.display-mode .today-card {
   background: #1a2633;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+
+  /* Isolate each card's layout and paint so the per-minute row re-classification
+     (is-now / is-past) on the live board repaints only within the card, not the
+     whole page — important on low-power display hardware (Raspberry Pi Zero). */
+  contain: layout paint;
 }
 
 body.display-mode .event-row {
@@ -596,6 +601,16 @@ body.display-mode .day-divider::after {
   color: var(--color-sage);
   font-variant-numeric: tabular-nums;
   line-height: 1;
+}
+
+/* The seconds tick every wall-clock second. `contain` tells the browser this
+   element's repaint cannot affect layout or paint elsewhere, so each tick is
+   confined to this small box rather than re-rasterising the surrounding page.
+   With tabular-nums above keeping the digit width fixed, the update never
+   triggers a reflow. This keeps the live clock cheap on low-power display
+   hardware such as a Raspberry Pi Zero. */
+.status-clock .clock-sec {
+  contain: layout paint style;
 }
 
 .status-updated {

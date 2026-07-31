@@ -173,7 +173,8 @@ Part of [the traceability index](./index.md).
 | EVT-23..25 | `tests/render-event.test.js` | `renderEventPage – markdown description (02-§56.1, 02-§56.6, 02-§56.7)` |
 | RSS-16 | `tests/render-rss.test.js` | `renderRssFeed – markdown stripped (02-§56.4)` |
 | ICAL-32..33 | `tests/render-ical.test.js` | `iCal DESCRIPTION markdown stripped (02-§56.5)` |
-| DIS-26..27 | `tests/coverage-today.test.js` | `Today view pre-rendered descriptionHtml (02-§56.3)` |
+| DIS-26..27 | `tests/coverage-today.test.js` | `Display view omits activity descriptions from its JSON (02-§4.26)` |
+| DIS-35 | `tests/coverage-today.test.js` | `Clock split into hour:minute and seconds elements (02-§4.27)` |
 | IDAG-19 | `tests/coverage-idag.test.js` | `Idag page pre-rendered descriptionHtml (02-§56.3)` |
 | MKD-CSS-01 | `tests/coverage-css.test.js` | `02-§56.8 — .event-description p italic removed` |
 | MDT-01..06 | `tests/markdown-toolbar.test.js` | `02-§57.2 — Toolbar wraps selected text` |
