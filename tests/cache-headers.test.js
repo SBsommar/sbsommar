@@ -105,10 +105,14 @@ describe('02-§69.1 — CSS cache-busting post-processing', () => {
     );
   });
 
-  it('CACHE-08: build.js replaces style.css href with versioned query string', () => {
+  it('CACHE-08: build.js replaces CSS href with versioned query string for both bundles', () => {
     assert.ok(
-      /style\.css\?v=/.test(buildSrc),
-      'Expected build.js to produce style.css?v= replacement pattern',
+      buildSrc.includes("'style.css'") && buildSrc.includes("'site.css'"),
+      'Expected build.js to cache-bust both the live (style.css) and site (site.css) bundles',
+    );
+    assert.ok(
+      buildSrc.includes('?v=${cssHash}'),
+      'Expected build.js to produce a ?v=<hash> replacement pattern',
     );
   });
 

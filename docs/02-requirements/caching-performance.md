@@ -260,6 +260,35 @@ the CSS URL so that any CSS change forces a cache miss.
 - Existing tests that verify `style.css` presence must continue to
   pass. <!-- 02-§69.5 -->
 
+### 69.3 Context — split delivery for the display board
+
+The display view (`/live.html`) runs on very low-power hardware (a
+Raspberry Pi Zero drives some of the camp's screens) but uses only about a
+fifth of the site's CSS — the base tokens plus the schedule/display
+sections. Delivering the whole stylesheet to that page means parsing four
+times more CSS than it needs on every load. Splitting the delivered CSS
+lets the board load only what it uses, while every other page still gets
+the complete stylesheet.
+
+### 69.4 Split delivery
+
+- The site's CSS is delivered as two bundles: the **live bundle**
+  (`public/style.css`) contains the base tokens, reset, typography and the
+  schedule/display sections; the **site bundle** (`public/site.css`)
+  contains every other section (site chrome, forms, modals, content pages,
+  admin, and the rest). <!-- 02-§69.6 -->
+- There is a single authoritative source stylesheet
+  (`source/assets/cs/style.css`). The two delivered bundles are generated
+  from it at build time and together contain exactly its rules, in source
+  order. <!-- 02-§69.7 -->
+- The display view (`/live.html`) links only the live bundle
+  (`style.css`). <!-- 02-§69.8 -->
+- Every page that carries the site header and footer links both bundles,
+  the live bundle first and the site bundle second, so the full cascade
+  matches the single source stylesheet. <!-- 02-§69.9 -->
+- Both bundles are cache-busted with their own content hash exactly as in
+  §69.1–69.3. <!-- 02-§69.10 -->
+
 ---
 
 ---

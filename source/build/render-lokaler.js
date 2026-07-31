@@ -350,6 +350,7 @@ ${positionRules.rules.join('\n')}
   <meta name="robots" content="noindex, nofollow">
   <title>Lokalöversikt – ${campName}</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="site.css">
   <link rel="icon" type="image/png" href="images/sbsommar-icon-192.png">
 ${pwaHeadTags()}
   ${gridStyleBlock}

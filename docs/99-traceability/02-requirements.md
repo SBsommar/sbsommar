@@ -962,7 +962,11 @@ its requirement rows together with the test-legend rows that evidence them.
 | CACHE-08 | `tests/cache-headers.test.js` | `02-§69.2 — build.js produces style.css?v= pattern` |
 | CACHE-09 | `tests/cache-headers.test.js` | `02-§69.3 — Hash is deterministic` |
 | `02-§69.4` | implemented | No render functions changed — post-processing in `build.js` `findHtmlFiles()` |
-| `02-§69.5` | covered | All 1182 existing tests pass — STR-CSS, EVT-13 still match |
+| `02-§69.5` | covered | All existing tests pass — STR-CSS, EVT-13 still match |
+| CSSPLIT-01..06 | `tests/css-split.test.js` | `02-§69.6/69.7 — style.css split into live + site bundles; bundles = source, no loss` |
+| CSSPLIT-07 | `tests/css-split.test.js` | `02-§69.8 — live.html links only the live bundle (style.css)` |
+| CSSPLIT-08 | `tests/css-split.test.js` | `02-§69.9 — chrome pages link both bundles (style.css + site.css)` |
+| `02-§69.10` | covered | Both bundles cache-busted — CACHE-08 (`build.js` loops `['style.css','site.css']`); `source/build/split-css.js`, `source/build/build.js` |
 | | | **§70 — Main Landmark Element** |
 | MAIN-01-* | `tests/main-landmark.test.js` | `02-§70.1 — Every page has exactly one <main>` |
 | `02-§70.2` | covered | `<main>` wraps content between nav and footer (MAIN-01/02/03 verify placement) |
@@ -1131,7 +1135,7 @@ its requirement rows together with the test-legend rows that evidence them.
 | `02-§83.12` | covered | PWA-05-*: all 8 pages include apple-touch-icon |
 | `02-§83.13` | covered | PWA-17: `source/static/sw.js` exists; `build.js` copies to public/ |
 | `02-§83.14` | covered | PWA-06-*: all 8 pages include sw-register.js |
-| `02-§83.15` | covered | PWA-18, PWA-31: sw.js CACHE_NAME is sb-sommar-v8 |
+| `02-§83.15` | covered | PWA-18, PWA-31: sw.js CACHE_NAME is sb-sommar-v9 |
 | `02-§83.16` | covered | PWA-19, PWA-19b: pre-cache excludes lagg-till.html, redigera.html; includes /index.html |
 | `02-§83.17` | implemented | Manual: verify network-first HTML, cache-first assets in browser DevTools |
 | `02-§83.18` | covered | PWA-20: sw.js activate handler deletes old caches |
@@ -1150,7 +1154,7 @@ its requirement rows together with the test-legend rows that evidence them.
 | `02-§83.31` | implemented | Manual: verify offline page uses shared nav/footer/CSS |
 | `02-§83.32` | covered | PWA-29: offline page contains Swedish offline text |
 | `02-§83.33` | covered | PWA-30: offline.html in PRE_CACHE_URLS |
-| `02-§83.34` | covered | PWA-31: CACHE_NAME is sb-sommar-v8 |
+| `02-§83.34` | covered | PWA-31: CACHE_NAME is sb-sommar-v9 |
 | `02-§83.35` | covered | PWA-32, PWA-33: offline page <main> does not link to lagg-till.html or redigera.html |
 
 ## Sections §84–§100
@@ -1404,7 +1408,7 @@ its requirement rows together with the test-legend rows that evidence them.
 
 | ID | Status | Notes |
 | --- | --- | --- |
-| `02-§96.1` | covered | OFF-02, PWA-31: `sw.js` declares `const CACHE_NAME = 'sb-sommar-v8'` |
+| `02-§96.1` | covered | OFF-02, PWA-31: `sw.js` declares `const CACHE_NAME = 'sb-sommar-v9'` |
 | `02-§96.2` | covered | SWH-01: `install` event handler contains `self.skipWaiting()` |
 | `02-§96.3` | covered | SWH-02: `install` handler wraps each URL as `new Request(u, { cache: 'reload' })` before `cache.addAll` |
 | `02-§96.4` | covered | SWH-03, SWH-04: `activate` handler deletes caches `!== CACHE_NAME` and calls `self.clients.claim()` |
@@ -1414,7 +1418,7 @@ its requirement rows together with the test-legend rows that evidence them.
 | `02-§96.7` | implemented | `source/build/build.js` pre-cache-manifest injection uses root-relative paths (no query strings); verified post-build by `public/sw.js` contents |
 | `02-§96.8` | implemented | `cacheFirstThenNetwork` catch branch calls `caches.match(request, { ignoreSearch: true })` so `/style.css` pre-cache entry still serves offline — manual browser verification |
 | `02-§96.9` | implemented | Manual browser verification: load SW v5, deploy v6, confirm next navigation upgrades without user action |
-| `02-§96.10` | implemented | Manual browser verification: confirm `sb-sommar-v7` is deleted on activate and `sb-sommar-v8` populated from fresh network responses |
+| `02-§96.10` | implemented | Manual browser verification: confirm `sb-sommar-v7` is deleted on activate and `sb-sommar-v9` populated from fresh network responses |
 | `02-§96.11` | implemented | Manual browser verification: confirm §94 registration-banner styling applies on second reload after deploy |
 | `02-§96.12` | implemented | Manual browser verification: no clear-site-data or unregister action required from the end user |
 | `02-§96.13` | covered | SWH-08: `sw.js` has no `import`, `require`, or `importScripts` |

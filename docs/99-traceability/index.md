@@ -138,11 +138,18 @@ Test IDs referenced in the `Test(s)` column are defined in the
 ## Summary
 
 ```text
-Total requirements:            1437
-Covered (implemented + tested): 776
+Total requirements:            1442
+Covered (implemented + tested): 781
 Implemented, not tested:        661
 Gap (no implementation):          0
 Orphan tests (no requirement):    0
+
+Note: CSS split delivery adds 5 requirements (02-§69.6–69.10), all
+  covered by CSSPLIT-01..08 and CACHE-08. The single source stylesheet is
+  split at build time into a live bundle (public/style.css, loaded alone by
+  live.html) and a site bundle (public/site.css); chrome pages load both.
+  See 02-requirements/caching-performance.md §69.3–69.4 and
+  03-architecture/ci-and-deploy.md §27.6.
 
 Note: Display-view low-power rendering adds 2 requirements
   (02-§4.26 omit descriptions from the live.html payload — covered by

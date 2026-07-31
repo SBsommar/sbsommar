@@ -22,6 +22,7 @@ const { renderOfflinePage } = require('./render-offline');
 const { resolveActiveCamp } = require('../scripts/resolve-active-camp');
 const { loadCampEvents } = require('./load-events');
 const { markLocationClashes } = require('./clashes');
+const { splitCss } = require('./split-css');
 const { addOneDay } = require('../api/time-gate');
 const { setFeedbackUrl } = require('./layout');
 const { resolveVersionString } = require('./version');
@@ -478,23 +479,38 @@ async function main() {
     }
   }
 
-  // ── Post-process: CSS cache-busting (02-§69.1–69.3) ───────────────────
+  // ── Post-process: split style.css into live + site bundles (02-§69.6) ──
+  // `copyFlattened` copied the single source stylesheet to public/style.css.
+  // Split it so live.html can load only the schedule/display CSS it needs:
+  // public/style.css becomes the live bundle, public/site.css the rest. Pages
+  // with site chrome link both (see the per-renderer <link> tags).
   const cssOut = path.join(OUTPUT_DIR, 'style.css');
   if (fs.existsSync(cssOut)) {
+    const { live, site } = splitCss(fs.readFileSync(cssOut, 'utf8'));
+    fs.writeFileSync(cssOut, live, 'utf8');
+    fs.writeFileSync(path.join(OUTPUT_DIR, 'site.css'), site, 'utf8');
+    console.log(
+      `Split CSS: style.css (${live.length} B, live/display) + site.css (${site.length} B, rest)`,
+    );
+  }
+
+  // ── Post-process: CSS cache-busting (02-§69.1–69.3) ───────────────────
+  const htmlFilesCss = findHtmlFiles(OUTPUT_DIR);
+  for (const cssName of ['style.css', 'site.css']) {
+    const cssPath = path.join(OUTPUT_DIR, cssName);
+    if (!fs.existsSync(cssPath)) continue;
     const cssHash = crypto.createHash('md5')
-      .update(fs.readFileSync(cssOut))
+      .update(fs.readFileSync(cssPath))
       .digest('hex')
       .slice(0, 8);
-    const htmlFiles = findHtmlFiles(OUTPUT_DIR);
-    for (const file of htmlFiles) {
+    const linkRe = new RegExp(`href="${cssName.replace('.', '\\.')}"`, 'g');
+    let hits = 0;
+    for (const file of htmlFilesCss) {
       const html = fs.readFileSync(file, 'utf8');
-      const updated = html.replace(
-        /href="style\.css"/g,
-        `href="style.css?v=${cssHash}"`,
-      );
-      if (updated !== html) fs.writeFileSync(file, updated, 'utf8');
+      const updated = html.replace(linkRe, `href="${cssName}?v=${cssHash}"`);
+      if (updated !== html) { fs.writeFileSync(file, updated, 'utf8'); hits += 1; }
     }
-    console.log(`Cache-bust: style.css?v=${cssHash}  (${htmlFiles.length} pages)`);
+    console.log(`Cache-bust: ${cssName}?v=${cssHash}  (${hits} pages)`);
   }
 
   // ── Post-process: JS cache-busting (02-§77.1–77.3) ────────────────────

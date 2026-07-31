@@ -260,7 +260,8 @@ function renderIndexPage({ heroSrc, heroAlt, heroDims, sections, discordUrl, fac
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
   <title>SB Sommar</title>
-  <link rel="stylesheet" href="style.css">${preloadHtml}
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="site.css">${preloadHtml}
   <link rel="icon" type="image/png" href="images/sbsommar-icon-192.png">
 ${pwaHeadTags()}
 </head>

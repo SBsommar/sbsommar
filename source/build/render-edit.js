@@ -48,6 +48,7 @@ function renderEditPage(camp, locations, apiUrl, footerHtml = '', navSections = 
   <meta name="robots" content="noindex, nofollow">
   <title>Redigera aktivitet – ${campName}</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="site.css">
   <link rel="icon" type="image/png" href="images/sbsommar-icon-192.png">
 ${pwaHeadTags()}
 </head>

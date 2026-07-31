@@ -602,7 +602,7 @@ miss.
 
 | Asset type | HTML attribute | Pattern | Requirement |
 | ---------- | -------------- | ------- | ----------- |
-| CSS | `href="style.css"` | `href="style.css?v=<hash>"` | 02-§69.1–69.3 |
+| CSS (both bundles) | `href="style.css"`, `href="site.css"` | `href="style.css?v=<hash>"`, `href="site.css?v=<hash>"` | 02-§69.1–69.3, 69.10 |
 | JS | `src="<file>.js"` | `src="<file>.js?v=<hash>"` | 02-§77.1–77.3 |
 | Images (`src`) | `src="<file>.<ext>"` | `src="<file>.<ext>?v=<hash>"` | 02-§78.1–78.3 |
 | Images (`href`) | `href="<file>.<ext>"` | `href="<file>.<ext>?v=<hash>"` | 02-§86.1 |
@@ -615,11 +615,27 @@ miss.
 - Each asset file is read once per build; the hash is reused across all
   HTML files that reference it.
 
+### 27.6 CSS split (live vs site bundle)
+
+Before CSS cache-busting runs, the build splits the single source stylesheet
+into two delivered bundles so the low-power display board loads only the CSS
+it uses (02-§69.6–69.10). `copyFlattened` copies the source
+`source/assets/cs/style.css` to `public/style.css`; then `splitCss()`
+(`source/build/split-css.js`) rewrites `public/style.css` to the **live
+bundle** (base tokens + schedule/display sections) and writes the remainder
+to `public/site.css` (the **site bundle**). The split is by top-level section
+header; `LIVE_SECTION_TITLES` lists the sections that belong to the live
+bundle, and every other section defaults to the site bundle. `live.html`
+links only `style.css`; renderers for pages with site chrome emit a second
+`<link>` for `site.css` (live bundle first, then site, preserving the source
+cascade). Both bundles are then cache-busted by the shared mechanism above.
+
 ### 27.5 Files
 
 | File | Role |
 | ---- | ---- |
-| `source/build/build.js` | Post-processing: hash computation and URL rewriting |
+| `source/build/build.js` | Post-processing: CSS split, hash computation and URL rewriting |
+| `source/build/split-css.js` | Splits the source stylesheet into the live and site bundles |
 
 ---
 
