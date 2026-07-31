@@ -170,6 +170,7 @@ function renderSchedulePage(camp, events, footerHtml = '', navSections = [], sit
   <meta name="robots" content="noindex, nofollow">
   <title>Lägrets schema – ${campName}</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="site.css">
   <link rel="icon" type="image/png" href="images/sbsommar-icon-192.png">
 ${pwaHeadTags()}
 </head>

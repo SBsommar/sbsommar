@@ -18,6 +18,7 @@ function renderAdminPage(camp, footerHtml = '', navSections = [], goatcounterCod
   <meta name="robots" content="noindex, nofollow">
   <title>Bakom kulisserna – ${camp.name || 'SB Sommar'}</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="site.css">
 ${pwa}
 </head>
 <body>

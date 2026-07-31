@@ -144,7 +144,7 @@ describe('02-§4.16 — Build time embedded at build', () => {
   });
 
   it('DIS-34: app version is embedded as window.__APP_VERSION__', () => {
-    const html = renderTodayPage(CAMP, EVENTS, QR_SVG, '', '', '', '1.0.3');
+    const html = renderTodayPage(CAMP, EVENTS, QR_SVG, '', '', '1.0.3');
     assert.ok(html.includes("window.__APP_VERSION__ = '1.0.3'"), 'app version embedded');
   });
 });
@@ -174,6 +174,14 @@ describe('02-§4.15 — Status bar with live clock is present', () => {
   it('DIS-23: live-clock element with id "live-clock" is present', () => {
     const html = renderTodayPage(CAMP, EVENTS, QR_SVG);
     assert.ok(html.includes('id="live-clock"'), 'live-clock element present');
+  });
+
+  it('DIS-35: clock is split into separate hour:minute and seconds elements', () => {
+    // The seconds live in their own element so a per-second tick rewrites only
+    // #clock-sec, which CSS `contain` isolates from the rest of the page.
+    const html = renderTodayPage(CAMP, EVENTS, QR_SVG);
+    assert.ok(html.includes('id="clock-hm"'), 'hour:minute element present');
+    assert.ok(html.includes('id="clock-sec"'), 'seconds element present');
   });
 });
 
@@ -245,12 +253,22 @@ describe('02-§17.3 — Display view tailored for shared screens', () => {
     const html = renderTodayPage(CAMP, EVENTS, QR_SVG);
     assert.ok(!html.includes('session.js'), 'no session.js in display mode');
   });
+
+  it('DIS-36 (02-§4.28): no pwa-install.js loaded (no header install button on the board)', () => {
+    const html = renderTodayPage(CAMP, EVENTS, QR_SVG);
+    assert.ok(!html.includes('pwa-install.js'), 'no pwa-install.js in display mode');
+  });
 });
 
-// ── 02-§56.3  Pre-rendered description HTML in JSON ──────────────────────────
+// ── 02-§4.26 / 02-§56.3  Display view omits activity descriptions ────────────
+// The passive display board is read at a distance and never expands an
+// activity's detail, so its embedded JSON deliberately carries neither the raw
+// `description` nor the pre-rendered `descriptionHtml`. This keeps the payload
+// small for low-power display hardware. (idag.html still ships descriptionHtml;
+// that is verified by IDAG-19 in coverage-idag.test.js.)
 
-describe('02-§56.3 — Today view pre-renders description HTML', () => {
-  it('DIS-26 (02-§56.3): embedded JSON includes descriptionHtml for events with markdown description', () => {
+describe('02-§4.26 — Display view omits activity descriptions from its JSON', () => {
+  it('DIS-26 (02-§4.26): descriptionHtml is not embedded even when a description is set', () => {
     const mdEvents = [
       { title: 'Test', date: '2099-07-01', start: '08:00', end: '09:00', location: 'Sal', responsible: 'A', description: 'This is **bold**', link: null },
     ];
@@ -258,18 +276,19 @@ describe('02-§56.3 — Today view pre-renders description HTML', () => {
     const match = html.match(/window\.__EVENTS__\s*=\s*(\[.*?\]);/s);
     assert.ok(match, 'events JSON found');
     const events = JSON.parse(match[1]);
-    assert.ok(events[0].descriptionHtml, 'descriptionHtml field present');
-    assert.ok(events[0].descriptionHtml.includes('<strong>bold</strong>'), 'description rendered as HTML');
+    assert.ok(!('descriptionHtml' in events[0]), 'descriptionHtml key absent');
+    assert.ok(!('description' in events[0]), 'description key absent');
+    assert.ok(!html.includes('<strong>bold</strong>'), 'no rendered description HTML in the page');
   });
 
-  it('DIS-27 (02-§56.3): descriptionHtml is null when description is null', () => {
-    const noDescEvents = [
-      { title: 'Test', date: '2099-07-01', start: '08:00', end: '09:00', location: 'Sal', responsible: 'A', description: null, link: null },
-    ];
-    const html = renderTodayPage(CAMP, noDescEvents, QR_SVG);
+  it('DIS-27 (02-§4.26): description fields are absent for every event', () => {
+    const html = renderTodayPage(CAMP, EVENTS, QR_SVG);
     const match = html.match(/window\.__EVENTS__\s*=\s*(\[.*?\]);/s);
     const events = JSON.parse(match[1]);
-    assert.strictEqual(events[0].descriptionHtml, null, 'descriptionHtml should be null');
+    for (const e of events) {
+      assert.ok(!('description' in e), 'description key absent');
+      assert.ok(!('descriptionHtml' in e), 'descriptionHtml key absent');
+    }
   });
 });
 

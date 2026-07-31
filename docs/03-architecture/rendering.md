@@ -234,6 +234,34 @@ both are skipped, so they neither clash nor are marked (02-§120.7).
 after the in-progress rule so red wins over the sage "now" accent and yields to
 the grey `.is-past` treatment once the activity has passed.
 
+### 5.9 Display view low-power rendering (02-§4.26, 02-§4.27)
+
+The display view (`live.html`) is often shown on very weak hardware — a
+Raspberry Pi Zero drives some of the camp's screens — where the browser is
+orders of magnitude slower than a phone. Two properties of `render-today.js`
+and `events-today.js` keep it within that budget.
+
+**Smaller embedded payload.** `render-today.js` embeds the whole camp's events
+(the client picks the current day at runtime and the page has no daily rebuild,
+so every day must be present), but its event map omits `description` and the
+pre-rendered `descriptionHtml` that `render-idag.js` still ships. The board
+never expands an activity, so those fields are dead weight; dropping them cut
+the built page from ~113 kB to ~38 kB, which is less JSON for the Pi to parse on
+each load, midnight reload, and version-triggered reload, and less to hold in
+memory. `events-today.js` already tolerates absent description fields
+(`hasExtra` is false), so such rows render as plain, non-expandable rows.
+
+**Confined clock repaint.** The sidebar clock ticks every wall-clock second, but
+the hour:minute and the seconds are separate elements (`#clock-hm` /
+`#clock-sec`). `updateClock()` rewrites `#clock-hm` only when the minute changes
+and writes the seconds into `#clock-sec` each tick, so a per-second update
+touches two digits. `.clock-sec` carries `contain: layout paint style` and
+`.status-clock` uses `tabular-nums` (fixed digit width), so the browser knows
+the tick can neither reflow nor repaint anything outside that small box — it
+does not re-rasterise the surrounding page. The per-minute row re-classification
+(`.is-now` / `.is-past`) is likewise confined by `contain: layout paint` on
+`body.display-mode .today-card`.
+
 ---
 
 ## 6. Project Structure

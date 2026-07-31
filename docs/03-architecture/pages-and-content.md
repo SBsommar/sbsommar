@@ -531,13 +531,14 @@ asynchronously on every page.
 ### 23.2 Script inclusion
 
 The GoatCounter `count.js` script is included via a `<script>` tag just
-before `</body>` on every page. Two inclusion points:
+before `</body>` on every page that carries the shared site layout: the
+layout helper (`layoutTop`/`layoutBottom` or equivalent) includes it once,
+so all header/footer pages inherit it.
 
-1. **Shared layout pages** — the layout helper (`layoutTop`/`layoutBottom` or
-   equivalent) includes the script once, so all pages with the site header
-   and footer inherit it.
-2. **Display view** (`/live.html`) — does not use the shared layout,
-   so its renderer includes the script separately.
+The **display view** (`/live.html`) is the one exception (02-§63.8): it is a
+passive board that reloads at midnight and on every deploy, which would only
+inflate the counts, so `render-today.js` takes no site code and `build.js`
+does not pass one to it. The board therefore loads no analytics.
 
 The script tag uses the `data-goatcounter` attribute pointing to the
 GoatCounter endpoint. The site code comes from the `GOATCOUNTER_SITE_CODE`

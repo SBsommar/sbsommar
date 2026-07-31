@@ -45,6 +45,9 @@ Part of [the traceability index](./index.md).
 | `02-§4.22` | Display view re-evaluates activities every minute without reloading: ended activities are removed, the in-progress one is highlighted, and a closing message shows when all have ended | 02-requirements/schedule-and-detail.md §4; 07-design/components.md §6.40 | — (manual: open `/live.html` on a day with events spanning the current time; confirm past rows disappear and the ongoing row is accented as the minute rolls over; after the last event ends, confirm the "Inga fler aktiviteter idag." message) | `source/assets/js/client/events-today.js` – `classifyRows()` adds `.is-past`/`.is-now` and toggles `doneMsg`, `tickClassify()` re-runs each minute; `source/assets/cs/style.css` – `body.display-mode .event-row.is-past { display: none }`, `.is-now` | implemented |
 | `02-§4.23` | Display view surfaces a red "Ingen kontakt med servern sedan HH:MM" banner only after >3 min without a successful version check, and hides it once a check succeeds | 02-requirements/schedule-and-detail.md §4; 07-design/components.md §6.40 | DIS-30, DIS-31 (element rendered hidden); — (manual: open `/live.html`, block `version.json` in DevTools, confirm the red banner appears after ~3 min showing the last-contact time, then unblock and confirm it clears) | `source/build/render-today.js` – `<p class="status-offline" id="connection-warning" … hidden>`; `source/assets/js/client/events-today.js` – `refreshConnectionWarning()`, `lastOkCheck`, `STALE_MS`; `source/assets/cs/style.css` – `.status-offline` | implemented |
 | `02-§4.24` | Display view also shows the next day's activities under an "Imorgon" divider when the camp has another day (tomorrow ≤ camp end) and it has at least one activity; next-day rows are exempt from the live "now" logic; not shown on `/idag.html` | 02-requirements/schedule-and-detail.md §4; 07-design/components.md §6 | DIS-32, DIS-33 (build embeds `__SHOW_NEXT_DAY__`/`__CAMP_END__`); — (manual: open `/live.html` in the evening of a non-final camp day and confirm the divider + next day's events appear below today's, and that on the last camp day no next-day section is shown) | `source/build/render-today.js` – `window.__SHOW_NEXT_DAY__`, `window.__CAMP_END__`; `source/assets/js/client/events-today.js` – `tomorrowEvents`, `renderCard()`, `today-list` scoping; `source/assets/cs/style.css` – `.day-divider` | implemented |
+| `02-§4.26` | Display view is passive and shows no expandable detail: its embedded event JSON omits `description`/`descriptionHtml`, keeping the payload small for low-power hardware; `/idag.html` still ships descriptions | 02-requirements/schedule-and-detail.md §4; 03-architecture/rendering.md §5.9 | DIS-26, DIS-27 | `source/build/render-today.js` – event map omits `description`/`descriptionHtml`; `source/assets/js/client/events-today.js` – `hasExtra` false so rows render plain | covered |
+| `02-§4.27` | Display view clock ticks every second without redrawing the page: hour:minute (`#clock-hm`) and seconds (`#clock-sec`) are separate elements and the seconds element is repaint-isolated with CSS containment | 02-requirements/schedule-and-detail.md §4; 03-architecture/rendering.md §5.9 | DIS-35 (structural: split clock elements); — (manual: open `/live.html` on a Raspberry Pi Zero and confirm the seconds tick smoothly without page-wide repaints/jank) | `source/build/render-today.js` – `#clock-hm`/`#clock-sec` spans; `source/assets/js/client/events-today.js` – `updateClock()` writes hm only on minute change; `source/assets/cs/style.css` – `.clock-sec { contain: … }`, `.today-card { contain: … }` | implemented |
+| `02-§4.28` | Display view does not load `pwa-install.js` (no header install button on the passive board) | 02-requirements/schedule-and-detail.md §4 | DIS-36 | `source/build/render-today.js` – script block omits `pwa-install.js` | covered |
 | `02-§76.1` | Old `/dagens-schema.html` URL redirects to `/live.html` | 02-requirements/schedule-and-detail.md §4 | RDR-01..04 | `source/build/render-today.js` – `renderRedirectPage()`; `source/build/build.js` → `public/dagens-schema.html` | covered |
 | `02-§77.1` | Build computes MD5 hash of each JS file referenced by `<script>` tags | 03-architecture/ci-and-deploy.md §27 | CACHE-10 | `source/build/build.js` – JS cache-busting post-processing | covered |
 | `02-§77.2` | Build replaces `src="<file>.js"` with `src="<file>.js?v=<hash>"` in all HTML | 03-architecture/ci-and-deploy.md §27 | CACHE-11 | `source/build/build.js` – JS cache-busting post-processing | covered |
@@ -754,7 +757,7 @@ Part of [the traceability index](./index.md).
 | `02-§55.5` | Modal entry animation: fade + slide-up, ≤ 300 ms | 07-design/components.md §6.54 | MDP-06 | `source/assets/cs/style.css` `.modal-box` | covered |
 | `02-§56.1` | Event detail page renders description as Markdown → HTML | 03-architecture/rendering.md §18.2; 03-architecture/ci-and-deploy.md §20.3 | EVT-23, EVT-25 | `source/build/render-event.js` → `renderDescriptionHtml()` | covered |
 | `02-§56.2` | Weekly schedule renders description as Markdown → HTML | 03-architecture/ci-and-deploy.md §20.3 | MKD-D02 (via eventExtraHtml) | `source/build/render.js` → `renderDescriptionHtml()` | covered |
-| `02-§56.3` | Today view uses pre-rendered description HTML from build JSON | 03-architecture/ci-and-deploy.md §20.3 | DIS-26, DIS-27, IDAG-19 | `source/build/render-today.js`, `render-idag.js` → `descriptionHtml` in JSON; `events-today.js` → uses `e.descriptionHtml` | covered |
+| `02-§56.3` | Interactive today view (`idag.html`) uses pre-rendered description HTML from build JSON; display view (`live.html`) omits descriptions entirely (see 02-§4.26) | 03-architecture/ci-and-deploy.md §20.3; 03-architecture/rendering.md §5.9 | IDAG-19, DIS-26, DIS-27 | `source/build/render-idag.js` → `descriptionHtml` in JSON; `source/build/render-today.js` → no `description`/`descriptionHtml`; `events-today.js` → uses `e.descriptionHtml` when present | covered |
 | `02-§56.4` | RSS feed strips Markdown, uses plain text description | 03-architecture/rendering.md §17.3; 03-architecture/ci-and-deploy.md §20.3 | RSS-16 | `source/build/render-rss.js` → `stripMarkdown()` | covered |
 | `02-§56.5` | iCal strips Markdown, uses plain text description | 03-architecture/ci-and-deploy.md §20.3 | ICAL-32, ICAL-33 | `source/build/render-ical.js` → `stripMarkdown()` | covered |
 | `02-§56.6` | Description Markdown sanitization: raw HTML dropped at parse time, unsafe-scheme URIs (`javascript:`/`vbscript:`/`data:`/`file:`) neutralized in links and images | 03-architecture/ci-and-deploy.md §20.3 | MKD-D07..12, MKD-D25..26, MKD-D28..30, EVT-24 | `source/assets/js/client/markdown-renderers.js` → `renderers`; consumed by `source/build/markdown.js` → `renderDescriptionHtml()` | covered |
@@ -818,7 +821,7 @@ Part of [the traceability index](./index.md).
 | `02-§63.5` | Separate GoatCounter site codes | 03-architecture/pages-and-content.md §23.2 | — | GitHub Environment secrets | implemented |
 | `02-§63.6` | No analytics in local dev | 03-architecture/pages-and-content.md §23.2 | — | `.env.example` | implemented |
 | `02-§63.7` | Script on all shared-layout pages | 03-architecture/pages-and-content.md §23.2 | ANA-SH-* | `source/build/analytics.js`, render-*.js | covered |
-| `02-§63.8` | Script on display view | 03-architecture/pages-and-content.md §23.2 | ANA-DIS-01 | `source/build/render-today.js` | covered |
+| `02-§63.8` | Display view is excluded from analytics (no GoatCounter script) | 03-architecture/pages-and-content.md §23.2 | ANA-DIS-01 | `source/build/render-today.js` (takes no goatcounter code); `source/build/build.js` (does not pass GOATCOUNTER_CODE to the display view) | covered |
 | `02-§63.9` | Script loads async, non-blocking | 03-architecture/pages-and-content.md §23.2 | ANA-ASYNC-01 | `source/build/analytics.js` | covered |
 | `02-§63.10` | GOATCOUNTER_SITE_CODE env var | 03-architecture/pages-and-content.md §23.2 | ANA-CODE-01 | `source/build/analytics.js` | covered |
 | `02-§63.11` | No script when env var absent | 03-architecture/pages-and-content.md §23.2 | ANA-NO-* | `source/build/analytics.js` | covered |
@@ -960,7 +963,12 @@ its requirement rows together with the test-legend rows that evidence them.
 | CACHE-08 | `tests/cache-headers.test.js` | `02-§69.2 — build.js produces style.css?v= pattern` |
 | CACHE-09 | `tests/cache-headers.test.js` | `02-§69.3 — Hash is deterministic` |
 | `02-§69.4` | implemented | No render functions changed — post-processing in `build.js` `findHtmlFiles()` |
-| `02-§69.5` | covered | All 1182 existing tests pass — STR-CSS, EVT-13 still match |
+| `02-§69.5` | covered | All existing tests pass — STR-CSS, EVT-13 still match |
+| `02-§69.6` | covered | Two delivered bundles: live (`style.css`, base + schedule/display) + site (`site.css`, rest) — CSSPLIT-01..05; `source/build/split-css.js`, `source/build/build.js` |
+| `02-§69.7` | covered | One source stylesheet; the two bundles together equal it (no loss) — CSSPLIT-01, CSSPLIT-06; `source/build/split-css.js` `splitCss()` |
+| `02-§69.8` | covered | `live.html` links only the live bundle — CSSPLIT-07; `source/build/render-today.js` |
+| `02-§69.9` | covered | Chrome pages link both bundles (live first) — CSSPLIT-08; 11 page renderers add `<link href="site.css">` |
+| `02-§69.10` | covered | Both bundles content-hash cache-busted — CACHE-08; `source/build/build.js` loops `['style.css','site.css']` |
 | | | **§70 — Main Landmark Element** |
 | MAIN-01-* | `tests/main-landmark.test.js` | `02-§70.1 — Every page has exactly one <main>` |
 | `02-§70.2` | covered | `<main>` wraps content between nav and footer (MAIN-01/02/03 verify placement) |
@@ -1129,7 +1137,7 @@ its requirement rows together with the test-legend rows that evidence them.
 | `02-§83.12` | covered | PWA-05-*: all 8 pages include apple-touch-icon |
 | `02-§83.13` | covered | PWA-17: `source/static/sw.js` exists; `build.js` copies to public/ |
 | `02-§83.14` | covered | PWA-06-*: all 8 pages include sw-register.js |
-| `02-§83.15` | covered | PWA-18, PWA-31: sw.js CACHE_NAME is sb-sommar-v8 |
+| `02-§83.15` | covered | PWA-18, PWA-31: sw.js CACHE_NAME is sb-sommar-v9 |
 | `02-§83.16` | covered | PWA-19, PWA-19b: pre-cache excludes lagg-till.html, redigera.html; includes /index.html |
 | `02-§83.17` | implemented | Manual: verify network-first HTML, cache-first assets in browser DevTools |
 | `02-§83.18` | covered | PWA-20: sw.js activate handler deletes old caches |
@@ -1148,7 +1156,7 @@ its requirement rows together with the test-legend rows that evidence them.
 | `02-§83.31` | implemented | Manual: verify offline page uses shared nav/footer/CSS |
 | `02-§83.32` | covered | PWA-29: offline page contains Swedish offline text |
 | `02-§83.33` | covered | PWA-30: offline.html in PRE_CACHE_URLS |
-| `02-§83.34` | covered | PWA-31: CACHE_NAME is sb-sommar-v8 |
+| `02-§83.34` | covered | PWA-31: CACHE_NAME is sb-sommar-v9 |
 | `02-§83.35` | covered | PWA-32, PWA-33: offline page <main> does not link to lagg-till.html or redigera.html |
 
 ## Sections §84–§100
@@ -1402,7 +1410,7 @@ its requirement rows together with the test-legend rows that evidence them.
 
 | ID | Status | Notes |
 | --- | --- | --- |
-| `02-§96.1` | covered | OFF-02, PWA-31: `sw.js` declares `const CACHE_NAME = 'sb-sommar-v8'` |
+| `02-§96.1` | covered | OFF-02, PWA-31: `sw.js` declares `const CACHE_NAME = 'sb-sommar-v9'` |
 | `02-§96.2` | covered | SWH-01: `install` event handler contains `self.skipWaiting()` |
 | `02-§96.3` | covered | SWH-02: `install` handler wraps each URL as `new Request(u, { cache: 'reload' })` before `cache.addAll` |
 | `02-§96.4` | covered | SWH-03, SWH-04: `activate` handler deletes caches `!== CACHE_NAME` and calls `self.clients.claim()` |
@@ -1412,7 +1420,7 @@ its requirement rows together with the test-legend rows that evidence them.
 | `02-§96.7` | implemented | `source/build/build.js` pre-cache-manifest injection uses root-relative paths (no query strings); verified post-build by `public/sw.js` contents |
 | `02-§96.8` | implemented | `cacheFirstThenNetwork` catch branch calls `caches.match(request, { ignoreSearch: true })` so `/style.css` pre-cache entry still serves offline — manual browser verification |
 | `02-§96.9` | implemented | Manual browser verification: load SW v5, deploy v6, confirm next navigation upgrades without user action |
-| `02-§96.10` | implemented | Manual browser verification: confirm `sb-sommar-v7` is deleted on activate and `sb-sommar-v8` populated from fresh network responses |
+| `02-§96.10` | implemented | Manual browser verification: confirm `sb-sommar-v7` is deleted on activate and `sb-sommar-v9` populated from fresh network responses |
 | `02-§96.11` | implemented | Manual browser verification: confirm §94 registration-banner styling applies on second reload after deploy |
 | `02-§96.12` | implemented | Manual browser verification: no clear-site-data or unregister action required from the end user |
 | `02-§96.13` | covered | SWH-08: `sw.js` has no `import`, `require`, or `importScripts` |

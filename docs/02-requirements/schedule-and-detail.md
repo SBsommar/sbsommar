@@ -46,6 +46,9 @@ Part of [the requirements index](./index.md). Section IDs (`02-§N.M`) are stabl
 - The layout is optimised for portrait-orientation screens; event rows are compact to maximise the number of visible events. <!-- 02-§4.21 -->
 - The event list tracks the current time without reloading: each activity is re-evaluated every minute, aligned to the minute boundary. An activity whose end time has passed is removed from the list; the activity currently in progress is highlighted. An activity with no end time is treated as in progress from its start time onward (it is never removed on its own). When every activity has ended, a closing message ("Inga fler aktiviteter idag.") is shown in place of the list. <!-- 02-§4.22 -->
 - Below today's activities, the next day's activities are also shown when the camp has another day (the next calendar day is on or before the camp's end date) and that day has at least one activity. They appear under a clear divider labelled "Imorgon". The next day's activities use the same row layout as today's but are never removed or highlighted by the live "now" logic — that logic applies only to today's list. This is especially useful late in the evening once the day's own activities have ended. The next-day section is shown only in the display view, not on `/idag.html`. <!-- 02-§4.24 -->
+- The display view is a passive board read at a distance and shows no expandable per-event detail: its embedded event data carries only the fields needed to render each row (title, date, times, location, responsible, link, and status markers), and omits the activity `description` and its pre-rendered HTML. This keeps the embedded payload small so low-power display hardware renders it quickly. The interactive today view (`/idag.html`) is unaffected and still shows descriptions. <!-- 02-§4.26 -->
+- The current-time clock ticks every wall-clock second without redrawing the surrounding page: the hour-and-minute portion and the seconds are separate elements, so a tick rewrites only the seconds, and that seconds element is isolated (CSS containment) so its repaint stays confined to its own box. <!-- 02-§4.27 -->
+- The display view does not load the PWA install script (`pwa-install.js`). That script only wires up the header install button (02-§88.1), which the display view has no header to show, so on the board it would do nothing but cost a request and a parse. <!-- 02-§4.28 -->
 - The old URL `/dagens-schema.html` serves a redirect page that sends the visitor to `/live.html` via `<meta http-equiv="refresh">` and a JavaScript fallback. <!-- 02-§76.1 -->
 
 ### All schedule views
@@ -395,10 +398,12 @@ appropriate output for each context.
 - In the weekly schedule (schema.html), the description inside the
   expandable event row must be rendered as formatted HTML produced by
   `marked.parse()`. <!-- 02-§56.2 -->
-- In the today view (idag.html / live.html), the description
-  must be rendered as formatted HTML. The HTML must be pre-rendered at
-  build time and delivered in the JSON payload to avoid shipping the
-  `marked` library to the client. <!-- 02-§56.3 -->
+- In the interactive today view (`/idag.html`), the description must be
+  rendered as formatted HTML. The HTML is pre-rendered at build time and
+  delivered in the JSON payload to avoid shipping the `marked` library to
+  the client. The display view (`/live.html`) is a passive board that shows
+  no description at all, so it carries neither the raw description nor its
+  pre-rendered HTML (02-§4.26). <!-- 02-§56.3 -->
 - In the RSS feed (schema.rss), the description must be stripped of
   Markdown syntax and included as plain text in the `<description>`
   element. <!-- 02-§56.4 -->

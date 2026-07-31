@@ -164,8 +164,11 @@ no-backend, minimal-JS constraints.
 
 - The GoatCounter script tag must be included on every page that uses the
   shared site layout (header/footer pages). <!-- 02-§63.7 -->
-- The display view (`/live.html`) must also include the analytics
-  script, even though it has no shared layout. <!-- 02-§63.8 -->
+- The display view (`/live.html`) does not include the analytics script.
+  It is a passive board shown on shared screens (often on low-power
+  hardware) and reloads itself at midnight and on every new deploy, which
+  would only inflate the counts; it is the one page intentionally excluded
+  from analytics. <!-- 02-§63.8 -->
 - The script must load asynchronously and must not block page
   rendering. <!-- 02-§63.9 -->
 - The GoatCounter site code must be configurable via an environment variable
@@ -967,7 +970,7 @@ from a stale cache.
 
 ### 96.2 Service worker (site requirements)
 
-- The service worker cache name is `sb-sommar-v8`. <!-- 02-§96.1 -->
+- The service worker cache name is `sb-sommar-v9`. <!-- 02-§96.1 -->
 - The `install` event handler calls `self.skipWaiting()` so that a new
   worker moves straight from `installed` to `activating` without
   waiting for all existing clients to close. <!-- 02-§96.2 -->
@@ -1023,11 +1026,12 @@ from a stale cache.
   `sbsommar.se` (or `qa.sbsommar.se`): the browser fetches `sw.js`
   bypassing its HTTP cache, installs the new worker, applies
   `skipWaiting`, and claims the open tab. <!-- 02-§96.9 -->
-- The new worker deletes the old `sb-sommar-v7` cache and rebuilds
-  `sb-sommar-v8` from fresh network responses. <!-- 02-§96.10 -->
+- The new worker deletes the old `sb-sommar-v8` cache and rebuilds
+  `sb-sommar-v9` from fresh network responses. <!-- 02-§96.10 -->
 - After at most one reload following the first post-deploy visit, every
   client sees the same assets that the server serves, including the
-  current `style.css` with the §94 registration-banner rules. <!-- 02-§96.11 -->
+  current stylesheets (`style.css` and `site.css`) with the §94
+  registration-banner rules. <!-- 02-§96.11 -->
 - No user action (clearing site data, uninstalling the PWA,
   unregistering the service worker) is required to recover from the
   stale-cache state. <!-- 02-§96.12 -->

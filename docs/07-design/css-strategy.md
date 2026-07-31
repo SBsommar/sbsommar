@@ -20,9 +20,21 @@ Write CSS for a component only once its HTML structure exists. Speculative CSS �
 
 ### Structure
 
-1. One main CSS file, organized in sections: reset → tokens → base → layout → components → utilities. <!-- 07-§7.3 -->
+1. One main CSS source file (`source/assets/cs/style.css`), organized in sections: reset → tokens → base → layout → components → utilities. Contributors edit this single file; linting and tests read it whole. <!-- 07-§7.3 -->
 2. No preprocessor required. CSS custom properties (variables) are enough. <!-- 07-§7.4 -->
 3. No CSS framework. Hand-written, minimal. <!-- 07-§7.5 -->
+
+### Delivered bundles (build-time split)
+
+The single source file is split at build time into two delivered bundles so the low-power display board loads only the CSS it needs (02-§69.6–69.10):
+
+- **`public/style.css` — the live bundle**: base tokens, reset, typography, and the schedule/display sections. `live.html` loads only this.
+- **`public/site.css` — the site bundle**: every other section. Pages with the site header/footer load both bundles (live first, then site).
+
+The split is driven by section header title in `source/build/split-css.js` (`LIVE_SECTION_TITLES`). A section whose `/* ── Title ── */` header is listed there goes to the live bundle; every other section defaults to the site bundle. When adding CSS:
+
+- New site chrome, form, or content-page styling needs no action — it defaults to the site bundle and reaches every ordinary page.
+- Styling the display board itself (`live.html`) needs its section title added to `LIVE_SECTION_TITLES`, otherwise the board will not receive it.
 
 ### CSS custom properties (design tokens)
 
