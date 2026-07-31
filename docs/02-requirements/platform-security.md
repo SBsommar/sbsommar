@@ -164,8 +164,11 @@ no-backend, minimal-JS constraints.
 
 - The GoatCounter script tag must be included on every page that uses the
   shared site layout (header/footer pages). <!-- 02-§63.7 -->
-- The display view (`/live.html`) must also include the analytics
-  script, even though it has no shared layout. <!-- 02-§63.8 -->
+- The display view (`/live.html`) does not include the analytics script.
+  It is a passive board shown on shared screens (often on low-power
+  hardware) and reloads itself at midnight and on every new deploy, which
+  would only inflate the counts; it is the one page intentionally excluded
+  from analytics. <!-- 02-§63.8 -->
 - The script must load asynchronously and must not block page
   rendering. <!-- 02-§63.9 -->
 - The GoatCounter site code must be configurable via an environment variable

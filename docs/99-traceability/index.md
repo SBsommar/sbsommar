@@ -138,8 +138,8 @@ Test IDs referenced in the `Test(s)` column are defined in the
 ## Summary
 
 ```text
-Total requirements:            1442
-Covered (implemented + tested): 781
+Total requirements:            1443
+Covered (implemented + tested): 782
 Implemented, not tested:        661
 Gap (no implementation):          0
 Orphan tests (no requirement):    0

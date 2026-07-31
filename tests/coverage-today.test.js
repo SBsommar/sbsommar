@@ -144,7 +144,7 @@ describe('02-§4.16 — Build time embedded at build', () => {
   });
 
   it('DIS-34: app version is embedded as window.__APP_VERSION__', () => {
-    const html = renderTodayPage(CAMP, EVENTS, QR_SVG, '', '', '', '1.0.3');
+    const html = renderTodayPage(CAMP, EVENTS, QR_SVG, '', '', '1.0.3');
     assert.ok(html.includes("window.__APP_VERSION__ = '1.0.3'"), 'app version embedded');
   });
 });
@@ -252,6 +252,11 @@ describe('02-§17.3 — Display view tailored for shared screens', () => {
   it('DIS-18: no session.js loaded (display-only, no editing)', () => {
     const html = renderTodayPage(CAMP, EVENTS, QR_SVG);
     assert.ok(!html.includes('session.js'), 'no session.js in display mode');
+  });
+
+  it('DIS-36 (02-§4.28): no pwa-install.js loaded (no header install button on the board)', () => {
+    const html = renderTodayPage(CAMP, EVENTS, QR_SVG);
+    assert.ok(!html.includes('pwa-install.js'), 'no pwa-install.js in display mode');
   });
 });
 

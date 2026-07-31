@@ -208,7 +208,10 @@ async function main() {
     .replace(/<\?xml[^?]*\?>\s*/g, '')
     .replace(/<!DOCTYPE[^>]*>\s*/g, '');
 
-  const todayHtml = renderTodayPage(camp, events, qrSvg, SITE_URL, buildTime, GOATCOUNTER_CODE, versionString);
+  // The display board (live.html) loads no analytics (02-§63.8): it is a passive
+  // screen and its auto-reloads would only inflate the counts. GOATCOUNTER_CODE
+  // is intentionally not passed here.
+  const todayHtml = renderTodayPage(camp, events, qrSvg, SITE_URL, buildTime, versionString);
   fs.writeFileSync(path.join(OUTPUT_DIR, 'live.html'), todayHtml, 'utf8');
   console.log(`Built: public/live.html  (${events.length} events)`);
 

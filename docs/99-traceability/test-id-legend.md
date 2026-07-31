@@ -176,6 +176,7 @@ Part of [the traceability index](./index.md).
 | DIS-26..27 | `tests/coverage-today.test.js` | `Display view omits activity descriptions from its JSON (02-§4.26)` |
 | DIS-35 | `tests/coverage-today.test.js` | `Clock split into hour:minute and seconds elements (02-§4.27)` |
 | CSSPLIT-01..08 | `tests/css-split.test.js` | `CSS split into live + site bundles; live.html links only style.css (02-§69.6–69.10)` |
+| DIS-36 | `tests/coverage-today.test.js` | `Display view omits pwa-install.js (02-§4.28)` |
 | IDAG-19 | `tests/coverage-idag.test.js` | `Idag page pre-rendered descriptionHtml (02-§56.3)` |
 | MKD-CSS-01 | `tests/coverage-css.test.js` | `02-§56.8 — .event-description p italic removed` |
 | MDT-01..06 | `tests/markdown-toolbar.test.js` | `02-§57.2 — Toolbar wraps selected text` |

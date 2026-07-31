@@ -60,10 +60,15 @@ describe('02-§88.12 — pwa-install.js exists', () => {
   });
 });
 
-// ── 02-§88.4 — Every page includes pwa-install.js ────────────────────────────
+// ── 02-§88.4 — Every header page includes pwa-install.js ─────────────────────
+// The install button lives in the shared header (02-§88.4). The display view
+// (`live.html`) has no header, so it neither shows the button nor loads the
+// script (02-§4.28); it is the documented exception, verified below.
 
-describe('02-§88.4 — Every page includes pwa-install.js', () => {
-  for (const [name, fn] of ALL_PAGES) {
+const SCRIPT_PAGES = ALL_PAGES.filter(([name]) => name !== 'display');
+
+describe('02-§88.4 — Every header page includes pwa-install.js', () => {
+  for (const [name, fn] of SCRIPT_PAGES) {
     it(`INST-02-${name}: ${name} page includes pwa-install.js`, () => {
       const html = fn();
       assert.ok(
@@ -72,6 +77,14 @@ describe('02-§88.4 — Every page includes pwa-install.js', () => {
       );
     });
   }
+
+  it('INST-02-display: display view does NOT load pwa-install.js (02-§4.28)', () => {
+    const html = renderTodayPage(CAMP, EVENTS, QR_SVG);
+    assert.ok(
+      !html.includes('pwa-install.js'),
+      'display view must not load pwa-install.js (no header install button)',
+    );
+  });
 });
 
 // ── 02-§88.1 — Install button placeholder in nav ────────────────────────────

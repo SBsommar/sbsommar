@@ -72,9 +72,8 @@ function idagWith(code) {
 function idagWithout() {
   return renderIdagPage(CAMP, EVENTS);
 }
-function todayWith(code) {
-  return renderTodayPage(CAMP, EVENTS, QR_SVG, '', '', code);
-}
+// The display view takes no goatcounter code — it is excluded from analytics
+// (02-§63.8), so there is only a "without" helper.
 function todayWithout() {
   return renderTodayPage(CAMP, EVENTS, QR_SVG);
 }
@@ -119,13 +118,15 @@ describe('02-§63.7 — GoatCounter script on all shared-layout pages', () => {
   }
 });
 
-// ── 02-§63.8 — Script on display view ──────────────────────────────────────
+// ── 02-§63.8 — Display view is excluded from analytics ─────────────────────
 
-describe('02-§63.8 — GoatCounter script on display view', () => {
-  it('ANA-DIS-01: display view includes GoatCounter script', () => {
-    const html = todayWith(GC_CODE);
-    assert.ok(html.includes('goatcounter.com/count'), 'display view has GoatCounter endpoint');
-    assert.ok(html.includes('count.js'), 'display view loads count.js');
+describe('02-§63.8 — Display view is excluded from analytics', () => {
+  it('ANA-DIS-01: display view loads no GoatCounter script', () => {
+    // The passive board (live.html) carries no analytics: build.js does not pass
+    // a site code and renderTodayPage takes none, so the script can never appear.
+    const html = todayWithout();
+    assert.ok(!html.includes('goatcounter.com/count'), 'display view has no GoatCounter endpoint');
+    assert.ok(!html.includes('count.js'), 'display view loads no count.js');
   });
 });
 
@@ -157,7 +158,6 @@ describe('02-§63.11 — No GoatCounter script when code is absent', () => {
     ['add-activity', addWithout],
     ['edit-activity', editWithout],
     ['idag', idagWithout],
-    ['display', todayWithout],
     ['index', indexWithout],
     ['arkiv', arkivWithout],
     ['kalender', kalenderWithout],

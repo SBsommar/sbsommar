@@ -1,7 +1,6 @@
 'use strict';
 
 const { escapeHtml, toDateString } = require('./render');
-const { goatcounterScript } = require('./analytics');
 const { pwaHeadTags } = require('./pwa');
 
 /**
@@ -14,7 +13,7 @@ const { pwaHeadTags } = require('./pwa');
  * Sidebar shows a live clock and last-updated time; page auto-reloads at
  * midnight and on new version detection via version.json polling.
  */
-function renderTodayPage(camp, events, qrSvg, siteUrl = '', buildTime = '', goatcounterCode = '', versionString = '') {
+function renderTodayPage(camp, events, qrSvg, siteUrl = '', buildTime = '', versionString = '') {
   const campName = escapeHtml(camp.name);
   const siteHost = siteUrl ? escapeHtml(siteUrl.replace(/^https?:\/\//, '').replace(/\/+$/, '')) : '';
   const safeBuildTime = escapeHtml(buildTime);
@@ -82,7 +81,6 @@ ${pwaHeadTags()}
   <script src="ghost-config.js"></script>
   <script src="events-today.js"></script>
   <script src="sw-register.js" defer></script>
-  <script src="pwa-install.js" defer></script>${goatcounterScript(goatcounterCode)}
 </body>
 </html>
 `;
