@@ -184,16 +184,31 @@
     });
   }
 
-  // ── Form lock / unlock ────────────────────────────────────────────────────────
+  // ── Form lock / unlock (02-§122) ──────────────────────────────────────────────
 
+  // True while an edit-form write (save, cancel/restore toggle, or delete) is
+  // in flight. The submit handler, submitCancelToggle(), and performDelete()
+  // all bail out when it is set, so a second activation cannot open a duplicate
+  // pull request even if a click slips past the disabled state.
+  var submitting = false;
+
+  // The cancel toggle (#btn-cancel) and delete button (#btn-delete) live in the
+  // header actions area, outside the <fieldset>, so fieldset.disabled does not
+  // reach them — they must be disabled explicitly (02-§122.1).
   function lock() {
+    submitting = true;
     fieldset.disabled = true;
     submitBtn.disabled = true;
+    if (cancelBtn) cancelBtn.disabled = true;
+    if (deleteBtn) deleteBtn.disabled = true;
   }
 
   function unlock() {
+    submitting = false;
     fieldset.disabled = false;
     submitBtn.disabled = false;
+    if (cancelBtn) cancelBtn.disabled = false;
+    if (deleteBtn) deleteBtn.disabled = false;
   }
 
   // ── Cookie helper ────────────────────────────────────────────────────────────
@@ -373,6 +388,7 @@
   // confirmation step. `cancelledState` only flips on success.
   function submitCancelToggle() {
     if (!form) return;
+    if (submitting) return; // a write is already in flight (02-§122.3)
     var els = form.elements;
     var target = !cancelledState;
     var body = {
@@ -757,6 +773,7 @@
 
   if (form) {
     form.addEventListener('submit', function (e) {
+      if (submitting) return; // a write is already in flight (02-§122.3)
       e.preventDefault();
       clearAllErrors();
 
@@ -947,6 +964,7 @@
     focusFirstInModal();
     document.getElementById('modal-retry-delete-btn').addEventListener('click', function () {
       closeModal();
+      unlock(); // re-enable the controls so the user can retry (02-§122.5)
       if (deleteBtn) deleteBtn.focus();
     });
   }
@@ -969,11 +987,13 @@
 
   function performDelete() {
     if (!form) return;
+    if (submitting) return; // a write is already in flight (02-§122.3)
     var els = form.elements;
     var id = els.id.value;
     var title = els.title.value || '';
     var date = els.date.value || '';
 
+    lock(); // disable all mutating controls for the duration (02-§122.5)
     setDeleteModalLoading();
 
     var deleteBody = { id: id, date: date };
