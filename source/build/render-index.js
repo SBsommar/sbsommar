@@ -544,4 +544,4 @@ function injectRegistrationCta(sectionHtml) {
   return sectionHtml.slice(0, insertPoint) + cta + '\n' + sectionHtml.slice(insertPoint);
 }
 
-module.exports = { renderIndexPage, convertMarkdown, extractHeroImage, extractH1, renderUpcomingCampsHtml, renderLocationAccordions, wrapTestimonialCards, renderRegistrationBannersHtml, injectRegistrationCta, formatLongSvDate, REGISTRATION_URL };
+module.exports = { renderIndexPage, convertMarkdown, extractHeroImage, extractH1, renderUpcomingCampsHtml, renderLocationAccordions, wrapTestimonialCards, renderRegistrationBannersHtml, injectRegistrationCta, formatLongSvDate, REGISTRATION_URL, EDQHUB_ICON };

@@ -36,6 +36,8 @@ camps:
     link: https://www.facebook.com/groups/syssleback2026
     information: |
       Claude code har nu fixat systemet. Ingen wordpress längre. Ren kod endast för våra behov. Kanske kan vi snart skriva önskemål och det införs nästan automatiskt.
+      Från och med detta läger flyttar kommunikationen från Facebook till EDQ Hub.
+    edqhub: https://edqhub.com/join/sb-sommarlager-2026
     file: 2026-07-syssleback.yaml
     archived: true
   - id: 2026-06-syssleback
