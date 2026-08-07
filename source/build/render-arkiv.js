@@ -5,6 +5,7 @@ const { escapeHtml, toDateString, formatDate, safeLinkHref } = require('./utils'
 const { renderDescriptionHtml } = require('./markdown');
 const { goatcounterScript } = require('./analytics');
 const { pwaHeadTags } = require('./pwa');
+const { EDQHUB_ICON } = require('./render-index');
 
 const MONTHS_SV = [
   'januari', 'februari', 'mars', 'april', 'maj', 'juni',
@@ -111,6 +112,7 @@ function renderArkivPage(allCamps, footerHtml = '', navSections = [], campEvents
     const location = escapeHtml(camp.location || '');
     const info = (camp.information || '').trim();
     const link = (camp.link || '').trim();
+    const edqhub = safeLinkHref(camp.edqhub);
 
     const infoHtml = info
       ? `\n        <p class="camp-information">${escapeHtml(info)}</p>`
@@ -118,6 +120,14 @@ function renderArkivPage(allCamps, footerHtml = '', navSections = [], campEvents
 
     const linkHtml = link
       ? `\n        <a class="camp-fb-link" href="${escapeHtml(link)}" target="_blank" rel="noopener noreferrer"><img src="images/facebook-ikon.webp" alt="Facebookgrupp" class="camp-fb-logo" width="24" height="24"></a>`
+      : '';
+
+    // A camp that carries an `edqhub` join URL shows an EDQ Hub link beside the
+    // Facebook link (02-§121.16), gated on the sanitised URL so camps without
+    // the field show none. The migration statement itself lives in the camp's
+    // `information` text (02-§121.17), not in a separate element.
+    const hubLinkHtml = edqhub
+      ? `\n        <a class="camp-hub-link" href="${escapeHtml(edqhub)}" target="_blank" rel="noopener noreferrer" aria-label="EDQ Hub">${EDQHUB_ICON}</a>`
       : '';
 
     const campEvents = campEventsMap[camp.id] || [];
@@ -131,7 +141,7 @@ function renderArkivPage(allCamps, footerHtml = '', navSections = [], campEvents
         <span class="timeline-meta">${headerDateRange} · ${location}</span>
         <span class="timeline-chevron" aria-hidden="true"></span>
       </button>
-      <div class="timeline-panel" id="${panelId}" hidden>${linkHtml}${infoHtml}${eventsHtml}
+      <div class="timeline-panel" id="${panelId}" hidden>${linkHtml}${hubLinkHtml}${infoHtml}${eventsHtml}
       </div>
     </div>
   </li>`;

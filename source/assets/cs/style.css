@@ -2609,6 +2609,19 @@ body.modal-open {
   vertical-align: middle;
 }
 
+/* EDQ Hub link in a camp's archive panel, beside the Facebook link (02-§121.16) */
+.camp-hub-link {
+  display: inline-block;
+  margin-bottom: var(--space-sm);
+  margin-left: var(--space-sm);
+}
+
+.camp-hub-link svg {
+  width: 28px;
+  height: 28px;
+  vertical-align: middle;
+}
+
 /* Archive event list */
 .archive-events {
   margin-top: var(--space-sm);
