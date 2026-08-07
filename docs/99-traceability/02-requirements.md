@@ -1957,6 +1957,11 @@ Doc ref: `02-requirements/design-and-content.md §121`;
 | `02-§121.12` | covered | HUBB-12: no inline `.hero-hub-banner[data-opens]` script; the banner is static markup with no new JS file |
 | `02-§121.13` | implemented | No dependency added to `package.json`; the icon is inline SVG and reuses the existing `EDQHUB_ICON` constant — review checkpoint |
 | `02-§121.14` | covered | HUBB-14, HUBB-15: the "Till EDQ Hub" call-to-action is a `<span class="hero-hub-banner-btn">` inside the single card anchor (no nested link/button); `html-validate` (`lint:html`) passes on the built page |
+| `02-§121.15` | covered | ARCHUB-01, ARCHUB-04: `renderArkivPage` reads the optional `camp.edqhub` field; a camp carrying it renders the hub link, one without renders none. Set on `2026-07-syssleback` in `source/data/camps.yaml` |
+| `02-§121.16` | covered | ARCHUB-01/-02/-03: `source/build/render-arkiv.js` emits a `.camp-hub-link` anchor with `href` = `edqhub`, the shared `EDQHUB_ICON` SVG, `aria-label="EDQ Hub"`, `target="_blank"` + `rel="noopener noreferrer"` |
+| `02-§121.17` | covered | Content in `source/data/camps.yaml` — the `2026-07-syssleback` `information` ends with "Från och med detta läger flyttar kommunikationen från Facebook till EDQ Hub.", rendered inside the existing `.camp-information` paragraph, not a separate element (manual/data checkpoint) |
+| `02-§121.18` | covered | ARCHUB-04, ARCHUB-05: absent `edqhub`, or an unsafe URL (`safeLinkHref` returns falsy), yields no hub link; the Facebook link is unaffected |
+| `02-§121.19` | implemented | `source/assets/cs/style.css` `.camp-hub-link` uses only `07-design/css-strategy.md §7` tokens; `stylelint` (`lint:css`) passes — token-only usage is a review checkpoint |
 
 ### §122 — Edit Duplicate Hardening
 

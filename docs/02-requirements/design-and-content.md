@@ -573,3 +573,27 @@ an additional, more visible surface for the same destination.
 - The banner is static markup: it requires no new JavaScript file and no inline
   script. <!-- 02-§121.12 -->
 - The banner introduces no new runtime dependencies. <!-- 02-§121.13 -->
+
+### 121.7 EDQ Hub in the archive
+
+The archive presents each past camp with a link to its community. For a camp
+whose community has moved to EDQ Hub, the archive shows the EDQ Hub link
+alongside the historical Facebook-group link and states that the move happened.
+
+- A camp entry in `source/data/camps.yaml` may carry an optional `edqhub` field
+  holding the camp's EDQ Hub join URL. <!-- 02-§121.15 -->
+- In the archive (`arkiv.html`), a camp whose `edqhub` field holds a valid URL
+  shows an EDQ Hub link beside its Facebook-group link in the camp panel. The
+  link carries the shared EDQ Hub hub-node icon, opens in a new tab with
+  `target="_blank"` and `rel="noopener noreferrer"`, and has the accessible name
+  "EDQ Hub". <!-- 02-§121.16 -->
+- The statement that a camp's communication has moved from Facebook to EDQ Hub
+  is part of that camp's existing `information` text, not a separate element. The
+  July 2026 camp's `information` ends with "Från och med detta läger flyttar
+  kommunikationen från Facebook till EDQ Hub.". <!-- 02-§121.17 -->
+- A camp without an `edqhub` field, or whose `edqhub` value is not a safe
+  `http(s)` URL, shows no EDQ Hub link in the archive; its Facebook-group link is
+  unaffected. <!-- 02-§121.18 -->
+- The archive EDQ Hub link uses only the design tokens defined in
+  `07-design/css-strategy.md §7`; no colours, spacing, or typography values are
+  hardcoded. <!-- 02-§121.19 -->
