@@ -37,7 +37,7 @@ camps:
     information: |
       Claude code har nu fixat systemet. Ingen wordpress längre. Ren kod endast för våra behov. Kanske kan vi snart skriva önskemål och det införs nästan automatiskt.
     file: 2026-07-syssleback.yaml
-    archived: false
+    archived: true
   - id: 2026-06-syssleback
     name: SB sommar 2026 juni
     start_date: '2026-06-21'
@@ -64,15 +64,15 @@ camps:
     qa: true
   - id: qa-thisweek
     name: QA Testläger (vår 2026)
-    start_date: '2026-04-24'
-    end_date: '2026-07-18'
-    opens_for_editing: '2026-04-20'
-    registration_opens: '2026-02-23'
-    registration_closes: '2026-04-19'
+    start_date: '2026-09-01'
+    end_date: '2027-06-20'
+    opens_for_editing: '2026-08-28'
+    registration_opens: '2026-07-03'
+    registration_closes: '2026-08-27'
     location: Sysslebäck
     link: ''
     information: |
-      QA-läger aktivt fram till att det riktiga lägret öppnar för redigering (2026-07-18).
+      QA-läger aktivt fram till att det riktiga lägret öppnar för redigering (2027-06-20).
     file: qa-thisweek.yaml
     archived: false
     qa: true

@@ -4,4 +4,3164 @@ camp:
   location: Sysslebäck
   start_date: '2026-07-26'
   end_date: '2026-08-02'
-events: []
+events:
+  - id: välkommen-2026-07-26-1200
+    title: Välkommen
+    date: '2026-07-26'
+    start: '12:00'
+    end: '23:30'
+    location: Annat
+    responsible: Alla
+    description: |
+      Första dagen. Besökare kommer vid olika tider. På eftermiddagen och kvällen hjälps vi åt att bygga tält, rigga datorsal, GA-hall med mera och komma iordning inför lägret.
+      Ta hand om varandra och tänk lite extra om ni ser nya ansikten. Ta kontakt!
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-02-27 09:16:57
+      updated_at: 2026-02-27 09:16:57
+  - id: middag-2026-07-26-1700
+    title: Middag
+    date: '2026-07-26'
+    start: '17:00'
+    end: '18:00'
+    location: Servicehus
+    responsible: Alla
+    description: |
+      Se tiden som en riktlinje då vi försöker att inte ha några aktiviteter igång. Man får givetvis äta precis när man vill.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-02-27 09:16:57
+      updated_at: 2026-02-27 09:16:57
+  - id: obs-alla-deltar-nya-lite-extra-rigga-tält-och-ställa-i-ordning-ga-hall-2026-07-26-1800
+    title: '(OBS! Alla deltar, nya lite extra) Rigga tält och ställa i ordning GA-hall'
+    date: '2026-07-26'
+    start: '18:00'
+    end: '20:30'
+    location: Annat
+    responsible: Alla
+    description: |
+      Vi hjälps åt att hämta material från förrådet vid receptionen.
+      Bygger massa tält.
+      Gör iordning GA-hallen.
+      Nya deltagare har här chansen att komma in, bidra, och bli delaktiga i lägret!
+      Det blir vad vi gör det till. Fråga den jämte dig, vad du kan göra.
+      Passa på att fråga om namn också. :)
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-02-27 09:16:57
+      updated_at: 2026-02-27 09:16:57
+  - id: lar-kanna-varandra-och-lagret-ish-tipsrunda-2026-07-27-0915
+    title: Lär känna varandra och lägret - ish tipsrunda
+    date: '2026-07-27'
+    start: '09:15'
+    end: '09:45'
+    location: Servicehus
+    responsible: Cecilia Löfgreen
+    description: |
+      Varmt välkomna på en rundtur i grupp där ni får lära känna varandra och lägret bättre.
+
+      Nya får lära er området lite bättre, ni som varit med ett tag får hjälpa till och säkerställa ett varmt mottagande!
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-26 19:00
+      updated_at: 2026-07-26 19:00
+      location_set_at: 2026-07-26 19:00
+  - id: rollspel-johans-kampanj-1-natten-som-aldrig-vill-2026-07-27-1000
+    title: 'Rollspel, Johans kampanj 1 – Natten som aldrig vill ta slut, Göra karaktärer'
+    date: '2026-07-27'
+    start: '10:00'
+    end: '11:00'
+    location: Rollspelstält2
+    responsible: Johan Eellend
+    description: |
+      Vi kommer att använda spelsystemet från nya Drakar och Demoner, men förhålla oss lite fritt till både världen och regler. Det finns alltid platts för fantasi, egna idéer och förslag, så länge det inte stjälper spelet!
+      För att få lite starkare karaktärer så kommer rollpersonerna få tre (3) extra tränade färdigheter från början. För magiker kan det bytas ut mot tre besvärjelser eller ytterligare en magiskola och två besvärjelser. Besvärjelserna kan också vara på en högre nivå.
+
+      Äventyret kommer äga rum i en värld där samhället håller på att tappa greppet, där naturen och dolda krafter håller på att ta över. Resorna till lands och till sjöss kan bli långa. Strid och magi kan behövas på oväntade platser, men lalla hinder går inte att övervinna, så det finns alltid platts för list, övertalning och reträtt. 
+
+      För er som kommer sent kommer det finnas möjlighet att göra karaktärer innan spelet drar i gång på måndag kväll. Att göra karaktärer till Drakar och Demoner går rätt fort, och inlevelse slår alltid siffror. 
+
+    link: null
+    cancelled: true
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-23 19:34
+      updated_at: 2026-07-25 07:55
+      location_set_at: 2026-07-23 19:34
+  - id: välkomstmöte-2026-07-27-1000
+    title: Välkomstmöte
+    date: '2026-07-27'
+    start: '10:00'
+    end: '10:30'
+    location: GA Idrott
+    responsible: Andreas (Lägernissen)
+    description: |
+      Lägeransvariga hälsar alla välkomna och presenterar upplägget för den här veckan och påminner om hur vi skapar lägret tillsammans.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-02-27 09:16:57
+      updated_at: 2026-02-27 09:16:57
+  - id: infomoten-ungdomsstuga-datorsal-etc-2026-07-27-1030
+    title: 'Infomöten, ungdomsstuga, datorsal, etc.'
+    date: '2026-07-27'
+    start: '10:30'
+    end: '11:30'
+    location: GA Idrott
+    responsible: Lite olika
+    description: |
+      Efter det gemensamma mötet delas det in i mindre grupper för lite olika saker.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-01 18:33
+      updated_at: 2026-07-01 18:33
+      location_set_at: 2026-07-01 18:33
+  - id: rollspel-elias-kampanj-gora-karaktarer-2026-07-27-1100
+    title: 'Rollspel, Elias Kampanj, GÖRA KARAKTÄRER'
+    date: '2026-07-27'
+    start: '11:00'
+    end: '12:00'
+    location: Rollspelstält1
+    responsible: Johan Eellend
+    description: null
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-23 19:32
+      updated_at: 2026-07-23 19:32
+      location_set_at: 2026-07-23 19:32
+  - id: rollspel-johans-kampanj-2-oar-av-eld-gora-karakt-2026-07-27-1100
+    title: 'Rollspel, Johans kampanj 2 "Öar av Eld" GÖRA KARAKTÄRER'
+    date: '2026-07-27'
+    start: '11:00'
+    end: '12:00'
+    location: Rollspelstält2
+    responsible: Johan Eellend
+    description: |
+      Vi kommer att använda spelsystemet från nya Drakar och Demoner, men förhålla oss lite fritt till både världen och regler. Det finns alltid platts för fantasi, egna idéer och förslag, så länge det inte stjälper spelet!
+      För att få lite starkare karaktärer så kommer rollpersonerna få tre (3) extra tränade färdigheter från början. För magiker kan det bytas ut mot tre besvärjelser eller ytterligare en magiskola och två besvärjelser. Besvärjelserna kan också vara på en högre nivå.
+
+      Äventyret kommer äga rum i en värld där samhället håller på att tappa greppet, där naturen och dolda krafter håller på att ta över. Resorna till lands och till sjöss kan bli långa. Strid och magi kan behövas på oväntade platser, men lalla hinder går inte att övervinna, så det finns alltid platts för list, övertalning och reträtt. 
+
+      För er som kommer sent kommer det finnas möjlighet att göra karaktärer innan spelet drar i gång på måndag kväll. Att göra karaktärer till Drakar och Demoner går rätt fort, och inlevelse slår alltid siffror. 
+
+    link: null
+    cancelled: true
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-23 19:36
+      updated_at: 2026-07-25 07:55
+      location_set_at: 2026-07-23 19:36
+  - id: rollspel-thors-kampanj-introduktion-till-rollspe-2026-07-27-1000
+    title: 'Rollspel Thors kampanj, Introduktion till rollspel'
+    date: '2026-07-27'
+    start: '11:00'
+    end: '12:00'
+    location: Rollspelstält2
+    responsible: Johan Eellend
+    description: null
+    link: null
+    moved:
+      from_date: '2026-07-27'
+      from_start: '10:00'
+      from_end: '11:00'
+    relocated:
+      from_location: Rollspelstält1
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-23 19:24
+      updated_at: 2026-07-25 07:58
+      location_set_at: 2026-07-25 07:57
+  - id: lunch-2026-07-27-1200
+    title: Lunch
+    date: '2026-07-27'
+    start: '12:00'
+    end: '13:00'
+    location: Servicehus
+    responsible: Alla
+    description: |
+      Se tiden som en riktlinje då vi försöker att inte ha några aktiviteter igång. Man får givetvis äta precis när man vill.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-02-27 09:16:57
+      updated_at: 2026-02-27 09:16:57
+  - id: drop-in-pyssel-med-skumlera-soft-clay-2026-07-27-1230
+    title: Pyssel med skumlera (soft clay) - drop-in
+    date: '2026-07-27'
+    start: '12:30'
+    end: '14:00'
+    location: AndreasTältet
+    responsible: Kajsa Ögård
+    description: |
+      Drop-in pyssel med soft clay i tältet vid servicehuset.
+
+      Ta gärna med saker som du eller andra kan använda för att forma och dekorera leran – små skålar, sugrör, svampar, penslar, grillpinnar, gem, stekspadar etc. Extra knivar (vassa) och släta glasflaskor/burkar kan användas som brödkavlar.
+
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-25 13:19
+      updated_at: 2026-07-26 20:24
+      location_set_at: 2026-07-25 13:19
+  - id: rollspel-elias-kampanj-fallout-det-svarta-guldet-2026-07-27-1300
+    title: 'Rollspel, Elias kampanj Fallout, Det svarta guldets slag"'
+    date: '2026-07-27'
+    start: '13:00'
+    end: '16:00'
+    location: Rollspelstält1
+    responsible: Johan Eellend
+    description: null
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-23 19:28
+      updated_at: 2026-07-23 19:28
+      location_set_at: 2026-07-23 19:28
+  - id: rollspel-johans-kampanj-1-natten-som-aldrig-vill-2026-07-27-1300
+    title: 'Rollspel, Johans kampanj 1 "Natten som aldrig vill ta slut"'
+    date: '2026-07-27'
+    start: '13:00'
+    end: '16:00'
+    location: Rollspelstält2
+    responsible: Johan Eellend
+    description: null
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-23 19:39
+      updated_at: 2026-07-23 19:39
+      location_set_at: 2026-07-23 19:39
+  - id: saknas-funktionarer-info-infor-braingames-2026-07-27-1300
+    title: SAKNAS FUNKTIONÄRER - info inför Braingames
+    date: '2026-07-27'
+    start: '13:00'
+    end: '13:30'
+    location: Kaffetält
+    responsible: 'Martina Sjöström & Christina Falk'
+    description: |
+      Här träffas funktionärer till Brain games. Ett väldigt uppskattat evenemang där man i lag löser klurigheter. Finns barn (max 13) och mix- klass. Lagen bestäms på plats, 3-5st.
+
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-18 09:17
+      updated_at: 2026-07-25 09:33
+      location_set_at: 2026-07-18 09:17
+  - id: dalarna-gavleborg-omrades-distriktsforeningstraf-2026-07-27-1330
+    title: Dalarna/Gävleborg - Områdes- / Distriktsföreningsträff
+    date: '2026-07-27'
+    start: '13:30'
+    end: '14:30'
+    location: KaffePaviljongen
+    responsible: Lisa Lautrup
+    description: |
+      Passa på att träffa andra på lägret från samma geografiska område 🎉
+
+      Hitta nya och gamla bekanta. Fundera på vilka aktiviteter som kan göras lokalt. Och bara ha trevligt!
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-26 23:06
+      updated_at: 2026-07-26 23:06
+      location_set_at: 2026-07-26 23:06
+  - id: omrades-distriktsforeningstraff-for-alla-som-int-2026-07-27-1330
+    title: 'Områdes-/ Distriktsföreningsträff för ALLA utom Väst, Syd, Sthlm, Öst, Dal/Gävle'
+    date: '2026-07-27'
+    start: '13:30'
+    end: '14:30'
+    location: GA Scen
+    responsible: Cecilia Löfgreen
+    description: |
+      Passa på att träffa andra på lägret från samma geografiska område 🎉
+
+      Vi ser till att dela in oss i lämpliga konstellationer för att alla ska få möjlighet att se om ni hittar några som är närmre där ni bor. 
+
+      Hitta nya och gamla bekanta. Fundera på vilka aktiviteter som kan göras lokalt. Och bara ha trevligt!
+
+      Vi träffas vid t-shirtsen, vid långsidan i GA-hallen mittemot entren.
+
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-26 20:23
+      updated_at: 2026-07-26 23:08
+      location_set_at: 2026-07-26 20:23
+  - id: ost-ostergotland-smaland-och-oland-omrades-distr-2026-07-27-1330
+    title: 'Öst (Östergötland, Småland och Öland) - Områdes-/ distriktföreningsträff'
+    date: '2026-07-27'
+    start: '13:30'
+    end: '14:30'
+    location: GA Kreativ hörna
+    responsible: Helena Ilke
+    description: |
+      Passa på att träffa andra på lägret från samma geografiska område 🎉
+
+      Hitta nya och gamla bekanta. Fundera på vilka aktiviteter som kan göras lokalt. Och bara ha trevligt!
+
+    link: null
+    relocated:
+      from_location: Tält2
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-26 20:11
+      updated_at: 2026-07-26 23:08
+      location_set_at: 2026-07-26 23:08
+  - id: stockholm-malardalen-omrades-distriktforeningstr-2026-07-27-1330
+    title: Stockholm/Mälardalen - Områdes-/ Distriktföreningsträff
+    date: '2026-07-27'
+    start: '13:30'
+    end: '14:30'
+    location: Tält1
+    responsible: Jessica Malmberg
+    description: |
+      Passa på att träffa andra på lägret från samma geografiska område 🎉
+
+      Hitta nya och gamla bekanta. Fundera på vilka aktiviteter som kan göras lokalt. Och bara ha trevligt!
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-26 20:15
+      updated_at: 2026-07-26 20:15
+      location_set_at: 2026-07-26 20:15
+  - id: syd-skane-o-blekinge-omrades-distriktsforeningst-2026-07-27-1330
+    title: Syd (Skåne o Blekinge) - Områdes-/ Distriktsföreningsträff
+    date: '2026-07-27'
+    start: '13:30'
+    end: '14:30'
+    location: Kaffetält
+    responsible: Johanna Rexgård
+    description: |
+      Passa på att träffa andra på lägret från samma geografiska område 🎉
+
+      Hitta nya och gamla bekanta. Fundera på vilka aktiviteter som kan göras lokalt. Och bara ha trevligt!
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-26 20:17
+      updated_at: 2026-07-26 20:17
+      location_set_at: 2026-07-26 20:17
+  - id: vast-vastra-gotaland-halland-varmland-omrades-di-2026-07-27-1330
+    title: 'Väst (Västra Götaland, Halland, Värmland) - Områdes- / Distriktsföreningsträff'
+    date: '2026-07-27'
+    start: '13:30'
+    end: '14:30'
+    location: Servicehus
+    responsible: Christina Johansson
+    description: |
+      Passa på att träffa andra på lägret från samma geografiska område 🎉
+
+      Hitta nya och gamla bekanta. Fundera på vilka aktiviteter som kan göras lokalt. Och bara ha trevligt!
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-26 20:19
+      updated_at: 2026-07-26 20:19
+      location_set_at: 2026-07-26 20:19
+  - id: jonglering-2026-07-27-1400
+    title: Jonglering
+    date: '2026-07-27'
+    start: '14:00'
+    end: '15:00'
+    location: GA Idrott
+    responsible: Christina Falk
+    description: |
+      Kom och testa på jonglering, eller visa vad du kan. Jag visar och lär ut hur man gör med 2, 3 eller 4 bollar. Man kan även få testa att jonglera med käglor. Det är drop-in, d.v.s. kom när du vill och öva hur länge du vill.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-24 05:33
+      updated_at: 2026-07-24 05:33
+      location_set_at: 2026-07-24 05:33
+  - id: varulvarna-2026-07-27-1400
+    title: Varulvarna
+    date: '2026-07-27'
+    start: '14:00'
+    end: '16:00'
+    location: GA Kreativ hörna
+    responsible: Naxy Isenfors
+    description: |
+      Varulvarna!
+      Kom och spela i GA-hallen mellan 14:00-16:00! 
+      Ålder: Från 7 år
+      Ingen erfarenhet krävs, kom och gå hur ni vill, ha kul!
+      /Naxy/Alex Isenfors
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-27 10:41
+      updated_at: 2026-07-27 10:41
+      location_set_at: 2026-07-27 10:41
+  - id: farga-t-shirt-2026-07-27-1500
+    title: Färga t-shirt
+    date: '2026-07-27'
+    start: '15:00'
+    end: '16:00'
+    location: Tält1
+    responsible: Martina Sjöström
+    description: null
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-26 23:53
+      updated_at: 2026-07-26 23:53
+      location_set_at: 2026-07-26 23:53
+  - id: foraldrarfika-2026-07-27-1500
+    title: Föräldrarfika
+    date: '2026-07-27'
+    start: '15:00'
+    end: '16:00'
+    location: Kaffetält
+    responsible: Birgitta
+    description: |
+      Inget tema alls.
+      Ta med dig något att dricka och prata och umgås med andra föräldrar.
+      Lär känna lite nya människor eller lär känna några lite mer.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-18 09:07
+      updated_at: 2026-07-18 09:07
+      location_set_at: 2026-07-18 09:07
+  - id: artstudio-2026-07-27-1600
+    title: Artstudio
+    date: '2026-07-27'
+    start: '16:00'
+    end: '18:00'
+    location: GA Stilla hyllan
+    responsible: Artstudio Teamet
+    description: |
+      Halloj! Första Artstudion för detta läger idag ca kl 16 - 19!
+      Drop in, ingen anmälan, man kan komma och gå som man vill. blir det fullt så blir det fullt helt enkelt. Men säg gärna till om ni kommer så vi vet :]
+
+      Vi har mycket saker att låna, men inget digitalt. Har du eget du vill använda får du gärna ta med det 
+
+      12- år behöver vuxet (18+) sällskap 
+
+      Vuxna varmt välkomna att delta! (både med och utan barn)
+
+      /Artstudio Teamet
+
+      Länk till vår discord: https://discord.gg/UDGWJJGTj
+
+    link: 'https://www.facebook.com/share/p/1HNK3xR4N8/'
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-27 09:43
+      updated_at: 2026-07-27 09:47
+      location_set_at: 2026-07-27 09:43
+  - id: barndomens-bradspel-2026-07-27-1600
+    title: BARNDOMENS BRÄDSPEL
+    date: '2026-07-27'
+    start: '16:00'
+    end: '18:00'
+    location: AndreasTältet
+    responsible: 'Jessica & Anders Malmberg'
+    description: |
+      Rota i era lådor, tänk nostalgiskt vilket är det bästa och konstigaste spelet ni spelade och håller det idag?
+
+      Vi plockar med oss Goliat & Sjörövarön!
+
+      Ska bl spännande att se vad ni har med er, vi träffas och spelar så länge vi orkar.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-24 10:20
+      updated_at: 2026-07-24 10:20
+      location_set_at: 2026-07-24 10:20
+  - id: middag-2026-07-27-1700
+    title: Middag
+    date: '2026-07-27'
+    start: '17:00'
+    end: '18:00'
+    location: Servicehus
+    responsible: Alla
+    description: |
+      Se tiden som en riktlinje då vi försöker att inte ha några aktiviteter igång. Man får givetvis äta precis när man vill.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-02-27 09:16:57
+      updated_at: 2026-02-27 09:16:57
+  - id: farga-t-shirt-2026-07-27-1800
+    title: Färga t-shirt
+    date: '2026-07-27'
+    start: '18:00'
+    end: '19:00'
+    location: Tält1
+    responsible: Martina Sjöström
+    description: null
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-26 23:54
+      updated_at: 2026-07-26 23:54
+      location_set_at: 2026-07-26 23:54
+  - id: gor-smycken-med-parlor-och-beads-drop-in-2026-07-27-1800
+    title: Gör smycken med pärlor och beads - drop-in
+    date: '2026-07-27'
+    start: '18:00'
+    end: '19:30'
+    location: GA Stilla hyllan
+    responsible: Kajsa Ögård
+    description: |
+      Gör dina egna halsband eller armband med pärlor. Finns i en massa former, färger och storlekar - fyrkantiga, rund, ovala, glittriga, genomskinliga, bokstäver, fjärilar, hjärtan, stjärnor och mer. 
+
+      Drop-in i Stilla hyllan i GA-hallen. Man behöver inte vara med från start så länge man börjar göra sitt smycke senast kl. 19:15.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-26 20:21
+      updated_at: 2026-07-26 20:21
+      location_set_at: 2026-07-26 20:21
+  - id: vattenovning-med-raddningstjansten-2026-07-27-1830
+    title: Vattenövning med räddningstjänsten
+    date: '2026-07-27'
+    start: '18:30'
+    end: '20:00'
+    location: Grillplats
+    responsible: Mamma Mia
+    description: |
+      Räddningstjänsten kommer hit med sin brandbil, tankbil och kanske nåt mer fordon och vi får vara med på övning.
+      Testa att spruta vatten, ca 400 liter per minut!
+      Passa på att träffa brandmän, provsitta brandbilen, ställa tusen frågor.
+      Vi är vid grillplatsen vid älven.
+      Barn och vuxna får vara med och leka brandman! Bara fantasin och säkerheten sätt gränser för vad vi hittar på ihop.
+      Ifall de måste åka på larm, så blir det tyvärr inställt.
+
+    link: null
+    moved:
+      from_date: '2026-07-27'
+      from_start: '18:30'
+      from_end: '20:30'
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-27 09:56
+      updated_at: 2026-07-27 09:59
+      location_set_at: 2026-07-27 09:56
+  - id: bradspel-2026-07-27-1900
+    title: Brädspel
+    date: '2026-07-27'
+    start: '19:00'
+    end: '22:00'
+    location: Kaffetält
+    responsible: Birgitta
+    description: |
+      Vi spelar brädspel med inriktning på kunskapspel.
+      Tex TP, 0-100 och När då då.
+
+      Ställs in om det krockar med grillkväll.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-18 09:04
+      updated_at: 2026-07-18 09:04
+      location_set_at: 2026-07-18 09:04
+  - id: handarbeteshang-2026-07-27-1900
+    title: 🧶HANDARBETESHÄNG 🧶
+    date: '2026-07-27'
+    start: '19:00'
+    end: '22:00'
+    location: Servicehus
+    responsible: Lisa Lautrup
+    description: |
+      Eftersom jag vet att det är flera som har packat ned ett handarbete eller två tänkte jag att vi kan träffas och handarbeta tillsammans!
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-27 10:04
+      updated_at: 2026-07-27 10:04
+      location_set_at: 2026-07-27 10:04
+  - id: rollspel-johans-kampanj-2-oar-av-eld-2026-07-27-1900
+    title: 'Rollspel, Johans kampanj 2 "Öar av Eld"'
+    date: '2026-07-27'
+    start: '19:00'
+    end: '21:00'
+    location: Rollspelstält2
+    responsible: Johan Eellend
+    description: null
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-23 19:44
+      updated_at: 2026-07-23 19:44
+      location_set_at: 2026-07-23 19:44
+  - id: bygg-med-ai-eller-ta-nasta-steg-1-2026-07-27-2000
+    title: 'Bygg med AI - eller ta nästa steg (#1)'
+    date: '2026-07-27'
+    start: '20:00'
+    end: '21:00'
+    location: GA Stilla hyllan
+    responsible: Jonas R
+    description: |
+      Det här är första träffen i en serie där vi utforskar vad man kan skapa med dagens AI. 
+
+      Två huvudspår:
+      **Bygga med AI**
+
+      Vi börjar med att titta på några exempel på vad som går att bygga på kort tid (webbsidor/appar/spel) och kommer sedan igång med verktyg som Lovable och AI Studio (eller Claude Code/Antigravity/Codex eller liknande). Målet är att alla ska ha byggt eller börja byggt något innan passet är slut.
+
+      **Ta ett steg till med din AI-användning**
+
+      För dig som är sugen på att fördjupa dig i hur AI kan användas mer effektivt i vardagen och arbetet. Vi kan till exempel titta på bättre arbetssätt med chatbotar, anpassade instruktioner, MCP, skills, agenter och andra sätt att få AI att göra mer än att bara svara på frågor.
+
+      De kommande träffarna fortsätter vi med dessa eller med nya byggprojekt, där vi testar idéer, utforskar verktyg och lär oss av varandra.
+
+      Ta med en dator, dina idéer och din nyfikenhet. Kom med din kunskap, oavsett nivå, så bygger och lär vi tillsammans.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-27 08:41
+      updated_at: 2026-07-27 08:41
+      location_set_at: 2026-07-27 08:41
+  - id: rollspel-kampanj-2-oar-av-eld-2026-07-27-2100
+    title: Rollspel kampanj 2 "Öar av eld"
+    date: '2026-07-27'
+    start: '21:00'
+    end: '22:00'
+    location: Tält2
+    responsible: Johan Eellend
+    description: null
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-24 16:32
+      updated_at: 2026-07-24 16:32
+      location_set_at: 2026-07-24 16:32
+  - id: killer-ball-2026-07-27-2230
+    title: Killer ball
+    date: '2026-07-27'
+    start: '22:30'
+    end: '23:30'
+    location: GA Idrott
+    responsible: Martina Sjöström
+    description: |
+      **Killerball** (även kallat **killerboll**) är en bolllek som liknar spökboll, men spelas oftast utan lag. Spelet är vanligt i svenska skolor och på idrottslektioner. 
+
+      Vanliga regler är:
+
+      * Alla spelare rör sig fritt inom spelområdet.
+      * En mjuk boll används för att träffa andra spelare.
+      * Blir du träffad av bollen direkt (utan att den först studsat i golvet eller väggen) är du ute.
+      * Om du fångar bollen innan den träffar marken är du kvar i spelet, och i vissa regelvarianter blir kastaren i stället ute.
+      * Den sista spelaren som är kvar vinner. 
+
+      Reglerna kan variera mellan skolor. Ofta finns också säkerhetsregler, till exempel att kast mot huvudet inte räknas eller inte är tillåtna.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-27 10:24
+      updated_at: 2026-07-27 10:24
+      location_set_at: 2026-07-27 10:24
+  - id: tossjon-2026-07-28-0845
+    title: Tossjön
+    date: '2026-07-28'
+    start: '08:45'
+    end: '12:30'
+    location: Annat
+    responsible: Birgitta
+    description: |
+      Elsa och jag tänkte åka till tossjön tisdag och titta på en rullstensås.
+      Samling med bil utanför GA hallen 8.45
+      Avfärd 9.00.
+      Hemresa när man vill.
+      Ta med dricka. Och kanske lunch om du vill stanna längre.
+      Det är ca 10 min promenad från bilen för att nå kanten på åsen.
+      Skriv en kommentar om du planerar att följa med.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-27 10:27
+      updated_at: 2026-07-27 10:27
+      location_set_at: 2026-07-27 10:27
+  - id: math-art-2026-07-28-0945
+    title: Math Art
+    date: '2026-07-28'
+    start: '09:45'
+    end: '10:45'
+    location: GA Stilla hyllan
+    responsible: Elin S
+    description: |
+      Välkomna att komma och pyssla i gränslandet mellan matematik och konst! Idag kör vi collage. 
+      Lämpligt för 3-9 åringar i föräldrars sällskap, men alla är naturligtvis välkomna!
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-28 06:29
+      updated_at: 2026-07-28 06:29
+      location_set_at: 2026-07-28 06:29
+  - id: foraldrarfika-2e-2026-07-28-1000
+    title: Föräldrarfika 2E
+    date: '2026-07-28'
+    start: '10:00'
+    end: '11:00'
+    location: Kaffetält
+    responsible: Christina Falk
+    description: |
+      Vi pratar och delar erfarenheter på temat 2E (twice exceptional), som syftar på dem som har både en NPF-diagnos (ADHD / Autism / dyslexi mm) och är särskilt begåvade. 
+
+      Eftersom en del brukar undra: det är helt ok att delta även om ditt barn inte har en diagnos (ännu?).
+
+
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-26 05:10
+      updated_at: 2026-07-26 05:14
+      location_set_at: 2026-07-26 05:10
+  - id: mala-med-sprayfarg-2026-07-28-1000
+    title: Måla med sprayfärg drop in
+    date: '2026-07-28'
+    start: '10:00'
+    end: '12:00'
+    location: Fotbollsplan
+    responsible: Eila och Jonas Colling
+    description: |
+      Testa att måla med sprayfärg eller skapa ditt livs grafittikonstverk. Vi har färger, kartongskivor och skyddsutrustning för mun och ögon, du har oömma kläder och vill prova hur det funkar. Man kan vända kläder ut och in för att dölja fläckar eller klippa till en sopsäck att ha som förekläde. Vi ger lite tips och tricks men inte så mycket konstnärlig handledning som istället möjlighet att prova på mediet och uttrycka sig fritt.
+
+      Platsen är beroende av vind och väder, vid regn eller stark vind ställer vi in och kör ett nytt tillfälle senare. Antagligen är vi i slänten bakom rollspelstälten, annars sätter vi en skylt vid ingången till hallen där det står var vi är. Om ni har något särskilt ni vill måla på, t ex en kylbox, en pannå eller vepa är det bara att ta med det.
+
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-26 10:18
+      updated_at: 2026-07-26 20:18
+      location_set_at: 2026-07-26 10:18
+  - id: rollspel-thors-kampanj-2026-07-28-1000
+    title: Rollspel Thors kampanj
+    date: '2026-07-28'
+    start: '10:00'
+    end: '11:00'
+    location: Rollspelstält1
+    responsible: Johan Eellend
+    description: null
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-23 19:25
+      updated_at: 2026-07-23 19:25
+      location_set_at: 2026-07-23 19:25
+  - id: enkel-yoga-som-passar-alla-2026-07-28-1100
+    title: Enkel Yoga som passar alla
+    date: '2026-07-28'
+    start: '11:00'
+    end: '11:45'
+    location: Annat
+    responsible: Tove Nackstad
+    description: |
+      Enkel Yoga som passar alla. Ca 45 minuter. Plats: vid björkarna vid volleybollnätet. Vid regn är vi i hallen. Ta med egen yogamatta/filt/handduk.
+
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-27 15:46
+      updated_at: 2026-07-27 16:22
+      location_set_at: 2026-07-27 15:46
+  - id: intervalllopning-2026-07-28-1000
+    title: Intervallöpning
+    date: '2026-07-28'
+    start: '11:15'
+    end: '12:00'
+    location: Fotbollsplan
+    responsible: David Erenger
+    description: |
+      Jag kommer hålla två intervallpass som passar alla oavsett nivå bara man kan springa något, från ca 8 år och uppåt. Ingen förkunskap krävs.
+
+      Ingen föranmälan.
+
+      Hög puls garanteras. Ta gärna med vattenflaska.
+
+    link: null
+    moved:
+      from_date: '2026-07-28'
+      from_start: '10:00'
+      from_end: '11:00'
+    relocated:
+      from_location: Servicehus
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-19 20:16
+      updated_at: 2026-07-27 09:34
+      location_set_at: 2026-07-26 14:23
+  - id: lunch-2026-07-28-1200
+    title: Lunch
+    date: '2026-07-28'
+    start: '12:00'
+    end: '13:00'
+    location: Servicehus
+    responsible: Alla
+    description: |
+      Se tiden som en riktlinje då vi försöker att inte ha några aktiviteter igång. Man får givetvis äta precis när man vill.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-02-27 09:16:57
+      updated_at: 2026-02-27 09:16:57
+  - id: gor-din-egen-slime-drop-in-2026-07-28-1300
+    title: Gör din egen slime - drop-in
+    date: '2026-07-28'
+    start: '13:00'
+    end: '14:30'
+    location: AndreasTältet
+    responsible: Kajsa Ögård
+    description: |
+      Kom och gör fluffigt eller genomskinligt slime i olika färger. Vi har tillbehören och visar hur. Mindre barn bör ha med en vuxen som hjälper till. 
+
+      Drop-in i tältet vid servicehuset - man behöver inte vara med från start så länge man börjar göra sitt slime senast kl. 14:15.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-25 13:24
+      updated_at: 2026-07-25 13:24
+      location_set_at: 2026-07-25 13:24
+  - id: johans-kampanj-1-natten-som-aldrig-vill-ta-slut-2026-07-28-1300
+    title: Johans kampanj 1 "Natten som aldrig vill ta slut"
+    date: '2026-07-28'
+    start: '13:00'
+    end: '15:00'
+    location: Rollspelstält2
+    responsible: Johan Eellend
+    description: null
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-23 19:40
+      updated_at: 2026-07-23 19:40
+      location_set_at: 2026-07-23 19:40
+  - id: rollspel-elias-kampanj-fallout-det-svarta-guldet-2026-07-28-1300
+    title: 'Rollspel, Elias kampanj, Fallout "Det svarta guldets slag"'
+    date: '2026-07-28'
+    start: '13:00'
+    end: '15:00'
+    location: Rollspelstält1
+    responsible: Johan Eellend
+    description: null
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-23 19:30
+      updated_at: 2026-07-23 19:30
+      location_set_at: 2026-07-23 19:30
+  - id: frigorande-dans-valkommen-hem-2026-07-28-1100
+    title: 'FRIGÖRANDE DANS: Välkommen hem 🌲- OBS! Ny tid'
+    date: '2026-07-28'
+    start: '13:30'
+    end: '14:15'
+    location: Annat
+    responsible: Lisa Lautrup
+    description: |
+      Välkommen till denna prova på klass i Frigörande dans på temat ”Välkommen hem”! 🌲
+
+      Denna form av meditation i rörelse är ett fint sätt att jobba både med fysiska spänningar i kroppen och hitta lugnet i tillvaron. 😌
+
+      Vi dansar barfota i mjuka kläder. Ta gärna med en matta, filt eller varm tröja till den avslutande avslappningen. 🧘🏻‍♀️
+
+      Hoppas att vi ses! 💕
+
+      PLATS: Under träden vid Volleybollnätet
+
+    link: null
+    moved:
+      from_date: '2026-07-28'
+      from_start: '11:00'
+      from_end: '11:45'
+    relocated:
+      from_location: Tält1
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-23 20:42
+      updated_at: 2026-07-28 10:04
+      location_set_at: 2026-07-28 10:04
+  - id: retorik-bli-battre-pa-att-tala-2026-07-28-1330
+    title: RETORIK - Bli bättre på att tala
+    date: '2026-07-28'
+    start: '13:30'
+    end: '15:00'
+    location: GA Stilla hyllan
+    responsible: Cecilia Löfgreen
+    description: |
+      Lär dig hur du bäst bygger upp ett tal, vad som är bra att tänka på för att lyckas bättre med att framföra ett tal samt i mån av tid så får ni även testa på.
+
+      Om mig - jag försörjer mig delvis som föreläsare, jag har en bakgrund som politiker och är ärligt talat riktigt bra på att tala inför folk.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-26 20:28
+      updated_at: 2026-07-26 20:28
+      location_set_at: 2026-07-26 20:28
+  - id: baka-tunnbrod-2026-07-28-1430
+    title: Baka tunnbröd
+    date: '2026-07-28'
+    start: '14:30'
+    end: '16:30'
+    location: Grillplats
+    responsible: 'Ej ansvarig, men inlagt av Petter ZK'
+    description: |
+      Kom ner till grillplatsen vid älven och baka tunnbröd. I år kommer inspirationen från Restaurang Hantverket och Stefan Ekengren så det blir tuttul. Tuttul är ett mjukt, potatisbaserat tunnbröd från Dalarna, framför allt förknippat med Siljansbygden. 
+
+      Deg finns färdig. Kavla, stek brödet på stekhäll över elden. Sen får man mumsa i sig med smör som smälter på det nybakade tunnbrödet. 
+
+      Drop-in: tisdag kl. 14.30 - 16.30 eller att degen tar slut 
+
+      Behöver man hjälp med att steka brödet är det bra med en förälder. 
+
+      Receptet innehåller smör och vetemjöl, mjölken är laktosfri.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-25 14:01
+      updated_at: 2026-07-25 14:01
+      location_set_at: 2026-07-25 14:01
+  - id: artstudio-2026-07-28-1500
+    title: Artstudio
+    date: '2026-07-28'
+    start: '15:00'
+    end: '17:00'
+    location: GA Stilla hyllan
+    responsible: Artstudio Teamet
+    description: |
+      Tjena!
+
+      Artstudio idag (Tisdag) ca kl 15 - 17 på hyllan i GA hallen! Drop in, ingen anmälan, man kan komma och gå som man vill. Men man får gärna säga till om man kommer så vi vet!
+
+      Ber om ursäkt att det är samtidigt som braingames, men det blir förmodligen fler Artstudio under veckan ifall man missar denna.
+
+      Vi har mycket saker att låna, men inget digitalt. Har du eget du vill använda får du gärna ta med det
+
+      12- år behöver vuxet (18+) sällskap
+
+      Vuxna varmt välkomna att delta! (både med och utan barn)
+
+      /Artstudio Teamet
+
+      Discord länk: https://discord.gg/UDGWJJGTj
+    link: 'https://www.facebook.com/share/p/19FGXYqzCn/'
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-28 03:36
+      updated_at: 2026-07-28 03:36
+      location_set_at: 2026-07-28 03:36
+  - id: brain-games-2026-07-28-1500
+    title: Brain games
+    date: '2026-07-28'
+    start: '15:00'
+    end: '17:00'
+    location: GA Idrott
+    responsible: 'Martina Sjöström & Christina Falk'
+    description: |
+      Ett väldigt uppskattat evenemang där man i lag löser klurigheter. Finns barn (max 13) och mix- klass. Lagen bestäms på plats, 3-5st. Om ni är nya är det definitivt värt att testa.
+
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-18 09:18
+      updated_at: 2026-07-25 09:34
+      location_set_at: 2026-07-18 09:18
+  - id: middag-2026-07-28-1700
+    title: Middag
+    date: '2026-07-28'
+    start: '17:00'
+    end: '18:00'
+    location: Servicehus
+    responsible: Alla
+    description: |
+      Se tiden som en riktlinje då vi försöker att inte ha några aktiviteter igång. Man får givetvis äta precis när man vill.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-02-27 09:16:57
+      updated_at: 2026-02-27 09:16:57
+  - id: grillkvall-2026-07-28-1730
+    title: Grillkväll
+    date: '2026-07-28'
+    start: '17:30'
+    end: '23:55'
+    location: Grillplats
+    responsible: Malin Isenfors
+    description: |
+      GRILLKVÄLL Tisdag 17.30.
+      Vi hoppas att vädergudarna är med oss och låter oss få ha en underbar grillkväll även i år.
+
+      Välkommen ner, ta med mat och dryck.
+
+      Vi startar eldarna kl 17.00 och runt 17.30 börjar det förhoppningsvis bli lite glöd. 
+
+      Ta gärna med instrument.
+
+      EFTER att de flesta hunnit få i sina barn mat, så bjuder vi på lite popcorn och marshmellows.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-26 15:45
+      updated_at: 2026-07-26 15:45
+      location_set_at: 2026-07-26 15:45
+  - id: bradspel-2026-07-28-1900
+    title: Brädspel
+    date: '2026-07-28'
+    start: '19:00'
+    end: '22:00'
+    location: Kaffetält
+    responsible: Birgitta
+    description: |
+      Vi spelar brädspel med inriktning på kunskapspel.
+      Tex TP, 0-100 och När då då.
+
+      Ställs in om det krockar med grillkväll.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-18 09:04
+      updated_at: 2026-07-18 09:04
+      location_set_at: 2026-07-18 09:04
+  - id: rollspel-johans-kampanj-2-oar-av-eld-2026-07-28-1900
+    title: 'Rollspel, Johans kampanj 2 "Öar av Eld"'
+    date: '2026-07-28'
+    start: '19:00'
+    end: '21:00'
+    location: Rollspelstält2
+    responsible: Johan Eellend
+    description: null
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-23 19:44
+      updated_at: 2026-07-23 19:44
+      location_set_at: 2026-07-23 19:44
+  - id: mtg-commander-traff-2026-07-28-1955
+    title: MTG Commander-träff
+    date: '2026-07-28'
+    start: '19:55'
+    end: '00:00'
+    location: GA Stilla hyllan
+    responsible: Elias E
+    description: |
+      Kom och spela Magic the Gathering Commander ikväll. Obs inte cedh
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-28 17:15
+      updated_at: 2026-07-28 17:15
+      location_set_at: 2026-07-28 17:15
+  - id: rollspel-kampanj-2-oar-av-eld-2026-07-28-2100
+    title: Rollspel kampanj 2 "Öar av eld"
+    date: '2026-07-28'
+    start: '21:00'
+    end: '22:00'
+    location: Tält2
+    responsible: Johan Eellend
+    description: null
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-24 16:32
+      updated_at: 2026-07-24 16:32
+      location_set_at: 2026-07-24 16:32
+  - id: killer-ball-2026-07-28-2245
+    title: Killer ball
+    date: '2026-07-28'
+    start: '22:45'
+    end: '23:30'
+    location: GA Idrott
+    responsible: Martina Sjöström
+    description: null
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-28 20:31
+      updated_at: 2026-07-28 20:31
+      location_set_at: 2026-07-28 20:31
+  - id: helansiktsmalning-2026-07-29-1000
+    title: Helansiktsmålning
+    date: '2026-07-29'
+    start: '10:00'
+    end: '12:00'
+    location: Tält1
+    responsible: Christina Falk
+    description: |
+      Vi prövar att ansiktsmåla med motiv där hela ansiktet täcks, t.ex. en tiger, spindelmannen, en solnedgång med palmer eller vad man känner sig inspirerad av.
+
+      - Vi går igenom grundläggande tekniker och målar sedan på varandra 2 och 2. 
+      - Var beredd på att även bli målad (eller ta med dig någon att måla på).
+      - Ta med mobiltelefon om du vill måla efter förlaga.
+
+      Rekommenderad ålder från 8 år. Yngre går bra om man har med en vuxen. Tålamod att slutföra är en önskvärd egenskap.
+
+      Färgerna är ansiktsfärger som inte ska ge allergiska reaktioner, men de är lätt parfymerade så eventuellt ska man undvika om man är väldigt känslig.
+      Färgerna tvättas av med vatten och två efteråt. Vid färg på kläder rekommenderas tvätt så fort som möjligt efter.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-24 06:03
+      updated_at: 2026-07-24 06:03
+      location_set_at: 2026-07-24 06:03
+  - id: rollspel-thors-kampanj-2026-07-29-1000
+    title: 'Rollspel, Thors kampanj'
+    date: '2026-07-29'
+    start: '10:00'
+    end: '11:00'
+    location: Rollspelstält1
+    responsible: Johan Eellend
+    description: null
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-23 19:27
+      updated_at: 2026-07-23 19:27
+      location_set_at: 2026-07-23 19:27
+  - id: spela-in-en-sketch-2026-07-29-1000
+    title: Spela in en sketch
+    date: '2026-07-29'
+    start: '10:00'
+    end: '11:30'
+    location: GA Stilla hyllan
+    responsible: 'Milo, Naxy, Becca och Willow'
+    description: |
+      Kom och filma en sketch tillsammans med oss. Ta med dig en fulladdad mobil. Rekommenderad ålder från 9 år. Yngre kan delta med vuxen medföljare. Alla är välkomna!
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-28 09:42
+      updated_at: 2026-07-28 09:42
+      location_set_at: 2026-07-28 09:42
+  - id: mala-med-sprayfarg-drop-in-2026-07-29-1100
+    title: Måla med sprayfärg - drop in
+    date: '2026-07-29'
+    start: '11:00'
+    end: '13:00'
+    location: Fotbollsplan
+    responsible: Eila och Jonas Colling
+    description: |
+      Testa att måla med sprayfärg eller skapa ditt livs grafittikonstverk. Vi har färger, kartongskivor och skyddsutrustning för mun och ögon, du har oömma kläder och vill prova hur det funkar. Man kan vända kläder ut och in för att dölja fläckar eller klippa till en sopsäck att ha som förekläde. Vi ger lite tips och tricks men inte så mycket konstnärlig handledning som istället möjlighet att prova på mediet och uttrycka sig fritt.
+
+      Platsen är beroende av vind och väder, vid regn eller stark vind ställer vi in och kör ett nytt tillfälle senare. Antagligen är vi i slänten bakom rollspelstälten, annars sätter vi en skylt vid ingången till hallen där det står var vi är. Om ni har något särskilt ni vill måla på, t ex en kylbox, en pannå eller vepa är det bara att ta med det.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-28 12:26
+      updated_at: 2026-07-28 12:26
+      location_set_at: 2026-07-28 12:26
+  - id: nagelstudio-2026-07-29-1100
+    title: Nagelstudio
+    date: '2026-07-29'
+    start: '11:00'
+    end: '12:00'
+    location: AndreasTältet
+    responsible: Malin Isenfors
+    description: |
+      Popup nagelstudio! 
+
+      I tältet vid servicehuset kl 11 - 12. 
+
+      Måla dina egna naglar, eller någon annans!
+
+      Barn som inte kan klara sig själva behöver komma med vuxet sällskap! 
+
+      - Det kommer fler tillfällen under veckan.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-29 08:18
+      updated_at: 2026-07-29 08:18
+      location_set_at: 2026-07-29 08:18
+  - id: lunch-2026-07-29-1200
+    title: Lunch
+    date: '2026-07-29'
+    start: '12:00'
+    end: '13:00'
+    location: Servicehus
+    responsible: Alla
+    description: |
+      Se tiden som en riktlinje då vi försöker att inte ha några aktiviteter igång. Man får givetvis äta precis när man vill.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-02-27 09:16:57
+      updated_at: 2026-02-27 09:16:57
+  - id: parkuor-prova-pa-2026-07-29-1300
+    title: Parkour prova på
+    date: '2026-07-29'
+    start: '13:00'
+    end: '14:00'
+    location: GA Idrott
+    responsible: Joel Tegnander
+    description: |
+      En introduktion till parkuor. Alla välkomna
+
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-27 07:55
+      updated_at: 2026-07-28 23:19
+      location_set_at: 2026-07-27 07:55
+  - id: rollspel-elias-kampanj-fallout-det-svarta-guldet-2026-07-29-1300
+    title: 'Rollspel, Elias kampanj Fallout, Det svarta guldets slag"'
+    date: '2026-07-29'
+    start: '13:00'
+    end: '16:00'
+    location: Rollspelstält1
+    responsible: Johan Eellend
+    description: null
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-23 19:28
+      updated_at: 2026-07-23 19:28
+      location_set_at: 2026-07-23 19:28
+  - id: rollspel-johans-kampanj-1-natten-som-aldrig-vill-2026-07-29-1300
+    title: 'Rollspel, Johans kampanj 1 "Natten som aldrig vill ta slut"'
+    date: '2026-07-29'
+    start: '13:00'
+    end: '16:00'
+    location: Rollspelstält2
+    responsible: Johan Eellend
+    description: |
+
+      Ser det inte ut som du tänkt dig? Kolla Markdown-guiden ↗
+      Vi kommer att använda spelsystemet från nya Drakar och Demoner, men förhålla oss lite fritt till både världen och regler. Det finns alltid platts för fantasi, egna idéer och förslag, så länge det inte stjälper spelet! För att få lite starkare karaktärer så kommer rollpersonerna få tre (3) extra tränade färdigheter från början. För magiker kan det bytas ut mot tre besvärjelser eller ytterligare en magiskola och två besvärjelser. Besvärjelserna kan också vara på en högre nivå.
+
+      Äventyret kommer äga rum i en värld där samhället håller på att tappa greppet, där naturen och dolda krafter håller på att ta över. Resorna till lands och till sjöss kan bli långa. Strid och magi kan behövas på oväntade platser, men lalla hinder går inte att övervinna, så det finns alltid platts för list, övertalning och reträtt.
+
+      För er som kommer sent kommer det finnas möjlighet att göra karaktärer innan spelet drar i gång på måndag kväll. Att göra karaktärer till Drakar och Demoner går rätt fort, och inlevelse slår alltid siffror.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-23 19:39
+      updated_at: 2026-07-25 07:57
+      location_set_at: 2026-07-23 19:39
+  - id: japansk-bakning-2-2026-07-29-1400
+    title: 'JAPANSK BAKNING #2'
+    date: '2026-07-29'
+    start: '14:00'
+    end: '17:00'
+    location: Servicehus
+    responsible: Lisa Lautrup
+    description: |
+      Vi bakar årets andra recept FIZZY RAMUNE ICE CREAM tillsammans. Under klassen kommer vi att jobba med olika texturer och smaker samt testa på flera kylmetoder i form av glassmaskin och kolsyreis. 
+
+      Hoppas att vi ses! 👩🏻‍🍳
+    link: 'https://id-preview--4b54cd55-fa16-487e-985a-bef490b46040.lovable.app/i/BJEGC2'
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-19 13:00
+      updated_at: 2026-07-19 13:00
+      location_set_at: 2026-07-19 13:00
+  - id: skapa-med-lera-2026-07-29-1400
+    title: 'Skapa med lera! - drop in'
+    date: '2026-07-29'
+    start: '14:00'
+    end: '16:00'
+    location: AndreasTältet
+    responsible: Julius Grassman
+    description: |
+      Ons: Vi skapar figurer i lera som får torka över natten 
+      Tor: figuerna målas med akryl
+      Lera, färger och verktyg finns på plats.
+      Alla är välkomna!
+
+    link: 'https://edqhub.com/groups/e69d06c5-b43a-4075-ad6a-21d09a925957'
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-28 10:06
+      updated_at: 2026-07-28 13:07
+      location_set_at: 2026-07-28 10:06
+  - id: presentation-live-demo-av-klar-2026-07-29-1400
+    title: 'Presentation & Live-demo av Klar'
+    date: '2026-07-29'
+    start: '14:15'
+    end: '15:00'
+    location: GA Scen
+    responsible: Jessica Malmberg
+    description: |
+      Klar är byggt av tre unga grundare i Uppsala som själva upplevde hur svårt det kan vara att plugga effektivt. Nu kommer de och visar hur AI-verktyget fungerar i praktiken, genom en kort presentation och en live-demo.
+
+      Inga förkunskaper krävs, bara nyfikenhet.
+
+    link: null
+    moved:
+      from_date: '2026-07-29'
+      from_start: '14:00'
+      from_end: '14:45'
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-24 08:01
+      updated_at: 2026-07-29 11:07
+      location_set_at: 2026-07-24 08:01
+  - id: varulvarna-2026-07-29-1415
+    title: Varulvarna
+    date: '2026-07-29'
+    start: '14:15'
+    end: '16:00'
+    location: Tält1
+    responsible: Naxy Isenfors
+    description: |
+      Varulvarna! Kom och spela i GA-hallen mellan 14:00-16:00! Ålder: Från 7 år Ingen erfarenhet krävs, kom och gå hur ni vill, ha kul!
+
+      /Naxy Isenfors
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-29 08:11
+      updated_at: 2026-07-29 08:11
+      location_set_at: 2026-07-29 08:11
+  - id: bridge-2026-07-29-1500
+    title: Bridge
+    date: '2026-07-29'
+    start: '15:00'
+    end: '17:00'
+    location: Kaffetält
+    responsible: Rikard Olofsson och Christina Falk
+    description: |
+      Kom och spela bridge. Inga förkunskaper krävs. Vi lär ut allt som behövs för att komma igång 
+
+      Bridge är ett kortspelens motsvarighet till schack. Rikard spelar på elitnivå och vi båda har spelat i många år.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-29 06:45
+      updated_at: 2026-07-29 06:45
+      location_set_at: 2026-07-29 06:45
+  - id: klar-challenge-2026-07-29-1500
+    title: 'Klar Challenge & Vibecoding Loveble'
+    date: '2026-07-29'
+    start: '16:00'
+    end: '18:00'
+    location: GA Stilla hyllan
+    responsible: Jessica Malmberg
+    description: |
+      *Ändring dubbelpass*
+
+      **Klar Challenge**
+       Välj något du velat lära dig men aldrig kommit igång med, eller något du redan är nyfiken på och vill gå riktigt djupt i – ett skolämne, ett helt eget spår, vad som helst – och se hur långt du kommer med Klar på begränsad tid. Den som vill får avsluta med en kort presentation av vad man lyckats åstadkomma – helt frivilligt.
+
+      Ta med din nyfikenhet, lite tävlingsanda, och gärna din egen laptop (mobil funkar också).
+
+      **Vibecoding** Loveble
+      Har du en idé för en app eller ett verktyg du velat bygga? Grundarna bakom Klar började med precis en sådan idé, i liten skala. Nu får du chansen att göra samma sak: bygga din egen idé med hjälp av AI, även om du aldrig kodat förut.
+
+      Ta med din egen laptop om du har en – annars funkar mobilen bra. Ingen kodvana krävs, bara en idé du vill förverkliga.
+
+    link: null
+    moved:
+      from_date: '2026-07-29'
+      from_start: '15:00'
+      from_end: '16:00'
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-24 08:03
+      updated_at: 2026-07-27 11:22
+      location_set_at: 2026-07-24 08:03
+  - id: nerf-war-2026-07-29-1600
+    title: Nerf War
+    date: '2026-07-29'
+    start: '16:00'
+    end: '17:00'
+    location: Nerf-arena
+    responsible: Francisco Penayo
+    description: |
+      Nerf War!!
+      Vi samlas vid servicehuset för att gå igenom regler.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-29 13:10
+      updated_at: 2026-07-29 13:10
+      location_set_at: 2026-07-29 13:10
+  - id: middag-2026-07-29-1700
+    title: Middag
+    date: '2026-07-29'
+    start: '17:00'
+    end: '18:00'
+    location: Servicehus
+    responsible: Alla
+    description: |
+      Se tiden som en riktlinje då vi försöker att inte ha några aktiviteter igång. Man får givetvis äta precis när man vill.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-02-27 09:16:57
+      updated_at: 2026-02-27 09:16:57
+  - id: mamma-middag-nedergardens-vilt-obs-anmalan-2026-07-29-1800
+    title: (ja den blir på onsdag) MAMMA-MIDDAG - Nedergårdens vilt OBS anmälan
+    date: '2026-07-29'
+    start: '18:00'
+    end: '22:00'
+    location: Annat
+    responsible: Cecilia Löfgreen
+    description: |
+      Vem vill skita i familjen och gå ut och äta middag? Jag har bokat bord på Nergårdens vilt och vi mammor tar oss tid för oss själva.
+
+      Det kommer att serveras en pizzabuffe med sallad. 
+
+      Anmäl er genom att maila cecilia@rfsb.se, ange eventuella allergier, SAMT swisha 155 kr till 0708705705. Anmäl er gärna snart så att jag kan förvarna om antal med bästa möjliga marginal.
+
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-27 12:39
+      updated_at: 2026-07-28 10:14
+      location_set_at: 2026-07-27 12:39
+  - id: artstudio-2026-07-29-1830
+    title: Artstudio
+    date: '2026-07-29'
+    start: '18:30'
+    end: '21:30'
+    location: GA Stilla hyllan
+    responsible: Artstudio Teamet
+    description: |
+      Hej hej!
+
+      Artstudio idag (Onsdag) ca kl 18.30 - 21.30 på hyllan i GA hallen! Drop in, ingen anmälan, man kan komma och gå som man vill. Men man får gärna säga till om man kommer så vi vet!
+
+      Vi har mycket saker att låna, men inget digitalt. Har du eget du vill använda får du gärna ta med det
+      12- år behöver vuxet (18+) sällskap
+      Vuxna varmt välkomna att delta! (både med och utan barn)
+
+      Länk till vår discord: https://discord.gg/UDGWJJGTj
+    link: 'https://www.facebook.com/share/p/19GDGiuNhi/'
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-29 03:45
+      updated_at: 2026-07-29 03:45
+      location_set_at: 2026-07-29 03:45
+  - id: bradspel-2026-07-29-1900
+    title: Brädspel
+    date: '2026-07-29'
+    start: '19:00'
+    end: '22:00'
+    location: Kaffetält
+    responsible: Birgitta
+    description: |
+      Vi spelar brädspel med inriktning på kunskapspel.
+      Tex TP, 0-100 och När då då.
+
+      Ställs in om det krockar med grillkväll.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-18 09:04
+      updated_at: 2026-07-18 09:04
+      location_set_at: 2026-07-18 09:04
+  - id: bredspel-trots-brist-pa-mammor-2026-07-29-1900
+    title: 'Bredspel (trots brist på mammor!)'
+    date: '2026-07-29'
+    start: '19:00'
+    end: '22:00'
+    location: KaffePaviljongen
+    responsible: Mikael Kludas
+    description: |
+      Vi spelar gärna brädspel trots att de flesta mammor är på annan ort! 😄
+
+      Vi har med oss Ticket to Ride Europe, Everdell, Exploding Kittens och lite annat smått och gått, utöver det som redan finns på lägret. Alla välkomna!
+
+      Vi är i Kaffetältet, kunde inte boka den "officiellt" eftersom den är bokad av det inställda brädspelet 😅
+
+    link: null
+    moved:
+      from_date: '2026-07-29'
+      from_start: '19:00'
+      from_end: '21:30'
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-29 16:20
+      updated_at: 2026-07-29 16:23
+      location_set_at: 2026-07-29 16:20
+  - id: rollspel-johans-kampanj-2-oar-av-eld-2026-07-29-1900
+    title: 'Rollspel, Johans kampanj 2 "Öar av Eld"'
+    date: '2026-07-29'
+    start: '19:00'
+    end: '21:00'
+    location: Rollspelstält2
+    responsible: Johan Eellend
+    description: null
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-23 19:44
+      updated_at: 2026-07-23 19:44
+      location_set_at: 2026-07-23 19:44
+  - id: karaoke-dans-2026-07-30-1900
+    title: Karaoke/ dans
+    date: '2026-07-29'
+    start: '20:30'
+    end: '22:00'
+    location: GA Scen
+    responsible: Milo Friberg Svensson
+    description: |
+      För dig som vill uppträda för publik. Anmäl er via länken eller på plats och berätta vilken låt och om det är karaoke, dans eller valfritt uppträdande. Dock tidsgräns på 5 minuter.
+
+    link: 'https://forms.gle/aYFhHArHmtMorWEGA'
+    moved:
+      from_date: '2026-07-30'
+      from_start: '19:00'
+      from_end: '20:30'
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-27 15:08
+      updated_at: 2026-07-29 10:13
+      location_set_at: 2026-07-27 15:08
+  - id: rollspel-kampanj-2-oar-av-eld-2026-07-29-2100
+    title: Rollspel kampanj 2 "Öar av eld"
+    date: '2026-07-29'
+    start: '21:00'
+    end: '22:00'
+    location: Tält2
+    responsible: Johan Eellend
+    description: null
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-24 16:32
+      updated_at: 2026-07-24 16:32
+      location_set_at: 2026-07-24 16:32
+  - id: killer-ball-2026-07-29-2230
+    title: Killer ball
+    date: '2026-07-29'
+    start: '22:30'
+    end: '23:30'
+    location: GA Idrott
+    responsible: Martina Sjöström
+    description: null
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-29 14:51
+      updated_at: 2026-07-29 14:51
+      location_set_at: 2026-07-29 14:51
+  - id: arsmote-och-lokalforeningstraff-stockholm-malard-2026-07-30-1000
+    title: Årsmöte och Lokalföreningsträff Stockholm /Mälardalen
+    date: '2026-07-30'
+    start: '10:00'
+    end: '11:30'
+    location: Tält1
+    responsible: Jessica Malmberg
+    description: |
+      Årsmöte 2026 samt att vi pratar om kommande aktiviteter och träffar för Stockholm/Mälardalen.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-24 10:10
+      updated_at: 2026-07-24 10:10
+      location_set_at: 2026-07-24 10:10
+  - id: intervalllopning-2026-07-30-1000
+    title: Intervallöpning
+    date: '2026-07-30'
+    start: '10:00'
+    end: '11:00'
+    location: Fotbollsplan
+    responsible: David Erenger
+    description: |
+      Jag kommer hålla två intervallpass som passar alla oavsett nivå bara man kan springa något, från ca 8 år och uppåt. Ingen förkunskap krävs.
+
+      Ingen föranmälan.
+
+      Hög puls garanteras. Ta gärna med vattenflaska.
+
+    link: null
+    relocated:
+      from_location: Servicehus
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-19 20:16
+      updated_at: 2026-07-26 14:23
+      location_set_at: 2026-07-26 14:23
+  - id: rollspel-thors-kampanj-2026-07-30-1000
+    title: 'Rollspel, Thors kampanj'
+    date: '2026-07-30'
+    start: '10:00'
+    end: '11:00'
+    location: Rollspelstält1
+    responsible: Johan Eellend
+    description: null
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-23 19:27
+      updated_at: 2026-07-23 19:27
+      location_set_at: 2026-07-23 19:27
+  - id: spela-in-en-sketch-2026-07-30-1000
+    title: Spela in en sketch
+    date: '2026-07-30'
+    start: '10:00'
+    end: '11:30'
+    location: GA Stilla hyllan
+    responsible: 'Milo, Naxy, Becca och Willow'
+    description: |
+      Kom och filma en sketch tillsammans med oss. Ta med dig en fulladdad mobil. Rekommenderad ålder från 9 år. Yngre kan delta med vuxen medföljare. Alla är välkomna!
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-28 09:42
+      updated_at: 2026-07-28 09:42
+      location_set_at: 2026-07-28 09:42
+  - id: hamta-din-fargade-t-shirt-2026-07-30-1100
+    title: Hämta din färgade t-shirt
+    date: '2026-07-30'
+    start: '11:00'
+    end: '11:15'
+    location: AndreasTältet
+    responsible: Martina Sjöström
+    description: |
+      Äntligen hämta ditt resultat
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-30 00:55
+      updated_at: 2026-07-30 00:55
+      location_set_at: 2026-07-30 00:55
+  - id: japansk-bakning-1-2026-07-27-1900
+    title: 'JAPANSK BAKNING #1 - OBS! NY TID'
+    date: '2026-07-30'
+    start: '11:00'
+    end: '13:00'
+    location: Servicehus
+    responsible: Lisa Lautrup
+    description: |
+      Vi bakar årets andra recept FIZZY RAMUNE ICE CREAM tillsammans. Under klassen kommer vi att jobba med olika texturer och smaker samt testa på flera kylmetoder i form av glassmaskin och kolsyreis. 
+
+      Hoppas att vi ses! 👩🏻‍🍳
+
+    link: 'https://id-preview--4b54cd55-fa16-487e-985a-bef490b46040.lovable.app/i/XTJHZR'
+    moved:
+      from_date: '2026-07-27'
+      from_start: '19:00'
+      from_end: '22:00'
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-19 12:57
+      updated_at: 2026-07-27 09:45
+      location_set_at: 2026-07-19 12:57
+  - id: lunch-2026-07-30-1200
+    title: Lunch
+    date: '2026-07-30'
+    start: '12:00'
+    end: '13:00'
+    location: Servicehus
+    responsible: Alla
+    description: |
+      Se tiden som en riktlinje då vi försöker att inte ha några aktiviteter igång. Man får givetvis äta precis när man vill.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-02-27 09:16:57
+      updated_at: 2026-02-27 09:16:57
+  - id: vattenparlor-2026-07-30-1230
+    title: Vattenpärlor
+    date: '2026-07-30'
+    start: '12:30'
+    end: '14:00'
+    location: GA Stilla hyllan
+    responsible: Eila och Jonas Colling
+    description: |
+      Eila bjuder in till att göra vattenpärlor (aqua beeds/water beeds). Vi har plattor och pärlor så att det räcker till fem personer samtidigt. Välkommen!
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-29 16:29
+      updated_at: 2026-07-29 16:29
+      location_set_at: 2026-07-29 16:29
+  - id: rollspel-elias-kampanj-fallout-det-svarta-guldet-2026-07-30-1300
+    title: 'Rollspel, Elias kampanj Fallout, Det svarta guldets slag"'
+    date: '2026-07-30'
+    start: '13:00'
+    end: '16:00'
+    location: Rollspelstält1
+    responsible: Johan Eellend
+    description: null
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-23 19:28
+      updated_at: 2026-07-23 19:28
+      location_set_at: 2026-07-23 19:28
+  - id: rollspel-johans-kampanj-1-natten-som-aldrig-vill-2026-07-30-1300
+    title: 'Rollspel, Johans kampanj 1 "Natten som aldrig vill ta slut"'
+    date: '2026-07-30'
+    start: '13:00'
+    end: '16:00'
+    location: Rollspelstält2
+    responsible: Johan Eellend
+    description: null
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-23 19:39
+      updated_at: 2026-07-23 19:39
+      location_set_at: 2026-07-23 19:39
+  - id: popup-nagelstudio-2026-07-30-1330
+    title: Popup nagelstudio
+    date: '2026-07-30'
+    start: '13:30'
+    end: '15:00'
+    location: GA Kreativ hörna
+    responsible: Malin Isenfors
+    description: |
+      Popup nagelstudio! 
+
+      I GA hallen, idag torsdag
+       kl 13.30 - 15. 
+
+      Måla dina egna naglar, eller någon annans!
+
+      Barn som inte kan klara sig själva behöver komma med vuxet sällskap!
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-30 11:03
+      updated_at: 2026-07-30 11:03
+      location_set_at: 2026-07-30 11:03
+  - id: improvisationsteater-ovningar-2026-07-30-1400
+    title: Improvisationsteater-övningar
+    date: '2026-07-30'
+    start: '14:00'
+    end: '15:00'
+    location: GA Stilla hyllan
+    responsible: Åsa Steinsvik
+    description: |
+      Små roliga lekar kopplat till teater som man kommer på vartefter. Inga förkunskaper krävs
+
+    link: null
+    relocated:
+      from_location: GA Scen
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-22 12:18
+      updated_at: 2026-07-22 21:36
+      location_set_at: 2026-07-22 21:36
+  - id: skapa-med-lera-2026-07-30-1400
+    title: Skapa med lera - måla din lerfigur
+    date: '2026-07-30'
+    start: '14:00'
+    end: '16:00'
+    location: AndreasTältet
+    responsible: Julius Grassman
+    description: |
+      Ons: Vi skapar figurer i lera som får torka över natten 
+      Tor: figuerna målas med akryl
+      Lera, färger och verktyg finns på plats.
+      Alla är välkomna!
+
+    link: 'https://edqhub.com/groups/e69d06c5-b43a-4075-ad6a-21d09a925957'
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-28 10:06
+      updated_at: 2026-07-28 13:08
+      location_set_at: 2026-07-28 10:06
+  - id: varulvarna-2026-07-30-1400
+    title: Varulvarna
+    date: '2026-07-30'
+    start: '14:00'
+    end: '16:00'
+    location: GA Kreativ hörna
+    responsible: Naxy Isenfors
+    description: |
+      Varulvarna! Kom och spela i GA-hallen mellan 14:00-16:00! 
+      Ålder: Från 7 år Ingen erfarenhet krävs, kom och gå hur ni vill, ha kul!
+
+      /Naxy Isenfors
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-29 17:51
+      updated_at: 2026-07-29 17:51
+      location_set_at: 2026-07-29 17:51
+  - id: artstudio-2026-07-30-1500
+    title: Artstudio
+    date: '2026-07-30'
+    start: '15:00'
+    end: '18:00'
+    location: GA Stilla hyllan
+    responsible: Artstudio Teamet
+    description: |
+      Hallå folket!
+
+      Artstudio idag (Torsdag) ca kl 15 - 18 på hyllan i GA hallen! Drop in, ingen anmälan, man kan komma och gå som man vill. Men man får gärna säga till om man kommer så vi vet!
+
+      Vi har mycket saker att låna, men inget digitalt. Har du eget du vill använda får du gärna ta med det
+      12- år behöver vuxet (18+) sällskap
+
+      Vuxna varmt välkomna att delta! (både med och utan barn)
+
+      /Artstudio Teamet
+
+      Länk till vår discord: https://discord.gg/UDGWJJGTj
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-29 16:50
+      updated_at: 2026-07-29 16:50
+      location_set_at: 2026-07-29 16:50
+  - id: frigorande-dans-det-kommer-bli-bra-2026-07-30-1500
+    title: 'FRIGÖRANDE DANS: Det kommer bli bra 💕'
+    date: '2026-07-30'
+    start: '15:00'
+    end: '15:45'
+    location: Tält1
+    responsible: Lisa Lautrup
+    description: |
+      Välkommen till denna prova på klass i Frigörande dans på temat ”Det kommer bli bra”! 💕
+
+      Denna form av meditation i rörelse är ett fint sätt att jobba både med fysiska spänningar i kroppen och hitta lugnet i tillvaron. 😌
+
+      Vi dansar barfota i mjuka kläder. Ta gärna med en matta, filt eller varm tröja till den avslutande avslappningen. 🧘🏻‍♀️
+
+      Hoppas att vi ses! 🙂
+
+    link: null
+    relocated:
+      from_location: Tält2
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-23 20:45
+      updated_at: 2026-07-26 22:44
+      location_set_at: 2026-07-26 22:44
+  - id: k-pop-musikquiz-2026-07-30-1600
+    title: K-pop musikquiz
+    date: '2026-07-30'
+    start: '16:00'
+    end: '17:00'
+    location: Servicehus
+    responsible: Agnes och Maria Egardt
+    description: |
+      Musikquiz med tema K-pop (troligen inte jättelätt).
+
+    link: null
+    cancelled: true
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-26 20:23
+      updated_at: 2026-07-30 14:22
+      location_set_at: 2026-07-26 20:23
+  - id: nerf-war-2026-07-30-1600
+    title: Nerf War
+    date: '2026-07-30'
+    start: '16:00'
+    end: '17:00'
+    location: Nerf-arena
+    responsible: Francisco Penayo
+    description: |
+      ”Nerf War”, 
+      Vi samlas vid pingisbordet.
+      Har ni extra puffror och ögonskydd så ta med dem så att flera kan vara med.
+      Grymt soundtrack utlovas för både deltagare och åskådare.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-29 20:36
+      updated_at: 2026-07-29 20:36
+      location_set_at: 2026-07-29 20:36
+  - id: middag-2026-07-30-1700
+    title: Middag
+    date: '2026-07-30'
+    start: '17:00'
+    end: '18:00'
+    location: Servicehus
+    responsible: Alla
+    description: |
+      Se tiden som en riktlinje då vi försöker att inte ha några aktiviteter igång. Man får givetvis äta precis när man vill.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-02-27 09:16:57
+      updated_at: 2026-02-27 09:16:57
+  - id: kolsyreisexperiment-demonstration-2026-07-30-1800
+    title: Kolsyreisexperiment DEMONSTRATION
+    date: '2026-07-30'
+    start: '18:00'
+    end: '18:30'
+    location: Annat
+    responsible: Martina Sjöström
+    description: |
+      Där graffiti hölls. Fråga om ni inte vet typ bakom rollspelen. Vi VISAR lite experiment med kolsyreis, ev kanske får ni göra något pyttelitet själva. Vid demon kommer vi ta hjälp av publiken med ofarliga delar.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-30 10:18
+      updated_at: 2026-07-30 10:18
+      location_set_at: 2026-07-30 10:18
+  - id: talja-i-tra-2026-07-30-1830
+    title: OBS ny plats. TÄLJA  trä
+    date: '2026-07-30'
+    start: '18:30'
+    end: '20:00'
+    location: GA Stilla hyllan
+    responsible: 'Petter Zonabend  König & Tova'
+    description: |
+      Vi sitter på Hyllan/ Balkongen i GA hallen. Pga regnrisk. 
+      Välkommen att tälja (och lyssna på musikquiz precis bredvid)!
+      Vi börjar med lite säkerhetsregler och säker täljteknik. Sen är det fritt fram. Det kommer att finnas trä för trollstavar, smörknivar, skedar mm. ELLER TÄLJ DIN EGEN FACKELSTAV, SOM DU SEN GÖR EN FACKLA AV PÅ LÖRDAG.
+      Medtag egen kniv om du har, det finns några låneknivar. 
+      Vuxennärvaro är bra.
+
+    link: null
+    relocated:
+      from_location: AndreasTältet
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-29 13:44
+      updated_at: 2026-07-30 16:18
+      location_set_at: 2026-07-30 16:18
+  - id: blood-on-the-clocktower-2026-07-29-1900
+    title: Blood On The Clocktower
+    date: '2026-07-30'
+    start: '19:00'
+    end: '22:00'
+    location: Tält1
+    responsible: Viktor Carlsson
+    description: |
+      Blood on the Clocktower är ett social deduction-spel, lite likt varulvar, maffia, secret hitler, etc... Ni känner säkert till något av de spelen, jag vet att det är många som spelar sånt på lägret. Hursomhelst skiljer det sig lite grann i att:
+      - Alla spelare har en roll som uppfyller någon funktion
+      - Man är fortfarande med i spelet även om man dö
+      - Information kan vara sann eller inte, det å lista ut vad som faktiskt stämmer kan också vara en del av spelet.
+
+      Jag skulle säga att det är likt maffia/varulvar fast lite mer komplext (men också mycket mer kul i min åsikt). 
+
+      En runda kan ta ett par timmar beroende på vad som händer, och man behöver inga förkunskaper för att vara med (vi går igenom allt). I och med komplexiteten kanske jag hade rekommenderat det för något äldre målgrupper utan att kunna dra någon exakt åldersgräns.
+
+      Spelet lämpar sig bäst på grupper mellan 8 och 15 personer.
+
+      ANMÄLAN: https://forms.gle/xPX1wRhYseQtJySQA
+
+    link: 'https://forms.gle/xPX1wRhYseQtJySQA'
+    moved:
+      from_date: '2026-07-29'
+      from_start: '19:00'
+      from_end: '22:00'
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-27 10:55
+      updated_at: 2026-07-28 15:51
+      location_set_at: 2026-07-27 10:55
+  - id: musikquiz-sing-along-2026-07-29-1900
+    title: 'Musikquiz, sing along!'
+    date: '2026-07-30'
+    start: '19:00'
+    end: '21:30'
+    location: Servicehus
+    responsible: Malin Isenfors
+    description: |
+      Välkomna till Malins mysiga, mysko, maffiga musikquiz med DJ Becca. 
+      Här belönas inte bara musikkunskap med poäng.
+      Här blandas allsång och gamla godingar med lite nyare musik och en inte alltid helt logisk upptäcktsfärd i Malins tankebanor.
+      Kom själv eller dra ihop ett gäng. Ålderblandning kan vara en fördel. Ta med en varm filt, något att dricka och ditt bästa humör och dela ett par roliga timmar ihop!
+
+    link: null
+    moved:
+      from_date: '2026-07-29'
+      from_start: '19:00'
+      from_end: '21:30'
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-26 19:19
+      updated_at: 2026-07-28 09:53
+      location_set_at: 2026-07-26 19:19
+  - id: rollspel-johans-kampanj-2-oar-av-eld-2026-07-30-1900
+    title: 'Rollspel, Johans kampanj 2 "Öar av Eld"'
+    date: '2026-07-30'
+    start: '19:00'
+    end: '21:00'
+    location: Rollspelstält2
+    responsible: Johan Eellend
+    description: null
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-23 19:44
+      updated_at: 2026-07-23 19:44
+      location_set_at: 2026-07-23 19:44
+  - id: bradspel-2026-07-30-2000
+    title: Brädspel
+    date: '2026-07-30'
+    start: '20:00'
+    end: '22:30'
+    location: Kaffetält
+    responsible: Birgitta
+    description: null
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-27 16:00
+      updated_at: 2026-07-27 16:00
+      location_set_at: 2026-07-27 16:00
+  - id: pinnbrod-2026-07-30-2000
+    title: 'Pinnbröd!'
+    date: '2026-07-30'
+    start: '20:00'
+    end: '21:00'
+    location: AndreasTältet
+    responsible: William VM
+    description: |
+      Vi gör pinnbröd tillsammans. Vi har degen och elden, du kommer med pinnen. Vi bakar och äter tills degen är slut eller vi får ont i magen!
+
+      Vi håller till vid grillarna vid servicehuset.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-30 15:47
+      updated_at: 2026-07-30 15:59
+      location_set_at: 2026-07-30 15:47
+  - id: rollspel-kampanj-2-oar-av-eld-2026-07-30-2100
+    title: Rollspel kampanj 2 "Öar av eld"
+    date: '2026-07-30'
+    start: '21:00'
+    end: '22:00'
+    location: Rollspelstält2
+    responsible: Johan Eellend
+    description: null
+    link: null
+    relocated:
+      from_location: Tält2
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-24 16:32
+      updated_at: 2026-07-26 13:25
+      location_set_at: 2026-07-26 13:25
+  - id: killer-ball-2026-07-30-2230
+    title: Killer ball
+    date: '2026-07-30'
+    start: '22:30'
+    end: '23:30'
+    location: GA Idrott
+    responsible: Martina Sjöström
+    description: null
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-29 14:51
+      updated_at: 2026-07-29 14:51
+      location_set_at: 2026-07-29 14:51
+  - id: natt-hitster-orginal-rock-2026-07-31-0005
+    title: Natt-Hitster Orginal + Rock
+    date: '2026-07-31'
+    start: '00:05'
+    end: '02:00'
+    location: Servicehus
+    responsible: 'Tilde, Moa, Nisse och Mida'
+    description: |
+      Kvälls och natt-Hitster. 2 lag och det är bara ansluta när man vill och kan. Man behöver inte vara med hela tiden om man inte vill.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-30 22:03
+      updated_at: 2026-07-30 22:03
+      location_set_at: 2026-07-30 22:03
+  - id: skogsutflykt-pa-varmlandska-2026-07-31-1000
+    title: SKOGSUTFLYKT PÅ VÄRMLÄNDSKA
+    date: '2026-07-31'
+    start: '10:00'
+    end: '14:00'
+    location: Annat
+    responsible: Lisa Lautrup
+    description: |
+      Vi samlas för en halvdagsutflykt tillsammans med barnens morfar och besöker valda platser i närområdet runt Sysslebäck. Syftet är att titta på gammelskog och de nyckelarter som är typiska för nordligaste Värmland. Som bonus finns det möjlighet att öva in några fraser på västvärmländsk dialekt 🤓
+
+      Vi samlas på parkeringen vid GA-hallen och kör ut med 4 bilar med max 20 st deltagare totalt.
+
+      Ta med matsäck, lämpliga kläder och en god portion nyfikenhet!
+
+      Hoppas att vi ses! 🤓🌲🍄‍🟫
+    link: 'https://id-preview--4b54cd55-fa16-487e-985a-bef490b46040.lovable.app/i/S57X2J'
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-19 13:31
+      updated_at: 2026-07-19 13:31
+      location_set_at: 2026-07-19 13:31
+  - id: spela-in-en-sketch-2026-08-01-0900
+    title: Spela in en sketch + redigering
+    date: '2026-07-31'
+    start: '10:00'
+    end: '12:00'
+    location: GA Stilla hyllan
+    responsible: 'Milo, Naxy, Becca och Willow'
+    description: |
+      OBS! Flyttad från lördag till fredag. 
+      Vi spelar in resten av sketchen och redigerar den.
+    link: null
+    moved:
+      from_date: '2026-08-01'
+      from_start: '09:00'
+      from_end: '11:30'
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-28 09:45
+      updated_at: 2026-07-30 14:35
+      location_set_at: 2026-07-28 09:45
+  - id: fotopromenad-2026-07-31-1100
+    title: Fotopromenad
+    date: '2026-07-31'
+    start: '11:00'
+    end: '12:00'
+    location: Grillplats
+    responsible: 'Milo, Elin och Anita'
+    description: |
+      Välkommen till en aktivitet där vi tar lite kul mobilbilder tillsammans. 
+
+      Samling sker nere vid grillplatsen, och vi håller oss inom campingområdet. 
+
+      Du behöver ha med dig en fulladdad mobiltelefon. Yngre barn behöver medföljande vuxen.
+
+      Alla är välkomna!
+
+    link: null
+    cancelled: true
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-29 08:23
+      updated_at: 2026-07-30 14:37
+      location_set_at: 2026-07-29 08:23
+  - id: lunch-2026-07-31-1200
+    title: Lunch
+    date: '2026-07-31'
+    start: '12:00'
+    end: '13:00'
+    location: Servicehus
+    responsible: Alla
+    description: |
+      Se tiden som en riktlinje då vi försöker att inte ha några aktiviteter igång. Man får givetvis äta precis när man vill.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-02-27 09:16:57
+      updated_at: 2026-02-27 09:16:57
+  - id: foraldrarsnack-skolproblem-2026-07-31-1300
+    title: Föräldrarsnack - skolproblem
+    date: '2026-07-31'
+    start: '13:00'
+    end: '13:30'
+    location: Kaffetält
+    responsible: Martina Sjöström
+    description: |
+      Vad är det tråkigaste barnen här vet, det är ju föräldrar och skolan. Dessutom ingen fika. Därför borde ingen läsa detta eller dyka upp när jag egentligen vill fixa priserna till den logiska olympiaden som var i tisdags. (Skriver medvetet inte ut namnet eftersom om någon bara tittar på beskrivningen kommer namnet sticka ut). Jag kommer sitta där och fixa, för jag behöver att det är schemalagt för att det ska bli av och man är väldigt välkommen och hjälpa till. För det är roligare att hjälpas åt och går fortare.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-30 12:22
+      updated_at: 2026-07-30 12:22
+      location_set_at: 2026-07-30 12:22
+  - id: rollspel-elias-kampanj-fallout-det-svarta-guldet-2026-07-31-1300
+    title: 'Rollspel, Elias kampanj Fallout, Det svarta guldets slag"'
+    date: '2026-07-31'
+    start: '13:00'
+    end: '16:00'
+    location: Rollspelstält1
+    responsible: Johan Eellend
+    description: null
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-23 19:28
+      updated_at: 2026-07-23 19:28
+      location_set_at: 2026-07-23 19:28
+  - id: rollspel-johans-kampanj-1-natten-som-aldrig-vill-2026-07-31-1300
+    title: 'Rollspel, Johans kampanj 1 "Natten som aldrig vill ta slut"'
+    date: '2026-07-31'
+    start: '13:00'
+    end: '16:00'
+    location: Rollspelstält2
+    responsible: Johan Eellend
+    description: null
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-23 19:39
+      updated_at: 2026-07-23 19:39
+      location_set_at: 2026-07-23 19:39
+  - id: slime-soft-clay-drop-in-2026-07-31-1300
+    title: 'Slime & soft clay - drop in'
+    date: '2026-07-31'
+    start: '13:00'
+    end: '14:30'
+    location: AndreasTältet
+    responsible: Kajsa Ögård
+    description: |
+      Vi kör en combo session där du antingen kan göra din egen slime eller pyssla med soft clay (självtorkande lera) - eller båda och.
+
+      Mindre barn bör ha med en vuxen som hjälper till. 
+
+      Drop-in i tältet vid servicehuset. Man behöver inte vara med från start så länge man börjar göra sitt slime/soft clay-grejs senast kl. 14:15.
+
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-30 06:55
+      updated_at: 2026-07-30 23:08
+      location_set_at: 2026-07-30 06:55
+  - id: improvisationsteater-ovningar-igen-2026-07-31-1400
+    title: 'Improvisationsteater - övningar igen!'
+    date: '2026-07-31'
+    start: '14:00'
+    end: '15:00'
+    location: GA Stilla hyllan
+    responsible: Åsa Steinsvik
+    description: |
+      Små roliga lekar kopplat till teater som man kommer på vartefter. Inga förkunskaper krävs
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-30 23:17
+      updated_at: 2026-07-30 23:17
+      location_set_at: 2026-07-30 23:17
+  - id: nagelstudio-2026-07-31-1430
+    title: Nagelstudio
+    date: '2026-07-31'
+    start: '14:30'
+    end: '16:00'
+    location: AndreasTältet
+    responsible: Malin Isenfors
+    description: |
+      Popup nagelstudio! 
+
+      I servicehuset , idag fredag
+       kl 14.30 - 16.00
+
+      Måla dina egna naglar, eller någon annans!
+
+      Barn som inte kan klara sig själva behöver komma med vuxet sällskap!
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-31 12:14
+      updated_at: 2026-07-31 12:14
+      location_set_at: 2026-07-31 12:14
+  - id: foraldrarfika-problematisk-skolfranvaro-2026-07-31-1830
+    title: Föräldrarfika - problematisk skolfrånvaro
+    date: '2026-07-31'
+    start: '15:00'
+    end: '16:00'
+    location: Kaffetält
+    responsible: Christina Falk
+    description: |
+      En stund att träffas och dela erfarenheter om barn med problematisk skolfrånvaro (s.k. hemmasittare / hemmakämpare). 
+
+      Vi träffas utan barn.
+
+    link: null
+    moved:
+      from_date: '2026-07-31'
+      from_start: '18:30'
+      from_end: '19:30'
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-26 05:19
+      updated_at: 2026-07-28 09:50
+      location_set_at: 2026-07-26 05:19
+  - id: varulvarna-2026-07-31-1400
+    title: Varulvarna
+    date: '2026-07-31'
+    start: '15:10'
+    end: '16:00'
+    location: GA Kreativ hörna
+    responsible: Naxy Isenfors
+    description: |
+      Varulvarna! Kom och spela i GA-hallen mellan 15:30-16:00! 
+      Ålder: Från 7 år Ingen erfarenhet krävs, kom och gå hur ni vill, ha kul!
+      (Sorry att jag ändrar tiden hela tiden, saker händer :'>)
+
+      /Naxy Isenfors
+
+    link: null
+    moved:
+      from_date: '2026-07-31'
+      from_start: '15:30'
+      from_end: '16:00'
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-29 17:51
+      updated_at: 2026-07-31 13:09
+      location_set_at: 2026-07-29 17:51
+  - id: artstudio-ja-igen-komsi-komsi-2026-07-31-1600
+    title: 'Artstudio (ja, igen. Komsi komsi)'
+    date: '2026-07-31'
+    start: '16:00'
+    end: '19:00'
+    location: GA Stilla hyllan
+    responsible: Artstudio Teamet
+    description: |
+      Jodå, det blir idag också.
+      Komsi komsi! 
+      Artstudio idag (Fredag) ca kl 16 - 19 på hyllan i GA hallen! Drop in, ingen anmälan, man kan komma och gå som man vill. Men man får gärna säga till om man kommer så vi vet!
+
+      Vi har mycket saker att låna, men inget digitalt. Har du eget du vill använda får du gärna ta med det
+      12- år behöver vuxet (18+) sällskap
+      Vuxna varmt välkomna att delta! (både med och utan barn)
+
+      /Artstudio Teamet
+
+      Länk till vår discord: https://discord.gg/UDGWJJGTj
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-31 02:33
+      updated_at: 2026-07-31 02:33
+      location_set_at: 2026-07-31 02:33
+  - id: middag-2026-07-31-1700
+    title: Middag
+    date: '2026-07-31'
+    start: '17:00'
+    end: '18:00'
+    location: Servicehus
+    responsible: Alla
+    description: |
+      Se tiden som en riktlinje då vi försöker att inte ha några aktiviteter igång. Man får givetvis äta precis när man vill.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-02-27 09:16:57
+      updated_at: 2026-02-27 09:16:57
+  - id: prisutdelning-braingames-2026-07-31-1800
+    title: Prisutdelning Braingames
+    date: '2026-07-31'
+    start: '18:00'
+    end: '18:20'
+    location: GA Idrott
+    responsible: 'Martina Sjöström & Christina Falk'
+    description: null
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-18 11:08
+      updated_at: 2026-07-18 11:08
+      location_set_at: 2026-07-18 11:08
+  - id: foraldrafika-goda-exempel-och-kommunikation-som--2026-07-31-1845
+    title: 'Föräldrafika: Goda exempel och kommunikation som har funkat bra'
+    date: '2026-07-31'
+    start: '18:45'
+    end: '19:45'
+    location: AndreasTältet
+    responsible: 'Pettter Zonabend König, Åsa Steinsvik'
+    description: |
+      Vi pratar om vad vi tycker har fungerat när det gäller kommunikation med skola, myndigheter etc, för att se om det finns några gemensamma nämnare. Johanna Rexgård kommer att vara med, som under lägret har pratat runt och samlat in vad som har funkat bra för våra barn.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-30 10:07
+      updated_at: 2026-07-30 10:07
+      location_set_at: 2026-07-30 10:07
+  - id: diamond-painting-2026-07-31-1900
+    title: Diamond painting
+    date: '2026-07-31'
+    start: '19:00'
+    end: '21:00'
+    location: GA Stilla hyllan
+    responsible: Martina Sjöström
+    description: |
+      Barn under 10år ta med en vuxen. Behöver hjälp för att köra aktiviteten
+
+      Chat gdt
+      Diamond painting är en kreativ hobby där du fäster små, glittrande plaststenar på en självhäftande duk med ett tryckt mönster. Genom att placera stenarna på rätt symboler växer en färgglad och glittrande bild fram, ungefär som en kombination av korsstygn och måla efter nummer.
+
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-31 08:44
+      updated_at: 2026-07-31 08:47
+      location_set_at: 2026-07-31 08:44
+  - id: rollspel-johans-kampanj-2-oar-av-eld-2026-07-31-1900
+    title: 'Rollspel, Johans kampanj 2 "Öar av Eld"'
+    date: '2026-07-31'
+    start: '19:00'
+    end: '21:00'
+    location: Rollspelstält2
+    responsible: Johan Eellend
+    description: null
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-23 19:44
+      updated_at: 2026-07-23 19:44
+      location_set_at: 2026-07-23 19:44
+  - id: varulvarna-igen-2026-07-31-1900
+    title: Varulvarna igen
+    date: '2026-07-31'
+    start: '19:00'
+    end: '20:45'
+    location: GA Kreativ hörna
+    responsible: Naxy Isenfors
+    description: |
+      Varulvarna! Kom och spela i GA-hallen mellan 19:00-20:45! 
+      Ålder: Från 7 år Ingen erfarenhet krävs, kom och gå hur ni vill, ha kul!
+
+      /Naxy Isenfors
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-31 12:53
+      updated_at: 2026-07-31 12:53
+      location_set_at: 2026-07-31 12:53
+  - id: bradspel-2026-07-31-1930
+    title: Brädspel
+    date: '2026-07-31'
+    start: '19:45'
+    end: '23:00'
+    location: Kaffetält
+    responsible: Birgitta
+    description: null
+    link: null
+    moved:
+      from_date: '2026-07-31'
+      from_start: '19:30'
+      from_end: '23:00'
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-30 21:53
+      updated_at: 2026-07-31 17:00
+      location_set_at: 2026-07-30 21:53
+  - id: frigorande-dans-anti-jante-2026-07-31-2000
+    title: 'FRIGÖRANDE DANS: Anti jante ✌🏻'
+    date: '2026-07-31'
+    start: '20:00'
+    end: '20:45'
+    location: Tält1
+    responsible: Lisa Lautrup
+    description: |
+      Välkommen till denna prova på klass i Frigörande dans på temat ”Anti jante”! 🤩
+
+      En riktigt ego boost som utmanar både kropp och knopp. Räkna med att bli ordentligt svettig och var inte rädd för att ta ut rörelserna ordentligt! 💃🏻
+
+      Vi dansar barfota i mjuka kläder. Ta gärna med en matta, filt eller varm tröja till den avslutande avslappningen. 🧘🏻‍♀️
+
+      Hoppas att vi ses! 💕
+
+    link: null
+    relocated:
+      from_location: Tält2
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-23 20:54
+      updated_at: 2026-07-26 22:44
+      location_set_at: 2026-07-26 22:44
+  - id: pappa-pub-restaurang-nedergarden-2026-07-30-2000
+    title: Pappa-pub restaurang Nedergården FLYTTAD TILL FREDAG
+    date: '2026-07-31'
+    start: '20:00'
+    end: '23:00'
+    location: Annat
+    responsible: Petter Åström
+    description: |
+      Pappa-pub! På junilägret hade vi en pappa-pub på restaurang Nedergården, väldigt trevligt! Jag bokar in denna vecka också. Går att äta om man vill.
+
+    link: null
+    moved:
+      from_date: '2026-07-30'
+      from_start: '20:00'
+      from_end: '23:00'
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-27 08:42
+      updated_at: 2026-07-28 08:43
+      location_set_at: 2026-07-27 08:42
+  - id: rollspel-kampanj-2-oar-av-eld-2026-07-31-2100
+    title: Rollspel kampanj 2 "Öar av eld"
+    date: '2026-07-31'
+    start: '21:00'
+    end: '22:00'
+    location: Rollspelstält2
+    responsible: Johan Eellend
+    description: null
+    link: null
+    relocated:
+      from_location: Tält2
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-24 16:32
+      updated_at: 2026-07-26 13:26
+      location_set_at: 2026-07-26 13:24
+  - id: hitsterkvall-fredag-2026-07-31-2115
+    title: Hitsterkväll fredag
+    date: '2026-07-31'
+    start: '21:30'
+    end: '01:00'
+    location: Servicehus
+    responsible: 'Tilde, Moa, Nisse Mida Karin'
+    description: |
+      Kom och spela hitster. Vi börjar tidigare ikväll. 
+      2 lag och man kan ansluta senare om man vill.
+      Ta med dricka och snacks. 😀
+
+    link: null
+    moved:
+      from_date: '2026-07-31'
+      from_start: '21:15'
+      from_end: '01:00'
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-31 18:14
+      updated_at: 2026-07-31 19:31
+      location_set_at: 2026-07-31 18:14
+  - id: killer-ball-2026-07-31-2230
+    title: Killer ball
+    date: '2026-07-31'
+    start: '22:30'
+    end: '23:30'
+    location: GA Idrott
+    responsible: Martina Sjöström
+    description: null
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-29 14:51
+      updated_at: 2026-07-29 14:51
+      location_set_at: 2026-07-29 14:51
+  - id: simlarare-i-simhall-2026-08-01-1000
+    title: Simlärare i simhall
+    date: '2026-08-01'
+    start: '10:00'
+    end: '11:30'
+    location: Annat
+    responsible: Christina Falk
+    description: |
+      Jag är utbildad simlärare och kommer att vara i simhallen. Jag kan hjälpa till med att tipsa / visa när det gäller att lära sig simma, bli vattenvan eller dyka. 
+
+      Alla åldrar är välkomna men icke simkunniga barn måste ha med en vuxen.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-08-01 06:09
+      updated_at: 2026-08-01 06:09
+      location_set_at: 2026-08-01 06:09
+  - id: tp-classic-bla-version-2026-08-01-1100
+    title: TP Classic blå version
+    date: '2026-08-01'
+    start: '11:00'
+    end: '12:00'
+    location: Kaffetält
+    responsible: Johanna Rexgård
+    description: |
+      Blå Tp. Lag om 2-3 personer. Tidsbegränsning. Bara roligt och tårtinsamling😀.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-31 22:30
+      updated_at: 2026-07-31 22:30
+      location_set_at: 2026-07-31 22:30
+  - id: lunch-2026-08-01-1200
+    title: Lunch
+    date: '2026-08-01'
+    start: '12:00'
+    end: '13:00'
+    location: Servicehus
+    responsible: Alla
+    description: |
+      Se tiden som en riktlinje då vi försöker att inte ha några aktiviteter igång. Man får givetvis äta precis när man vill.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-02-27 09:16:57
+      updated_at: 2026-02-27 09:16:57
+  - id: blood-on-the-clocktower-omgang-2-2026-08-01-1300
+    title: Blood on the Clocktower – Omgång 2
+    date: '2026-08-01'
+    start: '13:00'
+    end: '17:00'
+    location: Tonårsstugan
+    responsible: Viktor Carlsson
+    description: |
+      Folk hade kul på Blood on the Clocktower i torsdags och uttryckte en önskan om att köra mer så vi kör en andra omgång på Lördag kl. 13
+
+      Ingen anmälan utan dyk upp så kör vi om vi blir tillräckligt många
+
+      Update kl. 15:13: Vi har förflyttat spelandet till tonårsstugan.
+    link: null
+    relocated:
+      from_location: Tält1
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-31 16:53
+      updated_at: 2026-08-01 13:13
+      location_set_at: 2026-08-01 13:13
+  - id: experiment-dar-du-far-labba-2026-08-01-1300
+    title: Experiment där du får labba – hjälp sökes
+    date: '2026-08-01'
+    start: '13:00'
+    end: '13:30'
+    location: AndreasTältet
+    responsible: Martina Sjöström
+    description: |
+      Vi kollar pH, jobbar med provrör och pipetter. För att aktiviten ska bli av söker jag frivilliga.
+      Ha med en vuxen om ditt barn behöver stöd.
+      3 provrör och 3 pipetter får barnen med sig hem. När barnet vill gå får den korkarna till provröret.
+
+    link: 'https://edqhub.com/post/9c6bb4bb-37fe-49e5-a063-698dce75825e'
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-31 09:00
+      updated_at: 2026-07-31 09:08
+      location_set_at: 2026-07-31 09:00
+  - id: nar-skolan-gor-ratt-goda-exempel-2026-08-01-1300
+    title: När skolan gör rätt - goda exempel
+    date: '2026-08-01'
+    start: '13:00'
+    end: '14:30'
+    location: Kaffetält
+    responsible: Kajsa Ögård
+    description: |
+      Få inspiration av goda exempel på skolsamarbete och anpassningar som fungerat. Föräldrafika (endast för vuxna).
+
+      Jag börjar med att berätta om vår resa där vi gått från lågt förtroende till ett tätt och fungerande samarbete med en skola som tidigare inte alls jobbat med särskild begåvning utan där vi var först ut.
+
+      Sedan hoppas jag att andra som har goda exempel vill dela med sig av dem, oavsett om det handlar om skolan som helhet eller ”det enda lilla som faktiskt blev bra”.
+
+      Vi kör inga långa presentationsrundor så man kan hoppa in och ut om man inte kan vara med från början eller behöver gå tidigt. Bokar upp lite extra tid.
+    link: 'https://edqhub.com/post/3e238cdf-e7b4-42a3-9ab1-3ebe6cab509f'
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-30 11:06
+      updated_at: 2026-07-30 11:06
+      location_set_at: 2026-07-30 11:06
+  - id: artstudio-sista-2026-08-01-1400
+    title: Artstudio (sista)
+    date: '2026-08-01'
+    start: '14:00'
+    end: '18:00'
+    location: GA Stilla hyllan
+    responsible: Artstudio Teamet
+    description: |
+      En sista för I år!
+      Kom igen nu, se till att komma och rita/måla något eller snacka skit innan man måste vänta ett år.
+
+      You know the drill by now!
+
+      Artstudio idag (Lördag) ca kl 14 - 18 på hyllan i GA hallen! Drop in, ingen anmälan. Man får gärna säga till om man kommer så vi vet!
+
+      Vi har mycket saker att låna, men inget digitalt. Har du eget du vill använda får du gärna ta med det
+
+      12- år behöver vuxet (18+) sällskap
+
+      Vuxna varmt välkomna att delta! (både med och utan barn)
+
+      /Artstudio Teamet
+
+      Länk till vår discord: https://discord.gg/UDGWJJGTj
+
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-08-01 06:46
+      updated_at: 2026-08-01 12:11
+      location_set_at: 2026-08-01 06:46
+  - id: bridge-2026-08-01-1400
+    title: Bridge
+    date: '2026-08-01'
+    start: '14:00'
+    end: '16:00'
+    location: Servicehus
+    responsible: 'Christina Falk & Rikard Olofsson'
+    description: |
+      Vi spelar och lär ut bridge. Blir vi 8 st kan vi spela en kort tävling.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-08-01 11:23
+      updated_at: 2026-08-01 11:23
+      location_set_at: 2026-08-01 11:23
+  - id: killerball-bara-1h-2026-08-01-1400
+    title: Killerball -bara 1h
+    date: '2026-08-01'
+    start: '14:00'
+    end: '15:00'
+    location: GA Idrott
+    responsible: Martina Sjöström
+    description: |
+      För att alla som lagt sig innan 22:30 och missat killer ball. Men ALLA är välkomna
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-31 08:30
+      updated_at: 2026-07-31 08:30
+      location_set_at: 2026-07-31 08:30
+  - id: bradspel-2026-08-01-1500
+    title: Brädspel
+    date: '2026-08-01'
+    start: '15:00'
+    end: '17:00'
+    location: Kaffetält
+    responsible: Birgitta
+    description: null
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-08-01 10:11
+      updated_at: 2026-08-01 10:11
+      location_set_at: 2026-08-01 10:11
+  - id: vattenkrig-barn-vs-vuxna-2026-08-01-1505
+    title: Vattenkrig barn vs vuxna
+    date: '2026-08-01'
+    start: '15:05'
+    end: '15:35'
+    location: Nerf-arena
+    responsible: Martina Sjöström
+    description: |
+      Fint väder på lördag. Kort omgång vattenkrig, barn mot vuxna. Jag vill ha många vuxna, annars ställs aktivitet in. Jessica du kan inte köra ditt kort, för barnen gillar att träffa. ;) vi ses där det "alltid" är, nya kolla var det finns människor.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-31 08:39
+      updated_at: 2026-07-31 08:39
+      location_set_at: 2026-07-31 08:39
+  - id: fackeltillverkning-2026-08-01-1600
+    title: FACKELTILLVERKNING
+    date: '2026-08-01'
+    start: '16:00'
+    end: '17:00'
+    location: Grillplats
+    responsible: 'Petter Zonabend  König & Tova'
+    description: |
+      Kom och gör facklor ! 
+      Vi tänder dem sen lördag kväll vid Klarälvens kant som en stämningsfull avslutning på lägret. 
+      Eld och flytande stearin - vuxennärvaro behövs. 
+      Du som tagit med stearin eller lakan kan lämna det på altanen Stuga 1.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-29 13:58
+      updated_at: 2026-07-29 13:58
+      location_set_at: 2026-07-29 13:58
+  - id: handarbetshang-2026-08-01-1500
+    title: 🧶HANDARBETSHÄNG 🧶
+    date: '2026-08-01'
+    start: '16:00'
+    end: '18:00'
+    location: Servicehus
+    responsible: Lisa Lautrup
+    description: |
+      Eftersom jag vet att det är flera som har packat ned ett handarbete eller två tänkte jag att vi kan träffas och handarbeta tillsammans! 🤓
+
+    link: null
+    moved:
+      from_date: '2026-08-01'
+      from_start: '15:00'
+      from_end: '18:00'
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-30 14:38
+      updated_at: 2026-08-01 08:17
+      location_set_at: 2026-07-30 14:38
+  - id: middag-2026-08-01-1700
+    title: Middag
+    date: '2026-08-01'
+    start: '17:00'
+    end: '18:00'
+    location: Servicehus
+    responsible: Alla
+    description: |
+      Se tiden som en riktlinje då vi försöker att inte ha några aktiviteter igång. Man får givetvis äta precis när man vill.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-02-27 09:16:57
+      updated_at: 2026-02-27 09:16:57
+  - id: avslutningsmöte-alla-deltar-2026-08-01-1800
+    title: Avslutningsmöte (alla deltar)
+    date: '2026-08-01'
+    start: '18:00'
+    end: '20:00'
+    location: Annat
+    responsible: Andreas (Lägernissen)
+    description: |
+      **Möte:**
+      Vi börjar med avetablering, alla hjälps åt!
+      När vi är klara så samlas vi för att lyssna på vad lägeransvariga har att säga.
+      Ofta en gemensam bild på alla deltagare (som vill).
+
+      **Avetablering:**
+      Gemensam översyn på området med iordningställande och städ.
+
+      - Alla tält packas ner.
+      - All utrustning tas om hand.
+      - Alla gemensamma ytor sopas.
+      - Kyl/frys-skåp töms, torkas ur och tas till förrådet.
+      - Gräsytor utomhus gås igenom och skräp plockas upp.
+      Lost and found, vid ingång till GA-hallen.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-02-27 09:16:57
+      updated_at: 2026-02-27 09:16:57
+  - id: blood-on-the-clocktower-2026-08-01-2100
+    title: Blood on the Clocktower
+    date: '2026-08-01'
+    start: '21:00'
+    end: '23:00'
+    location: Tonårsstugan
+    responsible: Viktor Carlsson
+    description: |
+      Vi spelar Blood on the Clocktower i tonårsstugan så länge vi vill med start 21:00. Kom dit! (om du har åldern dvs, men Blood on the Clocktower är riktigt kul)
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-08-01 17:48
+      updated_at: 2026-08-01 17:48
+      location_set_at: 2026-08-01 17:48
+  - id: facklor-vid-alven-2026-08-01-2200
+    title: FACKLOR vid älven
+    date: '2026-08-01'
+    start: '22:15'
+    end: '22:30'
+    location: Grillplats
+    responsible: 'Petter Zonabend  König & Tova'
+    description: |
+      Avsluta lägret med en fantastiskt stämningsfull aktivitet. 
+      Vi tänder facklorna när solen börjar gå ner och ställer upp oss längs älven. 
+      Inga dunjackor eller polesterkläder.
+
+    link: null
+    moved:
+      from_date: '2026-08-01'
+      from_start: '22:00'
+      from_end: '22:30'
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-07-29 13:52
+      updated_at: 2026-07-31 20:24
+      location_set_at: 2026-07-29 13:52
+  - id: glass-på-chokladfabriken-2026-08-02-1200
+    title: Glass på chokladfabriken
+    date: '2026-08-02'
+    start: '12:00'
+    end: '15:00'
+    location: Annat
+    responsible: Alla
+    description: |
+      Många brukar besöka Chokladfabriken för att äta lite glass som avrundning och hej då.
+      Det finns parkering för de som vill vara redo för “hemfärd”.
+      Annars är det en lagom promenad på vägen bakom receptionen.
+      Tiden är för det brukar vara lite “drop-in”.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-02-27 09:16:57
+      updated_at: 2026-02-27 09:16:57
+  - id: lunch-2026-08-02-1200
+    title: Lunch
+    date: '2026-08-02'
+    start: '12:00'
+    end: '13:00'
+    location: Servicehus
+    responsible: Alla
+    description: |
+      Se tiden som en riktlinje då vi försöker att inte ha några aktiviteter igång. Man får givetvis äta precis när man vill.
+    link: null
+    owner:
+      name: ''
+      email: ''
+    meta:
+      created_at: 2026-02-27 09:16:57
+      updated_at: 2026-02-27 09:16:57

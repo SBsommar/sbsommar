@@ -2,12 +2,12 @@ camp:
   id: qa-thisweek
   name: QA Testläger (vår 2026)
   location: Sysslebäck
-  start_date: '2026-04-24'
-  end_date: '2026-07-18'
+  start_date: '2026-09-01'
+  end_date: '2027-06-20'
 events:
-  - id: lunch-2026-04-25-1200
+  - id: lunch-2026-09-02-1200
     title: Lunch
-    date: '2026-04-25'
+    date: '2026-09-02'
     start: '12:00'
     end: '13:00'
     location: Servicehus
@@ -20,9 +20,9 @@ events:
     meta:
       created_at: '2025-05-05 20:13:28'
       updated_at: '2025-05-05 20:13:28'
-  - id: lunch-2026-04-26-1200
+  - id: lunch-2026-09-03-1200
     title: Lunch
-    date: '2026-04-26'
+    date: '2026-09-03'
     start: '12:00'
     end: '13:00'
     location: Servicehus
@@ -35,9 +35,9 @@ events:
     meta:
       created_at: '2025-05-05 20:13:28'
       updated_at: '2025-05-05 20:13:28'
-  - id: lunch-2026-04-27-1200
+  - id: lunch-2026-09-04-1200
     title: Lunch
-    date: '2026-04-27'
+    date: '2026-09-04'
     start: '12:00'
     end: '13:00'
     location: Servicehus
@@ -50,9 +50,9 @@ events:
     meta:
       created_at: '2025-05-05 20:13:28'
       updated_at: '2025-05-05 20:13:28'
-  - id: lunch-2026-04-28-1200
+  - id: lunch-2026-09-05-1200
     title: Lunch
-    date: '2026-04-28'
+    date: '2026-09-05'
     start: '12:00'
     end: '13:00'
     location: Servicehus
@@ -65,9 +65,9 @@ events:
     meta:
       created_at: '2025-05-05 20:13:28'
       updated_at: '2025-05-05 20:13:28'
-  - id: lunch-2026-04-29-1200
+  - id: lunch-2026-09-06-1200
     title: Lunch
-    date: '2026-04-29'
+    date: '2026-09-06'
     start: '12:00'
     end: '13:00'
     location: Servicehus
@@ -80,9 +80,9 @@ events:
     meta:
       created_at: '2025-05-05 20:13:28'
       updated_at: '2025-05-05 20:13:28'
-  - id: lunch-2026-04-30-1200
+  - id: lunch-2026-09-07-1200
     title: Lunch
-    date: '2026-04-30'
+    date: '2026-09-07'
     start: '12:00'
     end: '13:00'
     location: Servicehus
@@ -95,9 +95,9 @@ events:
     meta:
       created_at: '2025-05-05 20:13:28'
       updated_at: '2025-05-05 20:13:28'
-  - id: middag-2026-04-25-1700
+  - id: middag-2026-09-02-1700
     title: Middag
-    date: '2026-04-25'
+    date: '2026-09-02'
     start: '17:00'
     end: '18:00'
     location: Servicehus
@@ -110,9 +110,9 @@ events:
     meta:
       created_at: '2025-05-05 20:18:43'
       updated_at: '2025-05-05 20:18:43'
-  - id: middag-2026-04-26-1700
+  - id: middag-2026-09-03-1700
     title: Middag
-    date: '2026-04-26'
+    date: '2026-09-03'
     start: '17:00'
     end: '18:00'
     location: Servicehus
@@ -125,9 +125,9 @@ events:
     meta:
       created_at: '2025-05-05 20:18:43'
       updated_at: '2025-05-05 20:18:43'
-  - id: middag-2026-04-27-1700
+  - id: middag-2026-09-04-1700
     title: Middag
-    date: '2026-04-27'
+    date: '2026-09-04'
     start: '17:00'
     end: '18:00'
     location: Servicehus
@@ -140,9 +140,9 @@ events:
     meta:
       created_at: '2025-05-05 20:18:43'
       updated_at: '2025-05-05 20:18:43'
-  - id: middag-2026-04-28-1700
+  - id: middag-2026-09-05-1700
     title: Middag
-    date: '2026-04-28'
+    date: '2026-09-05'
     start: '17:00'
     end: '18:00'
     location: Servicehus
@@ -155,9 +155,9 @@ events:
     meta:
       created_at: '2025-05-05 20:18:43'
       updated_at: '2025-05-05 20:18:43'
-  - id: middag-2026-04-29-1700
+  - id: middag-2026-09-06-1700
     title: Middag
-    date: '2026-04-29'
+    date: '2026-09-06'
     start: '17:00'
     end: '18:00'
     location: Servicehus
@@ -170,9 +170,9 @@ events:
     meta:
       created_at: '2025-05-05 20:18:43'
       updated_at: '2025-05-05 20:18:43'
-  - id: middag-2026-04-30-1700
+  - id: middag-2026-09-07-1700
     title: Middag
-    date: '2026-04-30'
+    date: '2026-09-07'
     start: '17:00'
     end: '18:00'
     location: Servicehus
@@ -185,9 +185,9 @@ events:
     meta:
       created_at: '2025-05-05 20:18:44'
       updated_at: '2025-05-05 20:18:44'
-  - id: valkommen-2026-04-24-1200
+  - id: valkommen-2026-09-01-1200
     title: Välkommen
-    date: '2026-04-24'
+    date: '2026-09-01'
     start: '12:00'
     end: '23:30'
     location: Annat
@@ -202,9 +202,9 @@ events:
     meta:
       created_at: '2025-05-05 20:20:28'
       updated_at: '2025-05-05 20:20:28'
-  - id: glass-pa-chokladfabriken-2026-05-01-1200
+  - id: glass-pa-chokladfabriken-2026-09-08-1200
     title: Glass på chokladfabriken
-    date: '2026-05-01'
+    date: '2026-09-08'
     start: '12:00'
     end: '15:00'
     location: Annat
@@ -221,9 +221,9 @@ events:
     meta:
       created_at: '2025-05-05 20:22:16'
       updated_at: '2025-05-05 20:22:16'
-  - id: valkomstmote-2026-04-25-1000
+  - id: valkomstmote-2026-09-02-1000
     title: Välkomstmöte
-    date: '2026-04-25'
+    date: '2026-09-02'
     start: '10:00'
     end: '10:30'
     location: GA Idrott
@@ -236,9 +236,9 @@ events:
     meta:
       created_at: '2025-05-05 20:44:56'
       updated_at: '2025-05-05 20:44:56'
-  - id: simhall-abonnerad-gratis-2026-04-30-1400
+  - id: simhall-abonnerad-gratis-2026-09-07-1400
     title: Simhall abonnerad (gratis)
-    date: '2026-04-30'
+    date: '2026-09-07'
     start: '14:00'
     end: '16:00'
     location: Annat
@@ -251,9 +251,9 @@ events:
     meta:
       created_at: '2025-06-12 21:42:45'
       updated_at: '2025-06-12 21:42:45'
-  - id: lokalforeningstraff-rfsb-inga-andra-aktiviteter-samma-tid-2026-04-25-1600
+  - id: lokalforeningstraff-rfsb-inga-andra-aktiviteter-samma-tid-2026-09-02-1600
     title: Lokalföreningsträff RFSB (inga andra aktiviteter samma tid)
-    date: '2026-04-25'
+    date: '2026-09-02'
     start: '16:00'
     end: '17:00'
     location: Tält3
@@ -268,9 +268,9 @@ events:
     meta:
       created_at: '2025-06-15 19:58:57'
       updated_at: '2025-06-15 19:58:57'
-  - id: avslutningsmote-alla-deltar-2026-04-30-1800
+  - id: avslutningsmote-alla-deltar-2026-09-07-1800
     title: Avslutningsmöte (alla deltar)
-    date: '2026-04-30'
+    date: '2026-09-07'
     start: '18:00'
     end: '20:00'
     location: Annat
@@ -297,9 +297,9 @@ events:
     meta:
       created_at: '2025-06-16 18:10:05'
       updated_at: '2025-06-16 18:10:05'
-  - id: barndans-2026-04-26-1000
+  - id: barndans-2026-09-03-1000
     title: 'Barndans '
-    date: '2026-04-26'
+    date: '2026-09-03'
     start: '10:00'
     end: '10:30'
     location: GA Idrott
@@ -319,9 +319,9 @@ events:
     meta:
       created_at: '2025-06-16 21:11:54'
       updated_at: '2025-06-16 21:11:54'
-  - id: bradspel-kunskap-2026-04-25-1930
+  - id: bradspel-kunskap-2026-09-02-1930
     title: 'Brädspel kunskap '
-    date: '2026-04-25'
+    date: '2026-09-02'
     start: '19:30'
     end: '23:00'
     location: Kaffetält
@@ -338,9 +338,9 @@ events:
     meta:
       created_at: '2025-06-16 22:04:02'
       updated_at: '2025-06-16 22:04:02'
-  - id: bradspel-kunskap-2026-04-26-1930
+  - id: bradspel-kunskap-2026-09-03-1930
     title: 'Brädspel kunskap '
-    date: '2026-04-26'
+    date: '2026-09-03'
     start: '19:30'
     end: '23:00'
     location: Kaffetält
@@ -357,9 +357,9 @@ events:
     meta:
       created_at: '2025-06-16 22:05:13'
       updated_at: '2025-06-16 22:05:13'
-  - id: bradspel-kunskap-2026-04-29-1900
+  - id: bradspel-kunskap-2026-09-06-1900
     title: 'Brädspel kunskap '
-    date: '2026-04-29'
+    date: '2026-09-06'
     start: '19:00'
     end: '23:00'
     location: Kaffetält
@@ -372,9 +372,9 @@ events:
     meta:
       created_at: '2025-06-16 22:09:00'
       updated_at: '2025-06-16 22:09:00'
-  - id: japansk-bakning-1-2026-04-26-1400
+  - id: japansk-bakning-1-2026-09-03-1400
     title: 'JAPANSK BAKNING #1'
-    date: '2026-04-26'
+    date: '2026-09-03'
     start: '14:00'
     end: '17:00'
     location: Servicehus
@@ -387,9 +387,9 @@ events:
     meta:
       created_at: '2025-06-17 17:24:55'
       updated_at: '2025-06-17 17:24:55'
-  - id: japansk-bakning-2-2026-04-28-1400
+  - id: japansk-bakning-2-2026-09-05-1400
     title: 'JAPANSK BAKNING #2'
-    date: '2026-04-28'
+    date: '2026-09-05'
     start: '14:00'
     end: '17:00'
     location: Servicehus
@@ -402,9 +402,9 @@ events:
     meta:
       created_at: '2025-06-17 17:26:34'
       updated_at: '2025-06-17 17:26:34'
-  - id: japansk-bakning-3-2026-04-30-1400
+  - id: japansk-bakning-3-2026-09-07-1400
     title: 'JAPANSK BAKNING #3'
-    date: '2026-04-30'
+    date: '2026-09-07'
     start: '14:00'
     end: '17:00'
     location: Servicehus
@@ -417,9 +417,9 @@ events:
     meta:
       created_at: '2025-06-17 17:28:37'
       updated_at: '2025-06-17 17:28:37'
-  - id: sa-kul-med-lager-vill-vi-ha-fler-2026-04-27-1600
+  - id: sa-kul-med-lager-vill-vi-ha-fler-2026-09-04-1600
     title: Så kul med läger! – vill vi ha fler?
-    date: '2026-04-27'
+    date: '2026-09-04'
     start: '16:00'
     end: '17:00'
     location: Kaffetält
@@ -437,9 +437,9 @@ events:
     meta:
       created_at: '2025-06-18 10:13:41'
       updated_at: '2025-06-18 10:13:41'
-  - id: strid-med-lajv-svard-2026-04-25-1700
+  - id: strid-med-lajv-svard-2026-09-02-1700
     title: 'Strid med lajv svärd! '
-    date: '2026-04-25'
+    date: '2026-09-02'
     start: '17:00'
     end: '18:00'
     location: Nerf-arena
@@ -455,9 +455,9 @@ events:
     meta:
       created_at: '2025-06-20 21:48:05'
       updated_at: '2025-06-20 21:48:05'
-  - id: artbestamning-i-gammelskog-2026-04-27-1000
+  - id: artbestamning-i-gammelskog-2026-09-04-1000
     title: ARTBESTÄMNING I GAMMELSKOG
-    date: '2026-04-27'
+    date: '2026-09-04'
     start: '10:00'
     end: '14:00'
     location: Annat
@@ -474,9 +474,9 @@ events:
     meta:
       created_at: '2025-06-21 09:23:43'
       updated_at: '2025-06-21 09:23:43'
-  - id: skapa-karaktarer-rollspel-hampus-kampanj-2026-04-25-1300
+  - id: skapa-karaktarer-rollspel-hampus-kampanj-2026-09-02-1300
     title: Skapa karaktärer rollspel Hampus kampanj
-    date: '2026-04-25'
+    date: '2026-09-02'
     start: '13:00'
     end: '15:00'
     location: Rollspelstält1
@@ -491,9 +491,9 @@ events:
     meta:
       created_at: '2025-06-21 12:37:08'
       updated_at: '2025-06-21 12:37:08'
-  - id: skapa-karaktarer-rollspel-astors-kampanj-2026-04-25-1300
+  - id: skapa-karaktarer-rollspel-astors-kampanj-2026-09-02-1300
     title: Skapa karaktärer rollspel Astors kampanj
-    date: '2026-04-25'
+    date: '2026-09-02'
     start: '13:00'
     end: '15:00'
     location: Rollspelstält2
@@ -508,9 +508,9 @@ events:
     meta:
       created_at: '2025-06-21 12:42:48'
       updated_at: '2025-06-21 12:42:48'
-  - id: skapa-karaktarer-rollspel-xanders-kampanj-2026-04-25-1500
+  - id: skapa-karaktarer-rollspel-xanders-kampanj-2026-09-02-1500
     title: Skapa karaktärer rollspel Xanders kampanj
-    date: '2026-04-25'
+    date: '2026-09-02'
     start: '15:00'
     end: '17:00'
     location: Rollspelstält2
@@ -525,9 +525,9 @@ events:
     meta:
       created_at: '2025-06-21 12:44:37'
       updated_at: '2025-06-21 12:44:37'
-  - id: surrning-for-vissa-forkunskaper-kravs-2026-04-27-1400
+  - id: surrning-for-vissa-forkunskaper-kravs-2026-09-04-1400
     title: Surrning för vissa förkunskaper krävs
-    date: '2026-04-27'
+    date: '2026-09-04'
     start: '14:00'
     end: '17:00'
     location: Annat
@@ -544,9 +544,9 @@ events:
     meta:
       created_at: '2025-06-21 14:01:13'
       updated_at: '2025-06-21 14:01:13'
-  - id: schackturnering-blixt-2026-04-28-1330
+  - id: schackturnering-blixt-2026-09-05-1330
     title: Schackturnering blixt
-    date: '2026-04-28'
+    date: '2026-09-05'
     start: '13:30'
     end: '17:00'
     location: Kaffetält
@@ -564,9 +564,9 @@ events:
     meta:
       created_at: '2025-06-21 14:50:25'
       updated_at: '2025-06-21 14:50:25'
-  - id: rollspel-wilhelms-kampanj-2026-04-27-1000
+  - id: rollspel-wilhelms-kampanj-2026-09-04-1000
     title: Rollspel Wilhelms kampanj
-    date: '2026-04-27'
+    date: '2026-09-04'
     start: '10:00'
     end: '13:00'
     location: Rollspelstält1
@@ -581,9 +581,9 @@ events:
     meta:
       created_at: '2025-06-21 14:59:48'
       updated_at: '2025-06-21 14:59:48'
-  - id: rollspel-wilhelms-kampanj-2026-04-26-1000
+  - id: rollspel-wilhelms-kampanj-2026-09-03-1000
     title: Rollspel Wilhelms kampanj
-    date: '2026-04-26'
+    date: '2026-09-03'
     start: '10:00'
     end: '13:00'
     location: Rollspelstält1
@@ -598,9 +598,9 @@ events:
     meta:
       created_at: '2025-06-21 15:00:50'
       updated_at: '2025-06-21 15:00:50'
-  - id: rollspel-wilhelms-kampanj-2026-04-28-1000
+  - id: rollspel-wilhelms-kampanj-2026-09-05-1000
     title: Rollspel Wilhelms kampanj
-    date: '2026-04-28'
+    date: '2026-09-05'
     start: '10:00'
     end: '13:00'
     location: Rollspelstält1
@@ -615,9 +615,9 @@ events:
     meta:
       created_at: '2025-06-21 15:01:38'
       updated_at: '2025-06-21 15:01:38'
-  - id: obs-alla-deltar-nya-lite-extra-rigga-talt-och-stalla-i-ordning-ga-hall-2026-04-24-1800
+  - id: obs-alla-deltar-nya-lite-extra-rigga-talt-och-stalla-i-ordning-ga-hall-2026-09-01-1800
     title: (OBS! Alla deltar, nya lite extra) Rigga tält och ställa i ordning GA-hall
-    date: '2026-04-24'
+    date: '2026-09-01'
     start: '18:00'
     end: '20:30'
     location: Annat
@@ -636,9 +636,9 @@ events:
     meta:
       created_at: '2025-06-21 17:28:53'
       updated_at: '2025-06-21 17:28:53'
-  - id: middag-2026-04-24-1700
+  - id: middag-2026-09-01-1700
     title: Middag
-    date: '2026-04-24'
+    date: '2026-09-01'
     start: '17:00'
     end: '18:00'
     location: Servicehus
@@ -651,9 +651,9 @@ events:
     meta:
       created_at: '2025-06-21 17:38:36'
       updated_at: '2025-06-21 17:38:36'
-  - id: lunch-2026-05-01-1200
+  - id: lunch-2026-09-08-1200
     title: Lunch
-    date: '2026-05-01'
+    date: '2026-09-08'
     start: '12:00'
     end: '13:00'
     location: Servicehus
@@ -666,9 +666,9 @@ events:
     meta:
       created_at: '2025-06-21 17:39:52'
       updated_at: '2025-06-21 17:39:52'
-  - id: bokcirkel-diskutera-djurens-gard-george-orwell-2026-04-26-1600
+  - id: bokcirkel-diskutera-djurens-gard-george-orwell-2026-09-03-1600
     title: Bokcirkel - Diskutera djurens gård (George Orwell)
-    date: '2026-04-26'
+    date: '2026-09-03'
     start: '16:00'
     end: '17:00'
     location: AndreasTältet
@@ -687,9 +687,9 @@ events:
     meta:
       created_at: '2025-06-21 17:45:59'
       updated_at: '2025-06-21 17:45:59'
-  - id: skapa-karaktarer-rollspel-wilhelms-kampanj-2026-04-25-1500
+  - id: skapa-karaktarer-rollspel-wilhelms-kampanj-2026-09-02-1500
     title: Skapa karaktärer rollspel Wilhelms kampanj
-    date: '2026-04-25'
+    date: '2026-09-02'
     start: '15:00'
     end: '17:00'
     location: Rollspelstält1
@@ -704,9 +704,9 @@ events:
     meta:
       created_at: '2025-06-22 11:09:55'
       updated_at: '2025-06-22 11:09:55'
-  - id: rollspel-astors-kampanj-2026-04-26-1330
+  - id: rollspel-astors-kampanj-2026-09-03-1330
     title: Rollspel Astors kampanj
-    date: '2026-04-26'
+    date: '2026-09-03'
     start: '13:30'
     end: '16:00'
     location: Rollspelstält2
@@ -721,9 +721,9 @@ events:
     meta:
       created_at: '2025-06-22 11:14:27'
       updated_at: '2025-06-22 11:14:27'
-  - id: rollspel-astors-kampanj-2026-04-27-1330
+  - id: rollspel-astors-kampanj-2026-09-04-1330
     title: Rollspel Astors kampanj
-    date: '2026-04-27'
+    date: '2026-09-04'
     start: '13:30'
     end: '16:00'
     location: Rollspelstält2
@@ -738,9 +738,9 @@ events:
     meta:
       created_at: '2025-06-22 11:15:19'
       updated_at: '2025-06-22 11:15:19'
-  - id: rollspel-astors-kampanj-2026-04-28-1330
+  - id: rollspel-astors-kampanj-2026-09-05-1330
     title: Rollspel Astors kampanj
-    date: '2026-04-28'
+    date: '2026-09-05'
     start: '13:30'
     end: '16:00'
     location: Rollspelstält2
@@ -755,9 +755,9 @@ events:
     meta:
       created_at: '2025-06-22 11:16:06'
       updated_at: '2025-06-22 11:16:06'
-  - id: lar-kanna-varandra-lagret-och-campingen-2026-04-25-0900
+  - id: lar-kanna-varandra-lagret-och-campingen-2026-09-02-0900
     title: Lär känna varandra, lägret och campingen!
-    date: '2026-04-25'
+    date: '2026-09-02'
     start: '09:00'
     end: '09:30'
     location: Servicehus
@@ -775,9 +775,9 @@ events:
     meta:
       created_at: '2025-06-22 11:17:16'
       updated_at: '2025-06-22 11:17:16'
-  - id: rollspel-hampus-kampanj-2026-04-26-1330
+  - id: rollspel-hampus-kampanj-2026-09-03-1330
     title: Rollspel Hampus kampanj
-    date: '2026-04-26'
+    date: '2026-09-03'
     start: '13:30'
     end: '16:30'
     location: Rollspelstält1
@@ -792,9 +792,9 @@ events:
     meta:
       created_at: '2025-06-22 11:17:55'
       updated_at: '2025-06-22 11:17:55'
-  - id: rollspel-hampus-kampanj-2026-04-27-1330
+  - id: rollspel-hampus-kampanj-2026-09-04-1330
     title: Rollspel Hampus kampanj
-    date: '2026-04-27'
+    date: '2026-09-04'
     start: '13:30'
     end: '16:30'
     location: Rollspelstält1
@@ -809,9 +809,9 @@ events:
     meta:
       created_at: '2025-06-22 11:18:52'
       updated_at: '2025-06-22 11:18:52'
-  - id: rollspel-hampus-kampanj-2026-04-29-1330
+  - id: rollspel-hampus-kampanj-2026-09-06-1330
     title: Rollspel Hampus kampanj
-    date: '2026-04-29'
+    date: '2026-09-06'
     start: '13:30'
     end: '16:30'
     location: Rollspelstält1
@@ -826,9 +826,9 @@ events:
     meta:
       created_at: '2025-06-22 11:19:46'
       updated_at: '2025-06-22 11:19:46'
-  - id: rollspel-hampus-kampanj-2026-04-30-1330
+  - id: rollspel-hampus-kampanj-2026-09-07-1330
     title: Rollspel Hampus kampanj
-    date: '2026-04-30'
+    date: '2026-09-07'
     start: '13:30'
     end: '16:30'
     location: Rollspelstält1
@@ -843,9 +843,9 @@ events:
     meta:
       created_at: '2025-06-22 11:20:31'
       updated_at: '2025-06-22 11:20:31'
-  - id: grillkvall-vid-alven-2026-04-27-1700
+  - id: grillkvall-vid-alven-2026-09-04-1700
     title: Grillkväll vid älven
-    date: '2026-04-27'
+    date: '2026-09-04'
     start: '17:00'
     end: '23:55'
     location: Grillplats
@@ -863,9 +863,9 @@ events:
     meta:
       created_at: '2025-06-22 11:54:07'
       updated_at: '2025-06-22 11:54:07'
-  - id: fotbollsspel-2026-04-26-1530
+  - id: fotbollsspel-2026-09-03-1530
     title: Fotbollsspel
-    date: '2026-04-26'
+    date: '2026-09-03'
     start: '15:30'
     end: '16:30'
     location: Fotbollsplan
@@ -880,9 +880,9 @@ events:
     meta:
       created_at: '2025-06-22 12:32:35'
       updated_at: '2025-06-22 12:32:35'
-  - id: fotbollsspel-2026-04-27-1530
+  - id: fotbollsspel-2026-09-04-1530
     title: Fotbollsspel
-    date: '2026-04-27'
+    date: '2026-09-04'
     start: '15:30'
     end: '16:30'
     location: Fotbollsplan
@@ -897,9 +897,9 @@ events:
     meta:
       created_at: '2025-06-22 12:37:10'
       updated_at: '2025-06-22 12:37:10'
-  - id: prova-pa-surrning-2026-04-28-1000
+  - id: prova-pa-surrning-2026-09-05-1000
     title: Prova-på surrning
-    date: '2026-04-28'
+    date: '2026-09-05'
     start: '10:00'
     end: '12:00'
     location: Annat
@@ -915,9 +915,9 @@ events:
     meta:
       created_at: '2025-06-22 13:27:40'
       updated_at: '2025-06-22 13:27:40'
-  - id: demo-5d-schack-2026-04-27-1100
+  - id: demo-5d-schack-2026-09-04-1100
     title: Demo 5D schack
-    date: '2026-04-27'
+    date: '2026-09-04'
     start: '11:00'
     end: '12:00'
     location: GA Datorsal
@@ -933,9 +933,9 @@ events:
     meta:
       created_at: '2025-06-22 14:00:09'
       updated_at: '2025-06-22 14:00:09'
-  - id: fotbollsspel-2026-04-29-1530
+  - id: fotbollsspel-2026-09-06-1530
     title: 'Fotbollsspel '
-    date: '2026-04-29'
+    date: '2026-09-06'
     start: '15:30'
     end: '16:30'
     location: Fotbollsplan
@@ -951,9 +951,9 @@ events:
     meta:
       created_at: '2025-06-22 15:28:10'
       updated_at: '2025-06-22 15:28:10'
-  - id: fotbollsspel-2026-04-30-1530
+  - id: fotbollsspel-2026-09-07-1530
     title: 'Fotbollsspel '
-    date: '2026-04-30'
+    date: '2026-09-07'
     start: '15:30'
     end: '16:30'
     location: Fotbollsplan
@@ -969,9 +969,9 @@ events:
     meta:
       created_at: '2025-06-22 15:30:02'
       updated_at: '2025-06-22 15:30:02'
-  - id: bokhorna-2026-04-26-1330
+  - id: bokhorna-2026-09-03-1330
     title: BOKHÖRNA
-    date: '2026-04-26'
+    date: '2026-09-03'
     start: '13:30'
     end: '14:30'
     location: GA Idrott
@@ -986,9 +986,9 @@ events:
     meta:
       created_at: '2025-06-23 09:45:34'
       updated_at: '2025-06-23 09:45:34'
-  - id: ryktet-gar-rolig-ritlek-for-alla-som-inte-maste-vinna-2026-04-27-1330
+  - id: ryktet-gar-rolig-ritlek-for-alla-som-inte-maste-vinna-2026-09-04-1330
     title: Ryktet går - rolig ritlek för alla som inte måste vinna
-    date: '2026-04-27'
+    date: '2026-09-04'
     start: '13:30'
     end: '14:30'
     location: Nerf-arena
@@ -1003,9 +1003,9 @@ events:
     meta:
       created_at: '2025-06-23 10:01:36'
       updated_at: '2025-06-23 10:01:36'
-  - id: bradspel-2026-04-26-1030
+  - id: bradspel-2026-09-03-1030
     title: 'Brädspel '
-    date: '2026-04-26'
+    date: '2026-09-03'
     start: '10:30'
     end: '17:30'
     location: GA Idrott
@@ -1027,9 +1027,9 @@ events:
     meta:
       created_at: '2025-06-23 10:08:22'
       updated_at: '2025-06-23 10:08:22'
-  - id: flata-vidars-har-2026-04-25-1120
+  - id: flata-vidars-har-2026-09-02-1120
     title: Fläta Vidars hår
-    date: '2026-04-25'
+    date: '2026-09-02'
     start: '11:20'
     end: '12:00'
     location: Annat
@@ -1042,9 +1042,9 @@ events:
     meta:
       created_at: '2025-06-23 11:19:05'
       updated_at: '2025-06-23 11:19:05'
-  - id: accelration-radikalaccelation-i-praktiken-2026-04-25-1400
+  - id: accelration-radikalaccelation-i-praktiken-2026-09-02-1400
     title: Accelration/radikalaccelation i praktiken
-    date: '2026-04-25'
+    date: '2026-09-02'
     start: '14:00'
     end: '15:00'
     location: Tält2
@@ -1057,9 +1057,9 @@ events:
     meta:
       created_at: '2025-06-23 11:26:28'
       updated_at: '2025-06-23 11:26:28'
-  - id: sarskilt-begavades-emotionalitet-och-familjelivets-konflikter-med-barnets-behov-i-centrum-2026-04-29-1330
+  - id: sarskilt-begavades-emotionalitet-och-familjelivets-konflikter-med-barnets-behov-i-centrum-2026-09-06-1330
     title: Särskilt begåvades emotionalitet och Familjelivets konflikter med barnets behov i centrum
-    date: '2026-04-29'
+    date: '2026-09-06'
     start: '13:30'
     end: '15:00'
     location: Kaffetält
@@ -1072,9 +1072,9 @@ events:
     meta:
       created_at: '2025-06-23 11:29:40'
       updated_at: '2025-06-23 11:29:40'
-  - id: lufttorkad-lera-2026-04-25-1300
+  - id: lufttorkad-lera-2026-09-02-1300
     title: 'Lufttorkad lera '
-    date: '2026-04-25'
+    date: '2026-09-02'
     start: '13:00'
     end: '15:00'
     location: Tält1
@@ -1087,9 +1087,9 @@ events:
     meta:
       created_at: '2025-06-23 11:30:59'
       updated_at: '2025-06-23 11:30:59'
-  - id: talj-en-penna-eller-vad-som-helst-2026-04-26-1300
+  - id: talj-en-penna-eller-vad-som-helst-2026-09-03-1300
     title: Tälj en penna eller vad som helst!
-    date: '2026-04-26'
+    date: '2026-09-03'
     start: '13:00'
     end: '15:00'
     location: Tält1
@@ -1105,9 +1105,9 @@ events:
     meta:
       created_at: '2025-06-23 11:52:46'
       updated_at: '2025-06-23 11:52:46'
-  - id: stick-fika-2026-04-25-1330
+  - id: stick-fika-2026-09-02-1330
     title: Stick-fika
-    date: '2026-04-25'
+    date: '2026-09-02'
     start: '13:30'
     end: '15:00'
     location: Kaffetält
@@ -1120,9 +1120,9 @@ events:
     meta:
       created_at: '2025-06-23 12:25:01'
       updated_at: '2025-06-23 12:25:01'
-  - id: lokalforening-dalarna-gavleborg-2026-04-25-1600
+  - id: lokalforening-dalarna-gavleborg-2026-09-02-1600
     title: 'Lokalförening: Dalarna Gävleborg'
-    date: '2026-04-25'
+    date: '2026-09-02'
     start: '16:00'
     end: '16:30'
     location: Kaffetält
@@ -1135,9 +1135,9 @@ events:
     meta:
       created_at: '2025-06-23 12:45:59'
       updated_at: '2025-06-23 12:45:59'
-  - id: musikjam-2026-04-28-1600
+  - id: musikjam-2026-09-05-1600
     title: Musikjam!
-    date: '2026-04-28'
+    date: '2026-09-05'
     start: '16:00'
     end: '17:00'
     location: AndreasTältet
@@ -1152,9 +1152,9 @@ events:
     meta:
       created_at: '2025-06-23 12:51:07'
       updated_at: '2025-06-23 12:51:07'
-  - id: bland-tanketroll-och-kanslomonster-om-angest-hos-barn-och-unga-2026-04-27-1500
+  - id: bland-tanketroll-och-kanslomonster-om-angest-hos-barn-och-unga-2026-09-04-1500
     title: Bland Tanketroll och Känslomonster - om ångest hos barn och unga.
-    date: '2026-04-27'
+    date: '2026-09-04'
     start: '15:00'
     end: '16:00'
     location: Tält2
@@ -1169,9 +1169,9 @@ events:
     meta:
       created_at: '2025-06-23 12:52:06'
       updated_at: '2025-06-23 12:52:06'
-  - id: musikjam-2026-04-29-1600
+  - id: musikjam-2026-09-06-1600
     title: Musikjam!
-    date: '2026-04-29'
+    date: '2026-09-06'
     start: '16:00'
     end: '17:00'
     location: Kaffetält
@@ -1186,9 +1186,9 @@ events:
     meta:
       created_at: '2025-06-23 12:52:33'
       updated_at: '2025-06-23 12:52:33'
-  - id: musikjam-2026-04-26-1600
+  - id: musikjam-2026-09-03-1600
     title: Musikjam!
-    date: '2026-04-26'
+    date: '2026-09-03'
     start: '16:00'
     end: '17:00'
     location: Kaffetält
@@ -1203,9 +1203,9 @@ events:
     meta:
       created_at: '2025-06-23 12:53:29'
       updated_at: '2025-06-23 12:53:29'
-  - id: tecknarstudio-anmalan-kravs-2026-04-25-1800
+  - id: tecknarstudio-anmalan-kravs-2026-09-02-1800
     title: Tecknarstudio - Anmälan KRÄVS
-    date: '2026-04-25'
+    date: '2026-09-02'
     start: '18:00'
     end: '20:00'
     location: GA Stilla hyllan
@@ -1227,9 +1227,9 @@ events:
     meta:
       created_at: '2025-06-23 12:53:59'
       updated_at: '2025-06-23 12:53:59'
-  - id: musikjam-2026-04-30-1600
+  - id: musikjam-2026-09-07-1600
     title: Musikjam!
-    date: '2026-04-30'
+    date: '2026-09-07'
     start: '16:00'
     end: '17:00'
     location: Kaffetält
@@ -1244,9 +1244,9 @@ events:
     meta:
       created_at: '2025-06-23 12:55:07'
       updated_at: '2025-06-23 12:55:07'
-  - id: musikjam-2026-04-27-1600
+  - id: musikjam-2026-09-04-1600
     title: Musikjam!
-    date: '2026-04-27'
+    date: '2026-09-04'
     start: '16:00'
     end: '17:00'
     location: AndreasTältet
@@ -1261,9 +1261,9 @@ events:
     meta:
       created_at: '2025-06-23 12:57:49'
       updated_at: '2025-06-23 12:57:49'
-  - id: gellitryck-2026-04-26-1300
+  - id: gellitryck-2026-09-03-1300
     title: Gellitryck
-    date: '2026-04-26'
+    date: '2026-09-03'
     start: '13:00'
     end: '16:00'
     location: Tält1
@@ -1282,9 +1282,9 @@ events:
     meta:
       created_at: '2025-06-23 13:05:22'
       updated_at: '2025-06-23 13:05:22'
-  - id: stationer-brain-games-2026-04-26-1100
+  - id: stationer-brain-games-2026-09-03-1100
     title: 'Stationer Brain Games '
-    date: '2026-04-26'
+    date: '2026-09-03'
     start: '11:00'
     end: '12:00'
     location: Kaffetält
@@ -1301,9 +1301,9 @@ events:
     meta:
       created_at: '2025-06-23 13:09:15'
       updated_at: '2025-06-23 13:09:15'
-  - id: diamond-painting-2026-04-25-1815
+  - id: diamond-painting-2026-09-02-1815
     title: 'Diamond painting '
-    date: '2026-04-25'
+    date: '2026-09-02'
     start: '18:15'
     end: '20:00'
     location: Tält1
@@ -1316,9 +1316,9 @@ events:
     meta:
       created_at: '2025-06-23 13:09:34'
       updated_at: '2025-06-23 13:09:34'
-  - id: brain-games-2026-04-28-1930
+  - id: brain-games-2026-09-05-1930
     title: 'Brain Games '
-    date: '2026-04-28'
+    date: '2026-09-05'
     start: '19:30'
     end: '21:00'
     location: GA Idrott
@@ -1334,9 +1334,9 @@ events:
     meta:
       created_at: '2025-06-23 13:11:29'
       updated_at: '2025-06-23 13:11:29'
-  - id: samling-stationsvardar-brain-games-2026-04-28-1845
+  - id: samling-stationsvardar-brain-games-2026-09-05-1845
     title: 'Samling stationsvärdar Brain Games '
-    date: '2026-04-28'
+    date: '2026-09-05'
     start: '18:45'
     end: '19:30'
     location: GA Idrott
@@ -1349,9 +1349,9 @@ events:
     meta:
       created_at: '2025-06-23 13:12:52'
       updated_at: '2025-06-23 13:12:52'
-  - id: mafia-2026-04-25-1800
+  - id: mafia-2026-09-02-1800
     title: MAFIA
-    date: '2026-04-25'
+    date: '2026-09-02'
     start: '18:00'
     end: '19:00'
     location: GA Idrott
@@ -1366,9 +1366,9 @@ events:
     meta:
       created_at: '2025-06-23 13:26:08'
       updated_at: '2025-06-23 13:26:08'
-  - id: latt-och-svar-eurovisionquiz-vi-borjar-med-den-latta-2026-04-25-1900
+  - id: latt-och-svar-eurovisionquiz-vi-borjar-med-den-latta-2026-09-02-1900
     title: Lätt och svår Eurovisionquiz. Vi börjar med den lätta.
-    date: '2026-04-25'
+    date: '2026-09-02'
     start: '19:00'
     end: '20:30'
     location: AndreasTältet
@@ -1383,9 +1383,9 @@ events:
     meta:
       created_at: '2025-06-23 14:25:43'
       updated_at: '2025-06-23 14:25:43'
-  - id: rfsb-syd-lokalforeningstraff-2026-04-25-1600
+  - id: rfsb-syd-lokalforeningstraff-2026-09-02-1600
     title: Rfsb Syd lokalföreningsträff
-    date: '2026-04-25'
+    date: '2026-09-02'
     start: '16:00'
     end: '17:00'
     location: Servicehus
@@ -1398,9 +1398,9 @@ events:
     meta:
       created_at: '2025-06-23 15:46:16'
       updated_at: '2025-06-23 15:46:16'
-  - id: nagelstudio-2026-04-25-1800
+  - id: nagelstudio-2026-09-02-1800
     title: Nagelstudio
-    date: '2026-04-25'
+    date: '2026-09-02'
     start: '18:00'
     end: '19:00'
     location: AndreasTältet
@@ -1415,9 +1415,9 @@ events:
     meta:
       created_at: '2025-06-23 16:51:22'
       updated_at: '2025-06-23 16:51:22'
-  - id: pda-2026-04-27-1100
+  - id: pda-2026-09-04-1100
     title: PDA
-    date: '2026-04-27'
+    date: '2026-09-04'
     start: '11:00'
     end: '12:00'
     location: Tält3
@@ -1435,9 +1435,9 @@ events:
     meta:
       created_at: '2025-06-23 17:26:18'
       updated_at: '2025-06-23 17:26:18'
-  - id: goteborgstraff-rfsb-vast-2026-04-26-1100
+  - id: goteborgstraff-rfsb-vast-2026-09-03-1100
     title: Göteborgsträff - RFSB Väst
-    date: '2026-04-26'
+    date: '2026-09-03'
     start: '11:00'
     end: '12:00'
     location: AndreasTältet
@@ -1450,9 +1450,9 @@ events:
     meta:
       created_at: '2025-06-23 17:40:59'
       updated_at: '2025-06-23 17:40:59'
-  - id: tradgardssnack-2026-04-29-1100
+  - id: tradgardssnack-2026-09-06-1100
     title: Trädgårdssnack
-    date: '2026-04-29'
+    date: '2026-09-06'
     start: '11:00'
     end: '12:00'
     location: Kaffetält
@@ -1465,9 +1465,9 @@ events:
     meta:
       created_at: '2025-06-23 17:47:32'
       updated_at: '2025-06-23 17:47:32'
-  - id: rollspel-xanders-kampanj-2026-04-26-1000
+  - id: rollspel-xanders-kampanj-2026-09-03-1000
     title: Rollspel Xanders kampanj
-    date: '2026-04-26'
+    date: '2026-09-03'
     start: '10:00'
     end: '13:00'
     location: Rollspelstält2
@@ -1482,9 +1482,9 @@ events:
     meta:
       created_at: '2025-06-23 18:24:27'
       updated_at: '2025-06-23 18:24:27'
-  - id: rollspel-xanders-kampanj-2026-04-27-1000
+  - id: rollspel-xanders-kampanj-2026-09-04-1000
     title: Rollspel Xanders kampanj
-    date: '2026-04-27'
+    date: '2026-09-04'
     start: '10:00'
     end: '13:00'
     location: Rollspelstält2
@@ -1499,9 +1499,9 @@ events:
     meta:
       created_at: '2025-06-23 18:25:13'
       updated_at: '2025-06-23 18:25:13'
-  - id: rollspel-xanders-kampanj-2026-04-29-1000
+  - id: rollspel-xanders-kampanj-2026-09-06-1000
     title: Rollspel Xanders kampanj
-    date: '2026-04-29'
+    date: '2026-09-06'
     start: '10:00'
     end: '13:00'
     location: Rollspelstält2
@@ -1516,9 +1516,9 @@ events:
     meta:
       created_at: '2025-06-23 18:25:59'
       updated_at: '2025-06-23 18:25:59'
-  - id: parkour-2026-04-26-1400
+  - id: parkour-2026-09-03-1400
     title: Parkour
-    date: '2026-04-26'
+    date: '2026-09-03'
     start: '14:00'
     end: '15:00'
     location: GA Idrott
@@ -1531,9 +1531,9 @@ events:
     meta:
       created_at: '2025-06-23 18:26:33'
       updated_at: '2025-06-23 18:26:33'
-  - id: rollspel-xanders-kampanj-2026-04-30-1000
+  - id: rollspel-xanders-kampanj-2026-09-07-1000
     title: Rollspel Xanders kampanj
-    date: '2026-04-30'
+    date: '2026-09-07'
     start: '10:00'
     end: '13:00'
     location: Rollspelstält2
@@ -1548,9 +1548,9 @@ events:
     meta:
       created_at: '2025-06-23 18:26:37'
       updated_at: '2025-06-23 18:26:37'
-  - id: gellitryck-2026-04-27-1300
+  - id: gellitryck-2026-09-04-1300
     title: Gellitryck
-    date: '2026-04-27'
+    date: '2026-09-04'
     start: '13:00'
     end: '16:00'
     location: Tält1
@@ -1569,9 +1569,9 @@ events:
     meta:
       created_at: '2025-06-23 19:00:26'
       updated_at: '2025-06-23 19:00:26'
-  - id: gelliprint-2026-04-28-1300
+  - id: gelliprint-2026-09-05-1300
     title: Gelliprint
-    date: '2026-04-28'
+    date: '2026-09-05'
     start: '13:00'
     end: '16:00'
     location: Tält1
@@ -1590,9 +1590,9 @@ events:
     meta:
       created_at: '2025-06-23 19:03:04'
       updated_at: '2025-06-23 19:03:04'
-  - id: rubiks-kub-2026-04-26-1300
+  - id: rubiks-kub-2026-09-03-1300
     title: Rubiks kub
-    date: '2026-04-26'
+    date: '2026-09-03'
     start: '13:00'
     end: '14:00'
     location: Tält2
@@ -1605,9 +1605,9 @@ events:
     meta:
       created_at: '2025-06-23 20:06:35'
       updated_at: '2025-06-23 20:06:35'
-  - id: japansk-snodd-2026-04-26-1030
+  - id: japansk-snodd-2026-09-03-1030
     title: Japansk snodd
-    date: '2026-04-26'
+    date: '2026-09-03'
     start: '10:30'
     end: '11:30'
     location: GA Kreativ hörna
@@ -1620,9 +1620,9 @@ events:
     meta:
       created_at: '2025-06-23 20:40:27'
       updated_at: '2025-06-23 20:40:27'
-  - id: skattjakt-for-de-yngsta-cirka-4-7-ar-2026-04-29-1530
+  - id: skattjakt-for-de-yngsta-cirka-4-7-ar-2026-09-06-1530
     title: Skattjakt för de yngsta (cirka 4-7 år)
-    date: '2026-04-29'
+    date: '2026-09-06'
     start: '15:30'
     end: '16:30'
     location: Nerf-arena
@@ -1635,9 +1635,9 @@ events:
     meta:
       created_at: '2025-06-23 21:31:05'
       updated_at: '2025-06-23 21:31:05'
-  - id: gor-din-egen-trollstav-ca-4-10-ar-2026-04-27-1100
+  - id: gor-din-egen-trollstav-ca-4-10-ar-2026-09-04-1100
     title: Gör din egen trollstav! (ca 4-10 år)
-    date: '2026-04-27'
+    date: '2026-09-04'
     start: '11:00'
     end: '12:00'
     location: GA Kreativ hörna
@@ -1654,9 +1654,9 @@ events:
     meta:
       created_at: '2025-06-23 23:17:09'
       updated_at: '2025-06-23 23:17:09'
-  - id: hemmakampare-hur-hitta-gnistan-igen-2026-04-27-1330
+  - id: hemmakampare-hur-hitta-gnistan-igen-2026-09-04-1330
     title: 'Hemmakämpare - hur hitta gnistan igen? '
-    date: '2026-04-27'
+    date: '2026-09-04'
     start: '13:30'
     end: '14:30'
     location: Tält2
@@ -1669,9 +1669,9 @@ events:
     meta:
       created_at: '2025-06-24 00:04:55'
       updated_at: '2025-06-24 00:04:55'
-  - id: blixttal-2026-04-28-1400
+  - id: blixttal-2026-09-05-1400
     title: Blixttal
-    date: '2026-04-28'
+    date: '2026-09-05'
     start: '14:00'
     end: '15:00'
     location: GA Idrott
@@ -1687,9 +1687,9 @@ events:
     meta:
       created_at: '2025-06-24 10:11:22'
       updated_at: '2025-06-24 10:11:22'
-  - id: nagelstudio-2026-04-26-1800
+  - id: nagelstudio-2026-09-03-1800
     title: Nagelstudio
-    date: '2026-04-26'
+    date: '2026-09-03'
     start: '18:00'
     end: '19:30'
     location: AndreasTältet
@@ -1704,9 +1704,9 @@ events:
     meta:
       created_at: '2025-06-24 13:30:56'
       updated_at: '2025-06-24 13:30:56'
-  - id: varulven-spel-2026-04-26-1430
+  - id: varulven-spel-2026-09-03-1430
     title: Varulven spel
-    date: '2026-04-26'
+    date: '2026-09-03'
     start: '14:30'
     end: '16:30'
     location: GA Kreativ hörna
@@ -1719,9 +1719,9 @@ events:
     meta:
       created_at: '2025-06-24 13:32:46'
       updated_at: '2025-06-24 13:32:46'
-  - id: powerpoint-karaoke-2026-04-29-1500
+  - id: powerpoint-karaoke-2026-09-06-1500
     title: Powerpoint Karaoke!
-    date: '2026-04-29'
+    date: '2026-09-06'
     start: '15:00'
     end: '16:00'
     location: GA Idrott
@@ -1745,9 +1745,9 @@ events:
     meta:
       created_at: '2025-06-24 13:43:38'
       updated_at: '2025-06-24 13:43:38'
-  - id: rollspel-selmas-kampanj-2026-04-26-1330
+  - id: rollspel-selmas-kampanj-2026-09-03-1330
     title: Rollspel Selmas kampanj
-    date: '2026-04-26'
+    date: '2026-09-03'
     start: '13:30'
     end: '16:00'
     location: Kaffetält
@@ -1762,9 +1762,9 @@ events:
     meta:
       created_at: '2025-06-24 13:54:29'
       updated_at: '2025-06-24 13:54:29'
-  - id: rollspel-selmas-kampanj-2026-04-27-1330
+  - id: rollspel-selmas-kampanj-2026-09-04-1330
     title: Rollspel Selmas kampanj
-    date: '2026-04-27'
+    date: '2026-09-04'
     start: '13:30'
     end: '16:00'
     location: Kaffetält
@@ -1779,9 +1779,9 @@ events:
     meta:
       created_at: '2025-06-24 13:56:35'
       updated_at: '2025-06-24 13:56:35'
-  - id: rollspel-selmas-kampanj-2026-04-28-1330
+  - id: rollspel-selmas-kampanj-2026-09-05-1330
     title: Rollspel Selmas kampanj
-    date: '2026-04-28'
+    date: '2026-09-05'
     start: '13:30'
     end: '16:00'
     location: Rollspelstält1
@@ -1796,9 +1796,9 @@ events:
     meta:
       created_at: '2025-06-24 14:08:20'
       updated_at: '2025-06-24 14:08:20'
-  - id: rollspel-selmas-kampanj-2026-04-29-1330
+  - id: rollspel-selmas-kampanj-2026-09-06-1330
     title: Rollspel Selmas kampanj
-    date: '2026-04-29'
+    date: '2026-09-06'
     start: '13:30'
     end: '16:00'
     location: Rollspelstält2
@@ -1813,9 +1813,9 @@ events:
     meta:
       created_at: '2025-06-24 14:08:56'
       updated_at: '2025-06-24 14:08:56'
-  - id: street-dance-2026-04-27-1600
+  - id: street-dance-2026-09-04-1600
     title: Street dance
-    date: '2026-04-27'
+    date: '2026-09-04'
     start: '16:00'
     end: '17:00'
     location: GA Idrott
@@ -1832,9 +1832,9 @@ events:
     meta:
       created_at: '2025-06-24 14:42:40'
       updated_at: '2025-06-24 14:42:40'
-  - id: programmerarhang-2026-04-26-1830
+  - id: programmerarhang-2026-09-03-1830
     title: Programmerarhäng
-    date: '2026-04-26'
+    date: '2026-09-03'
     start: '18:30'
     end: '19:30'
     location: Kaffetält
@@ -1847,9 +1847,9 @@ events:
     meta:
       created_at: '2025-06-24 15:05:17'
       updated_at: '2025-06-24 15:05:17'
-  - id: mafia-2026-04-26-1900
+  - id: mafia-2026-09-03-1900
     title: MAFIA
-    date: '2026-04-26'
+    date: '2026-09-03'
     start: '19:00'
     end: '20:00'
     location: Servicehus
@@ -1864,9 +1864,9 @@ events:
     meta:
       created_at: '2025-06-24 15:41:14'
       updated_at: '2025-06-24 15:41:14'
-  - id: artstudion-2026-04-26-1900
+  - id: artstudion-2026-09-03-1900
     title: Artstudion
-    date: '2026-04-26'
+    date: '2026-09-03'
     start: '19:00'
     end: '21:00'
     location: GA Stilla hyllan
@@ -1888,9 +1888,9 @@ events:
     meta:
       created_at: '2025-06-24 16:08:47'
       updated_at: '2025-06-24 16:08:47'
-  - id: reiki-behandling-2026-04-26-1900
+  - id: reiki-behandling-2026-09-03-1900
     title: Reiki behandling
-    date: '2026-04-26'
+    date: '2026-09-03'
     start: '19:00'
     end: '21:00'
     location: Servicehus
@@ -1906,9 +1906,9 @@ events:
     meta:
       created_at: '2025-06-24 16:52:43'
       updated_at: '2025-06-24 16:52:43'
-  - id: reiki-behandling-2026-04-28-1900
+  - id: reiki-behandling-2026-09-05-1900
     title: Reiki behandling
-    date: '2026-04-28'
+    date: '2026-09-05'
     start: '19:00'
     end: '21:00'
     location: Servicehus
@@ -1924,9 +1924,9 @@ events:
     meta:
       created_at: '2025-06-24 16:53:49'
       updated_at: '2025-06-24 16:53:49'
-  - id: mafia-2026-04-26-1830
+  - id: mafia-2026-09-03-1830
     title: MAFIA
-    date: '2026-04-26'
+    date: '2026-09-03'
     start: '18:30'
     end: '19:30'
     location: GA Idrott
@@ -1941,9 +1941,9 @@ events:
     meta:
       created_at: '2025-06-24 18:15:36'
       updated_at: '2025-06-24 18:15:36'
-  - id: baka-tunnbrod-vid-grillplatsen-vid-alven-2026-04-27-1300
+  - id: baka-tunnbrod-vid-grillplatsen-vid-alven-2026-09-04-1300
     title: 'Baka tunnbröd vid grillplatsen vid älven '
-    date: '2026-04-27'
+    date: '2026-09-04'
     start: '13:00'
     end: '15:00'
     location: Grillplats
@@ -1959,9 +1959,9 @@ events:
     meta:
       created_at: '2025-06-24 19:18:58'
       updated_at: '2025-06-24 19:18:58'
-  - id: schack-for-nyborjare-2026-04-28-1000
+  - id: schack-for-nyborjare-2026-09-05-1000
     title: Schack för nybörjare
-    date: '2026-04-28'
+    date: '2026-09-05'
     start: '10:00'
     end: '11:00'
     location: Kaffetält
@@ -1976,9 +1976,9 @@ events:
     meta:
       created_at: '2025-06-24 19:36:35'
       updated_at: '2025-06-24 19:36:35'
-  - id: elektronik-lab-2026-04-29-1600
+  - id: elektronik-lab-2026-09-06-1600
     title: Elektronik lab
-    date: '2026-04-29'
+    date: '2026-09-06'
     start: '16:00'
     end: '17:00'
     location: GA Stilla hyllan
@@ -1991,9 +1991,9 @@ events:
     meta:
       created_at: '2025-06-24 19:40:50'
       updated_at: '2025-06-24 19:40:50'
-  - id: trum-meditation-2026-04-28-0800
+  - id: trum-meditation-2026-09-05-0800
     title: 'Trum meditation '
-    date: '2026-04-28'
+    date: '2026-09-05'
     start: '08:00'
     end: '09:00'
     location: Tält2
@@ -2011,9 +2011,9 @@ events:
     meta:
       created_at: '2025-06-24 23:27:47'
       updated_at: '2025-06-24 23:27:47'
-  - id: strid-med-lajvsvard-och-strumpor-2026-04-27-1615
+  - id: strid-med-lajvsvard-och-strumpor-2026-09-04-1615
     title: 'Strid med lajvsvärd och *strumpor*! '
-    date: '2026-04-27'
+    date: '2026-09-04'
     start: '16:15'
     end: '17:30'
     location: Nerf-arena
@@ -2028,9 +2028,9 @@ events:
     meta:
       created_at: '2025-06-24 23:55:55'
       updated_at: '2025-06-24 23:55:55'
-  - id: diamond-painting-2026-04-27-1030
+  - id: diamond-painting-2026-09-04-1030
     title: 'Diamond painting '
-    date: '2026-04-27'
+    date: '2026-09-04'
     start: '10:30'
     end: '12:00'
     location: Tält1
@@ -2043,9 +2043,9 @@ events:
     meta:
       created_at: '2025-06-25 00:04:06'
       updated_at: '2025-06-25 00:04:06'
-  - id: stand-up-comedy-vad-ar-det-och-hur-gor-man-ett-skamt-2026-04-27-1600
+  - id: stand-up-comedy-vad-ar-det-och-hur-gor-man-ett-skamt-2026-09-04-1600
     title: Stand up comedy - vad är det och hur gör man ett skämt?
-    date: '2026-04-27'
+    date: '2026-09-04'
     start: '16:00'
     end: '17:00'
     location: Tält2
@@ -2060,9 +2060,9 @@ events:
     meta:
       created_at: '2025-06-25 00:05:22'
       updated_at: '2025-06-25 00:05:22'
-  - id: musikquiz-2026-04-26-1000
+  - id: musikquiz-2026-09-03-1000
     title: Musikquiz
-    date: '2026-04-26'
+    date: '2026-09-03'
     start: '10:00'
     end: '12:00'
     location: AndreasTältet
@@ -2075,9 +2075,9 @@ events:
     meta:
       created_at: '2025-06-25 00:18:55'
       updated_at: '2025-06-25 00:18:55'
-  - id: musikquiz-2026-04-30-1000
+  - id: musikquiz-2026-09-07-1000
     title: Musikquiz
-    date: '2026-04-30'
+    date: '2026-09-07'
     start: '10:00'
     end: '12:00'
     location: AndreasTältet
@@ -2090,9 +2090,9 @@ events:
     meta:
       created_at: '2025-06-25 00:23:49'
       updated_at: '2025-06-25 00:23:49'
-  - id: fotografering-fotopromenad-2026-04-28-1500
+  - id: fotografering-fotopromenad-2026-09-05-1500
     title: Fotografering-fotopromenad
-    date: '2026-04-28'
+    date: '2026-09-05'
     start: '15:00'
     end: '16:00'
     location: Annat
@@ -2107,9 +2107,9 @@ events:
     meta:
       created_at: '2025-06-25 00:40:20'
       updated_at: '2025-06-25 00:40:20'
-  - id: familjetraning-utomhus-nedanfor-beachvolleyplan-nara-gungorna-2026-04-27-1015
+  - id: familjetraning-utomhus-nedanfor-beachvolleyplan-nara-gungorna-2026-09-04-1015
     title: Familjeträning utomhus, nedanför beachvolleyplan, nära gungorna
-    date: '2026-04-27'
+    date: '2026-09-04'
     start: '10:15'
     end: '10:45'
     location: Annat
@@ -2124,9 +2124,9 @@ events:
     meta:
       created_at: '2025-06-25 09:50:56'
       updated_at: '2025-06-25 09:50:56'
-  - id: taljning-2026-04-27-1300
+  - id: taljning-2026-09-04-1300
     title: Täljning
-    date: '2026-04-27'
+    date: '2026-09-04'
     start: '13:00'
     end: '15:00'
     location: Tält1
@@ -2141,9 +2141,9 @@ events:
     meta:
       created_at: '2025-06-25 09:52:20'
       updated_at: '2025-06-25 09:52:20'
-  - id: varulven-2026-04-27-1300
+  - id: varulven-2026-09-04-1300
     title: Varulven
-    date: '2026-04-27'
+    date: '2026-09-04'
     start: '13:00'
     end: '14:30'
     location: GA Kreativ hörna
@@ -2160,9 +2160,9 @@ events:
     meta:
       created_at: '2025-06-25 10:09:30'
       updated_at: '2025-06-25 10:09:30'
-  - id: reiki-behandling-2026-04-29-1830
+  - id: reiki-behandling-2026-09-06-1830
     title: Reiki behandling
-    date: '2026-04-29'
+    date: '2026-09-06'
     start: '18:30'
     end: '20:00'
     location: Servicehus
@@ -2178,9 +2178,9 @@ events:
     meta:
       created_at: '2025-06-25 10:15:44'
       updated_at: '2025-06-25 10:15:44'
-  - id: ai-ett-samtal-om-framtid-ideer-och-manniskan-2026-04-28-1400
+  - id: ai-ett-samtal-om-framtid-ideer-och-manniskan-2026-09-05-1400
     title: AI – ett samtal om framtid, idéer och människan
-    date: '2026-04-28'
+    date: '2026-09-05'
     start: '14:00'
     end: '15:00'
     location: Tält2
@@ -2198,9 +2198,9 @@ events:
     meta:
       created_at: '2025-06-25 10:20:46'
       updated_at: '2025-06-25 10:20:46'
-  - id: familjedans-till-vastafrikanska-rytmer-2026-04-28-1000
+  - id: familjedans-till-vastafrikanska-rytmer-2026-09-05-1000
     title: Familjedans till västafrikanska rytmer
-    date: '2026-04-28'
+    date: '2026-09-05'
     start: '10:00'
     end: '11:00'
     location: GA Idrott
@@ -2215,9 +2215,9 @@ events:
     meta:
       created_at: '2025-06-25 10:55:41'
       updated_at: '2025-06-25 10:55:41'
-  - id: prisutdelning-brain-games-2026-04-29-2015
+  - id: prisutdelning-brain-games-2026-09-06-2015
     title: 'Prisutdelning Brain Games '
-    date: '2026-04-29'
+    date: '2026-09-06'
     start: '20:15'
     end: '20:30'
     location: GA Idrott
@@ -2230,9 +2230,9 @@ events:
     meta:
       created_at: '2025-06-25 12:28:57'
       updated_at: '2025-06-25 12:28:57'
-  - id: spelutveckling-med-godot-en-kort-intro-2026-04-29-1330
+  - id: spelutveckling-med-godot-en-kort-intro-2026-09-06-1330
     title: Spelutveckling med Godot, en kort intro
-    date: '2026-04-29'
+    date: '2026-09-06'
     start: '13:30'
     end: '14:30'
     location: GA Stilla hyllan
@@ -2248,9 +2248,9 @@ events:
     meta:
       created_at: '2025-06-25 12:35:29'
       updated_at: '2025-06-25 12:35:29'
-  - id: skapa-pappersblommor-2026-04-29-0930
+  - id: skapa-pappersblommor-2026-09-06-0930
     title: Skapa pappersblommor
-    date: '2026-04-29'
+    date: '2026-09-06'
     start: '09:30'
     end: '11:00'
     location: Tält1
@@ -2263,9 +2263,9 @@ events:
     meta:
       created_at: '2025-06-25 12:47:01'
       updated_at: '2025-06-25 12:47:01'
-  - id: stand-up-comedy-vad-ar-det-och-hur-gor-man-ett-skamt-2026-04-28-1100
+  - id: stand-up-comedy-vad-ar-det-och-hur-gor-man-ett-skamt-2026-09-05-1100
     title: Stand up comedy - vad är det och hur gör man ett skämt?
-    date: '2026-04-28'
+    date: '2026-09-05'
     start: '11:00'
     end: '12:00'
     location: Tält2
@@ -2278,9 +2278,9 @@ events:
     meta:
       created_at: '2025-06-25 14:24:27'
       updated_at: '2025-06-25 14:24:27'
-  - id: jobbigt-att-prata-infor-klassen-kollegorna-publik-kom-hit-for-lite-tips-2026-04-29-1100
+  - id: jobbigt-att-prata-infor-klassen-kollegorna-publik-kom-hit-for-lite-tips-2026-09-06-1100
     title: Jobbigt att prata inför klassen, kollegorna, publik - kom hit för lite tips
-    date: '2026-04-29'
+    date: '2026-09-06'
     start: '11:00'
     end: '12:00'
     location: GA Stilla hyllan
@@ -2293,9 +2293,9 @@ events:
     meta:
       created_at: '2025-06-25 15:14:09'
       updated_at: '2025-06-25 15:14:09'
-  - id: fotbollsturnering-2026-04-28-1600
+  - id: fotbollsturnering-2026-09-05-1600
     title: Fotbollsturnering
-    date: '2026-04-28'
+    date: '2026-09-05'
     start: '16:00'
     end: '17:00'
     location: Fotbollsplan
@@ -2311,9 +2311,9 @@ events:
     meta:
       created_at: '2025-06-25 16:59:56'
       updated_at: '2025-06-25 16:59:56'
-  - id: gor-din-egen-miljovanliga-matforvaring-2026-04-28-1630
+  - id: gor-din-egen-miljovanliga-matforvaring-2026-09-05-1630
     title: 'Gör din egen miljövänliga matförvaring '
-    date: '2026-04-28'
+    date: '2026-09-05'
     start: '16:30'
     end: '18:30'
     location: Tält1
@@ -2328,9 +2328,9 @@ events:
     meta:
       created_at: '2025-06-25 21:18:43'
       updated_at: '2025-06-25 21:18:43'
-  - id: vattenkrig-2026-04-28-1700
+  - id: vattenkrig-2026-09-05-1700
     title: Vattenkrig
-    date: '2026-04-28'
+    date: '2026-09-05'
     start: '17:00'
     end: '17:30'
     location: Nerf-arena
@@ -2343,9 +2343,9 @@ events:
     meta:
       created_at: '2025-06-25 22:21:08'
       updated_at: '2025-06-25 22:21:08'
-  - id: artstudio-aldre-tonaringar-unga-vuxna-chokladfabriken-naturpralinen-2026-04-28-1300
+  - id: artstudio-aldre-tonaringar-unga-vuxna-chokladfabriken-naturpralinen-2026-09-05-1300
     title: Artstudio äldre tonåringar/unga vuxna - Chokladfabriken/Naturpralinen
-    date: '2026-04-28'
+    date: '2026-09-05'
     start: '13:00'
     end: '15:30'
     location: Annat
@@ -2365,9 +2365,9 @@ events:
     meta:
       created_at: '2025-06-26 10:59:46'
       updated_at: '2025-06-26 10:59:46'
-  - id: frigorande-dans-2026-04-29-1000
+  - id: frigorande-dans-2026-09-06-1000
     title: 'FRIGÖRANDE DANS '
-    date: '2026-04-29'
+    date: '2026-09-06'
     start: '10:00'
     end: '11:00'
     location: GA Idrott
@@ -2383,9 +2383,9 @@ events:
     meta:
       created_at: '2025-06-26 11:40:11'
       updated_at: '2025-06-26 11:40:11'
-  - id: antika-raknemaskiner-workshop-2026-04-28-1300
+  - id: antika-raknemaskiner-workshop-2026-09-05-1300
     title: Antika räknemaskiner workshop
-    date: '2026-04-28'
+    date: '2026-09-05'
     start: '13:00'
     end: '13:30'
     location: AndreasTältet
@@ -2405,9 +2405,9 @@ events:
     meta:
       created_at: '2025-06-26 11:40:24'
       updated_at: '2025-06-26 11:40:24'
-  - id: frigorande-dans-2026-04-30-1100
+  - id: frigorande-dans-2026-09-07-1100
     title: FRIGÖRANDE DANS
-    date: '2026-04-30'
+    date: '2026-09-07'
     start: '11:00'
     end: '12:00'
     location: GA Idrott
@@ -2423,9 +2423,9 @@ events:
     meta:
       created_at: '2025-06-26 11:43:44'
       updated_at: '2025-06-26 11:43:44'
-  - id: varulvar-2026-04-28-1500
+  - id: varulvar-2026-09-05-1500
     title: Varulvar
-    date: '2026-04-28'
+    date: '2026-09-05'
     start: '15:00'
     end: '16:30'
     location: GA Kreativ hörna
@@ -2442,9 +2442,9 @@ events:
     meta:
       created_at: '2025-06-26 12:20:11'
       updated_at: '2025-06-26 12:20:11'
-  - id: varulvar-2026-04-29-1500
+  - id: varulvar-2026-09-06-1500
     title: Varulvar
-    date: '2026-04-29'
+    date: '2026-09-06'
     start: '15:00'
     end: '16:30'
     location: GA Kreativ hörna
@@ -2463,9 +2463,9 @@ events:
     meta:
       created_at: '2025-06-26 18:42:44'
       updated_at: '2025-06-26 18:42:44'
-  - id: parkour-2026-04-29-1400
+  - id: parkour-2026-09-06-1400
     title: Parkour
-    date: '2026-04-29'
+    date: '2026-09-06'
     start: '14:00'
     end: '15:00'
     location: GA Idrott
@@ -2478,9 +2478,9 @@ events:
     meta:
       created_at: '2025-06-26 19:02:08'
       updated_at: '2025-06-26 19:02:08'
-  - id: vi-startar-upp-rfsb-vast-2026-04-29-1200
+  - id: vi-startar-upp-rfsb-vast-2026-09-06-1200
     title: ' Vi startar upp RFSB Väst!'
-    date: '2026-04-29'
+    date: '2026-09-06'
     start: '12:00'
     end: '12:30'
     location: Kaffetält
@@ -2495,9 +2495,9 @@ events:
     meta:
       created_at: '2025-06-26 19:22:38'
       updated_at: '2025-06-26 19:22:38'
-  - id: it-projekt-agila-ramverk-m-m-informellt-snack-2026-04-29-1000
+  - id: it-projekt-agila-ramverk-m-m-informellt-snack-2026-09-06-1000
     title: IT-projekt, agila ramverk m.m. Informellt snack
-    date: '2026-04-29'
+    date: '2026-09-06'
     start: '10:00'
     end: '11:00'
     location: Kaffetält
@@ -2512,9 +2512,9 @@ events:
     meta:
       created_at: '2025-06-26 21:13:40'
       updated_at: '2025-06-26 21:13:40'
-  - id: prepping-hur-och-varfor-2026-04-30-1300
+  - id: prepping-hur-och-varfor-2026-09-07-1300
     title: 'Prepping, hur och varför? '
-    date: '2026-04-30'
+    date: '2026-09-07'
     start: '13:00'
     end: '14:30'
     location: Tält2
@@ -2529,9 +2529,9 @@ events:
     meta:
       created_at: '2025-06-27 00:49:11'
       updated_at: '2025-06-27 00:49:11'
-  - id: diamond-painting-bokning-2026-04-29-1300
+  - id: diamond-painting-bokning-2026-09-06-1300
     title: Diamond painting-bokning
-    date: '2026-04-29'
+    date: '2026-09-06'
     start: '13:00'
     end: '15:00'
     location: Tält1
@@ -2544,9 +2544,9 @@ events:
     meta:
       created_at: '2025-06-27 01:58:53'
       updated_at: '2025-06-27 01:58:53'
-  - id: inkluderad-till-exkludering-repris-fran-den-internationella-begavningskonferensen-i-karlstad-tidigare-i-sommar-2026-04-29-1600
+  - id: inkluderad-till-exkludering-repris-fran-den-internationella-begavningskonferensen-i-karlstad-tidigare-i-sommar-2026-09-06-1600
     title: Inkluderad till exkludering (repris från den internationella begåvningskonferensen i Karlstad tidigare i sommar)
-    date: '2026-04-29'
+    date: '2026-09-06'
     start: '16:00'
     end: '16:30'
     location: GA Idrott
@@ -2561,9 +2561,9 @@ events:
     meta:
       created_at: '2025-06-27 03:49:41'
       updated_at: '2025-06-27 03:49:41'
-  - id: neurodiversitet-2e-iq-begreppet-bra-att-veta-om-hur-psykologer-kan-tanka-2026-04-29-1800
+  - id: neurodiversitet-2e-iq-begreppet-bra-att-veta-om-hur-psykologer-kan-tanka-2026-09-06-1800
     title: Neurodiversitet, 2E, IQ-begreppet, bra att veta om hur psykologer kan tänka
-    date: '2026-04-29'
+    date: '2026-09-06'
     start: '18:00'
     end: '18:45'
     location: Annat
@@ -2579,9 +2579,9 @@ events:
     meta:
       created_at: '2025-06-27 10:00:55'
       updated_at: '2025-06-27 10:00:55'
-  - id: skapa-pappersblommor-2026-04-30-1300
+  - id: skapa-pappersblommor-2026-09-07-1300
     title: Skapa pappersblommor
-    date: '2026-04-30'
+    date: '2026-09-07'
     start: '13:00'
     end: '14:30'
     location: Tält1
@@ -2594,9 +2594,9 @@ events:
     meta:
       created_at: '2025-06-27 11:36:02'
       updated_at: '2025-06-27 11:36:02'
-  - id: open-stage-med-anmalningslank-2026-04-29-2030
+  - id: open-stage-med-anmalningslank-2026-09-06-2030
     title: Open Stage - med anmälningslänk!
-    date: '2026-04-29'
+    date: '2026-09-06'
     start: '20:30'
     end: '22:30'
     location: GA Idrott
@@ -2614,9 +2614,9 @@ events:
     meta:
       created_at: '2025-06-27 11:52:55'
       updated_at: '2025-06-27 11:52:55'
-  - id: karaoke-med-anmalningslank-2026-04-29-1800
+  - id: karaoke-med-anmalningslank-2026-09-06-1800
     title: Karaoke - med anmälningslänk!
-    date: '2026-04-29'
+    date: '2026-09-06'
     start: '18:00'
     end: '20:00'
     location: GA Idrott
@@ -2632,9 +2632,9 @@ events:
     meta:
       created_at: '2025-06-27 11:55:33'
       updated_at: '2025-06-27 11:55:33'
-  - id: artstudio-2026-04-29-1800
+  - id: artstudio-2026-09-06-1800
     title: Artstudio
-    date: '2026-04-29'
+    date: '2026-09-06'
     start: '18:00'
     end: '20:00'
     location: Annat
@@ -2656,9 +2656,9 @@ events:
     meta:
       created_at: '2025-06-27 15:30:24'
       updated_at: '2025-06-27 15:30:24'
-  - id: tank-dig-innanfor-boxen-tillfalle-2-2026-04-30-1700
+  - id: tank-dig-innanfor-boxen-tillfalle-2-2026-09-07-1700
     title: Tänk dig innanför boxen! Tillfälle 2
-    date: '2026-04-30'
+    date: '2026-09-07'
     start: '17:00'
     end: '18:00'
     location: AndreasTältet
@@ -2675,9 +2675,9 @@ events:
     meta:
       created_at: '2025-06-27 17:07:10'
       updated_at: '2025-06-27 17:07:10'
-  - id: tank-dig-innanfor-boxen-tillfalle-1-2026-04-30-1300
+  - id: tank-dig-innanfor-boxen-tillfalle-1-2026-09-07-1300
     title: Tänk dig innanför boxen! Tillfälle 1
-    date: '2026-04-30'
+    date: '2026-09-07'
     start: '13:00'
     end: '14:00'
     location: AndreasTältet
@@ -2693,9 +2693,9 @@ events:
     meta:
       created_at: '2025-06-27 17:09:15'
       updated_at: '2025-06-27 17:09:15'
-  - id: artstudio-hantverkstaltet-2026-04-29-1800
+  - id: artstudio-hantverkstaltet-2026-09-06-1800
     title: 'Artstudio - Hantverkstältet '
-    date: '2026-04-29'
+    date: '2026-09-06'
     start: '18:00'
     end: '20:00'
     location: Annat
@@ -2717,9 +2717,9 @@ events:
     meta:
       created_at: '2025-06-27 17:11:53'
       updated_at: '2025-06-27 17:11:53'
-  - id: powerpoint-karaoke-2-a-tillfallet-2026-04-30-1430
+  - id: powerpoint-karaoke-2-a-tillfallet-2026-09-07-1430
     title: Powerpoint-Karaoke, 2:a tillfället
-    date: '2026-04-30'
+    date: '2026-09-07'
     start: '14:30'
     end: '15:30'
     location: GA Idrott
@@ -2732,9 +2732,9 @@ events:
     meta:
       created_at: '2025-06-27 18:49:13'
       updated_at: '2025-06-27 18:49:13'
-  - id: hundsnack-2026-04-30-1100
+  - id: hundsnack-2026-09-07-1100
     title: Hundsnack
-    date: '2026-04-30'
+    date: '2026-09-07'
     start: '11:00'
     end: '11:45'
     location: Tält2
@@ -2751,9 +2751,9 @@ events:
     meta:
       created_at: '2025-06-27 19:48:37'
       updated_at: '2025-06-27 19:48:37'
-  - id: fa-hjalp-med-att-ga-med-i-rfsb-discord-kan-bli-grejen-framover-samma-som-de-yngre-https-discord-gg-gbcfxsek-2026-04-30-1100
+  - id: fa-hjalp-med-att-ga-med-i-rfsb-discord-kan-bli-grejen-framover-samma-som-de-yngre-https-discord-gg-gbcfxsek-2026-09-07-1100
     title: Få hjälp med att gå med i RFSB Discord (kan bli grejen framöver, samma som de yngre) - https://discord.gg/gBCfxseK
-    date: '2026-04-30'
+    date: '2026-09-07'
     start: '11:00'
     end: '12:00'
     location: KaffePaviljongen
@@ -2771,9 +2771,9 @@ events:
     meta:
       created_at: '2025-06-27 22:51:37'
       updated_at: '2025-06-27 22:51:37'
-  - id: svenskarna-samtiden-och-framtiden-2026-04-30-1530
+  - id: svenskarna-samtiden-och-framtiden-2026-09-07-1530
     title: 'Svenskarna, samtiden och framtiden '
-    date: '2026-04-30'
+    date: '2026-09-07'
     start: '15:30'
     end: '16:30'
     location: GA Idrott
@@ -2788,9 +2788,9 @@ events:
     meta:
       created_at: '2025-06-28 01:12:46'
       updated_at: '2025-06-28 01:12:46'
-  - id: musikquiz-2026-04-30-2030
+  - id: musikquiz-2026-09-07-2030
     title: Musikquiz
-    date: '2026-04-30'
+    date: '2026-09-07'
     start: '20:30'
     end: '23:00'
     location: Servicehus
@@ -2803,9 +2803,9 @@ events:
     meta:
       created_at: '2025-06-28 13:36:32'
       updated_at: '2025-06-28 13:36:32'
-  - id: gissa-vem-jag-ar-2026-05-01-0100
+  - id: gissa-vem-jag-ar-2026-09-08-0100
     title: Gissa vem jag är
-    date: '2026-05-01'
+    date: '2026-09-08'
     start: '01:00'
     end: '01:10'
     location: Nerf-arena
@@ -2821,9 +2821,9 @@ events:
     meta:
       created_at: '2025-06-29 00:50:00'
       updated_at: '2025-06-29 00:50:00'
-  - id: provsmakning-kryddor-2026-04-25-1230
+  - id: provsmakning-kryddor-2026-09-02-1230
     title: Provsmakning av nya kryddor
-    date: '2026-04-25'
+    date: '2026-09-02'
     start: '12:30'
     end: '13:45'
     location: Servicehus
@@ -2836,9 +2836,9 @@ events:
     meta:
       created_at: '2026-04-24 10:00:00'
       updated_at: '2026-04-24 10:00:00'
-  - id: filmvisning-tidig-2026-04-25-1730
+  - id: filmvisning-tidig-2026-09-02-1730
     title: Filmvisning (tidig)
-    date: '2026-04-25'
+    date: '2026-09-02'
     start: '17:30'
     end: '19:00'
     location: Servicehus
@@ -2851,9 +2851,9 @@ events:
     meta:
       created_at: '2026-04-24 10:00:00'
       updated_at: '2026-04-24 10:00:00'
-  - id: testar-github-2026-06-12-1200
+  - id: testar-github-2026-10-20-1200
     title: Testar github
-    date: '2026-06-12'
+    date: '2026-10-20'
     start: '12:00'
     end: '13:00'
     location: AndreasTältet
